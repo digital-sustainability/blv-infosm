@@ -8,7 +8,6 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { SparqlDataService } from 'src/app/shared/sparql-data.service';
 import { DistributeDataService } from 'src/app/shared/distribute-data.service';
 import { TranslateService } from '@ngx-translate/core';
-import { NgSelectModule, NgOption } from '@ng-select/ng-select';
 import * as moment from 'moment';
 import * as _ from 'lodash';
 
@@ -115,13 +114,13 @@ export class FilterComponent implements OnInit, OnDestroy {
   onAdd($event, filterType: string) {
     let selectedItem = [];
     selectedItem = $event.split();
-    console.log('Current tmpArr:');
+    console.log('selectedItem: ');
     console.log(selectedItem);
 
     // TODO: decide if we use filterConfig Object or currentFilter Array
     // to store the selected filters from the user
     if (this.filterConfig.hasOwnProperty(`${filterType}`)) {
-      this.filterConfig[`${filterType}`].push(selectedItem)
+      this.filterConfig[`${filterType}`].push(selectedItem.toString());
       console.log(this.filterConfig)
     }
     // tmpArr.forEach(el => {
@@ -140,6 +139,12 @@ export class FilterComponent implements OnInit, OnDestroy {
     const index = this.currentFilter.indexOf($event.value);
     if (index > -1) {
       this.currentFilter.splice(index, 1);
+    }
+
+    if (this.filterConfig.hasOwnProperty(`${filterType}`)) {
+      this.filterConfig[`${filterType}`]  = _.remove(this.filterConfig[`${filterType}`], (item: string) => {
+        return item !== $event.value;
+      });
     }
 
     console.log('Current filter after removing selected item:');
@@ -176,9 +181,6 @@ export class FilterComponent implements OnInit, OnDestroy {
     this._dataSub = this._sparqlDataService.getReports(lang, from, to).subscribe(
       data => {
         this.data = data;
-        console.log(data);
-        this.getFrequencyTable(data);
-        // this.extractFilterParts(this.data)
         // filter the data if event was fired
         if (this.currentFilter.length !== 0) {
           this.data = this.filterDataObjectBasedOnEventData(data, this.currentFilter);
@@ -255,29 +257,6 @@ export class FilterComponent implements OnInit, OnDestroy {
       }
     }
     return filteredData;
-  }
-
-  private getFrequencyTable(reports): void {
-    const animals = reports.map(r => {
-      return {
-        tierart: r.tierart.value,
-        seuche: r.seuche.value,
-      };
-    });
-    const animalTypes = _.uniqBy(animals.map(a => a.tierart));
-    const result = [];
-    animalTypes.forEach((at: string) => {
-      const seuchen = [];
-      animals.forEach(a => {
-        if (at === a.tierart) {
-          seuchen.push(a.seuche);
-        }
-      });
-      const tmp = _.countBy(seuchen);
-      tmp.tierart = at;
-      result.push(tmp);
-    });
-    console.table(result);
   }
 
 
