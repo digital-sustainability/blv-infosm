@@ -33,5 +33,13 @@
         "FREQUENCY": "Représentation selon la fréquence",
         "TIMELINE": "Représentation temporelle",
         "MAP": "Représentation selon l'emplacement géographique"
+    },
+    "FILTER": {
+        "FILTER": "Filtre",
+        "LASTWEEK": "semaine dernière",
+        "LASTMONTH": "mois dernier",
+        "LASTYEAR": "année dernière",
+        "LASTTHREEYEARS": "trois années dernières",
+        "WHOLETIME": "période complète"
     }
 }
