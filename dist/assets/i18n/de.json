@@ -33,5 +33,13 @@
         "FREQUENCY": "Auswertung nach Häufigkeit",
         "TIMELINE": "Zeitliche Auswertung",
         "MAP": "Auswertung nach Geografie"
+    },
+    "FILTER": {
+        "FILTER": "Filter",
+        "LASTWEEK": "letzte Woche",
+        "LASTMONTH": "letzter Monat",
+        "LASTYEAR": "letztes Jahr",
+        "LASTTHREEYEARS": "letzte drei Jahre",
+        "WHOLETIME": "ganzer Zeitraum"
     }
 }
