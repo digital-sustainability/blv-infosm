@@ -33,5 +33,13 @@
         "FREQUENCY": "Analisi frequenziale",
         "TIMELINE": "Analisi temporale",
         "MAP": "Analisi geografica"
+    },
+    "FILTER": {
+        "FILTER": "Filtro",
+        "LASTWEEK": "settimana scorsa",
+        "LASTMONTH": "ultimo mese",
+        "LASTYEAR": "anno scorso",
+        "LASTTHREEYEARS": "ultimi tre anni",
+        "WHOLETIME": "tutto il periodo"
     }
 }
