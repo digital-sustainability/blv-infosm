@@ -1,0 +1,39 @@
+
+
+#nav {
+    background-color: #E5E5E5;
+}
+
+ul {
+    margin: 0;
+    display: table;
+}
+
+hr {
+    border-top: 3px solid red;
+}
+
+li {
+    margin-left: 0;
+    border: none;
+    text-align: center;
+}
+
+ul.nav > li {
+    display: table-cell;
+    width: 50%;
+}
+
+.nav li a {
+    color:black;
+}
+
+.nav li a:hover {
+    color: red;
+    background-color: white;
+}
+
+.active {
+    color: red;
+    background-color: white;
+}

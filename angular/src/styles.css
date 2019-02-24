@@ -1,0 +1,23 @@
+/* You can add global styles to this file, and also import other style files */
+
+@import "~@ng-select/ng-select/themes/default.theme.css";
+body {
+  padding: 20px;
+}
+
+/* remove black outline from admin CSS */
+.btn.active:focus,
+.btn:focus,
+.carousel-control:focus,
+.chosen-container-active
+.chosen-single, .dropdown-toggle:focus,
+.form-control:focus,
+:not([class*=col-]):focus,
+a:focus, button:focus,
+input[type=checkbox]:focus,
+input[type=file]:focus,
+input[type=radio]:focus, 
+.nav>li>a:focus {
+  outline: 0;
+  outline: none;
+}

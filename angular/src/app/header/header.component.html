@@ -1,0 +1,46 @@
+<div class="section">
+  <header>
+    <section class="nav-services clearfix">
+      <h2 class="sr-only">Language selection</h2>
+      <nav class="nav-lang">
+        <ul>
+          <li><a
+            (click)="onLangChange('de');"
+            [ngClass]="this.selectedLang==='de' ? 'active' : 'notActive'"
+            lang="de"
+            title="Deutsch"
+            aria-label="Deutsch">DE</a></li>
+          <li><a
+            (click)="onLangChange('fr');"
+            [ngClass]="this.selectedLang==='fr' ? 'active' : 'notActive'"
+            lang="fr"
+            title="Français"
+            aria-label="Français">FR</a></li>
+          <li><a
+            (click)="onLangChange('it');"
+            [ngClass]="this.selectedLang==='it' ? 'active' : 'notActive'"
+            lang="it"
+            title="Italiano"
+            aria-label="Italiano">IT</a></li>
+          <li><a
+            (click)="onLangChange('en');"
+            [ngClass]="selectedLang==='en' ? 'active' : 'notActive'"
+            lang="en"
+            title="English"
+            aria-label="English">EN</a></li>
+        </ul>
+      </nav>
+      <a [routerLink]="['']" class="brand hidden-xs" title="{{ 'HEADER.GO_HOME' | translate }}">
+        <img src="../assets/img/logo-CH.svg" onerror="this.onerror=null; this.src='../assets/img/logo-CH.png'" alt="{{ 'HEADER.GO_HOME' | translate}}" />
+        <h1>{{ 'GENERAL.BLV_FULL' | translate }}</h1>
+      </a>
+    </section>
+  </header>
+  <hr>
+  <div id="nav">
+    <ul class="nav">
+      <li><a [routerLinkActive]="['active']" [routerLink]="['']">InfoSM</a></li>
+      <li><a [routerLinkActive]="['active']" [routerLink]="['/evaluation']">{{ 'HEADER.EVALUATION' | translate }}</a></li>
+    </ul>
+  </div>
+</div>

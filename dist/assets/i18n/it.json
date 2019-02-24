@@ -1,0 +1,37 @@
+{
+    "GENERAL": {
+        "BLV": "USAV",
+        "BLV_FULL": "Ufficio federale della sicurezza alimentare e di veterinaria"
+    },
+    "HEADER": {
+        "HOME": "Pagina iniziale",
+        "EVALUATION": "Strumenti di valutazione",
+        "GO_HOME": "Torna alla pagina iniziale"
+    },
+    "HOME": {
+        "TEST": "Sperimentazione di un grafico SVG per il flusso di segnalazione di una notifica di una malattia animale."
+    },
+    "EVALUATION": {
+        "YEAR": "Anno",
+        "COUNT": "Quantità",
+        "DIAGNOSIS_DATE": "Data di diagnosi",
+        "MUNICIPALITY": "Comune",
+        "CANTON": "Cantone",
+        "KILLED": "Ucciso",
+        "INFECTED": "Infetto",
+        "PEST": "Epizoozia",
+        "PEST_GROUP": "Gruppo epizoozia",
+        "ANIMAL_SPECIES": "Specie aimale",
+        "QUARTER": "Quartiere"
+    },
+    "ERROR": {
+        "OCCURED": "Error Page (404)",
+        "PAGE_NOT_FOUND": "La pagina desiderata non è disponibile. È possibile che l’indirizzo URL immesso sia sbagliato o che il documento richiesto sia stato cancellato o rinominato.",
+        "YOUR_OPTIONS": "Su questo sito internet la ricerca di contenuti può essere effettuata attraverso i seguenti canali:"
+    },
+    "FILTERCHARTS": {
+        "FREQUENCY": "Analisi frequenziale",
+        "TIMELINE": "Analisi temporale",
+        "MAP": "Analisi geografica"
+    }
+}

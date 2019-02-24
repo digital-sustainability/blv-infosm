@@ -1,0 +1,118 @@
+<div class="filterContainer">
+    <strong>Filter:</strong>
+    <fieldset>
+        <!-- last week and last month disabled since we dont have this data at the moment
+        TODO: translate text for radio buttons -->
+        <div class="radio radio--left">
+            <label for="radio">
+                <input type="radio" name="radios" id="radio1" value="radio1" (click)="changeDate('week')" disabled>
+                letzte Woche
+            </label>
+        </div>
+        <div class="radio radio--left">
+            <label for="radio2">
+                <input type="radio" name="radios" id="radio2" value="radio2" (click)="changeDate('month')" disabled>
+                letzter Monat
+            </label>
+        </div>
+        <div class="radio radio--left">
+            <label for="radio3">
+                <input type="radio" name="radios" id="radio3" value="radio3" (click)="changeDate('year')">
+                letztes Jahr
+            </label>
+        </div>
+        <div class="radio radio--left">
+            <label for="radio4">
+                <input type="radio" name="radios" id="radio4" value="radio4" (click)="changeDate('threeYears')">
+                letzte 3 Jahre
+            </label>
+        </div>
+        <div class="radio radio--left">
+            <label for="radio5">
+                <input type="radio" name="radios" id="radio5" value="radio5" (click)="changeDate('whole')" checked>
+                ganzer Zeitraum
+            </label>
+        </div>
+    </fieldset>
+    <!-- TODO: translate "notFoundText" -->
+    <div> {{ 'EVALUATION.MUNICIPALITY' | translate }}:
+        <ng-select [items]="communities" 
+                   notFoundText="Keine Einträge" 
+                   [multiple]="true" 
+                   placeholder="..."    
+                   (add)="onAdd($event, 'community')"
+                   (remove)="onRemove($event, 'community')">
+        </ng-select>
+    </div>
+    <div> {{ 'EVALUATION.PEST' | translate }}:
+        <ng-select [items]="epidemics"
+                   notFoundText="Keine Einträge" 
+                   [multiple]="true" 
+                   placeholder="..."   
+                   (add)="onAdd($event, 'epidemic')"
+                   (remove)="onRemove($event, 'epidemic')">
+        </ng-select>
+    </div>
+</div>
+
+
+<div style="margin-top: 15px" class="row">
+    <div class="col-sm-10 col-sm-offset-1">
+        <ul class="nav nav-tabs">
+            <li id="frequency" data-toggle="tab"><a [routerLink]="['./frequency']">{{ 'FILTERCHARTS.FREQUENCY' |
+                    translate }}</a></li>
+            <li id="timeline" data-toggle="tab"><a [routerLink]="['./timeline']">{{ 'FILTERCHARTS.TIMELINE' | translate
+                    }}</a></li>
+            <li id="map" data-toggle="tab"><a [routerLink]="['./map']">{{ 'FILTERCHARTS.MAP' | translate }}</a></li>
+        </ul>
+        <router-outlet></router-outlet>
+    </div>
+</div>
+
+<ng-template #loadingList>
+    <div class="loadingSign">
+        <fa name="refresh" size="4x" animation="spin"></fa>
+    </div>
+</ng-template>
+
+<div class="mat-elevation-z8" style="margin:5%">
+    <mat-table class="mat-elevation-z8" [dataSource]="dataSource" matSort>
+        <ng-container matColumnDef="diagnose_datum">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> <strong>{{ 'EVALUATION.DIAGNOSIS_DATE' | translate }}
+                </strong></mat-header-cell>
+            <mat-cell *matCellDef="let element"> {{element.diagnose_datum}} </mat-cell>
+        </ng-container>
+
+
+        <ng-container matColumnDef="gemeinde">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> <strong>{{ 'EVALUATION.MUNICIPALITY' | translate }}</strong></mat-header-cell>
+            <mat-cell *matCellDef="let element"> {{element.gemeinde}} </mat-cell>
+        </ng-container>
+
+
+        <ng-container matColumnDef="seuche">
+            <mat-header-cell *matHeaderCellDef mat-sort-header><strong>{{ 'EVALUATION.PEST_GROUP' | translate }}
+                </strong></mat-header-cell>
+            <mat-cell *matCellDef="let element"> {{element.seuche}} </mat-cell>
+        </ng-container>
+
+
+        <ng-container matColumnDef="seuchen_gruppe">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> <strong>{{ 'EVALUATION.PEST' | translate }}</strong>
+            </mat-header-cell>
+            <mat-cell *matCellDef="let element"> {{element.seuchen_gruppe}} </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="tierart">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> <strong>{{ 'EVALUATION.ANIMAL_SPECIES' | translate }}</strong>
+            </mat-header-cell>
+            <mat-cell *matCellDef="let element"> {{element.tierart}}</mat-cell>
+        </ng-container>
+
+        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+    </mat-table>
+
+    <mat-paginator [pageSize]="5" [hidePageSize]="true" showFirstLastButtons></mat-paginator>
+</div>
+<div style="height: 50px"></div>

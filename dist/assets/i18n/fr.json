@@ -1,0 +1,37 @@
+{
+    "GENERAL": {
+        "BLV": "OSAV",
+        "BLV_FULL": "Office fédéral de la sécurité alimentaire et des affaires vétérinaires"
+    },
+    "HEADER": {
+        "HOME": "Page d'accueil",
+        "EVALUATION": "Outil d'évaluation",
+        "GO_HOME": "Retour à la page d'accueil"
+    },
+    "HOME": {
+        "TEST": "Test d'un graphique SVG pour le flux de déclaration d'une notification de maladie animale."
+    },
+    "EVALUATION": {
+        "YEAR": "Année",
+        "COUNT": "Nombre",
+        "DIAGNOSIS_DATE": "Date du diagnostic",
+        "MUNICIPALITY": "Commune",
+        "CANTON": "Canton",
+        "KILLED": "Tué",
+        "INFECTED": "Infectés",
+        "PEST": "Peste",
+        "PEST_GROUP": "Groupe d'épizooties",
+        "ANIMAL_SPECIES": "Catégorie animale",
+        "QUARTER": "Quartier"
+    },
+    "ERROR": {
+        "OCCURED": "Une erreur est survenue",
+        "PAGE_NOT_FOUND": "Impossible d’afficher la page que vous voulez consulter. Vous avez sans doute saisi une mauvaise adresse (URL), le document n’existe pas ou son nom a été modifié.",
+        "YOUR_OPTIONS": "Les moyens de recherche suivant sont à votre disposition:"
+    },
+    "FILTERCHARTS": {
+        "FREQUENCY": "Représentation selon la fréquence",
+        "TIMELINE": "Représentation temporelle",
+        "MAP": "Représentation selon l'emplacement géographique"
+    }
+}

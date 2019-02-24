@@ -1,0 +1,22 @@
+.loadingSign {
+    margin: auto;
+    width: 50%;
+    text-align: center;
+    margin-top: 50px;
+    margin-bottom: 50px;
+}
+
+.radio {
+    display: inline-block;
+    margin-right: 3%;
+}
+
+.filterContainer {
+    padding: 2%;
+    margin-left: 8.5%;
+    margin-top: 2%;
+    margin-right: 8.5%;
+    border:1px solid #D8E8EF;
+    background-color: #F2F7F9
+}
+
