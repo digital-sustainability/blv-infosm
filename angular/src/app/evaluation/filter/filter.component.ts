@@ -177,7 +177,6 @@ export class FilterComponent implements OnInit, OnDestroy {
   }
 
   private getList(lang: string, from: string | Date, to: string | Date): void {
-    console.time('data_fetch_time');
     this._dataSub = this._sparqlDataService.getReports(lang, from, to).subscribe(
       data => {
         this.data = data;
@@ -188,8 +187,7 @@ export class FilterComponent implements OnInit, OnDestroy {
         this._distributeDataService.updateData(this.data);
         this.extractFilterParts(this.data);
 
-        console.timeEnd('data_fetch_time');
-
+        this.getFrequencyTable(data); // TODO: Temp
         // Prepare data for table
         // remove all elements from element_data due to language change
         this.element_data = [];
@@ -259,5 +257,26 @@ export class FilterComponent implements OnInit, OnDestroy {
     return filteredData;
   }
 
-
+  private getFrequencyTable(reports): void {
+    const animals = reports.map(r => {
+      return {
+        tierart: r.tierart.value,
+        seuche: r.seuche.value,
+      };
+    });
+    const animalTypes = _.uniqBy(animals.map(a => a.tierart));
+    const result = [];
+    animalTypes.forEach((at: string) => {
+      const seuchen = [];
+      animals.forEach(a => {
+        if (at === a.tierart) {
+          seuchen.push(a.seuche);
+        }
+      });
+      const tmp = _.countBy(seuchen);
+      tmp.tierart = at;
+      result.push(tmp);
+    });
+    console.table(result);
+  }
 }
