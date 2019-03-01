@@ -26,6 +26,7 @@ PREFIX skos: <http://www.w3.org/2004/02/skos/core#>`;
   FROM <https://linked.opendata.swiss/graph/blv/animalpest> WHERE {
   ?sub a qb:Observation ;
     <http://ld.zazuko.com/animalpest/attribute/diagnose_datum> ?diagnose_datum;
+    <http://ld.zazuko.com/animalpest/attribute/kanton_id>/rdfs:label ?kanton;
     <http://ld.zazuko.com/animalpest/attribute/gemeinde_id>/rdfs:label ?gemeinde;
 		<http://ld.zazuko.com/animalpest/dimension/tier-art>/rdfs:label ?tierart;
     <http://ld.zazuko.com/animalpest/dimension/tier-seuche> ?seuchen_uri.

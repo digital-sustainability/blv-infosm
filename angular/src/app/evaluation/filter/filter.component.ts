@@ -37,7 +37,7 @@ export class FilterComponent implements OnInit, OnDestroy {
   animal_species: String[];
 
   element_data: any[] = [];
-  displayedColumns: string[] = ['diagnose_datum', 'gemeinde', 'seuche', 'seuchen_gruppe', 'tierart'];
+  displayedColumns: string[] = ['diagnose_datum', 'kanton', 'gemeinde', 'seuche', 'seuchen_gruppe', 'tierart'];
   dataSource: any;
   currentFilter: String[] = [];
   filterConfig = {
@@ -180,6 +180,7 @@ export class FilterComponent implements OnInit, OnDestroy {
     this._dataSub = this._sparqlDataService.getReports(lang, from, to).subscribe(
       data => {
         this.data = data;
+        console.log(this.data)
         // filter the data if event was fired
         if (this.currentFilter.length !== 0) {
           this.data = this.filterDataObjectBasedOnEventData(data, this.currentFilter);
@@ -206,6 +207,7 @@ export class FilterComponent implements OnInit, OnDestroy {
     for (let element in data) {
       this.element_data.push({
         diagnose_datum: data[element].diagnose_datum.value,
+        kanton: data[element].kanton.value,
         gemeinde: data[element].gemeinde.value,
         seuche: data[element].seuche.value,
         seuchen_gruppe: data[element].seuchen_gruppe.value,
@@ -233,6 +235,7 @@ export class FilterComponent implements OnInit, OnDestroy {
 
   // extracts all the unique strings for every filter
   private extractFilterParts(data: Report[]) {
+    this.cantons = _.uniq(_.map(data, 'kanton.value'))
     this.communities = _.uniq(_.map(data, 'gemeinde.value'));
     this.epidemics = _.uniq(_.map(data, 'seuche.value'));
     this.epidemics_group = _.uniq(_.map(data, 'seuchen_gruppe.value'));

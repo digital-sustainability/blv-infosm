@@ -29,12 +29,21 @@
         </div>
         <div class="radio radio--left">
             <label for="radio5">
-                <input type="radio" name="radios" id="radio5" value="radio5" (click)="changeDate('whole')" checked>
+                <input type="radio" name="radios" id="radio5" value="radio5" (click)="changeDate('whole')">
                 {{ 'FILTER.WHOLETIME' | translate }}
             </label>
         </div>
     </fieldset>
     <!-- TODO: translate "notFoundText" -->
+    <div> {{ 'EVALUATION.CANTON' | translate }}:
+        <ng-select [items]="cantons" 
+                   notFoundText="Keine Einträge" 
+                   [multiple]="true" 
+                   placeholder="..."    
+                   (add)="onAdd($event, 'canton')"
+                   (remove)="onRemove($event, 'canton')">
+        </ng-select>
+    </div>
     <div> {{ 'EVALUATION.MUNICIPALITY' | translate }}:
         <ng-select [items]="communities" 
                    notFoundText="Keine Einträge" 
@@ -101,6 +110,10 @@
             <mat-cell *matCellDef="let element"> {{element.diagnose_datum}} </mat-cell>
         </ng-container>
 
+        <ng-container matColumnDef="kanton">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> <strong>{{ 'EVALUATION.CANTON' | translate }}</strong></mat-header-cell>
+            <mat-cell *matCellDef="let element"> {{element.kanton}} </mat-cell>
+        </ng-container>
 
         <ng-container matColumnDef="gemeinde">
             <mat-header-cell *matHeaderCellDef mat-sort-header> <strong>{{ 'EVALUATION.MUNICIPALITY' | translate }}</strong></mat-header-cell>
