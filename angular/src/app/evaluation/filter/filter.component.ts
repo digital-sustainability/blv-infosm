@@ -235,11 +235,11 @@ export class FilterComponent implements OnInit, OnDestroy {
 
   // extracts all the unique strings for every filter
   private extractFilterParts(data: Report[]) {
-    this.cantons = _.uniq(_.map(data, 'kanton.value'))
-    this.communities = _.uniq(_.map(data, 'gemeinde.value'));
-    this.epidemics = _.uniq(_.map(data, 'seuche.value'));
-    this.epidemics_group = _.uniq(_.map(data, 'seuchen_gruppe.value'));
-    this.animal_species = _.uniq(_.map(data, 'tierart.value'));
+    this.cantons = _.uniq(_.map(data, 'kanton.value')).sort();
+    this.communities = _.uniq(_.map(data, 'gemeinde.value')).sort();
+    this.epidemics = _.uniq(_.map(data, 'seuche.value')).sort();
+    this.epidemics_group = _.uniq(_.map(data, 'seuchen_gruppe.value')).sort();
+    this.animal_species = _.uniq(_.map(data, 'tierart.value')).sort();
   }
 
   // filters the data object based on the selected entries from
