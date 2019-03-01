@@ -1,5 +1,5 @@
 import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
+import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { FormsModule} from '@angular/forms'
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -28,6 +28,8 @@ import { MatPaginatorIntl } from '@angular/material';
 import { DistributeDataService } from './shared/distribute-data.service';
 import { NgSelectModule } from '@ng-select/ng-select';
 
+import '@openlayers-elements/maps/ol-map'
+import '@openlayers-elements/maps/ol-layer-openstreetmap'
 
 @NgModule({
   declarations: [
@@ -71,6 +73,10 @@ import { NgSelectModule } from '@ng-select/ng-select';
       useClass: MatPaginatorI18nService,
     },
   ],
+  schemas: [
+    CUSTOM_ELEMENTS_SCHEMA
+],
+
   bootstrap: [AppComponent]
 })
 export class AppModule { }
