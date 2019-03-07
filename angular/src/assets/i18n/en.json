@@ -39,6 +39,7 @@
         "LASTMONTH": "last month",
         "LASTYEAR": "last year",
         "LASTTHREEYEARS": "last three years",
-        "WHOLETIME": "entire period"
+        "WHOLETIME": "entire period",
+        "PLACEHOLDERCANTON": "all cantons"
     }
 }

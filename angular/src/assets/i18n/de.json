@@ -35,11 +35,12 @@
         "MAP": "Auswertung nach Geografie"
     },
     "FILTER": {
-        "FILTER": "Filter",
+        "FILTER": "Nach vorgegebenem Zeitraum filtern:",
         "LASTWEEK": "letzte Woche",
         "LASTMONTH": "letzter Monat",
         "LASTYEAR": "letztes Jahr",
         "LASTTHREEYEARS": "letzte drei Jahre",
-        "WHOLETIME": "ganzer Zeitraum"
+        "WHOLETIME": "ganzer Zeitraum",
+        "PLACEHOLDERCANTON": "alle Kantone"
     }
 }

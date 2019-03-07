@@ -1,5 +1,5 @@
 
-import { Component, OnInit, OnDestroy, ViewChild, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, AfterViewInit } from '@angular/core';
 import { Report } from '../../models/report.model';
 import { LanguageService } from 'src/app/shared/language.service';
 import { Subscription } from 'rxjs';
@@ -10,6 +10,7 @@ import { DistributeDataService } from 'src/app/shared/distribute-data.service';
 import { TranslateService } from '@ngx-translate/core';
 import * as moment from 'moment';
 import * as _ from 'lodash';
+declare let $: any;
 
 @Component({
   selector: 'app-filter',
@@ -17,7 +18,7 @@ import * as _ from 'lodash';
   styleUrls: ['./filter.component.css']
 })
 
-export class FilterComponent implements OnInit, OnDestroy {
+export class FilterComponent implements OnInit, AfterViewInit, OnDestroy {
 
   data: Report[];
   private _paramSub: Subscription;
@@ -104,6 +105,9 @@ export class FilterComponent implements OnInit, OnDestroy {
     );
   }
 
+  ngAfterViewInit() {
+  }
+
   ngOnDestroy() {
     this._langSub.unsubscribe();
     this._dataSub.unsubscribe();
@@ -158,16 +162,16 @@ export class FilterComponent implements OnInit, OnDestroy {
     this._filter.to = moment().subtract(1, 'y').format('YYYY-MM-DD');
     switch (option) {
       case ('week'):
-        this._filter.from = moment().subtract(7, 'd').format('YYYY-MM-DD'); break;
+        this._filter.from = moment().subtract(7, 'd').format('YYYY-MM-DD'); this.disableDateFilter(); break;
       case ('month'):
-        this._filter.from = moment().subtract(1, 'm').format('YYYY-MM-DD'); break;
+        this._filter.from = moment().subtract(1, 'm').format('YYYY-MM-DD'); this.disableDateFilter(); break;
       case ('year'):
-        this._filter.from = moment().subtract(2, 'y').format('YYYY-MM-DD'); break; // TODO: One year too much because we don't have all the data
+        this._filter.from = moment().subtract(2, 'y').format('YYYY-MM-DD'); this.disableDateFilter(); break; // TODO: One year too much because we don't have all the data
       case ('threeYears'):
-        this._filter.from = moment().subtract(3, 'y').format('YYYY-MM-DD'); break;
+        this._filter.from = moment().subtract(3, 'y').format('YYYY-MM-DD'); this.disableDateFilter(); break;
       case ('whole'):
         // TODO: replace with date from the first entry
-        this._filter.from = moment().subtract(30, 'y').format('YYYY-MM-DD'); break;
+        this._filter.from = moment().subtract(30, 'y').format('YYYY-MM-DD'); this.disableDateFilter(); break;
     }
     // Subscription to params will update the data. No need to call getList()
     this.updateRouteParams({
@@ -281,5 +285,35 @@ export class FilterComponent implements OnInit, OnDestroy {
       result.push(tmp);
     });
     console.table(result);
+  }
+
+  getFromToDates() {
+    let fromdate = (<HTMLInputElement>document.getElementById("from")).value;
+    let todate = (<HTMLInputElement>document.getElementById("to")).value;
+    if (moment(fromdate).isValid() && moment(todate).isValid() && fromdate.length === 10 && todate.length === 10 ) {
+      if( $('#datecompareerror').length ) { $('#datecompareerror').remove(); }
+      if(fromdate > todate) {
+        $('button.notValid').after("<strong style='color:red' id='datecompareerror'>*** error: date from > date to ***</strong>"); 
+        return;
+      }
+      this._filter.from = fromdate;
+      this._filter.to = todate;
+      this.updateRouteParams({
+        from: this._filter.from,
+        to: this._filter.to
+      });
+      // uncheck all radio buttons
+      $('.radio').prop('checked', false);
+      $('#dateformaterror').remove();
+     } else {
+      if( !($('#notValid').length) ) {
+        $('button.notValid').after("<strong style='color:red' id='dateformaterror'>*** not a valid date! right one: YYYY-MM-DD ***</strong>");
+      }
+    }
+  }
+
+  disableDateFilter() {
+    (<HTMLInputElement>document.getElementById("from")).value = "";
+    (<HTMLInputElement>document.getElementById("to")).value = "";
   }
 }

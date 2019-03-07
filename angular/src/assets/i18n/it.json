@@ -40,6 +40,7 @@
         "LASTMONTH": "ultimo mese",
         "LASTYEAR": "anno scorso",
         "LASTTHREEYEARS": "ultimi tre anni",
-        "WHOLETIME": "tutto il periodo"
+        "WHOLETIME": "tutto il periodo",
+        "PLACEHOLDERCANTON": "tutti i cantoni"
     }
 }
