@@ -292,7 +292,6 @@ export class FilterComponent implements OnInit, AfterViewInit, OnDestroy {
     let todate = (<HTMLInputElement>document.getElementById("to")).value;
     this.removeErrors();
     if (moment(fromdate).isValid() && moment(todate).isValid() && fromdate.length === 10 && todate.length === 10 ) {
-      //if( $('#datecompareerror').length ) { $('#datecompareerror').remove(); }
       if(fromdate > todate) {
         $('button.notValid').after("<p style='color:red' id='datecompareerror'>*** error: date from > date to ***</p>"); 
         return;
@@ -307,7 +306,7 @@ export class FilterComponent implements OnInit, AfterViewInit, OnDestroy {
         from: this._filter.from,
         to: this._filter.to
       });
-      // uncheck all radio buttons
+      // uncheck all radio buttons since either you search for period of for specific dates
       $('.radio').prop('checked', false);
       $('#dateformaterror').remove();
      } else {
