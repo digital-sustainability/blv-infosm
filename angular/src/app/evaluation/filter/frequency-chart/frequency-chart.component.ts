@@ -42,7 +42,7 @@ export class FrequencyChartComponent implements OnInit {
         text: undefined
       },
       xAxis: {
-        categories: this.animalTypes
+        categories: this.pestTypes
       },
       yAxis: {
         min: 0,
@@ -149,45 +149,6 @@ export class FrequencyChartComponent implements OnInit {
   }
 
   private extractFrequencyData(reports: any) {
-  //   const animals = reports.map(r => {
-  //     return {
-  //       tierart: r.tierart.value,
-  //       seuche: r.seuche.value,
-  //     };
-  //   });
-  //   const animalTypes = _.uniqBy(animals.map(a => a.tierart)).sort();
-  //   this.animalTypes = animalTypes;
-  //   const pestTypes = _.uniqBy(animals.map(p => p.seuche)).sort();
-  //   const pestPerAnimal = [];
-  //   animalTypes.forEach((at: string) => {
-  //     const seuchen = [];
-  //     animals.forEach(a => {
-  //       if (at === a.tierart) {
-  //         seuchen.push(a.seuche);
-  //       }
-  //     });
-  //     const tmp = _.countBy(seuchen);
-  //     tmp.name = at;
-  //     pestPerAnimal.push(tmp);
-  //   });
-  //   const result = [];
-  //   pestPerAnimal.forEach(ppa => {
-  //     const data =[];
-  //     pestTypes.forEach((pt: string) => {
-  //       if (ppa.hasOwnProperty(pt)) {
-  //         data.push(ppa[pt]);
-  //       } else {
-  //         data.push(0);
-  //       }
-  //     });
-  //     result.push({
-  //       name: ppa.name,
-  //       data: data
-  //     });
-  //   });
-  //   console.log('Here', result);
-  //   return result;
-  // }
     const animals = reports.map(r => {
       return {
         tierart: r.tierart.value,
@@ -210,22 +171,61 @@ export class FrequencyChartComponent implements OnInit {
       pestPerAnimal.push(tmp);
     });
     const result = [];
-    pestTypes.forEach(pestType => {
+    pestPerAnimal.forEach(ppa => {
       const data =[];
-      pestPerAnimal.forEach((pestpA: string) => {
-        if (pestpA.hasOwnProperty(pestType)) {
-          data.push(pestpA[pestType]);
+      pestTypes.forEach((pt: string) => {
+        if (ppa.hasOwnProperty(pt)) {
+          data.push(ppa[pt]);
         } else {
           data.push(0);
         }
       });
       result.push({
-        name: pestType,
+        name: ppa.name,
         data: data
       });
     });
     console.log('Here', result);
     return result;
+  
+    // const animals = reports.map(r => {
+    //   return {
+    //     tierart: r.tierart.value,
+    //     seuche: r.seuche.value,
+    //   };
+    // });
+    // const animalTypes = _.uniqBy(animals.map(a => a.tierart)).sort();
+    // this.animalTypes = animalTypes;
+    // const pestTypes = _.uniqBy(animals.map(p => p.seuche)).sort();
+    // const pestPerAnimal = [];
+    // animalTypes.forEach((at: string) => {
+    //   const seuchen = [];
+    //   animals.forEach(a => {
+    //     if (at === a.tierart) {
+    //       seuchen.push(a.seuche);
+    //     }
+    //   });
+    //   const tmp = _.countBy(seuchen);
+    //   tmp.name = at;
+    //   pestPerAnimal.push(tmp);
+    // });
+    // const result = [];
+    // pestTypes.forEach(pestType => {
+    //   const data =[];
+    //   pestPerAnimal.forEach((pestpA: string) => {
+    //     if (pestpA.hasOwnProperty(pestType)) {
+    //       data.push(pestpA[pestType]);
+    //     } else {
+    //       data.push(0);
+    //     }
+    //   });
+    //   result.push({
+    //     name: pestType,
+    //     data: data
+    //   });
+    // });
+    // console.log('Here', result);
+    // return result;
   }
 
 }
