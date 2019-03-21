@@ -290,10 +290,15 @@ export class FilterComponent implements OnInit, AfterViewInit, OnDestroy {
   getFromToDates() {
     let fromdate = (<HTMLInputElement>document.getElementById("from")).value;
     let todate = (<HTMLInputElement>document.getElementById("to")).value;
+    this.removeErrors();
     if (moment(fromdate).isValid() && moment(todate).isValid() && fromdate.length === 10 && todate.length === 10 ) {
-      if( $('#datecompareerror').length ) { $('#datecompareerror').remove(); }
+      //if( $('#datecompareerror').length ) { $('#datecompareerror').remove(); }
       if(fromdate > todate) {
-        $('button.notValid').after("<strong style='color:red' id='datecompareerror'>*** error: date from > date to ***</strong>"); 
+        $('button.notValid').after("<p style='color:red' id='datecompareerror'>*** error: date from > date to ***</p>"); 
+        return;
+      }
+      if((moment(todate).diff(fromdate, 'days')) < 7) {
+        $('button.notValid').after("<p style='color:red' id='dateuniterror'>*** error: the smallest time unit to search for is one week ***</p>"); 
         return;
       }
       this._filter.from = fromdate;
@@ -307,7 +312,7 @@ export class FilterComponent implements OnInit, AfterViewInit, OnDestroy {
       $('#dateformaterror').remove();
      } else {
       if( !($('#notValid').length) ) {
-        $('button.notValid').after("<strong style='color:red' id='dateformaterror'>*** not a valid date! right one: YYYY-MM-DD ***</strong>");
+        $('button.notValid').after("<p style='color:red' id='dateformaterror'>*** not a valid date! right format: YYYY-MM-DD ***</p>");
       }
     }
   }
@@ -315,5 +320,11 @@ export class FilterComponent implements OnInit, AfterViewInit, OnDestroy {
   disableDateFilter() {
     (<HTMLInputElement>document.getElementById("from")).value = "";
     (<HTMLInputElement>document.getElementById("to")).value = "";
+  }
+
+  removeErrors() {
+    $('#dateformaterror').remove();
+    $('#datecompareerror').remove();
+    $('#dateuniterror').remove();
   }
 }
