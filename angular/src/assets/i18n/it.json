@@ -1,7 +1,9 @@
 {
     "GENERAL": {
         "BLV": "USAV",
-        "BLV_FULL": "Ufficio federale della sicurezza alimentare e di veterinaria"
+        "BLV_FULL": "Ufficio federale della sicurezza alimentare e di veterinaria",
+        "CONTACT": "Contatto",
+        "LEGAL_FRAMEWORK": "Basi legali"
     },
     "HEADER": {
         "HOME": "Pagina iniziale",
@@ -40,6 +42,7 @@
         "LASTMONTH": "ultimo mese",
         "LASTYEAR": "anno scorso",
         "LASTTHREEYEARS": "ultimi tre anni",
-        "WHOLETIME": "tutto il periodo"
+        "WHOLETIME": "tutto il periodo",
+        "PLACEHOLDERCANTON": "tutti i cantoni"
     }
 }

@@ -1,7 +1,9 @@
 {
     "GENERAL": {
         "BLV": "FSVO",
-        "BLV_FULL": "Federal Food Safety and Veterinary Office"
+        "BLV_FULL": "Federal Food Safety and Veterinary Office",
+        "CONTACT": "Contact",
+        "LEGAL_FRAMEWORK": "Legal framework"
     },
     "HEADER": {
         "HOME": "Landing Page",
@@ -39,6 +41,7 @@
         "LASTMONTH": "last month",
         "LASTYEAR": "last year",
         "LASTTHREEYEARS": "last three years",
-        "WHOLETIME": "entire period"
+        "WHOLETIME": "entire period",
+        "PLACEHOLDERCANTON": "all cantons"
     }
 }

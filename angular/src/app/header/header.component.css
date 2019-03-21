@@ -1,4 +1,7 @@
-
+hr {
+    margin-top: 0;
+    margin-bottom:0;
+}
 
 #nav {
     background-color: #E5E5E5;

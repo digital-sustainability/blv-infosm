@@ -1,83 +1,86 @@
 <div class="filterContainer">
     <strong>{{ 'FILTER.FILTER' | translate }}:</strong>
     <fieldset>
-        <!-- last week and last month disabled since we dont have this data at the moment
-        TODO: translate text for radio buttons -->
+        <!-- last week and last month disabled since we dont have this data at the moment -->
         <div class="radio radio--left">
             <label for="radio">
-                <input type="radio" name="radios" id="radio1" value="radio1" (click)="changeDate('week')" disabled>
+                <input type="radio" name="radios" class="radio" id="radio1" value="radio1" (click)="changeDate('week')" disabled>
                 {{ 'FILTER.LASTWEEK' | translate }}
             </label>
         </div>
         <div class="radio radio--left">
             <label for="radio2">
-                <input type="radio" name="radios" id="radio2" value="radio2" (click)="changeDate('month')" disabled>
+                <input type="radio" name="radios" class="radio" id="radio2" value="radio2" (click)="changeDate('month')" disabled>
                 {{ 'FILTER.LASTMONTH' | translate }}
             </label>
         </div>
         <div class="radio radio--left">
             <label for="radio3">
-                <input type="radio" name="radios" id="radio3" value="radio3" (click)="changeDate('year')" checked>
+                <input type="radio" name="radios" class="radio" id="radio3" value="radio3" (click)="changeDate('year')" checked>
                 {{ 'FILTER.LASTYEAR' | translate }}
             </label>
         </div>
         <div class="radio radio--left">
             <label for="radio4">
-                <input type="radio" name="radios" id="radio4" value="radio4" (click)="changeDate('threeYears')">
+                <input type="radio" name="radios" class="radio" id="radio4" value="radio4" (click)="changeDate('threeYears')">
                 {{ 'FILTER.LASTTHREEYEARS' | translate }}
             </label>
         </div>
         <div class="radio radio--left">
             <label for="radio5">
-                <input type="radio" name="radios" id="radio5" value="radio5" (click)="changeDate('whole')">
+                <input type="radio" name="radios" class="radio" id="radio5" value="radio5" (click)="changeDate('whole')">
                 {{ 'FILTER.WHOLETIME' | translate }}
             </label>
         </div>
     </fieldset>
+
+    <hr>
+
+    <div id="selectDateSection" style="margin-top: 2%; margin-bottom: 2%">
+        <strong>Nach spezifischem Datum filtern:</strong>
+        <div class="input-group mb-3 from">
+            <div class="input-group-prepend">
+                <span class="input-group-text" id="inputGroup-sizing-default">von</span>
+            </div>
+            <input id="from" type="text" class="form-control" aria-label="Default" placeholder="YYYY-MM-DD">
+        </div>
+        <div class="input-group mb-3 to">
+            <div class="input-group-prepend">
+                <span class="input-group-text" id="inputGroup-sizing-default">bis&nbsp;</span>
+            </div>
+            <input id="to" class="to" type="text" class="form-control" aria-label="Default" placeholder="YYYY-MM-DD">
+        </div>
+        <button class="btn btn-dark notValid" type="submit" (click)="getFromToDates()">Filtern</button>
+    </div>
+
+    <hr>
+
     <!-- TODO: translate "notFoundText" -->
+    <!-- TODO: translate "placeholder" -->
     <div> {{ 'EVALUATION.CANTON' | translate }}:
-        <ng-select [items]="cantons" 
-                   notFoundText="Keine Einträge" 
-                   [multiple]="true" 
-                   placeholder="..."    
-                   (add)="onAdd($event, 'canton')"
-                   (remove)="onRemove($event, 'canton')">
+        <ng-select [items]="cantons" notFoundText="Keine Einträge" [multiple]="true"
+            placeholder="{{ 'FILTER.PLACEHOLDERCANTON' | translate }}" (add)="onAdd($event, 'canton')"
+            (remove)="onRemove($event, 'canton')">
         </ng-select>
     </div>
     <div> {{ 'EVALUATION.MUNICIPALITY' | translate }}:
-        <ng-select [items]="communities" 
-                   notFoundText="Keine Einträge" 
-                   [multiple]="true" 
-                   placeholder="..."    
-                   (add)="onAdd($event, 'community')"
-                   (remove)="onRemove($event, 'community')">
+        <ng-select [items]="communities" notFoundText="Keine Einträge" [multiple]="true" placeholder="..."
+            (add)="onAdd($event, 'community')" (remove)="onRemove($event, 'community')">
         </ng-select>
     </div>
     <div> {{ 'EVALUATION.PEST' | translate }}:
-        <ng-select [items]="epidemics"
-                   notFoundText="Keine Einträge" 
-                   [multiple]="true" 
-                   placeholder="..."   
-                   (add)="onAdd($event, 'epidemic')"
-                   (remove)="onRemove($event, 'epidemic')">
+        <ng-select [items]="epidemics" notFoundText="Keine Einträge" [multiple]="true" placeholder="..."
+            (add)="onAdd($event, 'epidemic')" (remove)="onRemove($event, 'epidemic')">
         </ng-select>
     </div>
     <div> {{ 'EVALUATION.PEST_GROUP' | translate }}:
-        <ng-select [items]="epidemics_group"
-                   notFoundText="Keine Einträge" 
-                   [multiple]="true" 
-                   placeholder="..."   
-                   (add)="onAdd($event, 'epidemic_group')"
-                   (remove)="onRemove($event, 'epidemic_group')">
+        <ng-select [items]="epidemics_group" notFoundText="Keine Einträge" [multiple]="true" placeholder="..."
+            (add)="onAdd($event, 'epidemic_group')" (remove)="onRemove($event, 'epidemic_group')">
         </ng-select>
     </div>
     <div> {{ 'EVALUATION.ANIMAL_SPECIES' | translate }}:
-        <ng-select [items]="animal_species"
-                   notFoundText="Keine Einträge" 
-                   [multiple]="true" 
-                   placeholder="..."   
-                   (add)="onAdd($event, 'animal_species')"
-                   (remove)="onRemove($event, 'animal_species')">
+        <ng-select [items]="animal_species" notFoundText="Keine Einträge" [multiple]="true" placeholder="..."
+            (add)="onAdd($event, 'animal_species')" (remove)="onRemove($event, 'animal_species')">
         </ng-select>
     </div>
 </div>
@@ -111,12 +114,14 @@
         </ng-container>
 
         <ng-container matColumnDef="kanton">
-            <mat-header-cell *matHeaderCellDef mat-sort-header> <strong>{{ 'EVALUATION.CANTON' | translate }}</strong></mat-header-cell>
+            <mat-header-cell *matHeaderCellDef mat-sort-header> <strong>{{ 'EVALUATION.CANTON' | translate }}</strong>
+            </mat-header-cell>
             <mat-cell *matCellDef="let element"> {{element.kanton}} </mat-cell>
         </ng-container>
 
         <ng-container matColumnDef="gemeinde">
-            <mat-header-cell *matHeaderCellDef mat-sort-header> <strong>{{ 'EVALUATION.MUNICIPALITY' | translate }}</strong></mat-header-cell>
+            <mat-header-cell *matHeaderCellDef mat-sort-header>
+                <strong>{{ 'EVALUATION.MUNICIPALITY' | translate }}</strong></mat-header-cell>
             <mat-cell *matCellDef="let element"> {{element.gemeinde}} </mat-cell>
         </ng-container>
 
@@ -135,7 +140,8 @@
         </ng-container>
 
         <ng-container matColumnDef="tierart">
-            <mat-header-cell *matHeaderCellDef mat-sort-header> <strong>{{ 'EVALUATION.ANIMAL_SPECIES' | translate }}</strong>
+            <mat-header-cell *matHeaderCellDef mat-sort-header>
+                <strong>{{ 'EVALUATION.ANIMAL_SPECIES' | translate }}</strong>
             </mat-header-cell>
             <mat-cell *matCellDef="let element"> {{element.tierart}}</mat-cell>
         </ng-container>
@@ -146,59 +152,4 @@
 
     <mat-paginator [pageSize]="5" [hidePageSize]="true" showFirstLastButtons></mat-paginator>
 </div>
-<div style="height: 50px"></div>
-
-
-<!--
-OLD HTML:
-
-<div *ngIf="data; else loadingList">
-    <table id="reportList">
-        <tr>
-            <th>{{ 'EVALUATION.DIAGNOSIS_DATE' | translate }}</th>
-            <th>{{ 'EVALUATION.MUNICIPALITY' | translate }}</th>
-            <th>{{ 'EVALUATION.PEST_GROUP' | translate }}</th>
-            <th>{{ 'EVALUATION.PEST' | translate }}</th>
-            <th>{{ 'EVALUATION.ANIMAL_SPECIES' | translate }}</th>
-        </tr>
-        <tr *ngFor="let entry of data">
-            <td>{{ entry.diagnose_datum.value }}</td>
-            <td>{{ entry.gemeinde.value | titlecase }}</td>
-            <td>{{ entry.seuchen_gruppe.value }}</td>
-            <td>{{ entry.seuche.value }}</td>
-            <td>{{ entry.tierart.value | titlecase }}</td>
-        </tr>
-        <tr>
-    </table
-
-<h3>Test Pie Chart</h3>
-<div *ngIf="data; else loadingPieChart"> -->
-<!-- TODO: Remove testData -->
-<!-- <app-frequency-chart [testData]="frequencyChartData" [data]="data"></app-frequency-chart>
-</div>
-<ng-template #loadingPieChart>
-    <div class="loadingSign">
-        <fa name="refresh" size="4x" animation="spin"></fa>
-    </div>
-</ng-template>
-<br>
-<h3>Test Timeline Chart</h3>
-<div *ngIf="data; else loadingTimelineChart"> -->
-<!-- TODO: Remove testData -->
-<!-- <app-timeline-chart [testData]="timelineChartData" [data]="data" [xAxis]="categories"></app-timeline-chart>
-</div>
-<ng-template #loadingTimelineChart>
-    <div class="loadingSign">
-        <fa name="refresh" size="4x" animation="spin"></fa>
-    </div>
-</ng-template> -->
-<!-- <h3>Test List</h3> -->
-
-<!-- <ul>
-    <li><a [routerLink]="['./frequency']">Frequency</a></li>
-    <li><a [routerLink]="['./timeline']">Timeline</a></li>
-    <li><a [routerLink]="['./map']">Map</a></li>
-</ul>
-<router-outlet></router-outlet> 
-
--->
+<!-- <div style="height: 50px"></div> -->
