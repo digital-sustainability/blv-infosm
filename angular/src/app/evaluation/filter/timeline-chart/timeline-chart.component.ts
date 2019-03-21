@@ -6,6 +6,7 @@ import { Report } from '../../../models/report.model';
 import { DistributeDataService } from 'src/app/shared/distribute-data.service';
 import * as _ from 'lodash';
 import * as moment from 'moment';
+import { debug } from 'util';
 
 @Component({
   selector: 'app-timeline-chart',
@@ -23,6 +24,7 @@ export class TimelineChartComponent implements OnInit, OnDestroy {
   translationSub: Subscription;
   ready = false;
   quarter = '';
+  isYear: boolean;
 
   constructor(
     public translate: TranslateService,
@@ -43,11 +45,12 @@ export class TimelineChartComponent implements OnInit, OnDestroy {
               this.count = texts['EVALUATION.COUNT'];
               this.quarter = texts['EVALUATION.QUARTER'];
               this.ready = true;
-              this.drawChart(data);
+              this.extract(data);
+              this.drawChart(data); 
             });
       },
       err => console.log(err) // TODO: Improve Error handling
-    );
+    );  
   }
 
   ngOnDestroy() {
@@ -64,9 +67,9 @@ export class TimelineChartComponent implements OnInit, OnDestroy {
         text: undefined
       },
       xAxis: {
-        categories: this.extractYears(data),
+        categories: this.isYear ? this.extractYears(data) : this.extractMonths(data).map((el: number) => {return el+1}),
         title: {
-          text: this.year
+          text: this.isYear ? this.year : `Monat [Jahr: ${this.extractYears(data)}]`
         }
       },
       yAxis: {
@@ -91,11 +94,11 @@ export class TimelineChartComponent implements OnInit, OnDestroy {
           }
       }
       },
-      series: this.extractChartData(data)
+      series: this.extract(data)
     });
   }
 
-  setColors() {
+  private setColors() {
     const piecols = [];
     for (let i = 15; i < 100; i += 20) {
       // http://www-db.deis.unibo.it/courses/TW/DOCS/w3schools/colors/colors_picker.asp-colorhex=A52A2A.html
@@ -104,44 +107,149 @@ export class TimelineChartComponent implements OnInit, OnDestroy {
     return piecols;
   }
 
-  private extractChartData(data: Report []) {
-    const aggregateEpidemicsPerQuarter = [{
-        name: `1. ${this.quarter}`, data: []
-      },
-      {
-        name: `2. ${this.quarter}`, data: []
-      },
-      {
-        name: `3. ${this.quarter}`, data: []
-      },
-      {
-        name: `4. ${this.quarter}`, data: []
-      }
-    ];
-    const dates = this.getDates(data);
+  private extract(data: Report[]) {
+    let finalChartData;
     const years = this.extractYears(data);
-    // Count pest occurances per quarter per year
-    for (const year of years) {
-      const pestPerQuater: number[] = [];
-      for (const date of dates) {
-        if (year === this.extractYear(date)) {
-          pestPerQuater.push(moment(date).quarter());
-        }
-      }
-      const count = _.countBy(pestPerQuater);
-      for (const q of ['1', '2', '3', '4']) {
-        // Push 0 if no epidemic per quarter
-        if (!Object.keys(count).includes(q)) {
-          count[q] = 0;
-        }
-      }
-      // Add counts for each year to every quarters data arr
-      aggregateEpidemicsPerQuarter.forEach((quarter, i) => {
-        quarter.data.push(count[(i + 1).toString()]);
+    // TODO: scale x axis when we have only one year
+    if(years.length === 1) {
+      // note: January is 0, december 11
+      this.isYear = false;
+      console.log(this.extractMonths(data));
+      let months = this.extractMonths(data).map((el:number) => {
+        return el+1;
       });
+      console.log(months)
+      finalChartData = this.aggregateEpidemicsGroup(data, months);
+    } else {
+      this.isYear = true;
+      finalChartData = this.aggregateEpidemicsGroup(data, years);
     }
-    return aggregateEpidemicsPerQuarter;
+    return finalChartData;
   }
+
+  // TODO: Replace this ugly vanilla js method by something that works faster
+  private aggregateEpidemicsGroup(data: Report[], timeUnit: number[]) {
+    let aggregatedEpidemics = [
+      { name: 'Aggregierte Seuchen', data: [] },
+      { name: 'Auszurottende Seuchen', data: [] },
+      { name: 'Hochansteckende Seuchen', data: [] },
+      { name: 'Zu bekämpfende Seuchen', data: [] },
+      { name: 'Zu überwachende Seuchen', data: [] }
+    ];
+
+    let auszurottende_seuchen = [];
+    let hochansteckende_seuchen = [];
+    let zu_bekämpfende_seuchen= [];
+    let zu_überwachende_seuchen = [];
+    let aggregierte_seuchen = [];
+
+    for (let i=0; i < timeUnit.length; i++) {
+      // initialize objects which will contain counted data
+      auszurottende_seuchen.push({
+        year: timeUnit[i],
+        count : 0
+      })
+      hochansteckende_seuchen.push({
+        year: timeUnit[i],
+        count : 0
+      })
+      zu_bekämpfende_seuchen.push({
+        year: timeUnit[i],
+        count : 0
+      })
+      zu_überwachende_seuchen.push({
+        year: timeUnit[i],
+        count : 0
+      })
+      aggregierte_seuchen.push({
+        year: timeUnit[i],
+        count : 0
+      })
+
+      let count1=0; // auszurottende Seuchen
+      let count2=0; // hochansteckende Seuchen
+      let count3=0; // zu bekämpfende Seuchen
+      let count4=0; // zu überwachende Seuchen
+      let count5=0; // aggregierte Seuchen
+      
+      for (const d of data) {
+        let yearOrMonthToCompare = this.isYear ? moment(d['diagnose_datum']['value']).year() : moment(d['diagnose_datum']['value']).month()+1;
+        if( timeUnit[i] ===  yearOrMonthToCompare) {
+          switch(d['seuchen_gruppe']['value']) {
+            case "Auszurottende Seuchen":
+              count1 += 1; count5 += 1;
+              aggregierte_seuchen[i]['count'] = count5;
+              auszurottende_seuchen[i]['count'] = count1;
+              break;
+            case "Hochansteckende Seuchen":
+              count2 += 1; count5 += 1;
+              aggregierte_seuchen[i]['count'] = count5;
+              hochansteckende_seuchen[i]['count'] = count2; 
+              break;
+            case "Zu bekämpfende Seuchen":
+              count3 +=1; count5 += 1;
+              aggregierte_seuchen[i]['count'] = count5;
+              zu_bekämpfende_seuchen[i]['count'] = count3; 
+              break;
+            case "Zu überwachende Seuchen":
+              count4 += 1; count5 += 1;
+              aggregierte_seuchen[i]['count'] = count5;
+              zu_überwachende_seuchen[i]['count'] = count4; 
+              break;
+          }
+        }
+      }
+    }
+
+    for (let i=0; i < timeUnit.length; i++) {
+      aggregatedEpidemics[0].data.push(aggregierte_seuchen[i]['count']);
+      aggregatedEpidemics[1].data.push(auszurottende_seuchen[i]['count']);
+      aggregatedEpidemics[2].data.push(hochansteckende_seuchen[i]['count']);
+      aggregatedEpidemics[3].data.push(zu_bekämpfende_seuchen[i]['count']);
+      aggregatedEpidemics[4].data.push(zu_überwachende_seuchen[i]['count']);
+    }
+    console.log(aggregatedEpidemics)
+    return aggregatedEpidemics;
+  }
+
+  // private extractChartData(data: Report []) {
+  //   const aggregateEpidemicsPerQuarter = [{
+  //       name: `1. ${this.quarter}`, data: []
+  //     },
+  //     {
+  //       name: `2. ${this.quarter}`, data: []
+  //     },
+  //     {
+  //       name: `3. ${this.quarter}`, data: []
+  //     },
+  //     {
+  //       name: `4. ${this.quarter}`, data: []
+  //     }
+  //   ];
+  //   const dates = this.getDates(data);
+  //   const years = this.extractYears(data);
+  //   // Count pest occurances per quarter per year
+  //   for (const year of years) {
+  //     const pestPerQuater: number[] = [];
+  //     for (const date of dates) {
+  //       if (year === this.extractYear(date)) {
+  //         pestPerQuater.push(moment(date).quarter());
+  //       }
+  //     }
+  //     const count = _.countBy(pestPerQuater);
+  //     for (const q of ['1', '2', '3', '4']) {
+  //       // Push 0 if no epidemic per quarter
+  //       if (!Object.keys(count).includes(q)) {
+  //         count[q] = 0;
+  //       }
+  //     }
+  //     // Add counts for each year to every quarters data arr
+  //     aggregateEpidemicsPerQuarter.forEach((quarter, i) => {
+  //       quarter.data.push(count[(i + 1).toString()]);
+  //     });
+  //   }
+  //   return aggregateEpidemicsPerQuarter;
+  // }
 
   private extractYear(date: string | Date): number {
     return moment(this.checkDate(date)).year();
@@ -149,6 +257,19 @@ export class TimelineChartComponent implements OnInit, OnDestroy {
 
   private extractYears(data: Report[]) {
     return _.uniq(this.getDates(data).map(date => this.extractYear(date))).sort();
+  }
+
+  private extractMonth(date: string | Date): number {
+    return moment(this.checkDate(date)).month();
+  }
+
+  private extractMonths(data: Report[]) {
+    return _.uniq(this.getDates(data).map(date=> this.extractMonth(date))).sort( (a: number, b: number) => {
+      if (a > b)
+        return 1;
+      if (a < b)
+        return -1;
+    });
   }
 
   private checkDate(date: string | Date): string { // TODO: Don't return today, come up with somehting better
@@ -164,6 +285,15 @@ export class TimelineChartComponent implements OnInit, OnDestroy {
       }
     }
     return dates;
+  }
+
+  // TODO: implement these two functions when animal groups are available
+  showEpidemics() {
+    console.log('epidemics selected')
+  }
+
+  showAnimals() {
+    console.log('animals selected')
   }
 
 }

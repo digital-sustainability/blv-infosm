@@ -64,22 +64,22 @@
         </ng-select>
     </div>
     <div> {{ 'EVALUATION.MUNICIPALITY' | translate }}:
-        <ng-select [items]="communities" notFoundText="Keine Einträge" [multiple]="true" placeholder="..."
+        <ng-select [items]="communities" notFoundText="Keine Einträge" [multiple]="true" placeholder="alle Gemeinden"
             (add)="onAdd($event, 'community')" (remove)="onRemove($event, 'community')">
         </ng-select>
     </div>
     <div> {{ 'EVALUATION.PEST' | translate }}:
-        <ng-select [items]="epidemics" notFoundText="Keine Einträge" [multiple]="true" placeholder="..."
+        <ng-select [items]="epidemics" notFoundText="Keine Einträge" [multiple]="true" placeholder="alle Seuchen"
             (add)="onAdd($event, 'epidemic')" (remove)="onRemove($event, 'epidemic')">
         </ng-select>
     </div>
     <div> {{ 'EVALUATION.PEST_GROUP' | translate }}:
-        <ng-select [items]="epidemics_group" notFoundText="Keine Einträge" [multiple]="true" placeholder="..."
+        <ng-select [items]="epidemics_group" notFoundText="Keine Einträge" [multiple]="true" placeholder="alle Seuchengruppen"
             (add)="onAdd($event, 'epidemic_group')" (remove)="onRemove($event, 'epidemic_group')">
         </ng-select>
     </div>
     <div> {{ 'EVALUATION.ANIMAL_SPECIES' | translate }}:
-        <ng-select [items]="animal_species" notFoundText="Keine Einträge" [multiple]="true" placeholder="..."
+        <ng-select [items]="animal_species" notFoundText="Keine Einträge" [multiple]="true" placeholder="alle Tierarten"
             (add)="onAdd($event, 'animal_species')" (remove)="onRemove($event, 'animal_species')">
         </ng-select>
     </div>
