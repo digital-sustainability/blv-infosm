@@ -29,7 +29,8 @@ import { DistributeDataService } from './shared/distribute-data.service';
 import { NgSelectModule } from '@ng-select/ng-select';
 
 import '@openlayers-elements/maps/ol-map'
-import '@openlayers-elements/maps/ol-layer-openstreetmap'
+import '@openlayers-elements/maps/ol-layer-openstreetmap';
+import { FooterComponent } from './footer/footer.component'
 
 @NgModule({
   declarations: [
@@ -41,7 +42,8 @@ import '@openlayers-elements/maps/ol-layer-openstreetmap'
     TimelineChartComponent,
     FrequencyChartComponent,
     MapChartComponent,
-    ErrorComponent
+    ErrorComponent,
+    FooterComponent
   ],
   imports: [
     BrowserModule,

@@ -1,7 +1,9 @@
 {
     "GENERAL": {
         "BLV": "OSAV",
-        "BLV_FULL": "Office fédéral de la sécurité alimentaire et des affaires vétérinaires"
+        "BLV_FULL": "Office fédéral de la sécurité alimentaire et des affaires vétérinaires",
+        "CONTACT": "Contact",
+        "LEGAL_FRAMEWORK": "Informations juridiques"
     },
     "HEADER": {
         "HOME": "Page d'accueil",

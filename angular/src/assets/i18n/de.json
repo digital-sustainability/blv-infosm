@@ -1,7 +1,9 @@
 {
     "GENERAL": {
         "BLV": "BLV",
-        "BLV_FULL": "Bundesamt für Lebensmittelsicherheit und Veterinärwesen"
+        "BLV_FULL": "Bundesamt für Lebensmittelsicherheit und Veterinärwesen",
+        "CONTACT": "Kontakt",
+        "LEGAL_FRAMEWORK": "Rechtliche Grundlagen"
     },
     "HEADER": {
         "HOME": "Startseite",
@@ -35,7 +37,7 @@
         "MAP": "Auswertung nach Geografie"
     },
     "FILTER": {
-        "FILTER": "Nach vorgegebenem Zeitraum filtern:",
+        "FILTER": "Nach vorgegebenem Zeitraum filtern",
         "LASTWEEK": "letzte Woche",
         "LASTMONTH": "letzter Monat",
         "LASTYEAR": "letztes Jahr",
