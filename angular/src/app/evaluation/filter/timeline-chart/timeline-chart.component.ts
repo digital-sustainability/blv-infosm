@@ -1,12 +1,12 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy} from '@angular/core';
 import { Chart } from 'angular-highcharts';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 import { Report } from '../../../models/report.model';
 import { DistributeDataService } from 'src/app/shared/distribute-data.service';
+import { ActivatedRoute } from '@angular/router';
 import * as _ from 'lodash';
 import * as moment from 'moment';
-import { debug } from 'util';
 
 @Component({
   selector: 'app-timeline-chart',
@@ -14,6 +14,8 @@ import { debug } from 'util';
   styleUrls: ['./timeline-chart.component.css']
 })
 export class TimelineChartComponent implements OnInit, OnDestroy {
+
+  _paramSub: Subscription;
 
   axis: [];
   data: Report[];
@@ -25,13 +27,29 @@ export class TimelineChartComponent implements OnInit, OnDestroy {
   ready = false;
   quarter = '';
   isYear: boolean;
+  minYear: number;
+  maxYear: number;
+  minMonth: number;
+  maxMonth: number;
+  timeLineChartData;
 
   constructor(
     public translate: TranslateService,
-    private _distributeDataService: DistributeDataService
+    private _distributeDataService: DistributeDataService,
+    private _route: ActivatedRoute
   ) { }
 
   ngOnInit() {
+    // get min/max year and min/max month for computing the range on the x axis
+    this._paramSub = this._route.queryParams.subscribe(
+      params => {
+        this.minYear = this.extractYear(params['from']);
+        this.maxYear = this.extractYear(params['to']);
+        this.minMonth = this.extractMonth(params['from'])+1;
+        this.maxMonth = this.extractMonth(params['to']) +1;
+      }
+    )
+    if(this.minYear === this.maxYear) {this.isYear = false;}
     this.dataSub = this._distributeDataService.currentData.subscribe(
       data => {
         // Translate if new data is loaded
@@ -45,12 +63,12 @@ export class TimelineChartComponent implements OnInit, OnDestroy {
               this.count = texts['EVALUATION.COUNT'];
               this.quarter = texts['EVALUATION.QUARTER'];
               this.ready = true;
-              this.extract(data);
+              this.timeLineChartData = this.extract(data);
               this.drawChart(data); 
             });
       },
       err => console.log(err) // TODO: Improve Error handling
-    );  
+    ); 
   }
 
   ngOnDestroy() {
@@ -67,7 +85,7 @@ export class TimelineChartComponent implements OnInit, OnDestroy {
         text: undefined
       },
       xAxis: {
-        categories: this.isYear ? this.fillMissingTimeUnits(this.extractYears(data)) : this.fillMissingTimeUnits(this.extractMonths(data).map((el: number) => {return el+1})),
+        categories: this.setCategories(),
         title: {
           text: this.isYear ? this.year : `Monat [Jahr: ${this.extractYears(data)}]`
         }
@@ -94,17 +112,25 @@ export class TimelineChartComponent implements OnInit, OnDestroy {
           }
       }
       },
-      series: this.extract(data)
+      series: this.timeLineChartData
     });
   }
 
   private setColors() {
-    const piecols = [];
+    const timelinecols = [];
     for (let i = 15; i < 100; i += 20) {
       // http://www-db.deis.unibo.it/courses/TW/DOCS/w3schools/colors/colors_picker.asp-colorhex=A52A2A.html
-      piecols.push(`hsl(0,100%, ${i}%)`);
+      timelinecols.push(`hsl(0,100%, ${i}%)`);
     }
-    return piecols;
+    return timelinecols;
+  }
+
+  private setCategories(): number[] {
+    if (this.isYear) {
+      return this.fillMissingTimeUnits(this.minYear, this.maxYear);
+    } else {
+      return this.fillMissingTimeUnits(this.minMonth, this.maxMonth);
+    }
   }
 
   private extract(data: Report[]) {
@@ -114,23 +140,18 @@ export class TimelineChartComponent implements OnInit, OnDestroy {
     if(years.length === 1) {
       // note: January is 0, december 11
       this.isYear = false;
-      console.log(this.extractMonths(data));
-      let months = this.extractMonths(data).map((el:number) => {
-        return el+1;
-      });
-      console.log(months)
-      finalChartData = this.aggregateEpidemicsGroup(data, months);
+      finalChartData = this.aggregateEpidemicsGroup(data, this.fillMissingTimeUnits(this.minMonth, this.maxMonth));
     } else {
       this.isYear = true;
-      console.log(years)
-      this.fillMissingTimeUnits(years)
-      finalChartData = this.aggregateEpidemicsGroup(data, this.fillMissingTimeUnits(years));
+      //this.fillMissingTimeUnits(years)
+      finalChartData = this.aggregateEpidemicsGroup(data, this.fillMissingTimeUnits(this.minYear, this.maxYear));
     }
     return finalChartData;
   }
 
   // TODO: Replace this ugly vanilla js method by something that works faster
   private aggregateEpidemicsGroup(data: Report[], timeUnit: number[]) {
+    console.log(timeUnit)
     let aggregatedEpidemics = [
       { name: 'Aggregierte Seuchen', data: [] },
       { name: 'Auszurottende Seuchen', data: [] },
@@ -250,18 +271,16 @@ export class TimelineChartComponent implements OnInit, OnDestroy {
     return dates;
   }
 
-  fillMissingTimeUnits(unit: number[]) {
-    let min = Math.min(...unit)
-    let max = Math.max(...unit)
-    return _.range(min, max+1, 1)
+  private fillMissingTimeUnits(minUnit: number, maxUnit: number): number[] {
+    return _.range(minUnit, maxUnit+1, 1)
   }
 
   // TODO: implement these two functions when animal groups are available
-  showEpidemics() {
+  private showEpidemics() {
     console.log('epidemics selected')
   }
 
-  showAnimals() {
+  private showAnimals() {
     console.log('animals selected')
   }
 
