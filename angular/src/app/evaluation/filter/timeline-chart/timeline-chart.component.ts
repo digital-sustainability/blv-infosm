@@ -16,8 +16,6 @@ import * as moment from 'moment';
 export class TimelineChartComponent implements OnInit, OnDestroy {
 
   _paramSub: Subscription;
-
-  axis: [];
   data: Report[];
   timelineChart: Chart;
   year: string;
@@ -25,7 +23,6 @@ export class TimelineChartComponent implements OnInit, OnDestroy {
   dataSub: Subscription;
   translationSub: Subscription;
   ready = false;
-  quarter = '';
   isYear: boolean;
   minYear: number;
   maxYear: number;
@@ -49,7 +46,7 @@ export class TimelineChartComponent implements OnInit, OnDestroy {
         this.maxMonth = this.extractMonth(params['to']) +1;
       }
     )
-    if(this.minYear === this.maxYear) {this.isYear = false;}
+    if(this.minYear === this.maxYear) {this.isYear = false; }
     this.dataSub = this._distributeDataService.currentData.subscribe(
       data => {
         // Translate if new data is loaded
@@ -61,7 +58,6 @@ export class TimelineChartComponent implements OnInit, OnDestroy {
             texts => {
               this.year = texts['EVALUATION.YEAR'];
               this.count = texts['EVALUATION.COUNT'];
-              this.quarter = texts['EVALUATION.QUARTER'];
               this.ready = true;
               this.timeLineChartData = this.extract(data);
               this.drawChart(data); 
@@ -76,6 +72,7 @@ export class TimelineChartComponent implements OnInit, OnDestroy {
     this.dataSub.unsubscribe();
   }
 
+  // TODO: doesnt work for other languages than DE --> has ty be checked
   drawChart(data: Report[]): void {
     this.timelineChart = new Chart({
       chart: {
@@ -126,7 +123,7 @@ export class TimelineChartComponent implements OnInit, OnDestroy {
   }
 
   private setCategories(): number[] {
-    if (this.isYear) {
+    if (this.isYear && this.minYear !== this.maxYear) {
       return this.fillMissingTimeUnits(this.minYear, this.maxYear);
     } else {
       return this.fillMissingTimeUnits(this.minMonth, this.maxMonth);
@@ -135,9 +132,8 @@ export class TimelineChartComponent implements OnInit, OnDestroy {
 
   private extract(data: Report[]) {
     let finalChartData;
-    const years = this.extractYears(data);
     // TODO: scale x axis when we have only one year
-    if(years.length === 1) {
+    if(this.minYear == this.maxYear) {
       // note: January is 0, december 11
       this.isYear = false;
       finalChartData = this.aggregateEpidemicsGroup(data, this.fillMissingTimeUnits(this.minMonth, this.maxMonth));
