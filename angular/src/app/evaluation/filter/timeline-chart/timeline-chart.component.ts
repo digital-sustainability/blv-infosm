@@ -121,6 +121,7 @@ export class TimelineChartComponent implements OnInit, OnDestroy {
     }
     return timelinecols;
   }
+  
 
   private setCategories(): number[] {
     if (this.isYear && this.minYear !== this.maxYear) {
