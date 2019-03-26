@@ -67,7 +67,7 @@ export class TimelineChartComponent implements OnInit, OnDestroy {
         text: undefined
       },
       xAxis: {
-        categories: this.isYear ? this.extractYears(data) : this.extractMonths(data).map((el: number) => {return el+1}),
+        categories: this.isYear ? this.fillMissingTimeUnits(this.extractYears(data)) : this.fillMissingTimeUnits(this.extractMonths(data).map((el: number) => {return el+1})),
         title: {
           text: this.isYear ? this.year : `Monat [Jahr: ${this.extractYears(data)}]`
         }
@@ -122,7 +122,9 @@ export class TimelineChartComponent implements OnInit, OnDestroy {
       finalChartData = this.aggregateEpidemicsGroup(data, months);
     } else {
       this.isYear = true;
-      finalChartData = this.aggregateEpidemicsGroup(data, years);
+      console.log(years)
+      this.fillMissingTimeUnits(years)
+      finalChartData = this.aggregateEpidemicsGroup(data, this.fillMissingTimeUnits(years));
     }
     return finalChartData;
   }
@@ -212,7 +214,60 @@ export class TimelineChartComponent implements OnInit, OnDestroy {
     return aggregatedEpidemics;
   }
 
-  // private extractChartData(data: Report []) {
+  private extractYear(date: string | Date): number {
+    return moment(this.checkDate(date)).year();
+  }
+
+  private extractYears(data: Report[]) {
+    return _.uniq(this.getDates(data).map(date => this.extractYear(date))).sort();
+  }
+
+  private extractMonth(date: string | Date): number {
+    return moment(this.checkDate(date)).month();
+  }
+
+  private extractMonths(data: Report[]) {
+    return _.uniq(this.getDates(data).map(date=> this.extractMonth(date))).sort( (a: number, b: number) => {
+      if (a > b)
+        return 1;
+      if (a < b)
+        return -1;
+    });
+  }
+
+  private checkDate(date: string | Date): string { // TODO: Don't return today, come up with somehting better
+    return (moment(date).isValid()) ? moment(date).format('YYYY-MM-DD') : moment().format('YYYY-MM-DD');
+  }
+
+
+  private getDates(data: Report[]): string[] {
+    const dates: string[] = [];
+    for (const e of data) {
+      if (e.diagnose_datum) {
+        dates.push(e.diagnose_datum['value']); // TODO: Change interface
+      }
+    }
+    return dates;
+  }
+
+  fillMissingTimeUnits(unit: number[]) {
+    let min = Math.min(...unit)
+    let max = Math.max(...unit)
+    return _.range(min, max+1, 1)
+  }
+
+  // TODO: implement these two functions when animal groups are available
+  showEpidemics() {
+    console.log('epidemics selected')
+  }
+
+  showAnimals() {
+    console.log('animals selected')
+  }
+
+}
+
+// private extractChartData(data: Report []) {
   //   const aggregateEpidemicsPerQuarter = [{
   //       name: `1. ${this.quarter}`, data: []
   //     },
@@ -251,49 +306,3 @@ export class TimelineChartComponent implements OnInit, OnDestroy {
   //   return aggregateEpidemicsPerQuarter;
   // }
 
-  private extractYear(date: string | Date): number {
-    return moment(this.checkDate(date)).year();
-  }
-
-  private extractYears(data: Report[]) {
-    return _.uniq(this.getDates(data).map(date => this.extractYear(date))).sort();
-  }
-
-  private extractMonth(date: string | Date): number {
-    return moment(this.checkDate(date)).month();
-  }
-
-  private extractMonths(data: Report[]) {
-    return _.uniq(this.getDates(data).map(date=> this.extractMonth(date))).sort( (a: number, b: number) => {
-      if (a > b)
-        return 1;
-      if (a < b)
-        return -1;
-    });
-  }
-
-  private checkDate(date: string | Date): string { // TODO: Don't return today, come up with somehting better
-    return (moment(date).isValid()) ? moment(date).format('YYYY-MM-DD') : moment().format('YYYY-MM-DD');
-  }
-
-
-  private getDates(data: Report[]): string[] {
-    const dates: string[] = [];
-    for (const e of data) {
-      if (e.diagnose_datum) {
-        dates.push(e.diagnose_datum['value']); // TODO: Change interface
-      }
-    }
-    return dates;
-  }
-
-  // TODO: implement these two functions when animal groups are available
-  showEpidemics() {
-    console.log('epidemics selected')
-  }
-
-  showAnimals() {
-    console.log('animals selected')
-  }
-
-}
