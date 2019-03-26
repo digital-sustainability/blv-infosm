@@ -284,7 +284,7 @@ export class FilterComponent implements OnInit, AfterViewInit, OnDestroy {
       tmp.tierart = at;
       result.push(tmp);
     });
-    console.table(result);
+    // console.table(result);
   }
 
   getFromToDates() {
