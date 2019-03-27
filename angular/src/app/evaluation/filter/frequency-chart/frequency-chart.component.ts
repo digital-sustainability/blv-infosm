@@ -15,6 +15,7 @@ export class FrequencyChartComponent implements OnInit {
   animalTypes: string[];
   pestTypes: string[];
   ready = false;
+  reports: Report[];
 
   constructor(
     private _distributeDataServie: DistributeDataService
@@ -26,17 +27,18 @@ export class FrequencyChartComponent implements OnInit {
         this.ready = true;
         this.pestTypes = _.uniqBy(data.map(d => d.seuche.value)).sort();
         this.animalTypes = _.uniqBy(data.map(d => d.tierart.value)).sort();
-        this.drawChart(data);
+        this.reports = data;
+        this.drawChart(data, 'seuche', this.extractPestFrequencies);
       },
       err => console.log(err)
     );
   }
 
-  drawChart(data: Report[]): void {
-    console.log('PestCount', this.countOccurance('seuche', data));
-    console.log('AnimalCount', this.countOccurance('tierart', data));
-    console.log('FirstSix', this.limitCollection('tierart', data));
-    const categories = this.limitCollection('tierart', data)
+  drawChart(data: Report[], filterTarget: string, filterFn): void {
+    // console.log('PestCount', this.countOccurance('seuche', data));
+    // console.log('AnimalCount', this.countOccurance(filterTarget, data));
+    // console.log('FirstSix', this.limitCollection('seuche', data));
+    const categories = this.limitCollection(filterTarget, data);
     categories.push('Other');
     this.frequencyChart = new Chart({
       chart: {
@@ -46,7 +48,6 @@ export class FrequencyChartComponent implements OnInit {
         text: undefined
       },
       xAxis: {
-        // categories: this.animalTypes
         categories: categories
       },
       yAxis: {
@@ -80,7 +81,7 @@ export class FrequencyChartComponent implements OnInit {
           // }
         }
       },
-      series: this.extractFrequencyData(data)
+      series: filterFn(data)
     });
   }
 
@@ -107,46 +108,58 @@ export class FrequencyChartComponent implements OnInit {
     return count;
   }
 
-  private extractFrequencyData(reports: any) {
-    // const animals = reports.map(r => {
-    //   return {
-    //     tierart: r.tierart.value,
-    //     seuche: r.seuche.value,
-    //   };
-    // });
-    // const animalTypes = _.uniqBy(animals.map(a => a.tierart)).sort();
+  extractPestFrequencies = (reports: any) => {
+    const animals = reports.map(r => {
+      if (this.limitCollection('seuche', reports).includes(r.seuche.value)) {
+        return {
+          tierart: r.tierart.value,
+          seuche: r.seuche.value,
+        };
+      } else {
+        return {
+          tierart: r.tierart.value,
+          seuche: 'Other',
+        };
+      }
+    });
+    const animalTypes = _.uniqBy(animals.map(a => a.tierart)).sort();
     // this.animalTypes = animalTypes;
+    const pestTypes = this.limitCollection('seuche', reports);
+    pestTypes.push('Other');
     // const pestTypes = _.uniqBy(animals.map(p => p.seuche)).sort();
-    // const pestPerAnimal = [];
-    // animalTypes.forEach((at: string) => {
-    //   const seuchen = [];
-    //   animals.forEach(a => {
-    //     if (at === a.tierart) {
-    //       seuchen.push(a.seuche);
-    //     }
-    //   });
-    //   const tmp = _.countBy(seuchen);
-    //   tmp.name = at;
-    //   pestPerAnimal.push(tmp);
-    // });
-    // const result = [];
-    // pestPerAnimal.forEach(ppa => {
-    //   const data =[];
-    //   pestTypes.forEach((pt: string) => {
-    //     if (ppa.hasOwnProperty(pt)) {
-    //       data.push(ppa[pt]);
-    //     } else {
-    //       data.push(0);
-    //     }
-    //   });
-    //   result.push({
-    //     name: ppa.name,
-    //     data: data
-    //   });
-    // });
-    // console.log('Here', result);
-    // return result;
+    const pestPerAnimal = [];
+    animalTypes.forEach((at: string) => {
+      const seuchen = [];
+      animals.forEach(a => {
+        if (at === a.tierart) {
+          seuchen.push(a.seuche);
+        }
+      });
+      const tmp = _.countBy(seuchen);
+      tmp.name = at;
+      pestPerAnimal.push(tmp);
+    });
+    const result = [];
+    pestPerAnimal.forEach(ppa => {
+      const data =[];
+      pestTypes.forEach((pt: string) => {
+        if (ppa.hasOwnProperty(pt)) {
+          data.push(ppa[pt]);
+        } else {
+          data.push(0);
+        }
+      });
+      result.push({
+        name: ppa.name,
+        data: data
+      });
+    });
+    console.log('Here', result);
+    return result;
+  }
 
+
+  extractAnimalFrequencies = (reports: any) => {
     const animals = reports.map(r => {
       if (this.limitCollection('tierart', reports).includes(r.tierart.value)) {
         return {
@@ -163,8 +176,8 @@ export class FrequencyChartComponent implements OnInit {
     });
     // const animalTypes = _.uniqBy(animals.map(a => a.tierart)).sort();
     // this.animalTypes = animalTypes;
-    const animalTypes = this.limitCollection('tierart', reports)
-    animalTypes.push('Other')
+    const animalTypes = this.limitCollection('tierart', reports);
+    animalTypes.push('Other');
     const pestTypes = _.uniqBy(animals.map(p => p.seuche)).sort();
     const pestPerAnimal = [];
     animalTypes.forEach((at: string) => {
@@ -197,9 +210,21 @@ export class FrequencyChartComponent implements OnInit {
     return result;
   }
 
-  private limitCollection(target, data: any) {
+  private limitCollection(target: string, data: any) {
     const count = this.countOccurance(target, data);
     return _.orderBy(count, ['y'], 'desc').slice(0, 6).map(e => e.name);
+  }
+
+  onShowEpidemics(): void {
+    if (this.reports) {
+      this.drawChart(this.reports, 'seuche', this.extractPestFrequencies);
+    }
+  }
+
+  onShowAnimals(): void {
+    if (this.reports) {
+      this.drawChart(this.reports, 'tierart', this.extractAnimalFrequencies);
+    }
   }
 
 }
