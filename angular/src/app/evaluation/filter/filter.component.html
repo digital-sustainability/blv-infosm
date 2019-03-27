@@ -89,11 +89,27 @@
 <div style="margin-top: 15px" class="row">
     <div class="col-sm-10 col-sm-offset-1">
         <ul class="nav nav-tabs">
-            <li id="frequency" data-toggle="tab"><a [routerLink]="['./frequency']">{{ 'FILTERCHARTS.FREQUENCY' |
-                    translate }}</a></li>
-            <li id="timeline" data-toggle="tab"><a [routerLink]="['./timeline']">{{ 'FILTERCHARTS.TIMELINE' | translate
-                    }}</a></li>
-            <li id="map" data-toggle="tab"><a [routerLink]="['./map']">{{ 'FILTERCHARTS.MAP' | translate }}</a></li>
+            <li id="frequency">
+                <a
+                data-toggle="tab"
+                [routerLink]="['./frequency']"
+                >{{ 'FILTERCHARTS.FREQUENCY' | translate }}
+                </a>
+            </li>
+            <li id="timeline">
+                <a
+                data-toggle="tab"
+                [routerLink]="['./timeline']"
+                >{{ 'FILTERCHARTS.TIMELINE' | translate }}
+                </a>
+            </li>
+            <li id="map">
+                <a
+                data-toggle="tab"
+                [routerLink]="['./map']"
+                >{{ 'FILTERCHARTS.MAP' | translate }}
+                </a>
+            </li>
         </ul>
         <router-outlet></router-outlet>
     </div>
