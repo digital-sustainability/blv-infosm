@@ -1,8 +1,8 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { DistributeDataService } from 'src/app/shared/distribute-data.service';
 import { Chart } from 'angular-highcharts';
 import { Report } from '../../../models/report.model';
-import * as _ from 'lodash';
+import { get, countBy, mapKeys, uniqBy, orderBy } from 'lodash';
 
 @Component({
   selector: 'app-frequency-chart',
@@ -12,8 +12,6 @@ import * as _ from 'lodash';
 export class FrequencyChartComponent implements OnInit {
 
   frequencyChart: Chart;
-  animalTypes: string[];
-  pestTypes: string[];
   ready = false;
   reports: Report[];
 
@@ -21,12 +19,12 @@ export class FrequencyChartComponent implements OnInit {
     private _distributeDataServie: DistributeDataService
   ) { }
 
+
+  // TODO: Enforce typing
   ngOnInit() {
     this._distributeDataServie.currentData.subscribe(
       data => {
         this.ready = true;
-        this.pestTypes = _.uniqBy(data.map(d => d.seuche.value)).sort();
-        this.animalTypes = _.uniqBy(data.map(d => d.tierart.value)).sort();
         this.reports = data;
         this.drawChart(data, 'seuche', this.extractPestFrequencies);
       },
@@ -95,20 +93,21 @@ export class FrequencyChartComponent implements OnInit {
   }
 
   private countOccurance(target: string, reports: Report[]): { name: string, y: number }[] {
-    const count = [];
+    const result = [];
     // countBy: count orrurence in array
     // get(obj, pathToValue, defaultValue): check if property exists
-    const counts = _.countBy(reports.map(pest => _.get(pest, `${target}.value`, 'undefined')));
-    _.mapKeys(counts, (value: string, key: number): void => {
-      count.push({
+    const count = countBy(reports.map(pest => get(pest, `${target}.value`, 'undefined')));
+    mapKeys(count, (value: string, key: number): void => {
+      result.push({
         name: key,
         y: value
       });
     });
-    return count;
+    return result;
   }
 
-  extractPestFrequencies = (reports: any) => {
+  // TODO: Merge with method below
+  private extractPestFrequencies = (reports: any): { name: string, y: number }[] => {
     const animals = reports.map(r => {
       if (this.limitCollection('seuche', reports).includes(r.seuche.value)) {
         return {
@@ -122,7 +121,7 @@ export class FrequencyChartComponent implements OnInit {
         };
       }
     });
-    const animalTypes = _.uniqBy(animals.map(a => a.tierart)).sort();
+    const animalTypes = uniqBy(animals.map(a => a.tierart)).sort();
     // this.animalTypes = animalTypes;
     const pestTypes = this.limitCollection('seuche', reports);
     pestTypes.push('Other');
@@ -135,13 +134,13 @@ export class FrequencyChartComponent implements OnInit {
           seuchen.push(a.seuche);
         }
       });
-      const tmp = _.countBy(seuchen);
+      const tmp = countBy(seuchen);
       tmp.name = at;
       pestPerAnimal.push(tmp);
     });
     const result = [];
     pestPerAnimal.forEach(ppa => {
-      const data =[];
+      const data = [];
       pestTypes.forEach((pt: string) => {
         if (ppa.hasOwnProperty(pt)) {
           data.push(ppa[pt]);
@@ -159,7 +158,7 @@ export class FrequencyChartComponent implements OnInit {
   }
 
 
-  extractAnimalFrequencies = (reports: any) => {
+  private extractAnimalFrequencies = (reports: any): { name: string, y: number }[] => {
     const animals = reports.map(r => {
       if (this.limitCollection('tierart', reports).includes(r.tierart.value)) {
         return {
@@ -178,7 +177,7 @@ export class FrequencyChartComponent implements OnInit {
     // this.animalTypes = animalTypes;
     const animalTypes = this.limitCollection('tierart', reports);
     animalTypes.push('Other');
-    const pestTypes = _.uniqBy(animals.map(p => p.seuche)).sort();
+    const pestTypes = uniqBy(animals.map(p => p.seuche)).sort();
     const pestPerAnimal = [];
     animalTypes.forEach((at: string) => {
       const seuchen = [];
@@ -187,7 +186,7 @@ export class FrequencyChartComponent implements OnInit {
           seuchen.push(a.seuche);
         }
       });
-      const tmp = _.countBy(seuchen);
+      const tmp = countBy(seuchen);
       tmp.name = at;
       pestPerAnimal.push(tmp);
     });
@@ -210,9 +209,9 @@ export class FrequencyChartComponent implements OnInit {
     return result;
   }
 
-  private limitCollection(target: string, data: any) {
+  private limitCollection(target: string, data: Report[]) {
     const count = this.countOccurance(target, data);
-    return _.orderBy(count, ['y'], 'desc').slice(0, 6).map(e => e.name);
+    return orderBy(count, ['y'], 'desc').slice(0, 6).map(e => e.name);
   }
 
   onShowEpidemics(): void {
