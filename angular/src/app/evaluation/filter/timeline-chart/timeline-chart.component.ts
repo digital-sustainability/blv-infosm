@@ -28,7 +28,7 @@ export class TimelineChartComponent implements OnInit, OnDestroy {
   maxYear: number;
   minMonth: number;
   maxMonth: number;
-  timeLineChartData;
+  timeLineChartData: [];
 
   constructor(
     public translate: TranslateService,
@@ -43,7 +43,7 @@ export class TimelineChartComponent implements OnInit, OnDestroy {
         this.minYear = this.extractYear(params['from']);
         this.maxYear = this.extractYear(params['to']);
         this.minMonth = this.extractMonth(params['from'])+1;
-        this.maxMonth = this.extractMonth(params['to']) +1;
+        this.maxMonth = this.extractMonth(params['to'])+1;
       }
     )
     if(this.minYear === this.maxYear) {this.isYear = false; }
@@ -123,11 +123,11 @@ export class TimelineChartComponent implements OnInit, OnDestroy {
   }
   
 
-  private setCategories(): number[] {
+  private setCategories(): number[] | string[] {
     if (this.isYear && this.minYear !== this.maxYear) {
       return this.fillMissingTimeUnits(this.minYear, this.maxYear);
     } else {
-      return this.fillMissingTimeUnits(this.minMonth, this.maxMonth);
+      return this.fillMissingTimeUnits(this.minMonth, this.maxMonth).map(el => this.numbersToMonths(el));
     }
   }
 
@@ -135,12 +135,13 @@ export class TimelineChartComponent implements OnInit, OnDestroy {
     let finalChartData;
     // TODO: scale x axis when we have only one year
     if(this.minYear == this.maxYear) {
-      // note: January is 0, december 11
+      console.log(this.extractMonths(data))
       this.isYear = false;
+      finalChartData = this.aggregateEpidemicsGroup(data, this.fillMissingTimeUnits(this.minMonth, this.maxMonth));
+    } else if(this.minYear+1 == this.maxYear && this.minMonth == this.maxMonth) {
       finalChartData = this.aggregateEpidemicsGroup(data, this.fillMissingTimeUnits(this.minMonth, this.maxMonth));
     } else {
       this.isYear = true;
-      //this.fillMissingTimeUnits(years)
       finalChartData = this.aggregateEpidemicsGroup(data, this.fillMissingTimeUnits(this.minYear, this.maxYear));
     }
     return finalChartData;
@@ -269,7 +270,25 @@ export class TimelineChartComponent implements OnInit, OnDestroy {
   }
 
   private fillMissingTimeUnits(minUnit: number, maxUnit: number): number[] {
-    return _.range(minUnit, maxUnit+1, 1)
+    if(minUnit === maxUnit) {
+      let range = [];
+      for(let i=minUnit; i<= 12; i++) {
+        range.push(i);
+      }
+      for(let j=1; j<=minUnit; j++) {
+        range.push(j);
+      }
+      console.log(range)
+      return range;
+    } else {
+      return _.range(minUnit, maxUnit+1, 1)
+    }
+   
+  }
+
+  private numbersToMonths(el: number) {
+    let months = ['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'];
+    return months[el-1];
   }
 
   // TODO: implement these two functions when animal groups are available
