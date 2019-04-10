@@ -15,7 +15,7 @@
     },
     "EVALUATION": {
         "YEAR": "Jahr",
-        "COUNT": "Anzahl",
+        "COUNT": "Seuchenfälle pro Seuchengruppe",
         "DIAGNOSIS_DATE": "Diagnosedatum",
         "MUNICIPALITY": "Gemeinde",
         "CANTON": "Kanton",
