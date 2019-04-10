@@ -24,11 +24,18 @@ export class TimelineChartComponent implements OnInit, OnDestroy {
   translationSub: Subscription;
   ready = false;
   isYear: boolean;
-  minYear: number;
-  maxYear: number;
-  minMonth: number;
-  maxMonth: number;
-  timeLineChartData: [];
+  isMonth: boolean;
+  isWeek: boolean;
+  xAxis: string;
+  timeLineChartData
+  intervals = {
+    minYear : 0,
+    maxYear : 0,
+    minMonth: 0,
+    maxMonth: 0,
+    minWeek: 0,
+    maxWeek: 0
+  }
 
   constructor(
     public translate: TranslateService,
@@ -40,13 +47,16 @@ export class TimelineChartComponent implements OnInit, OnDestroy {
     // get min/max year and min/max month for computing the range on the x axis
     this._paramSub = this._route.queryParams.subscribe(
       params => {
-        this.minYear = this.extractYear(params['from']);
-        this.maxYear = this.extractYear(params['to']);
-        this.minMonth = this.extractMonth(params['from'])+1;
-        this.maxMonth = this.extractMonth(params['to'])+1;
+        this.intervals.minYear = this.extractYear(params['from']);
+        this.intervals.maxYear = this.extractYear(params['to']);
+        this.intervals.minMonth = this.extractMonth(params['from'])+1;
+        this.intervals.maxMonth = this.extractMonth(params['to'])+1;
+        this.intervals.minWeek = this.extractWeek(params['from']);
+        this.intervals.maxWeek = this.extractWeek(params['to']);
+        this.getIntervalUnit(params['from'], params['to']);
       }
     )
-    if(this.minYear === this.maxYear) {this.isYear = false; }
+    //if(this.intervals.minYear === this.intervals.maxYear) {this.isYear = false; }
     this.dataSub = this._distributeDataService.currentData.subscribe(
       data => {
         // Translate if new data is loaded
@@ -58,9 +68,9 @@ export class TimelineChartComponent implements OnInit, OnDestroy {
             texts => {
               this.year = texts['EVALUATION.YEAR'];
               this.count = texts['EVALUATION.COUNT'];
-              this.ready = true;
               this.timeLineChartData = this.extract(data);
-              this.drawChart(data); 
+              this.ready = true;
+              this.drawChart(); 
             });
       },
       err => console.log(err) // TODO: Improve Error handling
@@ -71,9 +81,9 @@ export class TimelineChartComponent implements OnInit, OnDestroy {
     this.translationSub.unsubscribe();
     this.dataSub.unsubscribe();
   }
-
+  
   // TODO: doesnt work for other languages than DE --> has ty be checked
-  drawChart(data: Report[]): void {
+  drawChart(): void {
     this.timelineChart = new Chart({
       chart: {
         type: 'spline'
@@ -84,7 +94,7 @@ export class TimelineChartComponent implements OnInit, OnDestroy {
       xAxis: {
         categories: this.setCategories(),
         title: {
-          text: this.isYear ? this.year : `Monat [Jahr: ${this.extractYears(data)}]`
+          text: this.xAxis
         }
       },
       yAxis: {
@@ -122,33 +132,49 @@ export class TimelineChartComponent implements OnInit, OnDestroy {
     return timelinecols;
   }
   
-
   private setCategories(): number[] | string[] {
-    if (this.isYear && this.minYear !== this.maxYear) {
-      return this.fillMissingTimeUnits(this.minYear, this.maxYear);
+    if (this.isYear) {
+      return this.getInterval(this.intervals.minYear, this.intervals.maxYear);
+    } else if(this.isMonth) {
+      return this.getInterval(this.intervals.minMonth, this.intervals.maxMonth).map( (el: number) => this.numbersToMonths(el));
     } else {
-      return this.fillMissingTimeUnits(this.minMonth, this.maxMonth).map(el => this.numbersToMonths(el));
+      return this.getInterval(this.intervals.minWeek, this.intervals.maxWeek);
     }
   }
 
   private extract(data: Report[]) {
-    let finalChartData;
-    // TODO: scale x axis when we have only one year
-    if(this.minYear == this.maxYear) {
-      console.log(this.extractMonths(data))
-      this.isYear = false;
-      finalChartData = this.aggregateEpidemicsGroup(data, this.fillMissingTimeUnits(this.minMonth, this.maxMonth));
-    } else if(this.minYear+1 == this.maxYear && this.minMonth == this.maxMonth) {
-      finalChartData = this.aggregateEpidemicsGroup(data, this.fillMissingTimeUnits(this.minMonth, this.maxMonth));
+    let min =0; let max=0;
+    // case when we are in the same year (from-to)
+    if(this.intervals.minYear === this.intervals.maxYear) {
+      // scale down to weeks if interval distance between months <= 3
+      if(this.intervals.maxMonth - this.intervals.minMonth <= 3) {
+        min = this.intervals.minWeek;
+        max = this.intervals.maxWeek;
+      // if we don not scale weeks, we scale to months
+      } else {
+        min = this.intervals.minMonth;
+        max = this.intervals.maxMonth;
+      }
+    // case when we are in the two consecutive years (e.g 2017, 2018) AND we have to scale the axis
+    } else if(this.intervals.minYear+1 === this.intervals.maxYear) {
+      if (this.isMonth) {
+        min = this.intervals.minMonth;
+        max = this.intervals.maxMonth;
+      }
+      if( this.isWeek) {
+        min = this.intervals.minWeek;
+        max = this.intervals.maxWeek;
+      }
+    // default case, that is: > 1 year
     } else {
-      this.isYear = true;
-      finalChartData = this.aggregateEpidemicsGroup(data, this.fillMissingTimeUnits(this.minYear, this.maxYear));
+      min = this.intervals.minYear;
+      max = this.intervals.maxYear
     }
-    return finalChartData;
+    return this.aggregate(data, this.getInterval(min, max));
   }
 
   // TODO: Replace this ugly vanilla js method by something that works faster
-  private aggregateEpidemicsGroup(data: Report[], timeUnit: number[]) {
+  private aggregate(data: Report[], timeUnit: number[]) {
     console.log(timeUnit)
     let aggregatedEpidemics = [
       { name: 'Aggregierte Seuchen', data: [] },
@@ -166,26 +192,11 @@ export class TimelineChartComponent implements OnInit, OnDestroy {
 
     for (let i=0; i < timeUnit.length; i++) {
       // initialize objects which will contain counted data
-      auszurottende_seuchen.push({
-        year: timeUnit[i],
-        count : 0
-      })
-      hochansteckende_seuchen.push({
-        year: timeUnit[i],
-        count : 0
-      })
-      zu_bekämpfende_seuchen.push({
-        year: timeUnit[i],
-        count : 0
-      })
-      zu_überwachende_seuchen.push({
-        year: timeUnit[i],
-        count : 0
-      })
-      aggregierte_seuchen.push({
-        year: timeUnit[i],
-        count : 0
-      })
+      auszurottende_seuchen.push({year: timeUnit[i], count : 0})
+      hochansteckende_seuchen.push({year: timeUnit[i], count : 0})
+      zu_bekämpfende_seuchen.push({year: timeUnit[i], count : 0})
+      zu_überwachende_seuchen.push({year: timeUnit[i], count : 0})
+      aggregierte_seuchen.push({year: timeUnit[i], count : 0})
 
       let count1=0; // auszurottende Seuchen
       let count2=0; // hochansteckende Seuchen
@@ -194,8 +205,16 @@ export class TimelineChartComponent implements OnInit, OnDestroy {
       let count5=0; // aggregierte Seuchen
       
       for (const d of data) {
-        let yearOrMonthToCompare = this.isYear ? moment(d['diagnose_datum']['value']).year() : moment(d['diagnose_datum']['value']).month()+1;
-        if( timeUnit[i] ===  yearOrMonthToCompare) {
+        let compareUnit = this.isYear ? moment(d['diagnose_datum']['value']).year() : moment(d['diagnose_datum']['value']).month()+1;
+        if (this.isYear) {
+          compareUnit =  moment(d['diagnose_datum']['value']).year();
+        } else if (this.isMonth){
+          compareUnit = moment(d['diagnose_datum']['value']).month()+1;
+        } else {
+          compareUnit = moment(d['diagnose_datum']['value']).week();
+        }
+        // start counting epidemic groups
+        if( timeUnit[i] ===  compareUnit) {
           switch(d['seuchen_gruppe']['value']) {
             case "Auszurottende Seuchen":
               count1 += 1; count5 += 1;
@@ -245,6 +264,10 @@ export class TimelineChartComponent implements OnInit, OnDestroy {
     return moment(this.checkDate(date)).month();
   }
 
+  private extractWeek(date: string | Date): number {
+    return moment(this.checkDate(date)).week();
+  }
+
   private extractMonths(data: Report[]) {
     return _.uniq(this.getDates(data).map(date=> this.extractMonth(date))).sort( (a: number, b: number) => {
       if (a > b)
@@ -258,7 +281,6 @@ export class TimelineChartComponent implements OnInit, OnDestroy {
     return (moment(date).isValid()) ? moment(date).format('YYYY-MM-DD') : moment().format('YYYY-MM-DD');
   }
 
-
   private getDates(data: Report[]): string[] {
     const dates: string[] = [];
     for (const e of data) {
@@ -269,16 +291,24 @@ export class TimelineChartComponent implements OnInit, OnDestroy {
     return dates;
   }
 
-  private fillMissingTimeUnits(minUnit: number, maxUnit: number): number[] {
-    if(minUnit === maxUnit) {
+  private getInterval(minUnit: number, maxUnit: number): number[] {
+    if(this.isMonth && this.intervals.maxYear - this.intervals.minYear > 0) {
       let range = [];
       for(let i=minUnit; i<= 12; i++) {
         range.push(i);
       }
-      for(let j=1; j<=minUnit; j++) {
+      for(let j=1; j<minUnit; j++) {
         range.push(j);
       }
-      console.log(range)
+      return range;
+    } else if (this.isWeek && this.intervals.maxYear - this.intervals.minYear > 0) {
+      let range = [];
+      for (let i = minUnit; i<=52; i++) {
+        range.push(i);
+      }
+      for(let j=1; j <= maxUnit; j++) {
+        range.push(j);
+      }
       return range;
     } else {
       return _.range(minUnit, maxUnit+1, 1)
@@ -286,7 +316,28 @@ export class TimelineChartComponent implements OnInit, OnDestroy {
    
   }
 
+  private getIntervalUnit(from: Date, to: Date) {
+    if( (Math.abs(moment(from).diff(to, 'years'))+1) > 1) {
+      this.xAxis = this.year;
+      this.isYear = true; 
+      this.isMonth = false;
+      this.isWeek = false;
+    } else if ( (Math.abs(moment(from).diff(to, 'months'))+1) > 3) {
+      this.xAxis = `Monat [Jahr: ${this.year}]`
+      this.isMonth = true;
+      this.isYear = false;
+      this.isWeek = false;
+    } else {
+      this.xAxis = `Woche [Jahr: ${this.year}]`
+      this.isWeek = true;
+      this.isYear = false;
+      this.isMonth = false;
+    }
+    console.log(this.isWeek, this.isMonth, this.isYear)
+  }
+
   private numbersToMonths(el: number) {
+    //TODO: translate
     let months = ['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'];
     return months[el-1];
   }
