@@ -19,6 +19,7 @@ export class TimelineChartComponent implements OnInit, OnDestroy {
   data: Report[];
   timelineChart: Chart;
   year: string;
+  years: string;
   count: string;
   dataSub: Subscription;
   translationSub: Subscription;
@@ -59,6 +60,8 @@ export class TimelineChartComponent implements OnInit, OnDestroy {
     //if(this.intervals.minYear === this.intervals.maxYear) {this.isYear = false; }
     this.dataSub = this._distributeDataService.currentData.subscribe(
       data => {
+        this.years = this.extractYears(data);
+        console.log(this.years)
         // Translate if new data is loaded
         this.translationSub = this.translate.get([
           'EVALUATION.YEAR',
@@ -134,10 +137,13 @@ export class TimelineChartComponent implements OnInit, OnDestroy {
   
   private setCategories(): number[] | string[] {
     if (this.isYear) {
+      this.xAxis = this.year;
       return this.getInterval(this.intervals.minYear, this.intervals.maxYear);
     } else if(this.isMonth) {
+      this.xAxis = `Monat [Jahr: ${this.years}]`
       return this.getInterval(this.intervals.minMonth, this.intervals.maxMonth).map( (el: number) => this.numbersToMonths(el));
     } else {
+      this.xAxis = `Woche [Jahr: ${this.years}]`
       return this.getInterval(this.intervals.minWeek, this.intervals.maxWeek);
     }
   }
@@ -205,7 +211,8 @@ export class TimelineChartComponent implements OnInit, OnDestroy {
       let count5=0; // aggregierte Seuchen
       
       for (const d of data) {
-        let compareUnit = this.isYear ? moment(d['diagnose_datum']['value']).year() : moment(d['diagnose_datum']['value']).month()+1;
+        let compareUnit: number; 
+        //= this.isYear ? moment(d['diagnose_datum']['value']).year() : moment(d['diagnose_datum']['value']).month()+1;
         if (this.isYear) {
           compareUnit =  moment(d['diagnose_datum']['value']).year();
         } else if (this.isMonth){
@@ -318,17 +325,17 @@ export class TimelineChartComponent implements OnInit, OnDestroy {
 
   private getIntervalUnit(from: Date, to: Date) {
     if( (Math.abs(moment(from).diff(to, 'years'))+1) > 1) {
-      this.xAxis = this.year;
+      //this.xAxis = this.year;
       this.isYear = true; 
       this.isMonth = false;
       this.isWeek = false;
     } else if ( (Math.abs(moment(from).diff(to, 'months'))+1) > 3) {
-      this.xAxis = `Monat [Jahr: ${this.year}]`
+      //this.xAxis = `Monat [Jahr: ${this.years}]`
       this.isMonth = true;
       this.isYear = false;
       this.isWeek = false;
     } else {
-      this.xAxis = `Woche [Jahr: ${this.year}]`
+      //this.xAxis = `Woche [Jahr: ${this.years}]`
       this.isWeek = true;
       this.isYear = false;
       this.isMonth = false;
@@ -337,7 +344,7 @@ export class TimelineChartComponent implements OnInit, OnDestroy {
   }
 
   private numbersToMonths(el: number) {
-    //TODO: translate
+    //TODO: translate, use ENUM
     let months = ['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'];
     return months[el-1];
   }
