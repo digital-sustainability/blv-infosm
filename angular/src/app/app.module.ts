@@ -31,6 +31,7 @@ import { FooterComponent } from './footer/footer.component'
 
 import '@openlayers-elements/maps/ol-map'
 import '@openlayers-elements/maps/ol-layer-openstreetmap';
+import { BulletinComponent } from './bulletin/bulletin.component';
 
 @NgModule({
   declarations: [
@@ -43,7 +44,8 @@ import '@openlayers-elements/maps/ol-layer-openstreetmap';
     FrequencyChartComponent,
     MapChartComponent,
     ErrorComponent,
-    FooterComponent
+    FooterComponent,
+    BulletinComponent
   ],
   imports: [
     BrowserModule,

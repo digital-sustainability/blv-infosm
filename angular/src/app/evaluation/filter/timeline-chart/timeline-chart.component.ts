@@ -325,17 +325,14 @@ export class TimelineChartComponent implements OnInit, OnDestroy {
 
   private getIntervalUnit(from: Date, to: Date) {
     if( (Math.abs(moment(from).diff(to, 'years'))+1) > 1) {
-      //this.xAxis = this.year;
       this.isYear = true; 
       this.isMonth = false;
       this.isWeek = false;
     } else if ( (Math.abs(moment(from).diff(to, 'months'))+1) > 3) {
-      //this.xAxis = `Monat [Jahr: ${this.years}]`
       this.isMonth = true;
       this.isYear = false;
       this.isWeek = false;
     } else {
-      //this.xAxis = `Woche [Jahr: ${this.years}]`
       this.isWeek = true;
       this.isYear = false;
       this.isMonth = false;

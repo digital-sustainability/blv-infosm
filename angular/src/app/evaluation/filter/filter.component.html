@@ -132,7 +132,7 @@
         <ng-container matColumnDef="kanton">
             <mat-header-cell *matHeaderCellDef mat-sort-header> <strong>{{ 'EVALUATION.CANTON' | translate }}</strong>
             </mat-header-cell>
-            <mat-cell *matCellDef="let element"> {{element.kanton}} </mat-cell>
+            <mat-cell *matCellDef="let element" (click)="console.log('hello')"> {{element.kanton}} </mat-cell>
         </ng-container>
 
         <ng-container matColumnDef="gemeinde">
