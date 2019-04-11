@@ -3,7 +3,7 @@ import { Component, OnInit, OnDestroy, ViewChild, AfterViewInit } from '@angular
 import { Report } from '../../models/report.model';
 import { LanguageService } from 'src/app/shared/language.service';
 import { Subscription } from 'rxjs';
-import { MatPaginator, MatTableDataSource, MatSort, MatTooltipModule } from '@angular/material';
+import { MatPaginator, MatTableDataSource, MatSort } from '@angular/material';
 import { ActivatedRoute, Router } from '@angular/router';
 import { SparqlDataService } from 'src/app/shared/sparql-data.service';
 import { DistributeDataService } from 'src/app/shared/distribute-data.service';
@@ -19,6 +19,12 @@ declare let $: any;
 })
 
 export class FilterComponent implements OnInit, AfterViewInit, OnDestroy {
+  
+  @ViewChild('d') datepicker;
+  @ViewChild('c') datepicker2;
+
+  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatSort) sort: MatSort;
 
   data: Report[];
   private _paramSub: Subscription;
@@ -48,9 +54,6 @@ export class FilterComponent implements OnInit, AfterViewInit, OnDestroy {
     epidemic_group: [],
     animal_species: []
   }
-
-  @ViewChild(MatPaginator) paginator: MatPaginator;
-  @ViewChild(MatSort) sort: MatSort;
 
   constructor(
     private _sparqlDataService: SparqlDataService,
@@ -288,8 +291,8 @@ export class FilterComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   getFromToDates() {
-    let fromdate = (<HTMLInputElement>document.getElementById("from")).value;
-    let todate = (<HTMLInputElement>document.getElementById("to")).value;
+    let fromdate = this.datepicker._inputValue
+    let todate = this.datepicker2._inputValue;
     this.removeErrors();
     if (moment(fromdate).isValid() && moment(todate).isValid() && fromdate.length === 10 && todate.length === 10 ) {
       if(fromdate > todate) {

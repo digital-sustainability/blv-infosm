@@ -136,14 +136,15 @@ export class TimelineChartComponent implements OnInit, OnDestroy {
   }
   
   private setCategories(): number[] | string[] {
+    let countYears = this.years.length
     if (this.isYear) {
       this.xAxis = this.year;
       return this.getInterval(this.intervals.minYear, this.intervals.maxYear);
     } else if(this.isMonth) {
-      this.xAxis = `Monat [Jahr: ${this.years}]`
+      this.xAxis = (countYears == 1) ? `Monat (Jahr: ${this.years[0]})` : `Monat (Jahre: ${this.years[0]}, ${this.years[1]})`
       return this.getInterval(this.intervals.minMonth, this.intervals.maxMonth).map( (el: number) => this.numbersToMonths(el));
     } else {
-      this.xAxis = `Woche [Jahr: ${this.years}]`
+      this.xAxis = (countYears == 1) ? `Woche (Jahr: ${this.years[0]})` : `Woche (Jahre: ${this.years[0]}, ${this.years[1]})`
       return this.getInterval(this.intervals.minWeek, this.intervals.maxWeek);
     }
   }
@@ -328,7 +329,7 @@ export class TimelineChartComponent implements OnInit, OnDestroy {
       this.isYear = true; 
       this.isMonth = false;
       this.isWeek = false;
-    } else if ( (Math.abs(moment(from).diff(to, 'months'))+1) > 3) {
+    } else if ( (Math.abs(moment(from).diff(to, 'months'))) > 3) {
       this.isMonth = true;
       this.isYear = false;
       this.isWeek = false;

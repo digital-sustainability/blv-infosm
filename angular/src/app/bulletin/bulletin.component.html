@@ -1,3 +1,41 @@
-<p>
-  bulletin works!
-</p>
+<div style="margin-left: 5%; margin-right: 5%; margin-top: 2%">
+    <h3>Anzeigeoptionen</h3>
+    <hr>
+    Datumsfilter, Suche?
+    <button class="btn btn-dark notValid" type="submit" (click)="getFromToDates()">Filter zurücksetzen</button>
+    <hr>
+    Liste der Bulletins:
+</div>
+
+<div class="mat-elevation-z8" style="margin:5%">
+  <mat-table class="mat-elevation-z8" [dataSource]="dataSource" matSort>
+      <ng-container matColumnDef="nummer">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> <strong>Nummer</strong></mat-header-cell>
+          <mat-cell *matCellDef="let element"> {{element.nummer}} </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="dateFrom">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> <strong>Datum von</strong>
+          </mat-header-cell>
+          <mat-cell *matCellDef="let element" (click)="console.log('hello')"> {{element.dateFrom}} </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="dateTo">
+          <mat-header-cell *matHeaderCellDef mat-sort-header><strong>Datum bis
+              </strong></mat-header-cell>
+          <mat-cell *matCellDef="let element"> {{element.dateTo}} </mat-cell>
+      </ng-container>
+
+
+      <ng-container matColumnDef="action">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> <strong>Aktion</strong>
+          </mat-header-cell>
+          <mat-cell *matCellDef="let element"> {{element.action}} </mat-cell>
+      </ng-container>
+
+      <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+  </mat-table>
+
+  <mat-paginator [pageSize]="10" [hidePageSize]="true" showFirstLastButtons></mat-paginator>
+</div>

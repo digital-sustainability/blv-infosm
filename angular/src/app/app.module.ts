@@ -27,7 +27,8 @@ import { MatPaginatorI18nService} from './shared/mat-paginator-i18n.service'
 import { MatPaginatorIntl } from '@angular/material';
 import { DistributeDataService } from './shared/distribute-data.service';
 import { NgSelectModule } from '@ng-select/ng-select';
-import { FooterComponent } from './footer/footer.component'
+import { FooterComponent } from './footer/footer.component';
+import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 
 import '@openlayers-elements/maps/ol-map'
 import '@openlayers-elements/maps/ol-layer-openstreetmap';
@@ -60,6 +61,7 @@ import { BulletinComponent } from './bulletin/bulletin.component';
     NoopAnimationsModule,
     MatSortModule,
     MatTooltipModule,
+    NgbModule,
     TranslateModule.forRoot({
       loader: {
         provide: TranslateLoader,
