@@ -320,8 +320,8 @@ export class FilterComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   disableDateFilter() {
-    (<HTMLInputElement>document.getElementById("from")).value = "";
-    (<HTMLInputElement>document.getElementById("to")).value = "";
+    // (<HTMLInputElement>document.getElementById("from")).value = "";
+    // (<HTMLInputElement>document.getElementById("to")).value = "";
   }
 
   removeErrors() {

@@ -215,14 +215,14 @@ export class TimelineChartComponent implements OnInit, OnDestroy {
         let compareUnit: number; 
         //= this.isYear ? moment(d['diagnose_datum']['value']).year() : moment(d['diagnose_datum']['value']).month()+1;
         if (this.isYear) {
-          compareUnit =  moment(d['diagnose_datum']['value']).year();
+          compareUnit =  parseInt(d['diagnose_datum']['value'].split('-')[0]);
         } else if (this.isMonth){
-          compareUnit = moment(d['diagnose_datum']['value']).month()+1;
+          compareUnit = parseInt(d['diagnose_datum']['value'].split('-')[1]);
         } else {
           compareUnit = moment(d['diagnose_datum']['value']).week();
         }
         // start counting epidemic groups
-        if( timeUnit[i] ===  compareUnit) {
+        if( timeUnit[i] ===  (compareUnit)) {
           switch(d['seuchen_gruppe']['value']) {
             case "Auszurottende Seuchen":
               count1 += 1; count5 += 1;

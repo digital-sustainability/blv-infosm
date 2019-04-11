@@ -1,8 +1,42 @@
 <div style="margin-left: 5%; margin-right: 5%; margin-top: 2%">
     <h3>Anzeigeoptionen</h3>
     <hr>
-    Datumsfilter, Suche?
-    <button class="btn btn-dark notValid" type="submit" (click)="getFromToDates()">Filter zurücksetzen</button>
+    <div id="selectDateSection" style="margin-top: 2%; margin-bottom: 2%">
+        <div class="input-group" >
+            <form class="form-inline" >
+                <div class="form-group" >
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="inputGroup-sizing-default">von</span>
+                    </div>
+                    <div class="input-group" style="width: 40%">
+                        <input class="form-control" placeholder="YYYY-MM-DD" name="from" [(ngModel)]="from"
+                            ngbDatepicker #d="ngbDatepicker">
+                    </div>
+                    <div class="input-group-append" style="height:33.5px;">
+                        <button class="btn btn-outline-secondary calendar" (click)="d.toggle()" type="button"></button>
+                    </div>
+                </div>
+            </form>
+
+            <form class="form-inline">
+                <div class="form-group" >
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="inputGroup-sizing-default">bis&nbsp;</span>
+                    </div>
+                    <div class="input-group" style="width: 40%">
+                        <input class="form-control" placeholder="YYYY-MM-DD" name="to" [(ngModel)]="to" ngbDatepicker
+                            #c="ngbDatepicker">
+                    </div>
+                    <div class="input-group-append" style="height:33.5px;">
+                        <button class="btn btn-outline-secondary calendar" (click)="c.toggle()" type="button"></button>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <button class="btn btn-dark notValid" type="submit" (click)="getFromToDates()" style="margin-right: 3%">Filtern</button>
+        <button class="btn btn-danger notValid" type="submit" (click)="resetDates()">Filter zurücksetzen</button>
+    </div> 
+    
     <hr>
     Liste der Bulletins:
 </div>
@@ -10,7 +44,7 @@
 <div class="mat-elevation-z8" style="margin:5%">
   <mat-table class="mat-elevation-z8" [dataSource]="dataSource" matSort>
       <ng-container matColumnDef="nummer">
-          <mat-header-cell *matHeaderCellDef mat-sort-header> <strong>Nummer</strong></mat-header-cell>
+          <mat-header-cell *matHeaderCellDef> <strong>Nummer</strong></mat-header-cell>
           <mat-cell *matCellDef="let element"> {{element.nummer}} </mat-cell>
       </ng-container>
 
@@ -28,7 +62,7 @@
 
 
       <ng-container matColumnDef="action">
-          <mat-header-cell *matHeaderCellDef mat-sort-header> <strong>Aktion</strong>
+          <mat-header-cell *matHeaderCellDef > <strong>Aktion</strong>
           </mat-header-cell>
           <mat-cell *matCellDef="let element"> {{element.action}} </mat-cell>
       </ng-container>
