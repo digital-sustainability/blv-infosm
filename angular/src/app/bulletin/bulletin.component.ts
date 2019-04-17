@@ -1,12 +1,11 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { MatPaginator, MatTableDataSource, MatSort, MatTooltipModule } from '@angular/material';
+import { MatPaginator, MatTableDataSource, MatSort} from '@angular/material';
 import { SparqlDataService } from 'src/app/shared/sparql-data.service';
 import { TranslateService } from '@ngx-translate/core';
 import { LanguageService } from 'src/app/shared/language.service';
 import { Report } from '../models/report.model';
 import * as moment from 'moment';
 import * as _ from 'lodash';
-import { identifierModuleUrl } from '@angular/compiler';
 
 
 @Component({
@@ -18,6 +17,9 @@ export class BulletinComponent implements OnInit {
 
   @ViewChild('d') datepicker;
   @ViewChild('c') datepicker2;
+
+  from;
+  to;
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
@@ -46,11 +48,10 @@ export class BulletinComponent implements OnInit {
     this._sparqlDataService.getReports(lang, from, to).subscribe(
       data => {
         this.data = this.beautifyDataObject(data);
-        this.splitDataToIntervals(this.startOfBulletin, this.today);
+        this.splitDataToIntervals(from, to);
         console.log(this.data);
         
         // Prepare data for table
-        // remove all elements from element_data due to language change
         this.element_data = [];
 
         this.transformDataToMaterializeTable();
@@ -143,7 +144,7 @@ export class BulletinComponent implements OnInit {
     console.log(res);
   }
 
-  private getFromToDates() {
+  getFromToDates() {
     this.data = [];
     this.startIntervals = [];
     this.endIntervals = [];
@@ -152,7 +153,7 @@ export class BulletinComponent implements OnInit {
     this.getList('de', from, to);
   }
 
-  private resetDates() {
+ resetDates() {
     this.data = [];
     this.startIntervals = [];
     this.endIntervals = [];

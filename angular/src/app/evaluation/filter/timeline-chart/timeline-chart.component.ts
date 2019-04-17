@@ -302,6 +302,7 @@ export class TimelineChartComponent implements OnInit, OnDestroy {
   private getInterval(minUnit: number, maxUnit: number): number[] {
     if(this.isMonth && this.intervals.maxYear - this.intervals.minYear > 0) {
       let range = [];
+      // TODO: Fix intervals for month
       for(let i=minUnit; i<= 12; i++) {
         range.push(i);
       }

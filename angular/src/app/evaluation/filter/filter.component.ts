@@ -23,6 +23,9 @@ export class FilterComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('d') datepicker;
   @ViewChild('c') datepicker2;
 
+  from;
+  to;
+
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
 
@@ -55,6 +58,7 @@ export class FilterComponent implements OnInit, AfterViewInit, OnDestroy {
     animal_species: []
   }
 
+  
   constructor(
     private _sparqlDataService: SparqlDataService,
     private _langauageService: LanguageService,
