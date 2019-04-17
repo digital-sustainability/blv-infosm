@@ -1,0 +1,47 @@
+{
+    "GENERAL": {
+        "BLV": "FSVO",
+        "BLV_FULL": "Federal Food Safety and Veterinary Office",
+        "CONTACT": "Contact",
+        "LEGAL_FRAMEWORK": "Legal framework"
+    },
+    "HEADER": {
+        "HOME": "Landing Page",
+        "EVALUATION": "Evaluationtool",
+        "GO_HOME": "Go Back to Landing Page"
+    },
+    "HOME": {
+        "TEST": "Testing an SVG graph for the reporting flow of an animal disease notification."
+    },
+    "EVALUATION": {
+        "YEAR": "Year",
+        "COUNT": "Count",
+        "DIAGNOSIS_DATE": "Diagnosis Date",
+        "MUNICIPALITY": "Municipality",
+        "CANTON": "Canton",
+        "KILLED": "Killed",
+        "INFECTED": "Infected",
+        "PEST": "Group of Disease",
+        "PEST_GROUP": "Disease",
+        "ANIMAL_SPECIES": "Animal Species",
+        "QUARTER": "Quarter"
+    },
+    "ERROR": {
+        "OCCURED": "Error Page (404)",
+        "PAGE_NOT_FOUND": "The document you were looking for could not be found. Either you mistyped the adress (url) or the document does not exist or its name has changed.",
+        "YOUR_OPTIONS": "To search in this website the following possibilities are available:"
+    },
+    "FILTERCHARTS": {
+        "FREQUENCY": "Evaluation of frequency",
+        "TIMELINE": "Temporal evaluation",
+        "MAP": "Spatial evaluation"
+    },
+    "FILTER": {
+        "LASTWEEK": "last week",
+        "LASTMONTH": "last month",
+        "LASTYEAR": "last year",
+        "LASTTHREEYEARS": "last three years",
+        "WHOLETIME": "entire period",
+        "PLACEHOLDERCANTON": "all cantons"
+    }
+}

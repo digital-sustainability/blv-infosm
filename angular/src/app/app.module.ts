@@ -23,14 +23,17 @@ import { MatPaginatorModule } from '@angular/material/paginator';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { MatSortModule} from '@angular/material/sort';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { MatPaginatorI18nService } from './shared/mat-paginator-i18n.service';
+
+import { MatPaginatorI18nService} from './shared/mat-paginator-i18n.service'
 import { MatPaginatorIntl } from '@angular/material';
 import { DistributeDataService } from './shared/distribute-data.service';
 import { NgSelectModule } from '@ng-select/ng-select';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 import '@openlayers-elements/maps/ol-map';
 import '@openlayers-elements/maps/ol-layer-openstreetmap';
 import { FooterComponent } from './footer/footer.component';
+import { BulletinComponent } from './bulletin/bulletin.component';
 
 @NgModule({
   declarations: [
@@ -43,7 +46,8 @@ import { FooterComponent } from './footer/footer.component';
     FrequencyChartComponent,
     MapChartComponent,
     ErrorComponent,
-    FooterComponent
+    FooterComponent,
+    BulletinComponent
   ],
   imports: [
     BrowserModule,
@@ -58,6 +62,7 @@ import { FooterComponent } from './footer/footer.component';
     NoopAnimationsModule,
     MatSortModule,
     MatTooltipModule,
+    NgbModule,
     TranslateModule.forRoot({
       loader: {
         provide: TranslateLoader,

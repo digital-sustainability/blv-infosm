@@ -21,6 +21,7 @@ PREFIX skos: <http://www.w3.org/2004/02/skos/core#>`;
     ) { }
 
   getReports(lang: string, from: string | Date, to: string | Date): Observable<Report[]> {
+    const url = 'http://ld.zazuko.com/query';
     const query = `${this._prefix}
   SELECT *
   FROM <https://linked.opendata.swiss/graph/blv/animalpest> WHERE {
@@ -37,8 +38,28 @@ PREFIX skos: <http://www.w3.org/2004/02/skos/core#>`;
   FILTER(langMatches(lang(?seuchen_gruppe), "${lang}"))
   FILTER (?diagnose_datum >= "${this.checkDate(from)}"^^xsd:date && ?diagnose_datum <="${this.checkDate(to)}"^^xsd:date)
 }`;
-    const params = new HttpParams().set('query', query);
+    const params = new HttpParams()
+      .set('url', url)
+      .set('query', query);
     return this.http.get<Report[]>(this._api + 'getData', { params: params });
+  }
+
+  // TODO: Unify functions
+  getWkt(district: string): any {
+    const url = 'https://ld.geo.admin.ch/query';
+    const query = `${this._prefix}
+  SELECT * WHERE { <https://ld.geo.admin.ch/boundaries/district/${district}> <http://purl.org/dc/terms/hasVersion> ?geomuniVersion .
+    ?geomuniVersion <http://purl.org/dc/terms/issued> ?issued.
+    ?geomuniVersion <http://www.opengis.net/ont/geosparql#hasGeometry> ?geometry.
+    ?geometry <http://www.opengis.net/ont/geosparql#asWKT> ?wkt.
+  }
+  ORDER BY DESC(?issued)
+  LIMIT 10
+`;
+    const params = new HttpParams()
+      .set('url', url)
+      .set('query', query);
+    return this.http.get<any>(this._api + 'getData', { params: params });
   }
 
   private checkDate(date: string | Date): string {

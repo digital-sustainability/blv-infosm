@@ -4,51 +4,75 @@
         <!-- last week and last month disabled since we dont have this data at the moment -->
         <div class="radio radio--left">
             <label for="radio">
-                <input type="radio" name="radios" class="radio" id="radio1" value="radio1" (click)="changeDate('week')" disabled>
+                <input type="radio" name="radios" class="radio" id="radio1" value="radio1" (click)="changeDate('week')"
+                    disabled>
                 {{ 'FILTER.LASTWEEK' | translate }}
             </label>
         </div>
         <div class="radio radio--left">
             <label for="radio2">
-                <input type="radio" name="radios" class="radio" id="radio2" value="radio2" (click)="changeDate('month')" disabled>
+                <input type="radio" name="radios" class="radio" id="radio2" value="radio2" (click)="changeDate('month')"
+                    disabled>
                 {{ 'FILTER.LASTMONTH' | translate }}
             </label>
         </div>
         <div class="radio radio--left">
             <label for="radio3">
-                <input type="radio" name="radios" class="radio" id="radio3" value="radio3" (click)="changeDate('year')" checked>
+                <input type="radio" name="radios" class="radio" id="radio3" value="radio3" (click)="changeDate('year')"
+                    checked>
                 {{ 'FILTER.LASTYEAR' | translate }}
             </label>
         </div>
         <div class="radio radio--left">
             <label for="radio4">
-                <input type="radio" name="radios" class="radio" id="radio4" value="radio4" (click)="changeDate('threeYears')">
+                <input type="radio" name="radios" class="radio" id="radio4" value="radio4"
+                    (click)="changeDate('threeYears')">
                 {{ 'FILTER.LASTTHREEYEARS' | translate }}
             </label>
         </div>
         <div class="radio radio--left">
             <label for="radio5">
-                <input type="radio" name="radios" class="radio" id="radio5" value="radio5" (click)="changeDate('whole')">
+                <input type="radio" name="radios" class="radio" id="radio5" value="radio5"
+                    (click)="changeDate('whole')">
                 {{ 'FILTER.WHOLETIME' | translate }}
             </label>
         </div>
     </fieldset>
 
     <hr>
-
+  
     <div id="selectDateSection" style="margin-top: 2%; margin-bottom: 2%">
         <strong>Nach spezifischem Datum filtern:</strong>
-        <div class="input-group mb-3 from">
-            <div class="input-group-prepend">
-                <span class="input-group-text" id="inputGroup-sizing-default">von</span>
-            </div>
-            <input id="from" type="text" class="form-control" aria-label="Default" placeholder="YYYY-MM-DD">
-        </div>
-        <div class="input-group mb-3 to">
-            <div class="input-group-prepend">
-                <span class="input-group-text" id="inputGroup-sizing-default">bis&nbsp;</span>
-            </div>
-            <input id="to" class="to" type="text" class="form-control" aria-label="Default" placeholder="YYYY-MM-DD">
+        <div class="input-group" >
+            <form class="form-inline" >
+                <div class="form-group" >
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="inputGroup-sizing-default">von</span>
+                    </div>
+                    <div class="input-group" style="width: 40%">
+                        <input class="form-control" placeholder="YYYY-MM-DD" name="from" [(ngModel)]="from"
+                            ngbDatepicker #d="ngbDatepicker">
+                    </div>
+                    <div class="input-group-append" style="height:33.5px;">
+                        <button class="btn btn-outline-secondary calendar" (click)="d.toggle()" type="button"></button>
+                    </div>
+                </div>
+            </form>
+
+            <form class="form-inline">
+                <div class="form-group" >
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="inputGroup-sizing-default">bis&nbsp;</span>
+                    </div>
+                    <div class="input-group" style="width: 40%">
+                        <input class="form-control" placeholder="YYYY-MM-DD" name="to" [(ngModel)]="to" ngbDatepicker
+                            #c="ngbDatepicker">
+                    </div>
+                    <div class="input-group-append" style="height:33.5px;">
+                        <button class="btn btn-outline-secondary calendar" (click)="c.toggle()" type="button"></button>
+                    </div>
+                </div>
+            </form>
         </div>
         <button class="btn btn-dark notValid" type="submit" (click)="getFromToDates()">Filtern</button>
     </div>
@@ -74,8 +98,9 @@
         </ng-select>
     </div>
     <div> {{ 'EVALUATION.PEST_GROUP' | translate }}:
-        <ng-select [items]="epidemics_group" notFoundText="Keine Einträge" [multiple]="true" placeholder="alle Seuchengruppen"
-            (add)="onAdd($event, 'epidemic_group')" (remove)="onRemove($event, 'epidemic_group')">
+        <ng-select [items]="epidemics_group" notFoundText="Keine Einträge" [multiple]="true"
+            placeholder="alle Seuchengruppen" (add)="onAdd($event, 'epidemic_group')"
+            (remove)="onRemove($event, 'epidemic_group')">
         </ng-select>
     </div>
     <div> {{ 'EVALUATION.ANIMAL_SPECIES' | translate }}:
@@ -89,11 +114,18 @@
 <div style="margin-top: 15px" class="row">
     <div class="col-sm-10 col-sm-offset-1">
         <ul class="nav nav-tabs">
-            <li id="frequency" data-toggle="tab"><a [routerLink]="['./frequency']">{{ 'FILTERCHARTS.FREQUENCY' |
-                    translate }}</a></li>
-            <li id="timeline" data-toggle="tab"><a [routerLink]="['./timeline']">{{ 'FILTERCHARTS.TIMELINE' | translate
-                    }}</a></li>
-            <li id="map" data-toggle="tab"><a [routerLink]="['./map']">{{ 'FILTERCHARTS.MAP' | translate }}</a></li>
+            <li id="frequency">
+                <a data-toggle="tab" [routerLink]="['./frequency']">{{ 'FILTERCHARTS.FREQUENCY' | translate }}
+                </a>
+            </li>
+            <li id="timeline">
+                <a data-toggle="tab" [routerLink]="['./timeline']">{{ 'FILTERCHARTS.TIMELINE' | translate }}
+                </a>
+            </li>
+            <li id="map">
+                <a data-toggle="tab" [routerLink]="['./map']">{{ 'FILTERCHARTS.MAP' | translate }}
+                </a>
+            </li>
         </ul>
         <router-outlet></router-outlet>
     </div>
@@ -116,7 +148,7 @@
         <ng-container matColumnDef="kanton">
             <mat-header-cell *matHeaderCellDef mat-sort-header> <strong>{{ 'EVALUATION.CANTON' | translate }}</strong>
             </mat-header-cell>
-            <mat-cell *matCellDef="let element"> {{element.kanton}} </mat-cell>
+            <mat-cell *matCellDef="let element" (click)="console.log('hello')"> {{element.kanton}} </mat-cell>
         </ng-container>
 
         <ng-container matColumnDef="gemeinde">
@@ -153,3 +185,22 @@
     <mat-paginator [pageSize]="5" [hidePageSize]="true" showFirstLastButtons></mat-paginator>
 </div>
 <!-- <div style="height: 50px"></div> -->
+
+  <!--
+    <div id="selectDateSection" style="margin-top: 2%; margin-bottom: 2%">
+        <strong>Nach spezifischem Datum filtern:</strong>
+        <div class="input-group mb-3 from">
+            <div class="input-group-prepend">
+                <span class="input-group-text" id="inputGroup-sizing-default">von</span>
+            </div>
+            <input id="from" type="text" class="form-control" aria-label="Default" placeholder="YYYY-MM-DD">
+        </div>
+        <div class="input-group mb-3 to">
+            <div class="input-group-prepend">
+                <span class="input-group-text" id="inputGroup-sizing-default">bis&nbsp;</span>
+            </div>
+            <input id="to" class="to" type="text" class="form-control" aria-label="Default" placeholder="YYYY-MM-DD">
+        </div>
+        <button class="btn btn-dark notValid" type="submit" (click)="getFromToDates()">Filtern</button>
+    </div> 
+    -->
