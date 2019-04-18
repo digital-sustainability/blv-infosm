@@ -1,0 +1,50 @@
+<div style="margin-left: 2%; margin-right: 2%; margin-top: 2%">
+  <h5><strong>Tierseuchen: neue Ausbrüche im Zeitraum von {{  metaDataFromRoute[0][1] }} bis {{  metaDataFromRoute[0][2] }}</strong></h5>
+  <hr>
+  <h6>Bulletinnummer: {{  metaDataFromRoute[0][0]  }}</h6>
+</div>
+
+<div class="mat-elevation-z8" style="margin-left:2%; margin-right:2%">
+  <mat-table class="mat-elevation-z8" [dataSource]="dataSource" matSort>
+    <!-- <ng-container matColumnDef="diagnose_datum">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> <strong>Diagnosedatum</strong></mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{element.diagnose_datum}} </mat-cell>
+    </ng-container> -->
+
+    <ng-container matColumnDef="kanton">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> <strong>Kanton</strong> </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{element.kanton}} </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="gemeinde">
+      <mat-header-cell *matHeaderCellDef mat-sort-header><strong>Gemeinde</strong></mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{element.gemeinde}} </mat-cell>
+    </ng-container>
+
+
+    <ng-container matColumnDef="seuchen_gruppe" >
+      <mat-header-cell *matHeaderCellDef mat-sort-header> <strong>Seuche</strong></mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{element.seuche}} </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="seuche" >
+      <mat-header-cell *matHeaderCellDef mat-sort-header> <strong>Seuchengruppe</strong></mat-header-cell>
+      <mat-cell *matCellDef="let element">{{element.seuchen_gruppe}}</mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="tierart">
+      <mat-header-cell *matHeaderCellDef  mat-sort-header> <strong>Tierart</strong></mat-header-cell>
+      <mat-cell *matCellDef="let element">{{element.tierart}} </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="anzahl">
+      <mat-header-cell *matHeaderCellDef> <strong>Anzahl Fälle</strong></mat-header-cell>
+      <mat-cell *matCellDef="let element">{{element.anzahl}}</mat-cell>
+    </ng-container>
+
+    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+  </mat-table>
+
+  <mat-paginator [pageSize]="15" [hidePageSize]="true" showFirstLastButtons></mat-paginator>
+</div>

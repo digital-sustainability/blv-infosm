@@ -30,9 +30,10 @@ import { NgSelectModule } from '@ng-select/ng-select';
 import { FooterComponent } from './footer/footer.component';
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 
-import '@openlayers-elements/maps/ol-map'
-import '@openlayers-elements/maps/ol-layer-openstreetmap';
+// import '@openlayers-elements/maps/ol-map'
+// import '@openlayers-elements/maps/ol-layer-openstreetmap';
 import { BulletinComponent } from './bulletin/bulletin.component';
+import { BulletinDetailViewComponent } from './bulletin-detail-view/bulletin-detail-view.component';
 
 @NgModule({
   declarations: [
@@ -46,7 +47,8 @@ import { BulletinComponent } from './bulletin/bulletin.component';
     MapChartComponent,
     ErrorComponent,
     FooterComponent,
-    BulletinComponent
+    BulletinComponent,
+    BulletinDetailViewComponent
   ],
   imports: [
     BrowserModule,
