@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, forkJoin } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { Report } from '../models/report.model';
 import * as moment from 'moment';
@@ -44,11 +44,13 @@ PREFIX skos: <http://www.w3.org/2004/02/skos/core#>`;
     return this.http.get<Report[]>(this._api + 'getData', { params: params });
   }
 
-  // TODO: Unify functions
-  getWkt(district: string): any {
+  // TODO: Types
+  getCantonsWkt(): any {
+    const calls = [];
     const url = 'https://ld.geo.admin.ch/query';
+    Array(26).fill(1).map((x, y) => x + y).forEach(canton => {
     const query = `${this._prefix}
-  SELECT * WHERE { <https://ld.geo.admin.ch/boundaries/district/${district}> <http://purl.org/dc/terms/hasVersion> ?geomuniVersion .
+  SELECT * WHERE { <https://ld.geo.admin.ch/boundaries/canton/${canton}> <http://purl.org/dc/terms/hasVersion> ?geomuniVersion .
     ?geomuniVersion <http://purl.org/dc/terms/issued> ?issued.
     ?geomuniVersion <http://www.opengis.net/ont/geosparql#hasGeometry> ?geometry.
     ?geometry <http://www.opengis.net/ont/geosparql#asWKT> ?wkt.
@@ -56,10 +58,12 @@ PREFIX skos: <http://www.w3.org/2004/02/skos/core#>`;
   ORDER BY DESC(?issued)
   LIMIT 10
 `;
-    const params = new HttpParams()
+      const params = new HttpParams()
       .set('url', url)
       .set('query', query);
-    return this.http.get<any>(this._api + 'getData', { params: params });
+      calls.push(this.http.get<any>(this._api + 'getData', { params: params }));
+    });
+    return forkJoin(...calls);
   }
 
   private checkDate(date: string | Date): string {
