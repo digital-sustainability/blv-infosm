@@ -42,11 +42,12 @@ app.get('/', (req, res) => {
 // }));
 
 app.get('/getData', wrap( async (req, res) => {
-    if (!req.query.query) {
-        throw new BadRequestError('Missing SPARQL Query'); // sorted by next catch
+    if (!req.query.query || !req.query.url) {
+        throw new BadRequestError('No Sparql Endpoint or SPARQL Query defined'); // sorted by next catch
     }
     const options = {
-        url: 'http://ld.zazuko.com/query',
+        url: req.query.url,
+        // url: 'http://ld.zazuko.com/query',
         method: 'POST',
         headers: {
             'content-type': 'application/x-www-form-urlencoded',

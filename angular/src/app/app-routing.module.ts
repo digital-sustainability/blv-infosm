@@ -6,6 +6,7 @@ import { EvaluationComponent } from './evaluation/evaluation.component';
 import { FrequencyChartComponent } from './evaluation/filter/frequency-chart/frequency-chart.component';
 import { TimelineChartComponent } from './evaluation/filter/timeline-chart/timeline-chart.component';
 import { MapChartComponent } from './evaluation/filter/map-chart/map-chart.component';
+import { BulletinComponent } from './bulletin/bulletin.component'
 
 const routes: Routes = [
   {
@@ -17,6 +18,11 @@ const routes: Routes = [
       { path: 'timeline', component: TimelineChartComponent },
       { path: 'map', component: MapChartComponent }
     ]
+  },
+  {
+    path: 'bulletin',
+    component: BulletinComponent,
+    pathMatch: 'full'
   },
   {
     path: '',

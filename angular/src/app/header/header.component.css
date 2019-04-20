@@ -24,7 +24,7 @@ li {
 
 ul.nav > li {
     display: table-cell;
-    width: 50%;
+    width: 33%;
 }
 
 .nav li a {

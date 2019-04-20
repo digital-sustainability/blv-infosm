@@ -15,7 +15,7 @@
     },
     "EVALUATION": {
         "YEAR": "Jahr",
-        "COUNT": "Anzahl",
+        "COUNT": "Seuchenfälle pro Seuchengruppe",
         "DIAGNOSIS_DATE": "Diagnosedatum",
         "MUNICIPALITY": "Gemeinde",
         "CANTON": "Kanton",
@@ -37,7 +37,7 @@
         "MAP": "Auswertung nach Geografie"
     },
     "FILTER": {
-        "FILTER": "Nach vorgegebenem Zeitraum filtern",
+        "FILTER": "Nach Zeitraum filtern",
         "LASTWEEK": "letzte Woche",
         "LASTMONTH": "letzter Monat",
         "LASTYEAR": "letztes Jahr",
