@@ -9,3 +9,36 @@ button.calendar, button.calendar:active {
   .input-group, .form-inline, .form-group {
       border:0;
   }
+
+  .mat-table__wrapper .mat-table {
+    min-width: auto !important;
+    width: 100% !important;
+}
+
+.mat-header-row {
+    width: 100%;
+}
+
+.mat-row {
+    width: 100%;
+}
+
+.mat-column-nummer {
+    flex: 0 0 25% !important;
+    min-width: 104px !important;
+}
+
+.mat-column-dateFrom {
+    flex: 0 0 25% !important;
+    min-width: 104px !important;
+}
+
+.mat-column-dateTo {
+    flex: 0 0 25% !important;
+    min-width: 104px !important;
+}
+
+.mat-column-action {
+    flex: 0 0 25% !important;
+    min-width: 104px !important;
+}

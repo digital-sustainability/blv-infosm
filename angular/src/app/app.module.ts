@@ -25,6 +25,7 @@ import { MapChartComponent } from './evaluation/filter/map-chart/map-chart.compo
 import { ErrorComponent } from './error.component';
 import { FooterComponent } from './footer/footer.component';
 import { BulletinComponent } from './bulletin/bulletin.component';
+import { BulletinDetailViewComponent } from './bulletin-detail-view/bulletin-detail-view.component';
 
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { LanguageService } from './shared/language.service';
@@ -51,7 +52,8 @@ import '@openlayers-elements/maps/ol-layer-openstreetmap';
     MapChartComponent,
     ErrorComponent,
     FooterComponent,
-    BulletinComponent
+    BulletinComponent,
+    BulletinDetailViewComponent
   ],
   imports: [
     BrowserModule,

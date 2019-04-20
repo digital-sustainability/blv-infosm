@@ -1,9 +1,9 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { MatPaginator, MatTableDataSource, MatSort} from '@angular/material';
+import { MatPaginator, MatTableDataSource, MatSort, MatSortable } from '@angular/material';
 import { SparqlDataService } from 'src/app/shared/sparql-data.service';
 import { TranslateService } from '@ngx-translate/core';
 import { LanguageService } from 'src/app/shared/language.service';
-import { Report } from '../models/report.model';
+import { Router } from "@angular/router"
 import * as moment from 'moment';
 import * as _ from 'lodash';
 
@@ -13,6 +13,7 @@ import * as _ from 'lodash';
   templateUrl: './bulletin.component.html',
   styleUrls: ['./bulletin.component.css']
 })
+
 export class BulletinComponent implements OnInit {
 
   @ViewChild('d') datepicker;
@@ -26,18 +27,23 @@ export class BulletinComponent implements OnInit {
 
   dataSource: any;
   data: Object[];
-  element_data: any;
+  element_data: any[];
   displayedColumns: string[] = ['nummer', 'dateFrom', 'dateTo', 'action'];
   startIntervals = [];
   endIntervals = [];
   startOfBulletin = moment('2008-11-17').format('YYYY-MM-DD');
   today = moment().format('YYYY-MM-DD');
-  actionString = 'Details anzeigen'
+  actionString = 'Details anzeigen';
+  distributedData = {};
+  details: boolean;
+  detailData;
+  metaData = [];
 
   constructor(
     private _sparqlDataService: SparqlDataService,
     public translateService: TranslateService,
     private _langauageService: LanguageService,
+    private router: Router
   ) { }
 
   ngOnInit() {
@@ -53,11 +59,14 @@ export class BulletinComponent implements OnInit {
         
         // Prepare data for table
         this.element_data = [];
-
         this.transformDataToMaterializeTable();
-        
         this.dataSource = new MatTableDataSource<any>(this.element_data);
         this.dataSource.paginator = this.paginator;
+        // change the default ordering of the table
+        this.sort.sort(<MatSortable>{
+          id:'nummer',
+          start: 'desc'
+        })
         this.dataSource.sort = this.sort;
         this.distributeDataToIntervals();
       }, err => {
@@ -68,7 +77,7 @@ export class BulletinComponent implements OnInit {
 
   private splitDataToIntervals(startDate: Date | string, endDate: Date | string) {
     let tmpDate = startDate;
-    while( tmpDate <= endDate ) {
+    while (tmpDate <= endDate) {
       this.startIntervals.push(tmpDate);
       this.endIntervals.push(moment(tmpDate).add(6, 'days').format('YYYY-MM-DD'));
       tmpDate = moment(tmpDate).add(1, 'week').format('YYYY-MM-DD');
@@ -78,12 +87,12 @@ export class BulletinComponent implements OnInit {
   private constructNumber(date: Date | string) {
     let year = moment(date).year();
     let week = moment(date).week();
-    let result = (week <10 ) ? `${year}0${week}` : `${year}${week}`;
+    let result = (week < 10) ? `${year}0${week}` : `${year}${week}`;
     return result;
   }
 
   private transformDataToMaterializeTable() {
-    for (let i=0; i <= this.endIntervals.length; i++) {
+    for (let i = 0; i <= this.endIntervals.length-1; i++) {
       this.element_data.push({
         nummer: this.constructNumber(this.startIntervals[i]),
         dateFrom: this.startIntervals[i],
@@ -94,25 +103,33 @@ export class BulletinComponent implements OnInit {
   }
 
   private beautifyDataObject(data: Object) {
-    let reducedDataObject: any[]= [];
-    for(let el in data) {
+    let reducedDataObject: any[] = [];
+    for (let el in data) {
       reducedDataObject.push({
         diagnose_datum: data[el].diagnose_datum.value,
         kanton: data[el].kanton.value,
         gemeinde: data[el].gemeinde.value,
         seuche: data[el].seuche.value,
         seuchen_gruppe: data[el].seuchen_gruppe.value,
-        tierart: data[el].tierart.value 
+        tierart: data[el].tierart.value
       })
     }
     return reducedDataObject.sort((a, b) => {
       // chain the dates togehter to compare digits for sorting the object
-      let dA = parseInt(a['diagnose_datum'].replace(/\-/gi, ""));
-      let dB = parseInt(b['diagnose_datum'].replace(/\-/gi, ""));
-      if(dA > dB){
-        return 1;
-      }
-      return -1;
+      // let dA = parseInt(a['diagnose_datum'].replace(/\-/gi, ""));
+      // let dB = parseInt(b['diagnose_datum'].replace(/\-/gi, ""));
+      // if( typeof dA == undefined) {
+      //   console.log(parseInt(a['diagnose_datum']))
+      //   console.log( typeof parseInt(a['diagnose_datum']))
+      // }
+      // if (dA > dB){
+      //   return 1;
+      // }
+      // return -1;
+      let adate = new Date(a['diagnose_datum']);
+      let bdate= new Date(b['diagnose_datum']);
+      return (adate<bdate) ? -1 : (adate>bdate) ? 1 : 0;
+      
     });
   }
 
@@ -122,15 +139,15 @@ export class BulletinComponent implements OnInit {
     let res = {};
     let counter = 0;
     for (let o of this.data) {
-      if (o['diagnose_datum'] < this.element_data[counter]['dateTo']) {
+      if (o['diagnose_datum'] <= this.element_data[counter]['dateTo']) {
         if (!res[this.element_data[counter]['nummer']]) {
           res[this.element_data[counter]['nummer']] = [];
         }
         res[this.element_data[counter]['nummer']].push(o);
       } else {
-        while (o['diagnose_datum'] > this.element_data[counter]['dateTo']) {
+        while (o['diagnose_datum'] >= this.element_data[counter]['dateTo']) {
           counter++;
-          if (o['diagnose_datum'] < this.element_data[counter]['dateTo']) {
+          if (o['diagnose_datum'] <= this.element_data[counter]['dateTo']) {
             if (!res[this.element_data[counter]['nummer']]) {
               res[this.element_data[counter]['nummer']] = [];
             }
@@ -141,7 +158,26 @@ export class BulletinComponent implements OnInit {
         }
       }
     }
-    console.log(res);
+    this.distributedData = res;
+  }
+
+  findNumberIdInDataObject(object, id) {
+    let tmpObj = {};
+    if (object.hasOwnProperty(id)) {
+      tmpObj = object[id];
+      return tmpObj;
+    } else {
+      console.log(id + " not found in the object")
+    }
+  }
+
+  goToDetail(id: number, datefrom, dateTo) {
+    console.log('Hello Detail ID:' + id);
+    this.metaData.push([id, datefrom, dateTo]);
+    this.detailData = this.findNumberIdInDataObject(this.distributedData, id);
+    localStorage.setItem("metaData", JSON.stringify(this.metaData));
+    localStorage.setItem("detailData", JSON.stringify(this.detailData));
+    this.router.navigate(['bulletin/details', { number: id }]);
   }
 
   getFromToDates() {
@@ -153,12 +189,10 @@ export class BulletinComponent implements OnInit {
     this.getList('de', from, to);
   }
 
- resetDates() {
+  resetDates() {
     this.data = [];
     this.startIntervals = [];
     this.endIntervals = [];
     this.getList('de', this.startOfBulletin, this.today);
   }
- 
-
 }

@@ -1,4 +1,4 @@
-<div style="margin-left: 5%; margin-right: 5%; margin-top: 2%">
+<div style="margin-left: 2%; margin-right: 2%; margin-top: 2%">
     <h3>Anzeigeoptionen</h3>
     <hr>
     <div id="selectDateSection" style="margin-top: 2%; margin-bottom: 2%">
@@ -41,7 +41,7 @@
     Liste der Bulletins:
 </div>
 
-<div class="mat-elevation-z8" style="margin:5%">
+<div class="mat-elevation-z8" style="margin-left:2%; margin-right: 2%">
   <mat-table class="mat-elevation-z8" [dataSource]="dataSource" matSort>
       <ng-container matColumnDef="nummer">
           <mat-header-cell *matHeaderCellDef> <strong>Nummer</strong></mat-header-cell>
@@ -49,27 +49,25 @@
       </ng-container>
 
       <ng-container matColumnDef="dateFrom">
-          <mat-header-cell *matHeaderCellDef mat-sort-header> <strong>Datum von</strong>
-          </mat-header-cell>
-          <mat-cell *matCellDef="let element" (click)="console.log('hello')"> {{element.dateFrom}} </mat-cell>
+          <mat-header-cell *matHeaderCellDef mat-sort-header> <strong>Datum von</strong> </mat-header-cell>
+          <mat-cell *matCellDef="let element" > {{element.dateFrom}} </mat-cell>
       </ng-container>
 
       <ng-container matColumnDef="dateTo">
-          <mat-header-cell *matHeaderCellDef mat-sort-header><strong>Datum bis
-              </strong></mat-header-cell>
+          <mat-header-cell *matHeaderCellDef mat-sort-header><strong>Datum bis</strong></mat-header-cell>
           <mat-cell *matCellDef="let element"> {{element.dateTo}} </mat-cell>
       </ng-container>
 
 
       <ng-container matColumnDef="action">
-          <mat-header-cell *matHeaderCellDef > <strong>Aktion</strong>
-          </mat-header-cell>
-          <mat-cell *matCellDef="let element"> {{element.action}} </mat-cell>
+          <mat-header-cell *matHeaderCellDef > <strong>Aktion</strong></mat-header-cell>
+          <mat-cell *matCellDef="let element" (click)="$event.stopPropagation()"> <button mat-button (click)="goToDetail(element.nummer, element.dateFrom, element.dateTo)">
+            <span class="glyphicon glyphicon-info-sign"></span>  &nbsp;<mat-icon>{{ element.action}}</mat-icon>  </button> </mat-cell>
       </ng-container>
 
       <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-      <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+      <mat-row *matRowDef="let row; columns: displayedColumns;" ></mat-row>
   </mat-table>
 
-  <mat-paginator [pageSize]="10" [hidePageSize]="true" showFirstLastButtons></mat-paginator>
+  <mat-paginator [pageSize]="15" [hidePageSize]="true" showFirstLastButtons></mat-paginator>
 </div>

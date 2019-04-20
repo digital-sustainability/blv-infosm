@@ -1,0 +1,36 @@
+.mat-table__wrapper .mat-table {
+    min-width: auto !important;
+    width: 100% !important;
+}
+
+.mat-header-row {
+    width: 100%;
+}
+
+.mat-row {
+    width: 100%;
+}
+
+.mat-column-kanton {
+    flex: 0 0 20% !important;
+}
+
+.mat-column-gemeinde {
+    flex: 0 0 15% !important;
+}
+
+.mat-column-seuchen_gruppe {
+    flex: 0 0 30% !important;
+}
+
+.mat-column-seuche {
+    flex: 0 0 20% !important;
+}
+
+.mat-column-tierart {
+    flex: 0 0 10% !important;
+}
+
+.mat-column-anzahl {
+    flex: 0 0 5% !important;
+}
