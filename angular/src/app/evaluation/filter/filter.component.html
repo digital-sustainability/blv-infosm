@@ -40,12 +40,12 @@
     </fieldset>
 
     <hr>
-  
+
     <div id="selectDateSection" style="margin-top: 2%; margin-bottom: 2%">
         <strong>Nach spezifischem Datum filtern:</strong>
-        <div class="input-group" >
-            <form class="form-inline" >
-                <div class="form-group" >
+        <div class="input-group">
+            <form class="form-inline">
+                <div class="form-group">
                     <div class="input-group-prepend">
                         <span class="input-group-text" id="inputGroup-sizing-default">von</span>
                     </div>
@@ -60,7 +60,7 @@
             </form>
 
             <form class="form-inline">
-                <div class="form-group" >
+                <div class="form-group">
                     <div class="input-group-prepend">
                         <span class="input-group-text" id="inputGroup-sizing-default">bis&nbsp;</span>
                     </div>
@@ -79,6 +79,19 @@
 
     <hr>
 
+
+    <div ngbDropdown class="d-inline-block" autoClose="outside" (openChange)="toggleCheckbox($event, 'canton')">
+        <button class="btn btn-dark" id="dropdownForm1" ngbDropdownToggle>Kantone</button>
+        <div ngbDropdownMenu>
+            <div *ngFor="let canton of cantons" class="form-check">
+                <input type="checkbox" name="canton" class="form-check-input" id="{{canton}}">
+                <label class="form-check-label" for="{{canton }}">
+                    {{ canton }}
+                </label>
+            </div>
+        </div>
+    </div>
+
     <!-- TODO: translate "notFoundText" -->
     <!-- TODO: translate "placeholder" -->
     <div> {{ 'EVALUATION.CANTON' | translate }}:
@@ -92,17 +105,32 @@
             (add)="onAdd($event, 'community')" (remove)="onRemove($event, 'community')">
         </ng-select>
     </div>
-    <div> {{ 'EVALUATION.PEST' | translate }}:
-        <ng-select [items]="epidemics" notFoundText="Keine Einträge" [multiple]="true" placeholder="alle Seuchen"
-            (add)="onAdd($event, 'epidemic')" (remove)="onRemove($event, 'epidemic')">
-        </ng-select>
+
+    <div ngbDropdown class="d-inline-block" autoClose="outside" (openChange)="toggleCheckbox($event, 'epidemics')">
+        <button class="btn btn-dark" id="dropdownForm2" ngbDropdownToggle>Seuchengruppen</button>
+        <div ngbDropdownMenu>
+            <div *ngFor="let epidemic of epidemics_group" class="form-check">
+                <input type="checkbox" name="epidemic" class="form-check-input" id="{{epidemic}}">
+                <label class="form-check-label" for="{{epidemic}}">
+                    {{epidemic }}
+                </label>
+            </div>
+        </div>
     </div>
+
     <div> {{ 'EVALUATION.PEST_GROUP' | translate }}:
         <ng-select [items]="epidemics_group" notFoundText="Keine Einträge" [multiple]="true"
             placeholder="alle Seuchengruppen" (add)="onAdd($event, 'epidemic_group')"
             (remove)="onRemove($event, 'epidemic_group')">
         </ng-select>
     </div>
+
+    <div> {{ 'EVALUATION.PEST' | translate }}:
+        <ng-select [items]="epidemics" notFoundText="Keine Einträge" [multiple]="true" placeholder="alle Seuchen"
+            (add)="onAdd($event, 'epidemic')" (remove)="onRemove($event, 'epidemic')">
+        </ng-select>
+    </div>
+
     <div> {{ 'EVALUATION.ANIMAL_SPECIES' | translate }}:
         <ng-select [items]="animal_species" notFoundText="Keine Einträge" [multiple]="true" placeholder="alle Tierarten"
             (add)="onAdd($event, 'animal_species')" (remove)="onRemove($event, 'animal_species')">
@@ -186,7 +214,7 @@
 </div>
 <!-- <div style="height: 50px"></div> -->
 
-  <!--
+<!--
     <div id="selectDateSection" style="margin-top: 2%; margin-bottom: 2%">
         <strong>Nach spezifischem Datum filtern:</strong>
         <div class="input-group mb-3 from">

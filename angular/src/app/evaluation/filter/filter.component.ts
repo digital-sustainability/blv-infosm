@@ -121,6 +121,24 @@ export class FilterComponent implements OnInit, AfterViewInit, OnDestroy {
     this._paramSub.unsubscribe();
   }
 
+
+ toggleCheckbox($event, filterType) {
+    let idSelector = function() {  return this.id; };
+    if(!$event) {
+      switch(filterType) {
+        case 'canton': 
+          let selectedCantons = $("input:checkbox[name=canton]").attr('checked', true).map(idSelector).get(); 
+          console.log(selectedCantons); break;
+        case 'epidemics': 
+          let selectedEpidemics = $("input:checkbox[name=epidemic]").attr('checked', true).map(idSelector).get(); 
+          console.log(selectedEpidemics); break;
+        case 'animals': 
+          let selectedAnimals= $(":checkbox:checked").map(idSelector).get(); console.log(selectedAnimals); break;
+      }
+    }
+  }
+
+
   // updates every time when the user adds an entry in the filter
   onAdd($event, filterType: string) {
     let selectedItem = [];
