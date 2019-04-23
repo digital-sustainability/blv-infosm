@@ -36,8 +36,9 @@ export class FrequencyChartComponent implements OnInit {
     // console.log('PestCount', this.countOccurance('seuche', data));
     // console.log('AnimalCount', this.countOccurance(filterTarget, data));
     // console.log('FirstSix', this.limitCollection('seuche', data));
-    const categories = this.limitCollection(filterTarget, data);
-    categories.push('Other');
+
+    // const categories = this.limitCollection(filterTarget, data);
+    // categories.push('Other');
     this.frequencyChart = new Chart({
       chart: {
         type: 'column'
@@ -46,7 +47,7 @@ export class FrequencyChartComponent implements OnInit {
         text: undefined
       },
       xAxis: {
-        categories: categories
+        categories: this.limitCollection(filterTarget, data).concat(['Other'])
       },
       yAxis: {
         min: 0,
@@ -175,8 +176,9 @@ export class FrequencyChartComponent implements OnInit {
     });
     // const animalTypes = _.uniqBy(animals.map(a => a.tierart)).sort();
     // this.animalTypes = animalTypes;
-    const animalTypes = this.limitCollection('tierart', reports);
-    animalTypes.push('Other');
+    const animalTypes = this.limitCollection('tierart', reports).concat(['Other']);
+    // animalTypes.push('Other');
+
     const pestTypes = uniqBy(animals.map(p => p.seuche)).sort();
     const pestPerAnimal = [];
     animalTypes.forEach((at: string) => {

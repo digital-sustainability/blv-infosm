@@ -1,39 +1,44 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { FormsModule} from '@angular/forms'
+import { FormsModule} from '@angular/forms';
 import { AppRoutingModule } from './app-routing.module';
-import { AppComponent } from './app.component';
-import { HeaderComponent } from './header/header.component';
-import { HomeComponent } from './home/home.component';
-import { EvaluationComponent } from './evaluation/evaluation.component';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
-import { SparqlDataService } from './shared/sparql-data.service';
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
-import { TranslateHttpLoader } from '@ngx-translate/http-loader';
-import { FilterComponent } from './evaluation/filter/filter.component';
-import { TimelineChartComponent } from './evaluation/filter/timeline-chart/timeline-chart.component';
-import { FrequencyChartComponent } from './evaluation/filter/frequency-chart/frequency-chart.component';
-import { MapChartComponent } from './evaluation/filter/map-chart/map-chart.component';
 import { ChartModule } from 'angular-highcharts';
-import { LanguageService } from './shared/language.service';
 import { AngularFontAwesomeModule } from 'angular-font-awesome';
-import { ErrorComponent } from './error.component';
 import { MatTableModule } from '@angular/material';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { MatSortModule} from '@angular/material/sort';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { MatPaginatorI18nService} from './shared/mat-paginator-i18n.service'
-import { MatPaginatorIntl } from '@angular/material';
-import { DistributeDataService } from './shared/distribute-data.service';
 import { NgSelectModule } from '@ng-select/ng-select';
-import { FooterComponent } from './footer/footer.component';
-import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
-// import '@openlayers-elements/maps/ol-map'
-// import '@openlayers-elements/maps/ol-layer-openstreetmap';
+import { AppComponent } from './app.component';
+import { HeaderComponent } from './header/header.component';
+import { HomeComponent } from './home/home.component';
+import { EvaluationComponent } from './evaluation/evaluation.component';
+import { FilterComponent } from './evaluation/filter/filter.component';
+import { TimelineChartComponent } from './evaluation/filter/timeline-chart/timeline-chart.component';
+import { FrequencyChartComponent } from './evaluation/filter/frequency-chart/frequency-chart.component';
+import { MapChartComponent } from './evaluation/filter/map-chart/map-chart.component';
+import { ErrorComponent } from './error.component';
+import { FooterComponent } from './footer/footer.component';
 import { BulletinComponent } from './bulletin/bulletin.component';
 import { BulletinDetailViewComponent } from './bulletin-detail-view/bulletin-detail-view.component';
+
+import { TranslateHttpLoader } from '@ngx-translate/http-loader';
+import { LanguageService } from './shared/language.service';
+import { MatPaginatorIntl } from '@angular/material';
+import { NgbDatepickerI18n } from '@ng-bootstrap/ng-bootstrap';
+import { SparqlDataService } from './shared/sparql-data.service';
+import { MatPaginatorI18nService} from './shared/mat-paginator-i18n.service'
+import { DistributeDataService } from './shared/distribute-data.service';
+import { DatePickerI18nService } from './shared/date-picker-i18n.service';
+
+import '@openlayers-elements/maps/ol-map';
+import '@openlayers-elements/maps/ol-layer-wkt';
+import '@openlayers-elements/maps/ol-layer-openstreetmap';
 
 @NgModule({
   declarations: [
@@ -80,6 +85,10 @@ import { BulletinDetailViewComponent } from './bulletin-detail-view/bulletin-det
       provide: MatPaginatorIntl,
       useClass: MatPaginatorI18nService,
     },
+    {
+      provide: NgbDatepickerI18n,
+      useClass: DatePickerI18nService
+    }
   ],
   schemas: [
     CUSTOM_ELEMENTS_SCHEMA
