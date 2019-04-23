@@ -12,6 +12,7 @@
     "experimentalDecorators": true,
     "downlevelIteration": true,
     "target": "es5",
+    "allowJs": true,
     "typeRoots": [
       "node_modules/@types",
       "./src/typings.d.ts"
