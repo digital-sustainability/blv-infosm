@@ -45,6 +45,7 @@ export class FilterComponent implements OnInit, AfterViewInit, OnDestroy {
   epidemics_group: String[];
   communities: String[];
   animal_species: String[];
+  animal_groups: String[];
 
   element_data: any[] = [];
   displayedColumns: string[] = ['diagnose_datum', 'kanton', 'gemeinde', 'seuche', 'seuchen_gruppe', 'tierart'];
@@ -53,8 +54,9 @@ export class FilterComponent implements OnInit, AfterViewInit, OnDestroy {
   filterConfig = {
     canton: [],
     community:[],
-    epidemic: [],
     epidemic_group: [],
+    epidemic: [],
+    animal_groups: [],
     animal_species: []
   }
 
@@ -269,6 +271,7 @@ export class FilterComponent implements OnInit, AfterViewInit, OnDestroy {
     this.epidemics = _.uniq(_.map(data, 'seuche.value')).sort();
     this.epidemics_group = _.uniq(_.map(data, 'seuchen_gruppe.value')).sort();
     this.animal_species = _.uniq(_.map(data, 'tierart.value')).sort();
+    this.animal_groups = _.uniq(_.map(data, 'tier_gruppe.value')).sort();
   }
 
   // filters the data object based on the selected entries from
