@@ -60,6 +60,7 @@ export class TimelineChartComponent implements OnInit, OnDestroy {
     //if(this.intervals.minYear === this.intervals.maxYear) {this.isYear = false; }
     this.dataSub = this._distributeDataService.currentData.subscribe(
       data => {
+        console.log(data)
         this.years = this.extractYears(data);
         console.log(this.years)
         // Translate if new data is loaded
@@ -215,15 +216,15 @@ export class TimelineChartComponent implements OnInit, OnDestroy {
         let compareUnit: number; 
         //= this.isYear ? moment(d['diagnose_datum']['value']).year() : moment(d['diagnose_datum']['value']).month()+1;
         if (this.isYear) {
-          compareUnit =  parseInt(d['diagnose_datum']['value'].split('-')[0]);
+          compareUnit =  parseInt(d['diagnosis_date'].split('-')[0]);
         } else if (this.isMonth){
-          compareUnit = parseInt(d['diagnose_datum']['value'].split('-')[1]);
+          compareUnit = parseInt(d['diagnosis_date'].split('-')[1]);
         } else {
-          compareUnit = moment(d['diagnose_datum']['value']).week();
+          compareUnit = moment(d['diagnosis_date']).week();
         }
         // start counting epidemic groups
         if( timeUnit[i] ===  (compareUnit)) {
-          switch(d['seuchen_gruppe']['value']) {
+          switch(d['epidemic_group']) {
             case "Auszurottende Seuchen":
               count1 += 1; count5 += 1;
               aggregierte_seuchen[i]['count'] = count5;
@@ -292,10 +293,12 @@ export class TimelineChartComponent implements OnInit, OnDestroy {
   private getDates(data: Report[]): string[] {
     const dates: string[] = [];
     for (const e of data) {
-      if (e.diagnose_datum) {
-        dates.push(e.diagnose_datum['value']); // TODO: Change interface
+      if (e['diagnosis_date']) {
+        //dates.push(e.diagnose_datum['value']); // TODO: Change interface
+        dates.push(e['diagnosis_date']);
       }
     }
+    console.log(dates)
     return dates;
   }
 

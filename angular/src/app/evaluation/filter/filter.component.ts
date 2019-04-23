@@ -19,7 +19,7 @@ declare let $: any;
 })
 
 export class FilterComponent implements OnInit, AfterViewInit, OnDestroy {
-  
+
   @ViewChild('d') datepicker;
   @ViewChild('c') datepicker2;
 
@@ -45,22 +45,22 @@ export class FilterComponent implements OnInit, AfterViewInit, OnDestroy {
   epidemics_group: String[];
   communities: String[];
   animal_species: String[];
-  animal_groups: String[];
+  animal_group: String[];
 
-  element_data: any[] = [];
-  displayedColumns: string[] = ['diagnose_datum', 'kanton', 'gemeinde', 'seuche', 'seuchen_gruppe', 'tierart'];
+  displayedColumns: string[] = ['diagnosis_date', 'canton', 'community', 'epidemic', 'epidemic_group', 'animal_species'];
   dataSource: any;
-  currentFilter: String[] = [];
+  beautifiedData: any[] = [];
+  filteredData: any[] = []
   filterConfig = {
     canton: [],
-    community:[],
+    community: [],
     epidemic_group: [],
     epidemic: [],
-    animal_groups: [],
+    animal_group: [],
     animal_species: []
   }
 
-  
+
   constructor(
     private _sparqlDataService: SparqlDataService,
     private _langauageService: LanguageService,
@@ -97,9 +97,9 @@ export class FilterComponent implements OnInit, AfterViewInit, OnDestroy {
           }
         }
       }
-      );
+    );
 
-      // If the languare changes through click, update param
+    // If the languare changes through click, update param
     this._langSub = this._langauageService.currentLang.subscribe(
       lang => {
         if (this._filter.lang !== lang) {
@@ -124,62 +124,56 @@ export class FilterComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
 
- toggleCheckbox($event, filterType) {
-    let idSelector = function() {  return this.id; };
-    if(!$event) {
-      switch(filterType) {
-        case 'canton': 
-          let selectedCantons = $("input:checkbox[name=canton]").attr('checked', true).map(idSelector).get(); 
-          console.log(selectedCantons); break;
-        case 'epidemics': 
-          let selectedEpidemics = $("input:checkbox[name=epidemic]").attr('checked', true).map(idSelector).get(); 
-          console.log(selectedEpidemics); break;
-        case 'animals': 
-          let selectedAnimals= $(":checkbox:checked").map(idSelector).get(); console.log(selectedAnimals); break;
+  toggleCheckbox($event: boolean, filterType: string) {
+    let idSelector = function () { return this.id; };
+    if (!$event) {
+      switch (filterType) {
+        case 'canton':
+          let selectedCantons = $(":checkbox:checked[name=canton]").attr('checked', true).map(idSelector).get();
+          this.createFilterConfigDropdown(filterType, selectedCantons);
+          break;
+        case 'epidemic_group':
+          let selectedEpidemics = $(":checkbox:checked[name=epidemic]").attr('checked', true).map(idSelector).get();
+          this.createFilterConfigDropdown(filterType, selectedEpidemics);
+          break;
+        case 'animal_group':
+          let selectedAnimals = $(":checkbox:checked[name=animal]").attr('checked', true).map(idSelector).get();
+          this.createFilterConfigDropdown(filterType, selectedAnimals);
+          break;
       }
     }
+    this.getList(this._filter.lang, this._filter.from, this._filter.to);
+    console.log(this.filterConfig)
   }
 
+  createFilterConfigDropdown(filterType: string, arrSelected: []) {
+    if (this.filterConfig.hasOwnProperty(`${filterType}`)) {
+      this.filterConfig[`${filterType}`] = [];
+      arrSelected.forEach(entry => {
+        this.filterConfig[`${filterType}`].push(entry);
+      });
+    }
+  }
 
   // updates every time when the user adds an entry in the filter
   onAdd($event, filterType: string) {
     let selectedItem = [];
     selectedItem = $event.split();
-    console.log('selectedItem: ');
-    console.log(selectedItem);
-
-    // TODO: decide if we use filterConfig Object or currentFilter Array
-    // to store the selected filters from the user
     if (this.filterConfig.hasOwnProperty(`${filterType}`)) {
       this.filterConfig[`${filterType}`].push(selectedItem.toString());
-      console.log(this.filterConfig)
     }
-    // tmpArr.forEach(el => {
-      if (_.indexOf(this.currentFilter, selectedItem[0]) === -1) {
-        this.currentFilter.push(selectedItem[0]);
-      }
-    // });
-
-    console.log('Current Filter: ');
-    console.log(this.currentFilter);
+    console.log(this.filterConfig);
     this.getList(this._filter.lang, this._filter.from, this._filter.to);
   }
 
   // updates every time when the user removes an entry in the filter
   onRemove($event, filterType: string) {
-    const index = this.currentFilter.indexOf($event.value);
-    if (index > -1) {
-      this.currentFilter.splice(index, 1);
-    }
-
     if (this.filterConfig.hasOwnProperty(`${filterType}`)) {
-      this.filterConfig[`${filterType}`]  = _.remove(this.filterConfig[`${filterType}`], (item: string) => {
+      this.filterConfig[`${filterType}`] = _.remove(this.filterConfig[`${filterType}`], (item: string) => {
         return item !== $event.value;
       });
     }
-
-    console.log('Current filter after removing selected item:');
-    console.log(this.currentFilter);
+    console.log(this.filterConfig);
     this.getList(this._filter.lang, this._filter.from, this._filter.to);
   }
 
@@ -210,21 +204,16 @@ export class FilterComponent implements OnInit, AfterViewInit, OnDestroy {
   private getList(lang: string, from: string | Date, to: string | Date): void {
     this._dataSub = this._sparqlDataService.getReports(lang, from, to).subscribe(
       data => {
-        this.data = data;
-        console.log(this.data)
-        // filter the data if event was fired
-        if (this.currentFilter.length !== 0) {
-          this.data = this.filterDataObjectBasedOnEventData(data, this.currentFilter);
-        }
-        this._distributeDataService.updateData(this.data);
-        this.extractFilterParts(this.data);
-
-        this.getFrequencyTable(data); // TODO: Temp
-        // Prepare data for table
-        // remove all elements from element_data due to language change
-        this.element_data = [];
-        this.transformDataToMaterializeTable(this.data, false);
-        this.dataSource = new MatTableDataSource<any>(this.element_data);
+        this.beautifiedData = [];
+        this.transformData(data, false);
+        console.log(this.beautifiedData)
+        
+        this.filteredData = this.filterDataObjectBasedOnEventData(this.beautifiedData, this.filterConfig);
+        this._distributeDataService.updateData(this.filteredData);
+        
+        this.extractFilterParts(data, this.filteredData);
+        
+        this.dataSource = new MatTableDataSource<any>(this.filteredData);
         this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;
       }, err => {
@@ -233,17 +222,19 @@ export class FilterComponent implements OnInit, AfterViewInit, OnDestroy {
       });
   }
 
-  // transforms the data object properly to use it for the table
-  private transformDataToMaterializeTable(data: Object, originalData = false) {
+  // transforms the data object properly to use it for the table,
+  // and beatifies the data that we will filter 
+  private transformData(data: Object, originalData = false) {
     for (let element in data) {
-      this.element_data.push({
-        diagnose_datum: data[element].diagnose_datum.value,
-        kanton: data[element].kanton.value,
-        gemeinde: data[element].gemeinde.value,
-        seuche: data[element].seuche.value,
-        seuchen_gruppe: data[element].seuchen_gruppe.value,
-        tierart: data[element].tierart.value
-      });
+      this.beautifiedData.push({
+        diagnosis_date: data[element].diagnose_datum.value,
+        canton: data[element].kanton.value,
+        community: data[element].gemeinde.value,
+        epidemic_group: data[element].seuchen_gruppe.value,
+        epidemic: data[element].seuche.value,
+        animal_group: data[element].tier_gruppe.value,
+        animal_species: data[element].tierart.value
+      })
     }
   }
 
@@ -265,67 +256,70 @@ export class FilterComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   // extracts all the unique strings for every filter
-  private extractFilterParts(data: Report[]) {
+  private extractFilterParts(data: Report[], filteredData) {
     this.cantons = _.uniq(_.map(data, 'kanton.value')).sort();
-    this.communities = _.uniq(_.map(data, 'gemeinde.value')).sort();
-    this.epidemics = _.uniq(_.map(data, 'seuche.value')).sort();
+    this.communities = _.uniq(_.map(filteredData, 'community')).sort();
     this.epidemics_group = _.uniq(_.map(data, 'seuchen_gruppe.value')).sort();
-    this.animal_species = _.uniq(_.map(data, 'tierart.value')).sort();
-    this.animal_groups = _.uniq(_.map(data, 'tier_gruppe.value')).sort();
+    this.epidemics = _.uniq(_.map(filteredData, 'epidemic')).sort();
+    this.animal_group = _.uniq(_.map(data, 'tier_gruppe.value')).sort();
+    this.animal_species = _.uniq(_.map(filteredData, 'animal_species')).sort();
   }
 
   // filters the data object based on the selected entries from
   // the user in the currentFilter array
   // TODO: check function when multiple filters selected, at the moment
   // every entry of the currentFilter is filtered separately
-  private filterDataObjectBasedOnEventData(data: Report[], filterArray: String[]) {
+  private filterDataObjectBasedOnEventData(data: Report[], filterObject) {
     const filteredData = [];
-    for (let i = 0; i < filterArray.length; i++) {
-      for (const entry of data) {
-        for (const value of Object.values(entry)) {
-          if (value['value'] === filterArray[i]) {
-            filteredData.push(entry);
+    for (let i=0; i<data.length; i++) {
+      let insideFilter: boolean = false;
+      if( this.checkFilter('canton', data[i]['canton'], filterObject) ) {
+        if( this.checkFilter('community', data[i]['community'], filterObject)) {
+          if( this.checkFilter('epidemic_group', data[i]['epidemic_group'], filterObject)) {
+            if( this.checkFilter('epidemic', data[i]['epidemic'], filterObject)) {
+              if( this.checkFilter('animal_group', data[i]['animal_group'], filterObject) ) {
+                if( this.checkFilter('animal_species', data[i]['animal_species'], filterObject)) {
+                  insideFilter = true;
+                }
+              }
+            }
           }
         }
+      } else {
+        insideFilter = false
+      }
+      
+      if(insideFilter) {
+        filteredData.push({
+          diagnosis_date: data[i]['diagnosis_date'],
+          canton: data[i]['canton'],
+          community: data[i]['community'],
+          epidemic_group: data[i]['epidemic_group'],
+          epidemic: data[i]['epidemic'],
+          animal_group: data[i]['animal_group'],
+          animal_species: data[i]['animal_species'],
+        })
       }
     }
+    console.log(filteredData)
     return filteredData;
   }
 
-  private getFrequencyTable(reports): void {
-    const animals = reports.map(r => {
-      return {
-        tierart: r.tierart.value,
-        seuche: r.seuche.value,
-      };
-    });
-    const animalTypes = _.uniqBy(animals.map(a => a.tierart));
-    const result = [];
-    animalTypes.forEach((at: string) => {
-      const seuchen = [];
-      animals.forEach(a => {
-        if (at === a.tierart) {
-          seuchen.push(a.seuche);
-        }
-      });
-      const tmp = _.countBy(seuchen);
-      tmp.tierart = at;
-      result.push(tmp);
-    });
-    // console.table(result);
+  private checkFilter(type: string, compare: string, filterObject) {
+    return (filterObject[type].length !== 0 && filterObject[type].includes(compare)) || filterObject[type].length == 0;
   }
 
   getFromToDates() {
     let fromdate = this.datepicker._inputValue
     let todate = this.datepicker2._inputValue;
     this.removeErrors();
-    if (moment(fromdate).isValid() && moment(todate).isValid() && fromdate.length === 10 && todate.length === 10 ) {
-      if(fromdate > todate) {
-        $('button.notValid').after("<p style='color:red' id='datecompareerror'>*** error: date from > date to ***</p>"); 
+    if (moment(fromdate).isValid() && moment(todate).isValid() && fromdate.length === 10 && todate.length === 10) {
+      if (fromdate > todate) {
+        $('button.notValid').after("<p style='color:red' id='datecompareerror'>*** error: date from > date to ***</p>");
         return;
       }
-      if((moment(todate).diff(fromdate, 'days')) < 7) {
-        $('button.notValid').after("<p style='color:red' id='dateuniterror'>*** error: the smallest time unit to search for is one week ***</p>"); 
+      if ((moment(todate).diff(fromdate, 'days')) < 7) {
+        $('button.notValid').after("<p style='color:red' id='dateuniterror'>*** error: the smallest time unit to search for is one week ***</p>");
         return;
       }
       this._filter.from = fromdate;
@@ -337,8 +331,8 @@ export class FilterComponent implements OnInit, AfterViewInit, OnDestroy {
       // uncheck all radio buttons since either you search for period of for specific dates
       $('.radio').prop('checked', false);
       $('#dateformaterror').remove();
-     } else {
-      if( !($('#notValid').length) ) {
+    } else {
+      if (!($('#notValid').length)) {
         $('button.notValid').after("<p style='color:red' id='dateformaterror'>*** not a valid date! right format: YYYY-MM-DD ***</p>");
       }
     }
