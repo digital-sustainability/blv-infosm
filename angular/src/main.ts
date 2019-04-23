@@ -16,9 +16,6 @@ if (environment.production) {
   enableProdMode();
 }
 
-platformBrowserDynamic().bootstrapModule(AppModule)
-  .catch(err => console.error(err));
-
 function bootstrapModule() {
   platformBrowserDynamic().bootstrapModule(AppModule)
     .catch(err => console.log(err));
