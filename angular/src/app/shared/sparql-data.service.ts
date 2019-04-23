@@ -9,12 +9,23 @@ import * as moment from 'moment';
 export class SparqlDataService {
 
   private _api = environment.api;
-  private _prefix = `BASE <https://blv.ld.admin.ch/animalpest/>
+//   private _prefix = `BASE <https://blv.ld.admin.ch/animalpest/>
+// PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+// PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+// PREFIX qb: <http://purl.org/linked-data/cube#>
+// PREFIX gont: <https://gont.ch/>
+// PREFIX skos: <http://www.w3.org/2004/02/skos/core#>`;
+
+private _prefix = `
+BASE <https://blv.ld.admin.ch/animalpest/>
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX qb: <http://purl.org/linked-data/cube#>
 PREFIX gont: <https://gont.ch/>
-PREFIX skos: <http://www.w3.org/2004/02/skos/core#>`;
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+PREFIX blv-attribute: <http://ld.zazuko.com/animalpest/attribute/>
+PREFIX blv-dimension: <http://ld.zazuko.com/animalpest/dimension/>
+`
 
   constructor(
     private http: HttpClient,
@@ -22,22 +33,47 @@ PREFIX skos: <http://www.w3.org/2004/02/skos/core#>`;
 
   getReports(lang: string, from: string | Date, to: string | Date): Observable<Report[]> {
     const url = 'http://ld.zazuko.com/query';
+//     const query = `${this._prefix}
+//   SELECT *
+//   FROM <https://linked.opendata.swiss/graph/blv/animalpest> WHERE {
+//   ?sub a qb:Observation ;
+//     <http://ld.zazuko.com/animalpest/attribute/diagnose_datum> ?diagnose_datum;
+//     <http://ld.zazuko.com/animalpest/attribute/kanton_id>/rdfs:label ?kanton;
+//     <http://ld.zazuko.com/animalpest/attribute/gemeinde_id>/rdfs:label ?gemeinde;
+// 		<http://ld.zazuko.com/animalpest/dimension/tier-art>/rdfs:label ?tierart;
+//     <http://ld.zazuko.com/animalpest/dimension/tier-seuche> ?seuchen_uri.
+//       ?seuchen_uri rdfs:label ?seuche;
+//       skos:broader/rdfs:label ?seuchen_gruppe.
+//   FILTER(langMatches(lang(?tierart), "${lang}"))
+//   FILTER(langMatches(lang(?seuche), "${lang}"))
+//   FILTER(langMatches(lang(?seuchen_gruppe), "${lang}"))
+//   FILTER (?diagnose_datum >= "${this.checkDate(from)}"^^xsd:date && ?diagnose_datum <="${this.checkDate(to)}"^^xsd:date)
+// }`;
+
     const query = `${this._prefix}
-  SELECT *
-  FROM <https://linked.opendata.swiss/graph/blv/animalpest> WHERE {
-  ?sub a qb:Observation ;
-    <http://ld.zazuko.com/animalpest/attribute/diagnose_datum> ?diagnose_datum;
-    <http://ld.zazuko.com/animalpest/attribute/kanton_id>/rdfs:label ?kanton;
-    <http://ld.zazuko.com/animalpest/attribute/gemeinde_id>/rdfs:label ?gemeinde;
-		<http://ld.zazuko.com/animalpest/dimension/tier-art>/rdfs:label ?tierart;
-    <http://ld.zazuko.com/animalpest/dimension/tier-seuche> ?seuchen_uri.
-      ?seuchen_uri rdfs:label ?seuche;
-      skos:broader/rdfs:label ?seuchen_gruppe.
-  FILTER(langMatches(lang(?tierart), "${lang}"))
-  FILTER(langMatches(lang(?seuche), "${lang}"))
-  FILTER(langMatches(lang(?seuchen_gruppe), "${lang}"))
-  FILTER (?diagnose_datum >= "${this.checkDate(from)}"^^xsd:date && ?diagnose_datum <="${this.checkDate(to)}"^^xsd:date)
-}`;
+    SELECT *
+    FROM <https://linked.opendata.swiss/graph/blv/animalpest> WHERE {
+    ?sub a qb:Observation ;
+        blv-attribute:diagnose_datum ?diagnose_datum ;
+        blv-attribute:kanton_id/rdfs:label ?kanton ;
+        blv-attribute:gemeinde_id/rdfs:label ?gemeinde ;
+        blv-dimension:tier-art ?tierartUri ;
+
+        blv-dimension:tier-seuche ?seuchen_uri .
+
+    ?tierartUri rdfs:label ?tierart ;
+        skos:broader/rdfs:label ?tier_gruppe .
+
+    ?seuchen_uri rdfs:label ?seuche ;
+        skos:broader/rdfs:label ?seuchen_gruppe .
+
+    FILTER(langMatches(lang(?tierart), "${lang}"))
+    FILTER(langMatches(lang(?seuche), "${lang}"))
+    FILTER(langMatches(lang(?seuchen_gruppe), "${lang}"))
+    FILTER(langMatches(lang(?tier_gruppe), "${lang}"))
+    FILTER (?diagnose_datum >= "${this.checkDate(from)}"^^xsd:date && ?diagnose_datum <="${this.checkDate(to)}"^^xsd:date)
+    }`
+    
     const params = new HttpParams()
       .set('url', url)
       .set('query', query);

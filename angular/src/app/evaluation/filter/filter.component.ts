@@ -45,6 +45,7 @@ export class FilterComponent implements OnInit, AfterViewInit, OnDestroy {
   epidemics_group: String[];
   communities: String[];
   animal_species: String[];
+  animal_groups: String[];
 
   element_data: any[] = [];
   displayedColumns: string[] = ['diagnose_datum', 'kanton', 'gemeinde', 'seuche', 'seuchen_gruppe', 'tierart'];
@@ -53,8 +54,9 @@ export class FilterComponent implements OnInit, AfterViewInit, OnDestroy {
   filterConfig = {
     canton: [],
     community:[],
-    epidemic: [],
     epidemic_group: [],
+    epidemic: [],
+    animal_groups: [],
     animal_species: []
   }
 
@@ -120,6 +122,24 @@ export class FilterComponent implements OnInit, AfterViewInit, OnDestroy {
     this._dataSub.unsubscribe();
     this._paramSub.unsubscribe();
   }
+
+
+ toggleCheckbox($event, filterType) {
+    let idSelector = function() {  return this.id; };
+    if(!$event) {
+      switch(filterType) {
+        case 'canton': 
+          let selectedCantons = $("input:checkbox[name=canton]").attr('checked', true).map(idSelector).get(); 
+          console.log(selectedCantons); break;
+        case 'epidemics': 
+          let selectedEpidemics = $("input:checkbox[name=epidemic]").attr('checked', true).map(idSelector).get(); 
+          console.log(selectedEpidemics); break;
+        case 'animals': 
+          let selectedAnimals= $(":checkbox:checked").map(idSelector).get(); console.log(selectedAnimals); break;
+      }
+    }
+  }
+
 
   // updates every time when the user adds an entry in the filter
   onAdd($event, filterType: string) {
@@ -251,6 +271,7 @@ export class FilterComponent implements OnInit, AfterViewInit, OnDestroy {
     this.epidemics = _.uniq(_.map(data, 'seuche.value')).sort();
     this.epidemics_group = _.uniq(_.map(data, 'seuchen_gruppe.value')).sort();
     this.animal_species = _.uniq(_.map(data, 'tierart.value')).sort();
+    this.animal_groups = _.uniq(_.map(data, 'tier_gruppe.value')).sort();
   }
 
   // filters the data object based on the selected entries from
