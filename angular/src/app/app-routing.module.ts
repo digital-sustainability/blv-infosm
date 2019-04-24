@@ -37,8 +37,7 @@ const routes: Routes = [
   },
   {
     path: '',
-    // redirectTo: '/home',
-    component: EvaluationComponent,
+    redirectTo: 'evaluation',
     pathMatch: 'full'
   },
   {
