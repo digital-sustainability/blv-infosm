@@ -47,6 +47,7 @@ export class BulletinComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+    console.log(this._langauageService.currentLang)
     this.getList('de', this.startOfBulletin, this.today);
   }
 
@@ -115,17 +116,6 @@ export class BulletinComponent implements OnInit {
       })
     }
     return reducedDataObject.sort((a, b) => {
-      // chain the dates togehter to compare digits for sorting the object
-      // let dA = parseInt(a['diagnose_datum'].replace(/\-/gi, ""));
-      // let dB = parseInt(b['diagnose_datum'].replace(/\-/gi, ""));
-      // if( typeof dA == undefined) {
-      //   console.log(parseInt(a['diagnose_datum']))
-      //   console.log( typeof parseInt(a['diagnose_datum']))
-      // }
-      // if (dA > dB){
-      //   return 1;
-      // }
-      // return -1;
       let adate = new Date(a['diagnose_datum']);
       let bdate= new Date(b['diagnose_datum']);
       return (adate<bdate) ? -1 : (adate>bdate) ? 1 : 0;
