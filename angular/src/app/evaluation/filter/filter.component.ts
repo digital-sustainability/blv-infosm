@@ -268,15 +268,21 @@ export class FilterComponent implements OnInit, AfterViewInit, OnDestroy {
     this.animal_group = _.uniq(_.map(data, 'tier_gruppe.value')).sort();
     //this.animal_species = _.uniq(_.map(filteredData, 'animal_species')).sort();
     this.animal_species = [];
-    this.animal_species = _.uniq(this.extractSecondHierarchy(this.filterConfig.animal_group, 'animal_group', 'animal')).sort();
+    this.animal_species = _.uniq(this.extractSecondHierarchy(this.filterConfig.animal_group, 'animal_group', 'animal_species')).sort();
   }
 
   private extractSecondHierarchy(keys: string[], firstOrder: string, secondOrder: string) {
     if(keys.length !== 0) {
-      let items = []
-      items = this.beautifiedData.filter((el) => {
-        return keys.includes(el[firstOrder]);
-      }).map(obj => obj[`${secondOrder}`])
+      let items = [];
+      items = this.beautifiedData
+      .filter((el) => keys.includes(el[firstOrder]))
+      .map(obj => obj[secondOrder])
+      return(items)
+    } else {
+      let items = [];
+      items = this.beautifiedData.map(el => {
+        return el[secondOrder]
+      })
       return(items)
     }
   }
