@@ -27,7 +27,7 @@ export class FrequencyChartComponent implements OnInit {
       data => {
         this.ready = true;
         this.reports = data;
-        this.drawChart(data, 'seuche', this.extractPestFrequencies);
+        this.drawChart(data, 'epidemic', this.extractPestFrequencies);
       },
       err => console.log(err)
     );
@@ -92,7 +92,7 @@ export class FrequencyChartComponent implements OnInit {
     const result = [];
     // countBy: count orrurence in array
     // get(obj, pathToValue, defaultValue): check if property exists
-    const count = countBy(reports.map(pest => get(pest, `${target}.value`, 'undefined')));
+    const count = countBy(reports.map(pest => get(pest, `${target}`, 'undefined')));
     mapKeys(count, (value: string, key: number): void => {
       result.push({
         name: key,
@@ -105,29 +105,29 @@ export class FrequencyChartComponent implements OnInit {
   // TODO: Merge with method below
   private extractPestFrequencies = (reports: any): { name: string, y: number }[] => {
     const animals = reports.map(r => {
-      if (this.limitCollection('seuche', reports).includes(r.seuche.value)) {
+      if (this.limitCollection('epidemic', reports).includes(r.epidemic)) {
         return {
-          tierart: r.tierart.value,
-          seuche: r.seuche.value,
+          animal_species: r.animal_species,
+          epidemic: r.epidemic,
         };
       } else {
         return {
-          tierart: r.tierart.value,
-          seuche: 'Other',
+          animal_species: r.animal_species,
+          epidemic: 'Other',
         };
       }
     });
-    const animalTypes = uniqBy(animals.map(a => a.tierart)).sort();
+    const animalTypes = uniqBy(animals.map(a => a.animal_species)).sort();
     // this.animalTypes = animalTypes;
-    const pestTypes = this.limitCollection('seuche', reports);
+    const pestTypes = this.limitCollection('epidemic', reports);
     pestTypes.push('Other');
     // const pestTypes = _.uniqBy(animals.map(p => p.seuche)).sort();
     const pestPerAnimal = [];
     animalTypes.forEach((at: string) => {
       const seuchen = [];
       animals.forEach(a => {
-        if (at === a.tierart) {
-          seuchen.push(a.seuche);
+        if (at === a.animal_species) {
+          seuchen.push(a.epidemic);
         }
       });
       const tmp = countBy(seuchen);
@@ -156,31 +156,31 @@ export class FrequencyChartComponent implements OnInit {
 
   private extractAnimalFrequencies = (reports: any): { name: string, y: number }[] => {
     const animals = reports.map(r => {
-      if (this.limitCollection('tierart', reports).includes(r.tierart.value)) {
+      if (this.limitCollection('animal_species', reports).includes(r.animal_species)) {
         return {
-          tierart: r.tierart.value,
-          seuche: r.seuche.value,
+          animal_species: r.animal_species,
+          epidemic: r.epidemic,
         };
       } else {
         return {
-          tierart: 'Other',
-          seuche: r.seuche.value,
+          animal_species: 'Other',
+          epidemic: r.epidemic,
         };
       }
 
     });
     // const animalTypes = _.uniqBy(animals.map(a => a.tierart)).sort();
     // this.animalTypes = animalTypes;
-    const animalTypes = this.limitCollection('tierart', reports).concat(['Other']);
+    const animalTypes = this.limitCollection('animal_species', reports).concat(['Other']);
     // animalTypes.push('Other');
 
-    const pestTypes = uniqBy(animals.map(p => p.seuche)).sort();
+    const pestTypes = uniqBy(animals.map(p => p.epidemic)).sort();
     const pestPerAnimal = [];
     animalTypes.forEach((at: string) => {
       const seuchen = [];
       animals.forEach(a => {
-        if (at === a.tierart) {
-          seuchen.push(a.seuche);
+        if (at === a.animal_species) {
+          seuchen.push(a.epidemic);
         }
       });
       const tmp = countBy(seuchen);
@@ -217,13 +217,13 @@ export class FrequencyChartComponent implements OnInit {
 
   onShowEpidemics(): void {
     if (this.reports) {
-      this.drawChart(this.reports, 'seuche', this.extractPestFrequencies);
+      this.drawChart(this.reports, 'epidemic', this.extractPestFrequencies);
     }
   }
 
   onShowAnimals(): void {
     if (this.reports) {
-      this.drawChart(this.reports, 'tierart', this.extractAnimalFrequencies);
+      this.drawChart(this.reports, 'animal_species', this.extractAnimalFrequencies);
     }
   }
 
