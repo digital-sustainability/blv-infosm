@@ -141,8 +141,8 @@ export class FilterComponent implements OnInit, AfterViewInit, OnDestroy {
           this.createFilterConfigDropdown(filterType, selectedAnimals);
           break;
       }
+      this.getList(this._filter.lang, this._filter.from, this._filter.to);
     }
-    this.getList(this._filter.lang, this._filter.from, this._filter.to);
     console.log(this.filterConfig)
   }
 
@@ -258,11 +258,27 @@ export class FilterComponent implements OnInit, AfterViewInit, OnDestroy {
   // extracts all the unique strings for every filter
   private extractFilterParts(data: Report[], filteredData) {
     this.cantons = _.uniq(_.map(data, 'kanton.value')).sort();
-    this.communities = _.uniq(_.map(filteredData, 'community')).sort();
+    //this.communities = _.uniq(_.map(filteredData, 'community')).sort();
+    this.communities = [];
+    this.communities = _.uniq(this.extractSecondHierarchy(this.filterConfig.canton, 'canton', 'community')).sort();
     this.epidemics_group = _.uniq(_.map(data, 'seuchen_gruppe.value')).sort();
-    this.epidemics = _.uniq(_.map(filteredData, 'epidemic')).sort();
+    //this.epidemics = _.uniq(_.map(filteredData, 'epidemic')).sort();
+    this.epidemics = [];
+    this.epidemics = _.uniq(this.extractSecondHierarchy(this.filterConfig.epidemic_group, 'epidemic_group', 'epidemic')).sort();
     this.animal_group = _.uniq(_.map(data, 'tier_gruppe.value')).sort();
-    this.animal_species = _.uniq(_.map(filteredData, 'animal_species')).sort();
+    //this.animal_species = _.uniq(_.map(filteredData, 'animal_species')).sort();
+    this.animal_species = [];
+    this.animal_species = _.uniq(this.extractSecondHierarchy(this.filterConfig.animal_group, 'animal_group', 'animal')).sort();
+  }
+
+  private extractSecondHierarchy(keys: string[], firstOrder: string, secondOrder: string) {
+    if(keys.length !== 0) {
+      let items = []
+      items = this.beautifiedData.filter((el) => {
+        return keys.includes(el[firstOrder]);
+      }).map(obj => obj[`${secondOrder}`])
+      return(items)
+    }
   }
 
   // filters the data object based on the selected entries from
@@ -274,11 +290,11 @@ export class FilterComponent implements OnInit, AfterViewInit, OnDestroy {
     for (let i=0; i<data.length; i++) {
       let insideFilter: boolean = false;
       if( this.checkFilter('canton', data[i]['canton'], filterObject) ) {
-        if( this.checkFilter('community', data[i]['community'], filterObject)) {
-          if( this.checkFilter('epidemic_group', data[i]['epidemic_group'], filterObject)) {
-            if( this.checkFilter('epidemic', data[i]['epidemic'], filterObject)) {
+        if( this.checkFilter('community', data[i]['community'], filterObject) ) {
+          if( this.checkFilter('epidemic_group', data[i]['epidemic_group'], filterObject) ) {
+            if( this.checkFilter('epidemic', data[i]['epidemic'], filterObject) ) {
               if( this.checkFilter('animal_group', data[i]['animal_group'], filterObject) ) {
-                if( this.checkFilter('animal_species', data[i]['animal_species'], filterObject)) {
+                if( this.checkFilter('animal_species', data[i]['animal_species'], filterObject) ) {
                   insideFilter = true;
                 }
               }
@@ -288,7 +304,7 @@ export class FilterComponent implements OnInit, AfterViewInit, OnDestroy {
       } else {
         insideFilter = false
       }
-      
+
       if(insideFilter) {
         filteredData.push({
           diagnosis_date: data[i]['diagnosis_date'],
