@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { SparqlDataService } from '../../../shared/sparql-data.service';
+import { Fill, Stroke, Style } from 'ol/style';
 
 @Component({
   selector: 'app-map-chart',
@@ -30,10 +31,24 @@ export class MapChartComponent implements OnInit {
           );
         });
         this.featureData = features;
-        console.log(this.featureData);
+        // console.log(this.featureData);
       },
       err => console.log(err)
     );
+  }
+
+  getStackedStyle(feature) {
+    const fill = new Fill();
+    const style = new Style({
+      fill: fill,
+      stroke: new Stroke({
+        color: '#333',
+        width: 1,
+      }),
+    });
+    const id = feature.getId();
+    fill.setColor(`hsl(0, 59%, ${((id / 800000) * 100).toFixed()}%)`);
+    return style;
   }
 
 }

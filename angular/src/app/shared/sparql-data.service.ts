@@ -84,7 +84,7 @@ PREFIX blv-dimension: <http://ld.zazuko.com/animalpest/dimension/>
   getCantonsWkt(): any {
     const calls = [];
     const url = 'https://ld.geo.admin.ch/query';
-    Array(26).fill(1).map((x, y) => x + y).forEach(canton => {
+    Array(26).fill(1).map((x, i) => x + i).forEach(canton => {
     const query = `${this._prefix}
   SELECT * WHERE { <https://ld.geo.admin.ch/boundaries/canton/${canton}> <http://purl.org/dc/terms/hasVersion> ?geomuniVersion .
     ?geomuniVersion <http://purl.org/dc/terms/issued> ?issued.
