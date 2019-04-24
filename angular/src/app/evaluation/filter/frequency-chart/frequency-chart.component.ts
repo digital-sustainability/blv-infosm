@@ -22,6 +22,7 @@ export class FrequencyChartComponent implements OnInit {
 
   // TODO: Enforce typing
   ngOnInit() {
+    console.log(this.range(5, 19));
     this._distributeDataServie.currentData.subscribe(
       data => {
         this.ready = true;
@@ -72,6 +73,9 @@ export class FrequencyChartComponent implements OnInit {
       //       'Total: ' + this.point.stackTotal;
       //   }
       // },
+      colors: [95, 85, 70, 60, 45, 35, 25].map(x => `hsl(30, 100%, ${x}%)`)
+        .concat([95, 85, 70, 60, 45, 35, 25].map(x => `hsl(0, 100%, ${x}%)`))
+        .concat([95, 85, 70, 60, 45, 35, 25].map(x => `hsl(300, 100%, ${x}%)`)),
       plotOptions: {
         column: {
           stacking: 'normal',
@@ -82,15 +86,6 @@ export class FrequencyChartComponent implements OnInit {
       },
       series: filterFn(data)
     });
-  }
-
-  private setColors() {
-    const piecols = [];
-    for (let i = 20; i < 160; i += 10) {
-      // http://www-db.deis.unibo.it/courses/TW/DOCS/w3schools/colors/colors_picker.asp-colorhex=A52A2A.html
-      piecols.push(`hsl(0,59%, ${i}%)`);
-    }
-    return piecols;
   }
 
   private countOccurance(target: string, reports: Report[]): { name: string, y: number }[] {
@@ -214,6 +209,10 @@ export class FrequencyChartComponent implements OnInit {
   private limitCollection(target: string, data: Report[]) {
     const count = this.countOccurance(target, data);
     return orderBy(count, ['y'], 'desc').slice(0, 6).map(e => e.name);
+  }
+
+  private range(count: number, step: number): number[] {
+    return Array(count).fill(step).map((x, i) => x + i * step);
   }
 
   onShowEpidemics(): void {

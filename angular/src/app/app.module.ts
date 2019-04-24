@@ -36,7 +36,7 @@ import { MatPaginatorI18nService} from './shared/mat-paginator-i18n.service'
 import { DistributeDataService } from './shared/distribute-data.service';
 import { DatePickerI18nService } from './shared/date-picker-i18n.service';
 
-import '@openlayers-elements/maps/ol-map';
+import '@openlayers-elements/core/ol-map';
 import '@openlayers-elements/maps/ol-layer-wkt';
 import '@openlayers-elements/maps/ol-layer-openstreetmap';
 
