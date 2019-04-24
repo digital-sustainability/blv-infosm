@@ -29,6 +29,7 @@
     "@openlayers-elements/maps": "^0.2.0-beta.0",
     "@types/d3": "^5.7.1",
     "@types/jquery": "^3.3.29",
+    "@webcomponents/webcomponentsjs": "^2.2.10",
     "angular-font-awesome": "^3.1.2",
     "angular-highcharts": "^7.0.2",
     "angular-popper": "^2.0.0",

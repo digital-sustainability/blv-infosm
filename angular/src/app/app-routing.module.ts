@@ -31,9 +31,14 @@ const routes: Routes = [
     pathMatch: 'full'
   },
   {
+    path: 'info',
+    component: HomeComponent,
+    pathMatch: 'full'
+  },
+  {
     path: '',
     // redirectTo: '/home',
-    component: HomeComponent,
+    component: EvaluationComponent,
     pathMatch: 'full'
   },
   {

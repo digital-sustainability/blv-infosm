@@ -21,3 +21,9 @@ input[type=radio]:focus,
   outline: 0;
   outline: none;
 }
+
+.loadingSign {
+  margin: 50px 0 50px 0;
+  display: flex;
+  justify-content: center;
+}
