@@ -24,7 +24,8 @@
         "PEST": "Epizoozia",
         "PEST_GROUP": "Gruppo epizoozia",
         "ANIMAL_SPECIES": "Specie aimale",
-        "QUARTER": "Quartiere"
+        "QUARTER": "Quartiere",
+        "ALL_LINES": "Visualizza tutte le linee"
     },
     "ERROR": {
         "OCCURED": "Error Page (404)",

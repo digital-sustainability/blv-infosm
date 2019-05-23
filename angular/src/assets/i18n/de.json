@@ -24,7 +24,8 @@
         "PEST": "Seuche",
         "PEST_GROUP": "Seuchengruppe",
         "ANIMAL_SPECIES": "Tierart",
-        "QUARTER": "Quartal"
+        "QUARTER": "Quartal",
+        "ALL_LINES": "Alle Linien anzeigen"
     },
     "ERROR": {
         "OCCURED": "Ein Fehler ist aufgetreten.",

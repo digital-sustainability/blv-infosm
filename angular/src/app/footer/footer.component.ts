@@ -16,7 +16,7 @@ export class FooterComponent implements OnInit {
   }
 
   onNavigateContact(): string {
-    return `https://www.blv.admin.ch/blv/${this._translateService.currentLang}/home.html/`;
+    return `https://www.blv.admin.ch/blv/${this._translateService.currentLang}/home/das-blv/organisation/kontakt.html`;
   }
 
   onNavigateLegal(): string {

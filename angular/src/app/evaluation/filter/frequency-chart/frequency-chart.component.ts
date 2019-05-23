@@ -59,6 +59,11 @@ export class FrequencyChartComponent implements OnInit {
           }
         }
       },
+      legend: {
+        itemHoverStyle: {
+          color: '#999999',
+        }
+      },
       credits: {
         enabled: false
       },

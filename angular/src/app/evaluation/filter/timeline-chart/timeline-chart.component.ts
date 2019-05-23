@@ -21,6 +21,7 @@ export class TimelineChartComponent implements OnInit, OnDestroy {
   year: string;
   years: string;
   count: string;
+  allLinesLabel: string;
   dataSub: Subscription;
   translationSub: Subscription;
   ready = false;
@@ -28,7 +29,11 @@ export class TimelineChartComponent implements OnInit, OnDestroy {
   isMonth: boolean;
   isWeek: boolean;
   xAxis: string;
-  timeLineChartData;
+  timeLineChartData: {
+    name: string,
+    data: any[]
+    marker?: any,
+  }[];
   intervals = {
     minYear : 0,
     maxYear : 0,
@@ -63,16 +68,18 @@ export class TimelineChartComponent implements OnInit, OnDestroy {
         this.data = data;
         console.log(data);
         this.years = this.extractYears(data);
-        console.log(this.years);
+        // console.log(this.years);
         // Translate if new data is loaded
         this.translationSub = this.translate.get([
           'EVALUATION.YEAR',
           'EVALUATION.COUNT',
-          'EVALUATION.QUARTER'])
+          'EVALUATION.QUARTER',
+          'EVALUATION.ALL_LINES'])
           .subscribe(
             texts => {
               this.year = texts['EVALUATION.YEAR'];
               this.count = texts['EVALUATION.COUNT'];
+              this.allLinesLabel = texts['EVALUATION.ALL_LINES'];
               this.timeLineChartData = this.extract(data, 'epidemics');
               this.ready = true;
               this.drawChart();
@@ -108,6 +115,11 @@ export class TimelineChartComponent implements OnInit, OnDestroy {
           text: this.count
         }
       },
+      legend: {
+        itemHoverStyle: {
+          color: '#999999',
+        }
+      },
       tooltip: {
         crosshairs: true,
         shared: true
@@ -122,10 +134,32 @@ export class TimelineChartComponent implements OnInit, OnDestroy {
               radius: 2,
               lineColor: '#666666',
               lineWidth: 1
+          },
+          events: {
+            legendItemClick: function() {
+              const lines = this.chart.series;
+              // show all lines in case respective legend item (contains no data) is clicked
+              if (this.data.length === 0) {
+                lines.forEach(line => {
+                  line.show();
+                });
+                // Cancle the default action of the legend by returning false
+                return false;
+              }
+            }
           }
-      }
+        },
       },
+      /**
+       * Array holding each line as { name: string, data: number[] }
+       * Concat another empty line to add an additional label
+       */
       series: this.timeLineChartData
+        .concat({
+          name: this.allLinesLabel,
+          data: [],
+          marker: { enabled: false }
+        })
     });
   }
 

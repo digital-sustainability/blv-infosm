@@ -24,7 +24,8 @@
         "PEST": "Group of Disease",
         "PEST_GROUP": "Disease",
         "ANIMAL_SPECIES": "Animal Species",
-        "QUARTER": "Quarter"
+        "QUARTER": "Quarter",
+        "ALL_LINES": "Show all lines"
     },
     "ERROR": {
         "OCCURED": "Error Page (404)",
