@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { DistributeDataService } from 'src/app/shared/distribute-data.service';
 import { Chart } from 'angular-highcharts';
 import { Report } from '../../../models/report.model';
+import { Frequency } from '../../../models/frequency.model';
 import { get, countBy, mapKeys, uniqBy, orderBy } from 'lodash';
 
 @Component({
@@ -33,13 +34,7 @@ export class FrequencyChartComponent implements OnInit {
     );
   }
 
-  drawChart(data: Report[], filterTarget: string, filterFn): void {
-    // console.log('PestCount', this.countOccurance('seuche', data));
-    // console.log('AnimalCount', this.countOccurance(filterTarget, data));
-    // console.log('FirstSix', this.limitCollection('seuche', data));
-
-    // const categories = this.limitCollection(filterTarget, data);
-    // categories.push('Other');
+  drawChart(data: Report[], filterTarget: string, filterFn: (d: Report[]) => Frequency[]): void {
     this.frequencyChart = new Chart({
       chart: {
         type: 'column'
@@ -52,6 +47,7 @@ export class FrequencyChartComponent implements OnInit {
       },
       yAxis: {
         min: 0,
+        allowDecimals: false,
         title: {
           text: 'Seuchen Pro Tierart'
         },
@@ -88,11 +84,11 @@ export class FrequencyChartComponent implements OnInit {
     });
   }
 
-  private countOccurance(target: string, reports: Report[]): { name: string, y: number }[] {
+  private countOccurance(target: string, reports: Report[]): Frequency[] {
     const result = [];
     // countBy: count orrurence in array
     // get(obj, pathToValue, defaultValue): check if property exists
-    const count = countBy(reports.map(pest => get(pest, `${target}`, 'undefined')));
+    const count = countBy(reports.map(pest => get(pest, target, 'not defined')));
     mapKeys(count, (value: string, key: number): void => {
       result.push({
         name: key,
@@ -102,8 +98,7 @@ export class FrequencyChartComponent implements OnInit {
     return result;
   }
 
-  // TODO: Merge with method below
-  private extractPestFrequencies = (reports: any): { name: string, y: number }[] => {
+  private extractPestFrequencies = (reports: any): Frequency[] => {
     const animals = reports.map(r => {
       if (this.limitCollection('epidemic', reports).includes(r.epidemic)) {
         return {
@@ -118,10 +113,8 @@ export class FrequencyChartComponent implements OnInit {
       }
     });
     const animalTypes = uniqBy(animals.map(a => a.animal_species)).sort();
-    // this.animalTypes = animalTypes;
-    const pestTypes = this.limitCollection('epidemic', reports);
-    pestTypes.push('Other');
-    // const pestTypes = _.uniqBy(animals.map(p => p.seuche)).sort();
+    const pestTypes = this.extractUniqueType(reports, 'epidemic');
+    // TODO: From here merge all with method below
     const pestPerAnimal = [];
     animalTypes.forEach((at: string) => {
       const seuchen = [];
@@ -149,12 +142,11 @@ export class FrequencyChartComponent implements OnInit {
         data: data
       });
     });
-    console.log('Here', result);
     return result;
   }
 
 
-  private extractAnimalFrequencies = (reports: any): { name: string, y: number }[] => {
+  private extractAnimalFrequencies = (reports: any): Frequency[] => {
     const animals = reports.map(r => {
       if (this.limitCollection('animal_species', reports).includes(r.animal_species)) {
         return {
@@ -167,13 +159,8 @@ export class FrequencyChartComponent implements OnInit {
           epidemic: r.epidemic,
         };
       }
-
     });
-    // const animalTypes = _.uniqBy(animals.map(a => a.tierart)).sort();
-    // this.animalTypes = animalTypes;
-    const animalTypes = this.limitCollection('animal_species', reports).concat(['Other']);
-    // animalTypes.push('Other');
-
+    const animalTypes = this.extractUniqueType(reports, 'animal_species');
     const pestTypes = uniqBy(animals.map(p => p.epidemic)).sort();
     const pestPerAnimal = [];
     animalTypes.forEach((at: string) => {
@@ -188,7 +175,7 @@ export class FrequencyChartComponent implements OnInit {
       pestPerAnimal.push(tmp);
     });
     const result = [];
-    pestTypes.forEach(pestType => {
+    pestTypes.forEach((pestType: string) => {
       const data = [];
       pestPerAnimal.forEach((pestpA: string) => {
         if (pestpA.hasOwnProperty(pestType)) {
@@ -202,7 +189,7 @@ export class FrequencyChartComponent implements OnInit {
         data: data
       });
     });
-    console.log('Here', result);
+    // console.log('frequency', result)
     return result;
   }
 
@@ -213,6 +200,10 @@ export class FrequencyChartComponent implements OnInit {
 
   private range(count: number, step: number): number[] {
     return Array(count).fill(step).map((x, i) => x + i * step);
+  }
+
+  private extractUniqueType(reports: Report[], uniqueType: string): string[] {
+    return this.limitCollection(uniqueType, reports).concat(['Other']);
   }
 
   onShowEpidemics(): void {
