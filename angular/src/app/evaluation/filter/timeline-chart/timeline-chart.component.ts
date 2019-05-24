@@ -5,9 +5,10 @@ import { Subscription } from 'rxjs';
 import { Report } from '../../../models/report.model';
 import { DistributeDataService } from 'src/app/shared/distribute-data.service';
 import { ActivatedRoute } from '@angular/router';
-import { uniq, range } from 'lodash';
-import * as moment from 'moment';
+import { Frequency } from '../../../models/frequency.model';
 import { HighchartService } from 'src/app/shared/highchart.service';
+import { uniq, range, countBy, mapKeys, orderBy } from 'lodash';
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-timeline-chart',
@@ -67,7 +68,6 @@ export class TimelineChartComponent implements OnInit, OnDestroy {
     this.dataSub = this._distributeDataService.currentData.subscribe(
       data => {
         this.data = data;
-        console.log(data);
         this.years = this.extractYears(data);
         // console.log(this.years);
         // Translate if new data is loaded
@@ -215,6 +215,7 @@ export class TimelineChartComponent implements OnInit, OnDestroy {
 
   // TODO: Replace this ugly vanilla js method by something nicer
   private aggregate(data: Report[], timeUnit: number[]) {
+    console.log('Goal --> IN', data);
     const aggregatedEpidemics = [
       { name: 'Aggregierte Seuchen', data: [] },
       { name: 'Auszurottende Seuchen', data: [] },
@@ -287,8 +288,45 @@ export class TimelineChartComponent implements OnInit, OnDestroy {
       aggregatedEpidemics[3].data.push(zu_bekämpfende_seuchen[i]['count']);
       aggregatedEpidemics[4].data.push(zu_überwachende_seuchen[i]['count']);
     }
-    console.log(aggregatedEpidemics);
+    console.log('Goal --> OUT', aggregatedEpidemics);
     return aggregatedEpidemics;
+    // In: [{
+      // animal_group: "Rinder",
+      // animal_species: "Rind",
+      // canton: "Zürich",
+      // community: "Büron",
+      // diagnosis_date: "2018-01-15",
+      // epidemic: "Campylobacteriose",
+      // epidemic_group: "Zu überwachende Seuchen" }, {...}]
+    // Out: [{ data:[419, 654, 341, 0], name: "Aggregierte Seuchen" }, {...}]
+    // TODO: Replace above
+  }
+
+  private countOccurance(target: string, reports: Report[]): Frequency[] {
+    const result = [];
+    // countBy: count orrurence in array
+    // get(obj, pathToValue, defaultValue): check if property exists
+    const count = countBy(reports.map(pest => get(pest, target, 'not defined')));
+    mapKeys(count, (value: string, key: number): void => {
+      result.push({
+        name: key,
+        y: value
+      });
+    });
+    return result;
+  }
+
+  private limitCollection(target: string, data: Report[]) {
+    const count = this.countOccurance(target, data);
+    return orderBy(count, ['y'], 'desc').slice(0, 6).map(e => e.name);
+  }
+
+  private range(count: number, step: number): number[] {
+    return Array(count).fill(step).map((x, i) => x + i * step);
+  }
+
+  private extractUniqueType(reports: Report[], uniqueType: string): string[] {
+    return this.limitCollection(uniqueType, reports).concat(['Other']);
   }
 
   private aggregateT(data: Report[], timeUnit: number[]) {
@@ -429,7 +467,7 @@ export class TimelineChartComponent implements OnInit, OnDestroy {
       aggregatedAnimals[13].data.push(Wildvogel[i]['count']);
       aggregatedAnimals[14].data.push(andere_Hausvoegel[i]['count']);
     }
-    console.log(aggregatedAnimals);
+    // console.log(aggregatedAnimals);
     return aggregatedAnimals;
   }
 
@@ -512,7 +550,7 @@ export class TimelineChartComponent implements OnInit, OnDestroy {
       this.isYear = false;
       this.isMonth = false;
     }
-    console.log(this.isWeek, this.isMonth, this.isYear)
+    // console.log(this.isWeek, this.isMonth, this.isYear)
   }
 
   private numbersToMonths(el: number) {
