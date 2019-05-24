@@ -24,7 +24,8 @@
         "PEST": "Peste",
         "PEST_GROUP": "Groupe d'épizooties",
         "ANIMAL_SPECIES": "Catégorie animale",
-        "QUARTER": "Quartier"
+        "QUARTER": "Quartier",
+        "SHOW_ALL_NONE": "Montrer/Masquer tous"
     },
     "ERROR": {
         "OCCURED": "Une erreur est survenue",

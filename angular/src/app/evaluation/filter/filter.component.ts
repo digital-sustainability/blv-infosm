@@ -8,8 +8,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { SparqlDataService } from 'src/app/shared/sparql-data.service';
 import { DistributeDataService } from 'src/app/shared/distribute-data.service';
 import { TranslateService } from '@ngx-translate/core';
+import { remove, uniq, map } from 'lodash';
 import * as moment from 'moment';
-import * as _ from 'lodash';
 declare let $: any;
 
 @Component({
@@ -50,7 +50,7 @@ export class FilterComponent implements OnInit, AfterViewInit, OnDestroy {
   displayedColumns: string[] = ['diagnosis_date', 'canton', 'community', 'epidemic', 'epidemic_group', 'animal_species'];
   dataSource: any;
   beautifiedData: any[] = [];
-  filteredData: any[] = []
+  filteredData: any[] = [];
   filterConfig = {
     canton: [],
     community: [],
@@ -58,7 +58,7 @@ export class FilterComponent implements OnInit, AfterViewInit, OnDestroy {
     epidemic: [],
     animal_group: [],
     animal_species: []
-  }
+  };
 
 
   constructor(
@@ -125,25 +125,25 @@ export class FilterComponent implements OnInit, AfterViewInit, OnDestroy {
 
 
   toggleCheckbox($event: boolean, filterType: string) {
-    let idSelector = function () { return this.id; };
+    const idSelector = function () { return this.id; };
     if (!$event) {
       switch (filterType) {
         case 'canton':
-          let selectedCantons = $(":checkbox:checked[name=canton]").attr('checked', true).map(idSelector).get();
+          const selectedCantons = $(':checkbox:checked[name=canton]').attr('checked', true).map(idSelector).get();
           this.createFilterConfigDropdown(filterType, selectedCantons);
           break;
         case 'epidemic_group':
-          let selectedEpidemics = $(":checkbox:checked[name=epidemic]").attr('checked', true).map(idSelector).get();
+          const selectedEpidemics = $(':checkbox:checked[name=epidemic]').attr('checked', true).map(idSelector).get();
           this.createFilterConfigDropdown(filterType, selectedEpidemics);
           break;
         case 'animal_group':
-          let selectedAnimals = $(":checkbox:checked[name=animal]").attr('checked', true).map(idSelector).get();
+          const selectedAnimals = $(':checkbox:checked[name=animal]').attr('checked', true).map(idSelector).get();
           this.createFilterConfigDropdown(filterType, selectedAnimals);
           break;
       }
       this.getList(this._filter.lang, this._filter.from, this._filter.to);
     }
-    console.log(this.filterConfig)
+    console.log(this.filterConfig);
   }
 
   createFilterConfigDropdown(filterType: string, arrSelected: []) {
@@ -169,7 +169,7 @@ export class FilterComponent implements OnInit, AfterViewInit, OnDestroy {
   // updates every time when the user removes an entry in the filter
   onRemove($event, filterType: string) {
     if (this.filterConfig.hasOwnProperty(`${filterType}`)) {
-      this.filterConfig[`${filterType}`] = _.remove(this.filterConfig[`${filterType}`], (item: string) => {
+      this.filterConfig[`${filterType}`] = remove(this.filterConfig[`${filterType}`], (item: string) => {
         return item !== $event.value;
       });
     }
@@ -206,13 +206,13 @@ export class FilterComponent implements OnInit, AfterViewInit, OnDestroy {
       data => {
         this.beautifiedData = [];
         this.transformData(data, false);
-        console.log(this.beautifiedData)
-        
+        console.log(this.beautifiedData);
+
         this.filteredData = this.filterDataObjectBasedOnEventData(this.beautifiedData, this.filterConfig);
         this._distributeDataService.updateData(this.filteredData);
-        
+
         this.extractFilterParts(data, this.filteredData);
-        
+
         this.dataSource = new MatTableDataSource<any>(this.filteredData);
         this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;
@@ -257,33 +257,33 @@ export class FilterComponent implements OnInit, AfterViewInit, OnDestroy {
 
   // extracts all the unique strings for every filter
   private extractFilterParts(data: Report[], filteredData) {
-    this.cantons = _.uniq(_.map(data, 'kanton.value')).sort();
-    //this.communities = _.uniq(_.map(filteredData, 'community')).sort();
+    this.cantons = uniq(map(data, 'kanton.value')).sort();
+    // this.communities = uniq(map(filteredData, 'community')).sort();
     this.communities = [];
-    this.communities = _.uniq(this.extractSecondHierarchy(this.filterConfig.canton, 'canton', 'community')).sort();
-    this.epidemics_group = _.uniq(_.map(data, 'seuchen_gruppe.value')).sort();
-    //this.epidemics = _.uniq(_.map(filteredData, 'epidemic')).sort();
+    this.communities = uniq(this.extractSecondHierarchy(this.filterConfig.canton, 'canton', 'community')).sort();
+    this.epidemics_group = uniq(map(data, 'seuchen_gruppe.value')).sort();
+    // this.epidemics = uniq(map(filteredData, 'epidemic')).sort();
     this.epidemics = [];
-    this.epidemics = _.uniq(this.extractSecondHierarchy(this.filterConfig.epidemic_group, 'epidemic_group', 'epidemic')).sort();
-    this.animal_group = _.uniq(_.map(data, 'tier_gruppe.value')).sort();
-    //this.animal_species = _.uniq(_.map(filteredData, 'animal_species')).sort();
+    this.epidemics = uniq(this.extractSecondHierarchy(this.filterConfig.epidemic_group, 'epidemic_group', 'epidemic')).sort();
+    this.animal_group = uniq(map(data, 'tier_gruppe.value')).sort();
+    // this.animal_species = uniq(map(filteredData, 'animal_species')).sort();
     this.animal_species = [];
-    this.animal_species = _.uniq(this.extractSecondHierarchy(this.filterConfig.animal_group, 'animal_group', 'animal_species')).sort();
+    this.animal_species = uniq(this.extractSecondHierarchy(this.filterConfig.animal_group, 'animal_group', 'animal_species')).sort();
   }
 
   private extractSecondHierarchy(keys: string[], firstOrder: string, secondOrder: string) {
-    if(keys.length !== 0) {
+    if (keys.length !== 0) {
       let items = [];
       items = this.beautifiedData
       .filter((el) => keys.includes(el[firstOrder]))
-      .map(obj => obj[secondOrder])
-      return(items)
+      .map(obj => obj[secondOrder]);
+      return(items);
     } else {
       let items = [];
       items = this.beautifiedData.map(el => {
-        return el[secondOrder]
-      })
-      return(items)
+        return el[secondOrder];
+      });
+      return(items);
     }
   }
 
@@ -293,14 +293,14 @@ export class FilterComponent implements OnInit, AfterViewInit, OnDestroy {
   // every entry of the currentFilter is filtered separately
   private filterDataObjectBasedOnEventData(data: Report[], filterObject) {
     const filteredData = [];
-    for (let i=0; i<data.length; i++) {
-      let insideFilter: boolean = false;
-      if( this.checkFilter('canton', data[i]['canton'], filterObject) ) {
-        if( this.checkFilter('community', data[i]['community'], filterObject) ) {
-          if( this.checkFilter('epidemic_group', data[i]['epidemic_group'], filterObject) ) {
-            if( this.checkFilter('epidemic', data[i]['epidemic'], filterObject) ) {
-              if( this.checkFilter('animal_group', data[i]['animal_group'], filterObject) ) {
-                if( this.checkFilter('animal_species', data[i]['animal_species'], filterObject) ) {
+    for (let i = 0; i < data.length; i++) {
+      let insideFilter = false;
+      if ( this.checkFilter('canton', data[i]['canton'], filterObject) ) {
+        if ( this.checkFilter('community', data[i]['community'], filterObject) ) {
+          if ( this.checkFilter('epidemic_group', data[i]['epidemic_group'], filterObject) ) {
+            if ( this.checkFilter('epidemic', data[i]['epidemic'], filterObject) ) {
+              if ( this.checkFilter('animal_group', data[i]['animal_group'], filterObject) ) {
+                if ( this.checkFilter('animal_species', data[i]['animal_species'], filterObject) ) {
                   insideFilter = true;
                 }
               }
@@ -308,10 +308,10 @@ export class FilterComponent implements OnInit, AfterViewInit, OnDestroy {
           }
         }
       } else {
-        insideFilter = false
+        insideFilter = false;
       }
 
-      if(insideFilter) {
+      if (insideFilter) {
         filteredData.push({
           diagnosis_date: data[i]['diagnosis_date'],
           canton: data[i]['canton'],
@@ -320,20 +320,20 @@ export class FilterComponent implements OnInit, AfterViewInit, OnDestroy {
           epidemic: data[i]['epidemic'],
           animal_group: data[i]['animal_group'],
           animal_species: data[i]['animal_species'],
-        })
+        });
       }
     }
-    console.log(filteredData)
+    console.log(filteredData);
     return filteredData;
   }
 
   private checkFilter(type: string, compare: string, filterObject) {
-    return (filterObject[type].length !== 0 && filterObject[type].includes(compare)) || filterObject[type].length == 0;
+    return (filterObject[type].length !== 0 && filterObject[type].includes(compare)) || filterObject[type].length === 0;
   }
 
   getFromToDates() {
-    let fromdate = this.datepicker._inputValue
-    let todate = this.datepicker2._inputValue;
+    const fromdate = this.datepicker._inputValue;
+    const todate = this.datepicker2._inputValue;
     this.removeErrors();
     if (moment(fromdate).isValid() && moment(todate).isValid() && fromdate.length === 10 && todate.length === 10) {
       if (fromdate > todate) {
@@ -361,8 +361,8 @@ export class FilterComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   disableDateFilter() {
-    // (<HTMLInputElement>document.getElementById("from")).value = "";
-    // (<HTMLInputElement>document.getElementById("to")).value = "";
+    // (<HTMLInputElement>document.getElementById('from')).value = '';
+    // (<HTMLInputElement>document.getElementById('to')).value = '';
   }
 
   removeErrors() {

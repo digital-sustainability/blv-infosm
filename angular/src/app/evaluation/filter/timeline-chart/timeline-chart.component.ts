@@ -5,8 +5,9 @@ import { Subscription } from 'rxjs';
 import { Report } from '../../../models/report.model';
 import { DistributeDataService } from 'src/app/shared/distribute-data.service';
 import { ActivatedRoute } from '@angular/router';
-import * as _ from 'lodash';
+import { uniq, range } from 'lodash';
 import * as moment from 'moment';
+import { HighchartService } from 'src/app/shared/highchart.service';
 
 @Component({
   selector: 'app-timeline-chart',
@@ -14,7 +15,6 @@ import * as moment from 'moment';
   styleUrls: ['./timeline-chart.component.css']
 })
 export class TimelineChartComponent implements OnInit, OnDestroy {
-
   _paramSub: Subscription;
   data: Report[];
   timelineChart: Chart;
@@ -46,7 +46,8 @@ export class TimelineChartComponent implements OnInit, OnDestroy {
   constructor(
     public translate: TranslateService,
     private _distributeDataService: DistributeDataService,
-    private _route: ActivatedRoute
+    private _route: ActivatedRoute,
+    private _highChartService: HighchartService,
   ) { }
 
   ngOnInit() {
@@ -74,16 +75,17 @@ export class TimelineChartComponent implements OnInit, OnDestroy {
           'EVALUATION.YEAR',
           'EVALUATION.COUNT',
           'EVALUATION.QUARTER',
-          'EVALUATION.ALL_LINES'])
+          'EVALUATION.SHOW_ALL_NONE'])
           .subscribe(
             texts => {
               this.year = texts['EVALUATION.YEAR'];
               this.count = texts['EVALUATION.COUNT'];
-              this.allLinesLabel = texts['EVALUATION.ALL_LINES'];
+              this.allLinesLabel = texts['EVALUATION.SHOW_ALL_NONE'];
               this.timeLineChartData = this.extract(data, 'epidemics');
               this.ready = true;
               this.drawChart();
-            });
+            }
+          );
       },
       err => console.log(err) // TODO: Improve Error handling
     );
@@ -127,7 +129,7 @@ export class TimelineChartComponent implements OnInit, OnDestroy {
       credits: {
         enabled: false
       },
-      colors: this.setColors(),
+      colors: this._highChartService.getColors(),
       plotOptions: {
         spline: {
           marker: {
@@ -136,23 +138,18 @@ export class TimelineChartComponent implements OnInit, OnDestroy {
               lineWidth: 1
           },
           events: {
-            legendItemClick: function() {
-              const lines = this.chart.series;
-              // show all lines in case respective legend item (contains no data) is clicked
-              if (this.data.length === 0) {
-                lines.forEach(line => {
-                  line.show();
-                });
-                // Cancle the default action of the legend by returning false
-                return false;
-              }
-            }
+            /**
+             * Toggle all legend items via service.
+             * Use a service because the function needs both access to
+             * class scope and highchart scope of `this`
+             */
+            legendItemClick: this.onPointClick
           }
         },
       },
       /**
-       * Array holding each line as { name: string, data: number[] }
-       * Concat another empty line to add an additional label
+       * Array holding each line as `{ name: string, data: number[] }`
+       * Concat another empty line to add an additional label for `toggleLegend()`
        */
       series: this.timeLineChartData
         .concat({
@@ -163,13 +160,8 @@ export class TimelineChartComponent implements OnInit, OnDestroy {
     });
   }
 
-  private setColors() {
-    const timelinecols = [];
-    for (let i = 0; i < 100; i += 7) {
-      // http://www-db.deis.unibo.it/courses/TW/DOCS/w3schools/colors/colors_picker.asp-colorhex=A52A2A.html
-      timelinecols.push(`hsl(0,100%, ${i}%)`);
-    }
-    return timelinecols;
+  onPointClick = (event: any): boolean => {
+      return this._highChartService.toggleLegend(event);
   }
 
   private setCategories(): number[] | string[] {
@@ -446,7 +438,7 @@ export class TimelineChartComponent implements OnInit, OnDestroy {
   }
 
   private extractYears(data: Report[]) {
-    return _.uniq(this.getDates(data).map(date => this.extractYear(date))).sort();
+    return uniq(this.getDates(data).map(date => this.extractYear(date))).sort();
   }
 
   private extractMonth(date: string | Date): number {
@@ -458,7 +450,7 @@ export class TimelineChartComponent implements OnInit, OnDestroy {
   }
 
   private extractMonths(data: Report[]) {
-    return _.uniq(this.getDates(data).map(date => this.extractMonth(date))).sort( (a: number, b: number) => {
+    return uniq(this.getDates(data).map(date => this.extractMonth(date))).sort( (a: number, b: number) => {
       if (a > b)
         return 1;
       if (a < b)
@@ -502,7 +494,7 @@ export class TimelineChartComponent implements OnInit, OnDestroy {
       }
       return range;
     } else {
-      return _.range(minUnit, maxUnit + 1, 1);
+      return range(minUnit, maxUnit + 1, 1);
     }
   }
 

@@ -3,9 +3,8 @@ import { MatPaginator, MatTableDataSource, MatSort, MatSortable } from '@angular
 import { SparqlDataService } from 'src/app/shared/sparql-data.service';
 import { TranslateService } from '@ngx-translate/core';
 import { LanguageService } from 'src/app/shared/language.service';
-import { Router } from "@angular/router"
+import { Router } from '@angular/router';
 import * as moment from 'moment';
-import * as _ from 'lodash';
 
 
 @Component({
@@ -47,7 +46,7 @@ export class BulletinComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    console.log(this._langauageService.currentLang)
+    console.log(this._langauageService.currentLang);
     this.getList('de', this.startOfBulletin, this.today);
   }
 
@@ -57,7 +56,7 @@ export class BulletinComponent implements OnInit {
         this.data = this.beautifyDataObject(data);
         this.splitDataToIntervals(from, to);
         console.log(this.data);
-        
+
         // Prepare data for table
         this.element_data = [];
         this.transformDataToMaterializeTable();
@@ -65,9 +64,9 @@ export class BulletinComponent implements OnInit {
         this.dataSource.paginator = this.paginator;
         // change the default ordering of the table
         this.sort.sort(<MatSortable>{
-          id:'nummer',
+          id: 'nummer',
           start: 'desc'
-        })
+        });
         this.dataSource.sort = this.sort;
         this.distributeDataToIntervals();
       }, err => {
@@ -86,14 +85,14 @@ export class BulletinComponent implements OnInit {
   }
 
   private constructNumber(date: Date | string) {
-    let year = moment(date).year();
-    let week = moment(date).week();
-    let result = (week < 10) ? `${year}0${week}` : `${year}${week}`;
+    const year = moment(date).year();
+    const week = moment(date).week();
+    const result = (week < 10) ? `${year}0${week}` : `${year}${week}`;
     return result;
   }
 
   private transformDataToMaterializeTable() {
-    for (let i = 0; i <= this.endIntervals.length-1; i++) {
+    for (let i = 0; i <= this.endIntervals.length - 1; i++) {
       this.element_data.push({
         nummer: this.constructNumber(this.startIntervals[i]),
         dateFrom: this.startIntervals[i],
@@ -116,17 +115,16 @@ export class BulletinComponent implements OnInit {
       })
     }
     return reducedDataObject.sort((a, b) => {
-      let adate = new Date(a['diagnose_datum']);
-      let bdate= new Date(b['diagnose_datum']);
-      return (adate<bdate) ? -1 : (adate>bdate) ? 1 : 0;
-      
+      const adate = new Date(a['diagnose_datum']);
+      const bdate = new Date(b['diagnose_datum']);
+      return (adate < bdate) ? -1 : (adate > bdate) ? 1 : 0;
     });
   }
 
   // distribute the data into the weekly intervals from the table
   // returns an object key: number(vgl table) and value: array of objects which fall into the weelky interval 
   private distributeDataToIntervals() {
-    let res = {};
+    const res = {};
     let counter = 0;
     for (let o of this.data) {
       if (o['diagnose_datum'] <= this.element_data[counter]['dateTo']) {
@@ -157,7 +155,7 @@ export class BulletinComponent implements OnInit {
       tmpObj = object[id];
       return tmpObj;
     } else {
-      console.log(id + " not found in the object")
+      console.log(id + ' not found in the object');
     }
   }
 
@@ -165,8 +163,8 @@ export class BulletinComponent implements OnInit {
     console.log('Hello Detail ID:' + id);
     this.metaData.push([id, datefrom, dateTo]);
     this.detailData = this.findNumberIdInDataObject(this.distributedData, id);
-    localStorage.setItem("metaData", JSON.stringify(this.metaData));
-    localStorage.setItem("detailData", JSON.stringify(this.detailData));
+    localStorage.setItem('metaData', JSON.stringify(this.metaData));
+    localStorage.setItem('detailData', JSON.stringify(this.detailData));
     this.router.navigate(['bulletin/details', { number: id }]);
   }
 
@@ -174,8 +172,8 @@ export class BulletinComponent implements OnInit {
     this.data = [];
     this.startIntervals = [];
     this.endIntervals = [];
-    let from = this.datepicker._inputValue;
-    let to = this.datepicker2._inputValue;
+    const from = this.datepicker._inputValue;
+    const to = this.datepicker2._inputValue;
     this.getList('de', from, to);
   }
 

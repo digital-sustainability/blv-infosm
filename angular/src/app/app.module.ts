@@ -35,6 +35,7 @@ import { SparqlDataService } from './shared/sparql-data.service';
 import { MatPaginatorI18nService} from './shared/mat-paginator-i18n.service'
 import { DistributeDataService } from './shared/distribute-data.service';
 import { DatePickerI18nService } from './shared/date-picker-i18n.service';
+import { HighchartService } from './shared/highchart.service';
 
 import '@openlayers-elements/core/ol-map';
 import '@openlayers-elements/maps/ol-layer-wkt';
@@ -81,6 +82,7 @@ import '@openlayers-elements/maps/ol-layer-openstreetmap';
     SparqlDataService,
     LanguageService,
     DistributeDataService,
+    HighchartService,
     {
       provide: MatPaginatorIntl,
       useClass: MatPaginatorI18nService,

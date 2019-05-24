@@ -2,15 +2,12 @@ const express = require('express');
 const cors = require('cors');
 const compression = require('compression');
 const path = require('path');
-// const sparql = require('sparql');
 const querystring = require('querystring');
 const requests = require('request');
 const BadRequestError = require('http-errors').BadRequestError;
-
 const config = require('./config/config');
 
 const app = express();
-// const client = new sparql.Client('http://ld.zazuko.com/query');
 
 // wrapper function propagetes err to error handling
 const wrap = fn => (...args) => fn(...args).catch(args[2]);
@@ -27,27 +24,12 @@ app.get('/', (req, res) => {
     res.sendFile(__dirname + '/dist/index.html');
 });
 
-// query SPARQL Client
-// app.get('/getData', wrap(async (req, res) => {
-//     if (!req.query.query)
-//         throw new BadRequestError('Missing SPARQL Query'); // sorted by next catch
-//     await client.query(req.query.query, (err, response) => {
-//         try {
-//             res.json(response.results.bindings);
-//         } catch (err) {
-//             console.error(err, '\nApp is running');
-//             res.status(500).json(err);
-//         }
-//     });
-// }));
-
 app.get('/getData', wrap( async (req, res) => {
     if (!req.query.query || !req.query.url) {
         throw new BadRequestError('No Sparql Endpoint or SPARQL Query defined'); // sorted by next catch
     }
     const options = {
         url: req.query.url,
-        // url: 'http://ld.zazuko.com/query',
         method: 'POST',
         headers: {
             'content-type': 'application/x-www-form-urlencoded',

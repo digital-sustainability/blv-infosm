@@ -1,37 +1,55 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { DistributeDataService } from 'src/app/shared/distribute-data.service';
 import { Chart } from 'angular-highcharts';
 import { Report } from '../../../models/report.model';
 import { Frequency } from '../../../models/frequency.model';
 import { get, countBy, mapKeys, uniqBy, orderBy } from 'lodash';
+import { HighchartService } from 'src/app/shared/highchart.service';
+import { TranslateService } from '@ngx-translate/core';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-frequency-chart',
   templateUrl: './frequency-chart.component.html',
   styleUrls: ['./frequency-chart.component.css']
 })
-export class FrequencyChartComponent implements OnInit {
+export class FrequencyChartComponent implements OnInit, OnDestroy {
 
+  dataSub: Subscription;
+  translationSub: Subscription;
   frequencyChart: Chart;
   ready = false;
   reports: Report[];
+  allLinesLabel: string;
 
   constructor(
-    private _distributeDataServie: DistributeDataService
+    public translate: TranslateService,
+    private _distributeDataServie: DistributeDataService,
+    private _highChartService: HighchartService,
   ) { }
-
 
   // TODO: Enforce typing
   ngOnInit() {
     console.log(this.range(5, 19));
-    this._distributeDataServie.currentData.subscribe(
+    this.dataSub = this._distributeDataServie.currentData.subscribe(
       data => {
         this.ready = true;
         this.reports = data;
-        this.drawChart(data, 'epidemic', this.extractPestFrequencies);
+        this.translationSub = this.translate.get(['EVALUATION.SHOW_ALL_NONE'])
+          .subscribe(
+            texts => {
+              this.allLinesLabel = texts['EVALUATION.SHOW_ALL_NONE'];
+              this.drawChart(data, 'epidemic', this.extractPestFrequencies);
+            }
+          );
       },
       err => console.log(err)
     );
+  }
+
+  ngOnDestroy() {
+    this.translationSub.unsubscribe();
+    this.dataSub.unsubscribe();
   }
 
   drawChart(data: Report[], filterTarget: string, filterFn: (d: Report[]) => Frequency[]): void {
@@ -60,6 +78,7 @@ export class FrequencyChartComponent implements OnInit {
         }
       },
       legend: {
+        itemWidth: 200,
         itemHoverStyle: {
           color: '#999999',
         }
@@ -74,19 +93,34 @@ export class FrequencyChartComponent implements OnInit {
       //       'Total: ' + this.point.stackTotal;
       //   }
       // },
-      colors: [95, 85, 70, 60, 45, 35, 25].map(x => `hsl(30, 100%, ${x}%)`)
-        .concat([95, 85, 70, 60, 45, 35, 25].map(x => `hsl(0, 100%, ${x}%)`))
-        .concat([95, 85, 70, 60, 45, 35, 25].map(x => `hsl(300, 100%, ${x}%)`)),
+      colors: this._highChartService.getColors(),
       plotOptions: {
         column: {
           stacking: 'normal',
           // dataLabels: {
           //   enabled: true,
-          // }
+          // },
+          events: {
+            /**
+             * Toggle all legend items via service.
+             * Use a service because the function needs both access to
+             * class scope and highchart scope of `this`
+             */
+            legendItemClick: this.onPointClick
+          }
         }
       },
       series: filterFn(data)
+        .concat({
+          name: this.allLinesLabel,
+          data: [],
+          // TODO: Change marker
+        })
     });
+  }
+
+  onPointClick = (event: any): boolean => {
+    return this._highChartService.toggleLegend(event);
   }
 
   private countOccurance(target: string, reports: Report[]): Frequency[] {
