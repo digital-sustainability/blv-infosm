@@ -7,7 +7,7 @@ import { DistributeDataService } from 'src/app/shared/distribute-data.service';
 import { ActivatedRoute } from '@angular/router';
 import { Frequency } from '../../../models/frequency.model';
 import { HighchartService } from 'src/app/shared/highchart.service';
-import { uniq, range, countBy, mapKeys, orderBy } from 'lodash';
+import { uniq, range, countBy, mapKeys, orderBy, get } from 'lodash';
 import * as moment from 'moment';
 
 @Component({
@@ -214,8 +214,8 @@ export class TimelineChartComponent implements OnInit, OnDestroy {
   }
 
   // TODO: Replace this ugly vanilla js method by something nicer
-  private aggregate(data: Report[], timeUnit: number[]) {
-    console.log('Goal --> IN', data);
+  private aggregate(reports: Report[], timeUnit: number[]) {
+    console.log('Goal --> IN', reports);
     const aggregatedEpidemics = [
       { name: 'Aggregierte Seuchen', data: [] },
       { name: 'Auszurottende Seuchen', data: [] },
@@ -244,7 +244,7 @@ export class TimelineChartComponent implements OnInit, OnDestroy {
       let count4 = 0; // zu überwachende Seuchen
       let count5 = 0; // aggregierte Seuchen
 
-      for (const d of data) {
+      for (const d of reports) {
         let compareUnit: number;
         if (this.isYear) {
           compareUnit =  parseInt(d['diagnosis_date'].split('-')[0]);
@@ -289,6 +289,20 @@ export class TimelineChartComponent implements OnInit, OnDestroy {
       aggregatedEpidemics[4].data.push(zu_überwachende_seuchen[i]['count']);
     }
     console.log('Goal --> OUT', aggregatedEpidemics);
+    const animals = reports.map(r => {
+      if (this.limitCollection('epidemic', reports).includes(r.epidemic)) {
+        return {
+          animal_species: r.animal_species,
+          epidemic: r.epidemic,
+        };
+      } else {
+        return {
+          animal_species: r.animal_species,
+          epidemic: 'Other',
+        };
+      }
+    });
+    console.log()
     return aggregatedEpidemics;
     // In: [{
       // animal_group: "Rinder",
@@ -319,10 +333,6 @@ export class TimelineChartComponent implements OnInit, OnDestroy {
   private limitCollection(target: string, data: Report[]) {
     const count = this.countOccurance(target, data);
     return orderBy(count, ['y'], 'desc').slice(0, 6).map(e => e.name);
-  }
-
-  private range(count: number, step: number): number[] {
-    return Array(count).fill(step).map((x, i) => x + i * step);
   }
 
   private extractUniqueType(reports: Report[], uniqueType: string): string[] {
