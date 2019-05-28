@@ -2,12 +2,12 @@ import { Component, OnInit, OnDestroy} from '@angular/core';
 import { Chart } from 'angular-highcharts';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
-import { Report } from '../../../models/report.model';
 import { DistributeDataService } from 'src/app/shared/distribute-data.service';
 import { ActivatedRoute } from '@angular/router';
-import { Frequency } from '../../../models/frequency.model';
+import { Report } from '../../../shared/models/report.model';
+import { Line } from '../../../shared/models/line.model';
 import { HighchartService } from 'src/app/shared/highchart.service';
-import { uniq, range, countBy, mapKeys, orderBy, get } from 'lodash';
+import { uniq, uniqBy, range, countBy, mapKeys, get } from 'lodash';
 import * as moment from 'moment';
 
 @Component({
@@ -21,6 +21,7 @@ export class TimelineChartComponent implements OnInit, OnDestroy {
   timelineChart: Chart;
   year: string;
   years: string;
+  months: string[];
   count: string;
   allLinesLabel: string;
   dataSub: Subscription;
@@ -30,11 +31,9 @@ export class TimelineChartComponent implements OnInit, OnDestroy {
   isMonth: boolean;
   isWeek: boolean;
   xAxis: string;
-  timeLineChartData: {
-    name: string,
-    data: any[]
-    marker?: any,
-  }[];
+  aggrEpidemicGroupLabel: string;
+  aggrAnimalGroupLabel: string;
+  timeLineChartData: Line[];
   intervals = {
     minYear : 0,
     maxYear : 0,
@@ -72,17 +71,25 @@ export class TimelineChartComponent implements OnInit, OnDestroy {
         // console.log(this.years);
         // Translate if new data is loaded
         this.translationSub = this.translate.get([
+          'GENERAL.MONTHS',
           'EVALUATION.YEAR',
+          'EVALUATION.AGGR_ANIMAL_GROUPS',
+          'EVALUATION.AGGR_EPIDEMICS_GROUPS',
           'EVALUATION.COUNT',
           'EVALUATION.QUARTER',
           'EVALUATION.SHOW_ALL_NONE'])
           .subscribe(
             texts => {
               this.year = texts['EVALUATION.YEAR'];
+              this.months = texts['GENERAL.MONTHS'];
               this.count = texts['EVALUATION.COUNT'];
+              this.aggrEpidemicGroupLabel = texts['AGGR_EPIDEMICS_GROUPS'];
+              // this.aggrAnimalGroupLabel = texts['AGGR_ANIMAL_GROUPS'];
+              this.aggrAnimalGroupLabel = 'ZOOOO';
               this.allLinesLabel = texts['EVALUATION.SHOW_ALL_NONE'];
-              this.timeLineChartData = this.extract(data, 'epidemics');
+              this.timeLineChartData = this.extract(data, 'epidemic_group');
               this.ready = true;
+              console.log('MOOONTHS', this.months);
               this.drawChart();
             }
           );
@@ -96,7 +103,6 @@ export class TimelineChartComponent implements OnInit, OnDestroy {
     this.dataSub.unsubscribe();
   }
 
-  // TODO: doesnt work for other languages than DE --> has ty be checked
   drawChart(): void {
     this.timelineChart = new Chart({
       chart: {
@@ -178,7 +184,7 @@ export class TimelineChartComponent implements OnInit, OnDestroy {
     }
   }
 
-  private extract(data: Report[], method: string) {
+  private extract(data: Report[], target: string): Line[] {
 
     let min = 0; let max = 0;
     // case when we are in the same year (from-to)
@@ -207,15 +213,13 @@ export class TimelineChartComponent implements OnInit, OnDestroy {
       min = this.intervals.minYear;
       max = this.intervals.maxYear;
     }
-    if (method === 'epidemics') {
-      return this.aggregate(data, this.getInterval(min, max));
-    }
-    return this.aggregateT(data, this.getInterval(min, max));
+    return this.aggregate(data, this.getInterval(min, max), target);
   }
 
-  // TODO: Replace this ugly vanilla js method by something nicer
-  private aggregate(reports: Report[], timeUnit: number[]) {
+  // TODO: enforce typing. There seem to be two kinds of Report (EN vs. DE)
+  private aggregate(reports: Report[], timeUnit: number[], target: string): Line[] {
     console.log('Goal --> IN', reports);
+    /*
     const aggregatedEpidemics = [
       { name: 'Aggregierte Seuchen', data: [] },
       { name: 'Auszurottende Seuchen', data: [] },
@@ -289,56 +293,106 @@ export class TimelineChartComponent implements OnInit, OnDestroy {
       aggregatedEpidemics[4].data.push(zu_überwachende_seuchen[i]['count']);
     }
     console.log('Goal --> OUT', aggregatedEpidemics);
-    const animals = reports.map(r => {
-      if (this.limitCollection('epidemic', reports).includes(r.epidemic)) {
-        return {
-          animal_species: r.animal_species,
-          epidemic: r.epidemic,
-        };
-      } else {
-        return {
-          animal_species: r.animal_species,
-          epidemic: 'Other',
-        };
+
+    */
+    // ****************
+
+
+    // Extract unique the names of all possible targets
+    const uniqeKeys = uniqBy(reports.map(report => report[target])).sort();
+
+    // TODO: Add error handling (as higher order function)
+    // Prepare collection that is later handed to the plot
+    const lines = uniqeKeys.map((uniqeKey: string) => {
+      return {
+        'name': uniqeKey,
+        'data': []
+      };
+    });
+
+    console.log('show me the lines', timeUnit);
+
+
+    /**
+     * Accpets array of arrays containing reports per time unit.
+     * `timeUnitIndex` mirrors the positon the time unit will have in the final data array.
+     * Input: `Report[]`
+     * Output: [{ data:[419, 654, 341, 0], name: "Aggregierte Seuchen" }, {...}]
+    */
+    this.extractTargetByTimeUnit(reports, timeUnit).forEach(
+        (tragetPerTimeUnit, timeUnitIndex) => {
+        // Counts how often target occurs in all reports per time unit
+        const countPerTarget = this.countOccurance(target, tragetPerTimeUnit);
+        console.log('countPerTraget', countPerTarget);
+        // For each final data obj in collection populate the data array. Add 0 if target does not occur
+        lines.forEach(line => {
+          mapKeys(countPerTarget, (value, key) => {
+            if (key === line.name) {
+              line.data.push(countPerTarget[key]);
+            }
+          });
+          if (!line.data[timeUnitIndex]) {
+            line.data.push(0);
+          }
+        });
       }
-    });
-    console.log()
-    return aggregatedEpidemics;
-    // In: [{
-      // animal_group: "Rinder",
-      // animal_species: "Rind",
-      // canton: "Zürich",
-      // community: "Büron",
-      // diagnosis_date: "2018-01-15",
-      // epidemic: "Campylobacteriose",
-      // epidemic_group: "Zu überwachende Seuchen" }, {...}]
-    // Out: [{ data:[419, 654, 341, 0], name: "Aggregierte Seuchen" }, {...}]
-    // TODO: Replace above
-  }
+    );
 
-  private countOccurance(target: string, reports: Report[]): Frequency[] {
-    const result = [];
-    // countBy: count orrurence in array
-    // get(obj, pathToValue, defaultValue): check if property exists
-    const count = countBy(reports.map(pest => get(pest, target, 'not defined')));
-    mapKeys(count, (value: string, key: number): void => {
-      result.push({
-        name: key,
-        y: value
+    // Create obj that will hold the data for the aggregated line
+    const tmpAggregatedTarget = {
+      'name': this.aggrEpidemicGroupLabel,
+      'data': []
+    };
+    // Sum up for the value for every time unit
+    for (let i = 0; i < timeUnit.length; i++) {
+      let aggregat = 0;
+      lines.forEach((line, j) => {
+        aggregat += line.data[i];
       });
+      tmpAggregatedTarget.data.push(aggregat);
+    }
+    // Add it as first line
+    lines.unshift(tmpAggregatedTarget);
+
+    // Output format: [{ data:[419, 654, 341, 0], name: "Aggregierte Seuchen" }, {...}]
+    return lines;
+
+  }
+
+
+  // Go through all reports and count how many times the target variable occurs in report.
+  private countOccurance(target: string, reports: Report[]): any {
+    return countBy(reports.map(
+      (report: Report) => get(report, target, 'not defined')
+    ));
+  }
+
+  // Create array of arrays holding reports separated per time unit
+  private extractTargetByTimeUnit(reports: Report[], timeUnits: number[]): Report[][] {
+    // Create new array per time unit
+    const tragetsPerTimeUnit = [];
+    timeUnits.forEach((timeUnit: number) => {
+        const tmp = reports.filter(report => {
+          // return Number(report.diagnosis_date.split('-')[0]) === unit;
+          return  this.getCurrentTimeUnit(report.diagnosis_date) === timeUnit;
+        });
+        tragetsPerTimeUnit.push(tmp);
     });
-    return result;
+    return tragetsPerTimeUnit;
   }
 
-  private limitCollection(target: string, data: Report[]) {
-    const count = this.countOccurance(target, data);
-    return orderBy(count, ['y'], 'desc').slice(0, 6).map(e => e.name);
+  // Extract day, month or year number depending on current interval
+  private getCurrentTimeUnit(time: string | Date): Number {
+    if (this.isWeek) {
+      return Number(moment(time).format('WW'));
+    }
+    if (this.isMonth) {
+      return new Date(time).getMonth() + 1;
+    }
+    return new Date(time).getFullYear();
   }
 
-  private extractUniqueType(reports: Report[], uniqueType: string): string[] {
-    return this.limitCollection(uniqueType, reports).concat(['Other']);
-  }
-
+ /*
   private aggregateT(data: Report[], timeUnit: number[]) {
     const aggregatedAnimals = [
       { name: 'Aggregierte Tiere', data: [] },
@@ -480,12 +534,13 @@ export class TimelineChartComponent implements OnInit, OnDestroy {
     // console.log(aggregatedAnimals);
     return aggregatedAnimals;
   }
+  */
 
   private extractYear(date: string | Date): number {
     return moment(this.checkDate(date)).year();
   }
 
-  private extractYears(data: Report[]) {
+  private extractYears(data: Report[]): string {
     return uniq(this.getDates(data).map(date => this.extractYear(date))).sort();
   }
 
@@ -497,7 +552,7 @@ export class TimelineChartComponent implements OnInit, OnDestroy {
     return moment(this.checkDate(date)).week();
   }
 
-  private extractMonths(data: Report[]) {
+  private extractMonths(data: Report[]): number {
     return uniq(this.getDates(data).map(date => this.extractMonth(date))).sort( (a: number, b: number) => {
       if (a > b)
         return 1;
@@ -546,7 +601,7 @@ export class TimelineChartComponent implements OnInit, OnDestroy {
     }
   }
 
-  private getIntervalUnit(from: Date, to: Date) {
+  private getIntervalUnit(from: Date, to: Date): void {
     if ((Math.abs(moment(from).diff(to, 'years')) + 1) > 1) {
       this.isYear = true;
       this.isMonth = false;
@@ -563,23 +618,23 @@ export class TimelineChartComponent implements OnInit, OnDestroy {
     // console.log(this.isWeek, this.isMonth, this.isYear)
   }
 
-  private numbersToMonths(el: number) {
+  private numbersToMonths(el: number): string {
     // TODO: translate, use ENUM
     const months = ['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'];
     return months[el - 1];
   }
 
-  showEpidemics() {
+  showEpidemics(): void {
     this.timeLineChartData = [];
-    this.timeLineChartData = this.extract(this.data, 'epidemics');
+    this.timeLineChartData = this.extract(this.data, 'epidemic_group');
     if (this.timeLineChartData) {
       this.drawChart();
     }
   }
 
-  showAnimals() {
+  showAnimals(): void {
     this.timeLineChartData = [];
-    this.timeLineChartData = this.extract(this.data, 'animals');
+    this.timeLineChartData = this.extract(this.data, 'animal_group');
     if (this.timeLineChartData) {
       this.drawChart();
     }

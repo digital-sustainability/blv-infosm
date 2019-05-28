@@ -3,7 +3,12 @@
         "BLV": "FSVO",
         "BLV_FULL": "Federal Food Safety and Veterinary Office",
         "CONTACT": "Contact",
-        "LEGAL_FRAMEWORK": "Legal framework"
+        "LEGAL_FRAMEWORK": "Legal framework",
+        "MONTHS": [
+            "D",
+            "E",
+            "F"
+        ]
     },
     "HEADER": {
         "HOME": "Landing Page",

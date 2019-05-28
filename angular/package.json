@@ -27,7 +27,6 @@
     "@ngx-translate/core": "^11.0.1",
     "@ngx-translate/http-loader": "^4.0.0",
     "@openlayers-elements/maps": "^0.2.0-beta.0",
-    "@types/d3": "^5.7.1",
     "@types/jquery": "^3.3.29",
     "@webcomponents/webcomponentsjs": "^2.2.10",
     "angular-font-awesome": "^3.1.2",

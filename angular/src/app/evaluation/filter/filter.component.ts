@@ -1,6 +1,6 @@
 
 import { Component, OnInit, OnDestroy, ViewChild, AfterViewInit } from '@angular/core';
-import { Report } from '../../models/report.model';
+import { Report } from '../../shared/models/report.model';
 import { LanguageService } from 'src/app/shared/language.service';
 import { Subscription } from 'rxjs';
 import { MatPaginator, MatTableDataSource, MatSort } from '@angular/material';

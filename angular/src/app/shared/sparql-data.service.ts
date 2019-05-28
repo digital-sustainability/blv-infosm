@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, forkJoin } from 'rxjs';
 import { environment } from '../../environments/environment';
-import { Report } from '../models/report.model';
+import { Report } from './models/report.model';
 import * as moment from 'moment';
 
 @Injectable()

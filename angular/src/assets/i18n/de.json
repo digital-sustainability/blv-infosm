@@ -3,7 +3,8 @@
         "BLV": "BLV",
         "BLV_FULL": "Bundesamt für Lebensmittelsicherheit und Veterinärwesen",
         "CONTACT": "Kontakt",
-        "LEGAL_FRAMEWORK": "Rechtliche Grundlagen"
+        "LEGAL_FRAMEWORK": "Rechtliche Grundlagen",
+        "MONTHS": ["A", "B", "C"]
     },
     "HEADER": {
         "HOME": "Startseite",
@@ -25,7 +26,8 @@
         "PEST_GROUP": "Seuchengruppe",
         "ANIMAL_SPECIES": "Tierart",
         "QUARTER": "Quartal",
-        "SHOW_ALL_NONE": "Alle ein-/ausblenden"
+        "SHOW_ALL_NONE": "Alle ein-/ausblenden",
+        "AGGR_EPIDEMICS_GROUPS": "Zoooo"
     },
     "ERROR": {
         "OCCURED": "Ein Fehler ist aufgetreten.",

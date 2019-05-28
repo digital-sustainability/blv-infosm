@@ -1,8 +1,8 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { DistributeDataService } from 'src/app/shared/distribute-data.service';
 import { Chart } from 'angular-highcharts';
-import { Report } from '../../../models/report.model';
-import { Frequency } from '../../../models/frequency.model';
+import { Report } from '../../../shared/models/report.model';
+import { Frequency } from '../../../shared/models/frequency.model';
 import { get, countBy, mapKeys, uniqBy, orderBy } from 'lodash';
 import { HighchartService } from 'src/app/shared/highchart.service';
 import { TranslateService } from '@ngx-translate/core';

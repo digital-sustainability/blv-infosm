@@ -27,7 +27,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this._langSub.unsubscribe(); // TODO: Double-check need for BehaviorSubj.
+    this._langSub.unsubscribe();
   }
 
   onLangChange(lang: string): void {

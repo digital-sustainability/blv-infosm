@@ -7,6 +7,7 @@ import { TranslateService } from '@ngx-translate/core';
 })
 export class DatePickerI18nService extends NgbDatepickerI18n {
 
+  // TODO: Move to i18n.jsons
   i18n_values = {
     'en': {
       weekdays: ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'],
