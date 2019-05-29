@@ -1,8 +1,8 @@
-<div style="border:1px solid lightgray;" *ngIf="ready; else loadingTimelineChart">
+<div style="border:1px solid lightgray;" *ngIf="loaded; else loadingTimelineChart">
     <div [chart]="timelineChart" style="height: 450px; width:99%"></div>
     <div id="buttonContainer">
         <button style="margin-right: 5px" class="btn btn-dark" type="submit" (click)="showEpidemics()">Seuchengruppen darstellen</button>
-        <button style="margin-left: 5px" class="btn btn-dark" type="submit" (click)="showAnimals()" >Tiergruppen darstellen</button>
+        <button style="margin-left: 5px" class="btn btn-dark" type="submit" (click)="showAnimals()">Tiergruppen darstellen</button>
     </div>
 </div>
 <ng-template #loadingTimelineChart>

@@ -3,12 +3,7 @@
         "BLV": "FSVO",
         "BLV_FULL": "Federal Food Safety and Veterinary Office",
         "CONTACT": "Contact",
-        "LEGAL_FRAMEWORK": "Legal framework",
-        "MONTHS": [
-            "D",
-            "E",
-            "F"
-        ]
+        "LEGAL_FRAMEWORK": "Legal framework"
     },
     "HEADER": {
         "HOME": "Landing Page",
@@ -19,7 +14,7 @@
         "TEST": "Testing an SVG graph for the reporting flow of an animal disease notification."
     },
     "EVALUATION": {
-        "YEAR": "Year",
+        "YEAR_LABEL": "Year",
         "COUNT": "Count",
         "DIAGNOSIS_DATE": "Diagnosis Date",
         "MUNICIPALITY": "Municipality",
@@ -30,7 +25,8 @@
         "PEST_GROUP": "Disease",
         "ANIMAL_SPECIES": "Animal Species",
         "QUARTER": "Quarter",
-        "SHOW_ALL_NONE": "Show all/none"
+        "SHOW_ALL_NONE": "Show all/none",
+        "MONTHS": ["January", "February", "March", "April", "May", "une", "July", "August", "September", "October", "November", "December"]
     },
     "ERROR": {
         "OCCURED": "Error Page (404)",

@@ -6,8 +6,8 @@ import { EvaluationComponent } from './evaluation/evaluation.component';
 import { FrequencyChartComponent } from './evaluation/filter/frequency-chart/frequency-chart.component';
 import { TimelineChartComponent } from './evaluation/filter/timeline-chart/timeline-chart.component';
 import { MapChartComponent } from './evaluation/filter/map-chart/map-chart.component';
-import { BulletinComponent } from './bulletin/bulletin.component'
-import { BulletinDetailViewComponent} from './bulletin-detail-view/bulletin-detail-view.component'
+import { BulletinComponent } from './bulletin/bulletin.component';
+import { BulletinDetailViewComponent} from './bulletin-detail-view/bulletin-detail-view.component';
 
 const routes: Routes = [
   {

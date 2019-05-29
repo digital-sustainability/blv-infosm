@@ -1,5 +1,5 @@
 
-import { Component, OnInit, OnDestroy, ViewChild, AfterViewInit } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { Report } from '../../shared/models/report.model';
 import { LanguageService } from 'src/app/shared/language.service';
 import { Subscription } from 'rxjs';
@@ -18,7 +18,7 @@ declare let $: any;
   styleUrls: ['./filter.component.css']
 })
 
-export class FilterComponent implements OnInit, AfterViewInit, OnDestroy {
+export class FilterComponent implements OnInit, OnDestroy {
 
   @ViewChild('d') datepicker;
   @ViewChild('c') datepicker2;
@@ -114,7 +114,8 @@ export class FilterComponent implements OnInit, AfterViewInit, OnDestroy {
     );
   }
 
-  ngAfterViewInit() {
+  changeRoute(route: string): void {
+    this._router.navigate(['evaluation' + route], { queryParamsHandling: 'merge' });
   }
 
   ngOnDestroy() {

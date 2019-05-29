@@ -14,7 +14,7 @@
         "TEST": "Sperimentazione di un grafico SVG per il flusso di segnalazione di una notifica di una malattia animale."
     },
     "EVALUATION": {
-        "YEAR": "Anno",
+        "YEAR_LABEL": "Anno",
         "COUNT": "Quantità",
         "DIAGNOSIS_DATE": "Data di diagnosi",
         "MUNICIPALITY": "Comune",
@@ -25,7 +25,8 @@
         "PEST_GROUP": "Gruppo epizoozia",
         "ANIMAL_SPECIES": "Specie aimale",
         "QUARTER": "Quartiere",
-        "SHOW_ALL_NONE": "Mostra/Nascondi tutti"
+        "SHOW_ALL_NONE": "Mostra/Nascondi tutti",
+        "MONTHS": ["Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Giugno", "Luglio", "Agosto", "Settembre", "Ottobre", "Novembre", "Dicembre"]
     },
     "ERROR": {
         "OCCURED": "Error Page (404)",

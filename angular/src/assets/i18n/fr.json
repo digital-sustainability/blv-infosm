@@ -14,7 +14,7 @@
         "TEST": "Test d'un graphique SVG pour le flux de déclaration d'une notification de maladie animale."
     },
     "EVALUATION": {
-        "YEAR": "Année",
+        "YEAR_LABEL": "Année",
         "COUNT": "Nombre",
         "DIAGNOSIS_DATE": "Date du diagnostic",
         "MUNICIPALITY": "Commune",
@@ -25,7 +25,8 @@
         "PEST_GROUP": "Groupe d'épizooties",
         "ANIMAL_SPECIES": "Catégorie animale",
         "QUARTER": "Quartier",
-        "SHOW_ALL_NONE": "Montrer/Masquer tous"
+        "SHOW_ALL_NONE": "Montrer/Masquer tous",
+        "MONTHS": ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"]
     },
     "ERROR": {
         "OCCURED": "Une erreur est survenue",

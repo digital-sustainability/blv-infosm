@@ -172,15 +172,15 @@
     <div class="col-sm-10 col-sm-offset-1">
         <ul class="nav nav-tabs">
             <li id="frequency">
-                <a data-toggle="tab" [routerLink]="['./frequency']">{{ 'FILTERCHARTS.FREQUENCY' | translate }}
+                <a data-toggle="tab" (click)="changeRoute('/frequency')">{{ 'FILTERCHARTS.FREQUENCY' | translate }}
                 </a>
             </li>
             <li id="timeline">
-                <a data-toggle="tab" [routerLink]="['./timeline']">{{ 'FILTERCHARTS.TIMELINE' | translate }}
+                <a data-toggle="tab" (click)="changeRoute('/timeline')">{{ 'FILTERCHARTS.TIMELINE' | translate }}
                 </a>
             </li>
             <li id="map">
-                <a data-toggle="tab" [routerLink]="['./map']">{{ 'FILTERCHARTS.MAP' | translate }}
+                <a data-toggle="tab" (click)="changeRoute('/map')">{{ 'FILTERCHARTS.MAP' | translate }}
                 </a>
             </li>
         </ul>
