@@ -1,51 +1,75 @@
 {
-    "GENERAL": {
-        "BLV": "BLV",
-        "BLV_FULL": "Bundesamt für Lebensmittelsicherheit und Veterinärwesen",
-        "CONTACT": "Kontakt",
-        "LEGAL_FRAMEWORK": "Rechtliche Grundlagen"
-    },
-    "HEADER": {
-        "HOME": "Startseite",
-        "EVALUATION": "Auswertungstool",
-        "GO_HOME": "Zurück zur Startseite"
-    },
-    "HOME": {
-        "TEST": "Testen einer SVG Grafik für den Meldefluss einer Tierseuchenmeldung."
-    },
-    "EVALUATION": {
-        "YEAR_LABEL": "Jahr",
-        "COUNT": "Seuchenfälle pro Seuchengruppe",
-        "DIAGNOSIS_DATE": "Diagnosedatum",
-        "MUNICIPALITY": "Gemeinde",
-        "CANTON": "Kanton",
-        "KILLED": "Getötet",
-        "INFECTED": "Infiziert",
-        "PEST": "Seuche",
-        "PEST_GROUP": "Seuchengruppe",
-        "ANIMAL_SPECIES": "Tierart",
-        "QUARTER": "Quartal",
-        "SHOW_ALL_NONE": "Alle ein-/ausblenden",
-        "AGGR_EPIDEMICS_GROUPS": "Zoooo",
-        "MONTHS": ["Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"]
-    },
-    "ERROR": {
-        "OCCURED": "Ein Fehler ist aufgetreten.",
-        "PAGE_NOT_FOUND": "Die aufgerufene Seite wurde leider nicht gefunden. Möglicherweise haben Sie eine falsche Adresse (URL) eingegeben, die Seite existiert nicht mehr oder der Name wurde geändert.",
-        "YOUR_OPTIONS": "Für die Suche in diesem Internet-Angebot stehen folgende Möglichkeiten offen:"
-    },
-    "FILTERCHARTS": {
-        "FREQUENCY": "Auswertung nach Häufigkeit",
-        "TIMELINE": "Zeitliche Auswertung",
-        "MAP": "Auswertung nach Geografie"
-    },
-    "FILTER": {
-        "FILTER": "Nach Zeitraum filtern",
-        "LASTWEEK": "letzte Woche",
-        "LASTMONTH": "letzter Monat",
-        "LASTYEAR": "letztes Jahr",
-        "LASTTHREEYEARS": "letzte drei Jahre",
-        "WHOLETIME": "ganzer Zeitraum",
-        "PLACEHOLDERCANTON": "alle Kantone"
-    }
+  "GENERAL": {
+    "BLV": "BLV",
+    "BLV_FULL": "Bundesamt für Lebensmittelsicherheit und Veterinärwesen",
+    "CONTACT": "Kontakt",
+    "LEGAL_FRAMEWORK": "Rechtliche Grundlagen"
+  },
+  "HEADER": {
+    "HOME": "Startseite",
+    "EVALUATION": "Auswertungstool",
+    "GO_HOME": "Zurück zur Startseite"
+  },
+  "HOME": {
+    "TEST": "Testen einer SVG Grafik für den Meldefluss einer Tierseuchenmeldung."
+  },
+  "EVALUATION": {
+    "YEAR_LABEL": "Jahr",
+    "COUNT": "Seuchenfälle pro Seuchengruppe",
+    "DIAGNOSIS_DATE": "Diagnosedatum",
+    "MUNICIPALITY": "Gemeinde",
+    "CANTON": "Kanton",
+    "KILLED": "Getötet",
+    "INFECTED": "Infiziert",
+    "PEST": "Seuche",
+    "PEST_GROUP": "Seuchengruppe",
+    "ANIMAL_SPECIES": "Tierart",
+    "QUARTER": "Quartal",
+    "SHOW_ALL_NONE": "Alle ein-/ausblenden",
+    "AGGR_EPIDEMICS_GROUPS": "Zoooo",
+    "MONTHS": [
+      "Januar",
+      "Februar",
+      "März",
+      "April",
+      "Mai",
+      "Juni",
+      "Juli",
+      "August",
+      "September",
+      "Oktober",
+      "November",
+      "Dezember"
+    ]
+  },
+  "ERROR": {
+    "OCCURED": "Ein Fehler ist aufgetreten.",
+    "PAGE_NOT_FOUND": "Die aufgerufene Seite wurde leider nicht gefunden. Möglicherweise haben Sie eine falsche Adresse (URL) eingegeben, die Seite existiert nicht mehr oder der Name wurde geändert.",
+    "YOUR_OPTIONS": "Für die Suche in diesem Internet-Angebot stehen folgende Möglichkeiten offen:"
+  },
+  "FILTERCHARTS": {
+    "FREQUENCY": "Auswertung nach Häufigkeit",
+    "TIMELINE": "Zeitliche Auswertung",
+    "MAP": "Auswertung nach Geografie"
+  },
+  "FILTER": {
+    "FILTER": "Nach Zeitraum filtern",
+    "LASTWEEK": "letzte Woche",
+    "LASTMONTH": "letzter Monat",
+    "LASTYEAR": "letztes Jahr",
+    "LASTTHREEYEARS": "letzte drei Jahre",
+    "WHOLETIME": "ganzer Zeitraum",
+    "PLACEHOLDERCANTON": "alle Kantone",
+
+    "FROM": "von",
+    "TO": "bis",
+    "FILTER_ACTION": "Filtern",
+    "FILTER_BY_CATEGORY": "Nach Kategorien filtern",
+    "NO_ENTRIES": "Keine Einträge",
+    "PLACEHOLDER_MUNICIPALITY": "alle Gemeinden",
+    "PLACEHOLDER_EPIDEMIC_GROUP": "alle Seuchengruppen",
+    "PLACEHOLDER_EPIDEMIC": "alle Seuchen",
+    "PLACEHOLDER_ANIMAL_GROUP": "alle Tiergruppen",
+    "PLACEHOLDER_ANIMAL_SPECIES": "alle Tierarten"
+  }
 }
