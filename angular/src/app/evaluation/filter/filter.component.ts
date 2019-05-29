@@ -178,6 +178,15 @@ export class FilterComponent implements OnInit, OnDestroy {
     this.getList(this._filter.lang, this._filter.from, this._filter.to);
   }
 
+
+  onClear($event: {}, filterType: string) {
+    if (this.filterConfig.hasOwnProperty(`${filterType}`)) {
+      this.filterConfig[filterType] = [];
+    }
+    console.log(this.filterConfig);
+    this.getList(this._filter.lang, this._filter.from, this._filter.to);
+  }
+
   // changes the date based on radio buttons
   changeDate(option: string) {
     // TODO: One year too much because we don't have all the data

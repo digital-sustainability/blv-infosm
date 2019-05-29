@@ -1,245 +1,238 @@
 <div class="filterContainer">
-    <div class="panel panel-info">
-        <div class="panel-heading collapsed" data-toggle="collapse" data-target="#filterDates">
-            <i class="fa fa-fw fa-chevron-down"></i>
-            <i class="fa fa-fw fa-chevron-right"></i>Nach vorgegebenem Zeitraum filtern
-        </div>
-        <div class="panel-body">
-            <div id="filterDates" class="collapse " style="margin-bottom: 10px;">
-                <!-- <strong>{{ 'FILTER.FILTER' | translate }}:</strong> -->
-                <fieldset >
-                    <!-- last week and last month disabled since we dont have this data at the moment -->
-                    <div class="radio radio--left">
-                        <label for="radio">
-                            <input type="radio" name="radios" class="radio" id="radio1" value="radio1"
-                                (click)="changeDate('week')" disabled>
-                            {{ 'FILTER.LASTWEEK' | translate }}
-                        </label>
-                    </div>
-                    <div class="radio radio--left">
-                        <label for="radio2">
-                            <input type="radio" name="radios" class="radio" id="radio2" value="radio2"
-                                (click)="changeDate('month')" disabled>
-                            {{ 'FILTER.LASTMONTH' | translate }}
-                        </label>
-                    </div>
-                    <div class="radio radio--left">
-                        <label for="radio3">
-                            <input type="radio" name="radios" class="radio" id="radio3" value="radio3"
-                                (click)="changeDate('year')" checked>
-                            {{ 'FILTER.LASTYEAR' | translate }}
-                        </label>
-                    </div>
-                    <div class="radio radio--left">
-                        <label for="radio4">
-                            <input type="radio" name="radios" class="radio" id="radio4" value="radio4"
-                                (click)="changeDate('threeYears')">
-                            {{ 'FILTER.LASTTHREEYEARS' | translate }}
-                        </label>
-                    </div>
-                    <div class="radio radio--left">
-                        <label for="radio5">
-                            <input type="radio" name="radios" class="radio" id="radio5" value="radio5"
-                                (click)="changeDate('whole')">
-                            {{ 'FILTER.WHOLETIME' | translate }}
-                        </label>
-                    </div>
-                </fieldset>
-            </div>
-        </div>
+  <div class="panel panel-info">
+    <div class="panel-heading collapsed" data-toggle="collapse" data-target="#filterDates">
+      <i class="fa fa-fw fa-chevron-down"></i>
+      <i class="fa fa-fw fa-chevron-right"></i>{{ 'FILTER.FILTER' | translate }}
     </div>
-    <div class="panel panel-info ">
-        <div class="panel-heading collapsed" data-toggle="collapse" data-target="#filterSpecificDate">
-            <i class="fa fa-fw fa-chevron-down"></i>
-            <i class="fa fa-fw fa-chevron-right"></i>Nach vorgegebenem Zeitraum filtern
-        </div>
-        <div class="panel-body">
-            <div id="filterSpecificDate" class="collapse " style="margin-bottom: 10px">
-                <div id="selectDateSection" >
-                    <div class="input-group">
-                        <form class="form-inline">
-                            <div class="form-group">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text" id="inputGroup-sizing-default">von</span>
-                                </div>
-                                <div class="input-group" style="width: 40%">
-                                    <input class="form-control" placeholder="YYYY-MM-DD" name="from" [(ngModel)]="from"
-                                        ngbDatepicker #d="ngbDatepicker">
-                                </div>
-                                <div class="input-group-append" style="height:33.5px;">
-                                    <button class="btn btn-outline-secondary calendar" (click)="d.toggle()"
-                                        type="button"></button>
-                                </div>
-                            </div>
-                        </form>
-                        <form class="form-inline">
-                            <div class="form-group">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text" id="inputGroup-sizing-default">bis&nbsp;</span>
-                                </div>
-                                <div class="input-group" style="width: 40%">
-                                    <input class="form-control" placeholder="YYYY-MM-DD" name="to" [(ngModel)]="to"
-                                        ngbDatepicker #c="ngbDatepicker">
-                                </div>
-                                <div class="input-group-append" style="height:33.5px;">
-                                    <button class="btn btn-outline-secondary calendar" (click)="c.toggle()"
-                                        type="button"></button>
-                                </div>
-                            </div>
-                        </form>
-                        <button style="height:35px; margin-top: 15px" class="btn btn-dark notValid" type="submit"
-                            (click)="getFromToDates()">Filtern</button>
-                    </div>
-                </div>
-            </div>
-        </div>
+    <div class="panel-body">
+      <div id="filterDates" class="collapse " style="margin-bottom: 10px;">
+        <!-- <strong>{{ 'FILTER.FILTER' | translate }}:</strong> -->
+        <fieldset>
+          <!-- last week and last month disabled since we dont have this data at the moment -->
+          <div class="radio radio--left">
+            <label for="radio">
+              <input type="radio" name="radios" class="radio" id="radio1" value="radio1"
+                     (click)="changeDate('week')" disabled>
+              {{ 'FILTER.LASTWEEK' | translate }}
+            </label>
+          </div>
+          <div class="radio radio--left">
+            <label for="radio2">
+              <input type="radio" name="radios" class="radio" id="radio2" value="radio2"
+                     (click)="changeDate('month')" disabled>
+              {{ 'FILTER.LASTMONTH' | translate }}
+            </label>
+          </div>
+          <div class="radio radio--left">
+            <label for="radio3">
+              <input type="radio" name="radios" class="radio" id="radio3" value="radio3"
+                     (click)="changeDate('year')" checked>
+              {{ 'FILTER.LASTYEAR' | translate }}
+            </label>
+          </div>
+          <div class="radio radio--left">
+            <label for="radio4">
+              <input type="radio" name="radios" class="radio" id="radio4" value="radio4"
+                     (click)="changeDate('threeYears')">
+              {{ 'FILTER.LASTTHREEYEARS' | translate }}
+            </label>
+          </div>
+          <div class="radio radio--left">
+            <label for="radio5">
+              <input type="radio" name="radios" class="radio" id="radio5" value="radio5"
+                     (click)="changeDate('whole')">
+              {{ 'FILTER.WHOLETIME' | translate }}
+            </label>
+          </div>
+        </fieldset>
+      </div>
     </div>
-    <div class="panel panel-info">
-        <div class="panel-heading collapsed" data-toggle="collapse" data-target="#filterCategories">
-            <i class="fa fa-fw fa-chevron-down"></i>
-            <i class="fa fa-fw fa-chevron-right"></i>Nach Kategorien filtern
-        </div>
-        <div class="panel-body">
-            <div id="filterCategories" class="collapse" style="margin-top: 10px">
-                <!-- cantons and communities -->
-                <div style="width:200px; margin-bottom: 20px; margin-right: 30px" ngbDropdown class="d-inline-block"
-                    autoClose="outside" (openChange)="toggleCheckbox($event, 'canton')">
-                    <button style="width: 200px" class="btn btn-dark" id="dropdownForm1"
-                        ngbDropdownToggle>{{ 'EVALUATION.CANTON' | translate }}</button>
-                    <div ngbDropdownMenu>
-                        <div *ngFor="let canton of cantons" class="form-check">
-                            <input type="checkbox" name="canton" class="form-check-input" id="{{canton}}">
-                            <label class="form-check-label" for="{{canton }}"> </label>
-                            <div style="display:inline-block; margin-left: 20px">{{ canton }}</div>
-                        </div>
-                    </div>
-                </div>
-                <div style="display: inline-block; width: 60%">
-                    <ng-select [items]="communities" notFoundText="Keine Einträge" [multiple]="true"
-                        placeholder="alle Gemeinden" (add)="onAdd($event, 'community')"
-                        (remove)="onRemove($event, 'community')">
-                    </ng-select>
-
-                </div>
-                <br />
-                <!-- pest groups and pest  -->
-                <div style="width:200px; margin-bottom: 20px; margin-right: 30px" ngbDropdown class="d-inline-block"
-                    autoClose="outside" (openChange)="toggleCheckbox($event, 'epidemic_group')">
-                    <button style="width: 200px" class="btn btn-dark" id="dropdownForm2"
-                        ngbDropdownToggle>{{ 'EVALUATION.PEST_GROUP' | translate }}</button>
-                    <div ngbDropdownMenu>
-                        <div *ngFor="let epidemic of epidemics_group" class="form-check">
-                            <input type="checkbox" name="epidemic" class="form-check-input" id="{{epidemic}}">
-                            <label class="form-check-label" for="{{epidemic}}"></label>
-                            <div style="display:inline-block; margin-left: 20px">{{ epidemic }}</div>
-                        </div>
-                    </div>
-                </div>
-                <div style="display: inline-block; width: 60%">
-                    <ng-select [items]="epidemics" notFoundText="Keine Einträge" [multiple]="true"
-                        placeholder="alle Seuchen" (add)="onAdd($event, 'epidemic')"
-                        (remove)="onRemove($event, 'epidemic')">
-                    </ng-select>
-                </div>
-                <br />
-                <!-- animal groups and animal species  -->
-                <div style="width:200px; margin-bottom: 20px; margin-right: 30px" ngbDropdown class="d-inline-block"
-                    autoClose="outside" (openChange)="toggleCheckbox($event, 'animal_group')">
-                    <button style="width: 200px" class="btn btn-dark" id="dropdownForm3"
-                        ngbDropdownToggle>Tiergruppen</button>
-                    <div ngbDropdownMenu>
-                        <div *ngFor="let animal of animal_group" class="form-check">
-                            <input type="checkbox" name="animal" class="form-check-input" id="{{animal}}">
-                            <label class="form-check-label" for="{{animal}}"></label>
-                            <div style="display:inline-block; margin-left: 20px">{{ animal }}</div>
-                        </div>
-                    </div>
-                </div>
-                <div style="display: inline-block; width: 60%">
-                    <ng-select [items]="animal_species" notFoundText="Keine Einträge" [multiple]="true"
-                        placeholder="alle Tierarten" (add)="onAdd($event, 'animal_species')"
-                        (remove)="onRemove($event, 'animal_species')">
-                    </ng-select>
-                </div>
-            </div>
-        </div>
+  </div>
+  <div class="panel panel-info ">
+    <div class="panel-heading collapsed" data-toggle="collapse" data-target="#filterSpecificDate">
+      <i class="fa fa-fw fa-chevron-down"></i>
+      <i class="fa fa-fw fa-chevron-right"></i>{{'FILTER.FILTER' | translate}}
     </div>
+    <div class="panel-body">
+      <div id="filterSpecificDate" class="collapse " style="margin-bottom: 10px">
+        <div id="selectDateSection">
+          <div class="input-group">
+            <form class="form-inline">
+              <div class="form-group">
+                <div class="input-group-prepend">
+                  <span class="input-group-text" id="inputGroup-sizing-default">{{'FILTER.FROM' | translate}}</span>
+                </div>
+                <div class="input-group" style="width: 40%">
+                  <input class="form-control" placeholder="YYYY-MM-DD" name="from" [(ngModel)]="from"
+                         ngbDatepicker #d="ngbDatepicker">
+                </div>
+                <div class="input-group-append" style="height:33.5px;">
+                  <button class="btn btn-outline-secondary calendar" (click)="d.toggle()"
+                          type="button"></button>
+                </div>
+              </div>
+            </form>
+            <form class="form-inline">
+              <div class="form-group">
+                <div class="input-group-prepend">
+                  <span class="input-group-text" id="inputGroup-sizing-default">{{'FILTER.TO' | translate}}&nbsp;</span>
+                </div>
+                <div class="input-group" style="width: 40%">
+                  <input class="form-control" placeholder="YYYY-MM-DD" name="to" [(ngModel)]="to"
+                         ngbDatepicker #c="ngbDatepicker">
+                </div>
+                <div class="input-group-append" style="height:33.5px;">
+                  <button class="btn btn-outline-secondary calendar" (click)="c.toggle()"
+                          type="button"></button>
+                </div>
+              </div>
+            </form>
+            <button style="height:35px; margin-top: 15px" class="btn btn-dark notValid" type="submit"
+                    (click)="getFromToDates()">{{'FILTER.FILTER_ACTION' | translate}}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="panel panel-info">
+    <div class="panel-heading collapsed" data-toggle="collapse" data-target="#filterCategories">
+      <i class="fa fa-fw fa-chevron-down"></i>
+      <i class="fa fa-fw fa-chevron-right"></i>{{'FILTER.FILTER_BY_CATEGORY' | translate}}
+    </div>
+    <div class="panel-body">
+      <div id="filterCategories" class="collapse" style="margin-top: 10px">
+        <div class="flex-container">
+          <!-- cantons and communities -->
+          <div class="select-wrapper">
+            <ng-select [items]="cantons" notFoundText="{{'FILTER.NO_ENTRIES' | translate}}" [multiple]="true"
+                       placeholder="{{'FILTER.PLACEHOLDERCANTON' | translate}}"
+                       (add)="onAdd($event, 'canton')"
+                       (remove)="onRemove($event, 'canton')"
+                       (clear)="onClear($event, 'canton')">
+            </ng-select>
+          </div>
+          <div class="select-wrapper">
+            <ng-select [items]="communities" notFoundText="{{'FILTER.NO_ENTRIES' | translate}}" [multiple]="true"
+                       placeholder="{{'FILTER.PLACEHOLDER_MUNICIPALITY' | translate}}"
+                       (add)="onAdd($event, 'community')"
+                       (remove)="onRemove($event, 'community')"
+                       (clear)="onClear($event, 'community')">
+            </ng-select>
+          </div>
+          <!--        epidamic groups and epidemics-->
+          <div class="select-wrapper">
+            <ng-select [items]="epidemics_group" notFoundText="{{'FILTER.NO_ENTRIES' | translate}}" [multiple]="true"
+                       placeholder="{{'FILTER.PLACEHOLDER_EPIDEMIC_GROUP' | translate}}"
+                       (add)="onAdd($event, 'epidemic_group')"
+                       (remove)="onRemove($event, 'epidemic_group')"
+                       (clear)="onClear($event, 'epidemic_group')">
+            </ng-select>
+          </div>
+          <div class="select-wrapper">
+            <ng-select [items]="epidemics" notFoundText="{{'FILTER.NO_ENTRIES' | translate}}" [multiple]="true"
+                       placeholder="{{'FILTER.PLACEHOLDER_EPIDEMIC' | translate}}"
+                       (add)="onAdd($event, 'epidemic')"
+                       (remove)="onRemove($event, 'epidemic')"
+                       (clear)="onClear($event, 'epidemic')">
+            </ng-select>
+          </div>
+          <!-- animal groups and animal species  -->
+          <div class="select-wrapper">
+            <ng-select [items]="animal_group" notFoundText="{{'FILTER.NO_ENTRIES' | translate}}" [multiple]="true"
+                       placeholder="{{'FILTER.PLACEHOLDER_ANIMAL_GROUP' | translate}}"
+                       (add)="onAdd($event, 'animal_group')"
+                       (remove)="onRemove($event, 'animal_group')"
+                       (clear)="onClear($event, 'animal_group')">
+            </ng-select>
+          </div>
+          <div class="select-wrapper">
+            <ng-select [items]="animal_species" notFoundText="{{'FILTER.NO_ENTRIES' | translate}}" [multiple]="true"
+                       placeholder="{{'FILTER.PLACEHOLDER_ANIMAL_SPECIES' | translate}}"
+                       (add)="onAdd($event, 'animal_species')"
+                       (remove)="onRemove($event, 'animal_species')"
+                       (clear)="onClear($event, 'animal_species')">
+            </ng-select>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
-   
 
 
 <div style="margin-top: 15px" class="row">
-    <div class="col-sm-10 col-sm-offset-1">
-        <ul class="nav nav-tabs">
-            <li id="frequency">
-                <a data-toggle="tab" (click)="changeRoute('/frequency')">{{ 'FILTERCHARTS.FREQUENCY' | translate }}
-                </a>
-            </li>
-            <li id="timeline">
-                <a data-toggle="tab" (click)="changeRoute('/timeline')">{{ 'FILTERCHARTS.TIMELINE' | translate }}
-                </a>
-            </li>
-            <li id="map">
-                <a data-toggle="tab" (click)="changeRoute('/map')">{{ 'FILTERCHARTS.MAP' | translate }}
-                </a>
-            </li>
-        </ul>
-        <router-outlet></router-outlet>
-    </div>
+  <div class="col-sm-10 col-sm-offset-1">
+    <ul class="nav nav-tabs">
+      <li id="frequency">
+        <a data-toggle="tab" (click)="changeRoute('/frequency')">{{ 'FILTERCHARTS.FREQUENCY' | translate }}
+        </a>
+      </li>
+      <li id="timeline">
+        <a data-toggle="tab" (click)="changeRoute('/timeline')">{{ 'FILTERCHARTS.TIMELINE' | translate }}
+        </a>
+      </li>
+      <li id="map">
+        <a data-toggle="tab" (click)="changeRoute('/map')">{{ 'FILTERCHARTS.MAP' | translate }}
+        </a>
+      </li>
+    </ul>
+    <router-outlet></router-outlet>
+  </div>
 </div>
 
 <ng-template #loadingList>
-    <div class="loadingSign">
-        <fa name="refresh" size="4x" animation="spin"></fa>
-    </div>
+  <div class="loadingSign">
+    <fa name="refresh" size="4x" animation="spin"></fa>
+  </div>
 </ng-template>
 
 <div class="mat-elevation-z8" style="margin:5%">
-    <mat-table class="mat-elevation-z8" [dataSource]="dataSource" matSort>
-        <ng-container matColumnDef="diagnosis_date">
-            <mat-header-cell *matHeaderCellDef mat-sort-header> <strong>{{ 'EVALUATION.DIAGNOSIS_DATE' | translate }}
-                </strong></mat-header-cell>
-            <mat-cell *matCellDef="let element"> {{element.diagnosis_date}} </mat-cell>
-        </ng-container>
+  <mat-table class="mat-elevation-z8" [dataSource]="dataSource" matSort>
+    <ng-container matColumnDef="diagnosis_date">
+      <mat-header-cell *matHeaderCellDef mat-sort-header><strong>{{ 'EVALUATION.DIAGNOSIS_DATE' | translate }}
+      </strong></mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{element.diagnosis_date}} </mat-cell>
+    </ng-container>
 
-        <ng-container matColumnDef="canton">
-            <mat-header-cell *matHeaderCellDef mat-sort-header> <strong>{{ 'EVALUATION.CANTON' | translate }}</strong>
-            </mat-header-cell>
-            <mat-cell *matCellDef="let element"> {{element.canton}} </mat-cell>
-        </ng-container>
+    <ng-container matColumnDef="canton">
+      <mat-header-cell *matHeaderCellDef mat-sort-header><strong>{{ 'EVALUATION.CANTON' | translate }}</strong>
+      </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{element.canton}} </mat-cell>
+    </ng-container>
 
-        <ng-container matColumnDef="community">
-            <mat-header-cell *matHeaderCellDef mat-sort-header>
-                <strong>{{ 'EVALUATION.MUNICIPALITY' | translate }}</strong></mat-header-cell>
-            <mat-cell *matCellDef="let element"> {{element.community}} </mat-cell>
-        </ng-container>
-
-
-        <ng-container matColumnDef="epidemic">
-            <mat-header-cell *matHeaderCellDef mat-sort-header><strong>{{ 'EVALUATION.PEST_GROUP' | translate }}
-                </strong></mat-header-cell>
-            <mat-cell *matCellDef="let element"> {{element.epidemic}} </mat-cell>
-        </ng-container>
+    <ng-container matColumnDef="community">
+      <mat-header-cell *matHeaderCellDef mat-sort-header>
+        <strong>{{ 'EVALUATION.MUNICIPALITY' | translate }}</strong></mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{element.community}} </mat-cell>
+    </ng-container>
 
 
-        <ng-container matColumnDef="epidemic_group">
-            <mat-header-cell *matHeaderCellDef mat-sort-header> <strong>{{ 'EVALUATION.PEST' | translate }}</strong>
-            </mat-header-cell>
-            <mat-cell *matCellDef="let element"> {{element.epidemic_group}} </mat-cell>
-        </ng-container>
+    <ng-container matColumnDef="epidemic">
+      <mat-header-cell *matHeaderCellDef mat-sort-header><strong>{{ 'EVALUATION.PEST_GROUP' | translate }}
+      </strong></mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{element.epidemic_group}} </mat-cell>
+    </ng-container>
 
-        <ng-container matColumnDef="animal_species">
-            <mat-header-cell *matHeaderCellDef mat-sort-header>
-                <strong>{{ 'EVALUATION.ANIMAL_SPECIES' | translate }}</strong>
-            </mat-header-cell>
-            <mat-cell *matCellDef="let element"> {{element.animal_species}}</mat-cell>
-        </ng-container>
 
-        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-        <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
-    </mat-table>
+    <ng-container matColumnDef="epidemic_group">
+      <mat-header-cell *matHeaderCellDef mat-sort-header><strong>{{ 'EVALUATION.PEST' | translate }}</strong>
+      </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{element.epidemic}} </mat-cell>
+    </ng-container>
 
-    <mat-paginator [pageSize]="5" [hidePageSize]="true" showFirstLastButtons></mat-paginator>
+    <ng-container matColumnDef="animal_species">
+      <mat-header-cell *matHeaderCellDef mat-sort-header>
+        <strong>{{ 'EVALUATION.ANIMAL_SPECIES' | translate }}</strong>
+      </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{element.animal_species}}</mat-cell>
+    </ng-container>
+
+    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+  </mat-table>
+
+  <mat-paginator [pageSize]="5" [hidePageSize]="true" showFirstLastButtons></mat-paginator>
 </div>
 <!-- <div style="height: 50px"></div> -->
 
