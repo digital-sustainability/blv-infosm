@@ -66,31 +66,33 @@ export class TimelineChartComponent implements OnInit, OnDestroy {
     // if(this.intervals.minYear === this.intervals.maxYear) {this.isYear = false; }
     this.dataSub = this._distributeDataService.currentData.subscribe(
       data => {
-        this.data = data;
-        this.years = this.extractYears(data);
-        // Translate if new data is loaded
-        this.translationSub = this.translate.get([
-          'EVALUATION.MONTHS',
-          'EVALUATION.MONTH_LABEL',
-          'EVALUATION.YEAR',
-          'EVALUATION.AGGR_ANIMAL_GROUPS',
-          'EVALUATION.AGGR_EPIDEMICS_GROUPS',
-          'EVALUATION.COUNT',
-          'EVALUATION.QUARTER',
-          'EVALUATION.SHOW_ALL_NONE']).subscribe(
-            texts => {
-              this.months = texts['EVALUATION.MONTHS'];
-              this.yearLabel = texts['EVALUATION.YEAR_LABEL'];
-              this.count = texts['EVALUATION.COUNT'];
-              this.aggrEpidemicGroupLabel = texts['AGGR_EPIDEMICS_GROUPS'];
-              // this.aggrAnimalGroupLabel = texts['AGGR_ANIMAL_GROUPS'];
-              this.aggrAnimalGroupLabel = 'ZOOOO';
-              this.allLinesLabel = texts['EVALUATION.SHOW_ALL_NONE'];
-              this.timeLineChartData = this.extract(data, 'epidemic_group');
-              this.loaded = true;
-              this.drawChart();
-            }
-          );
+        if (data) {
+          this.data = data;
+          this.years = this.extractYears(data);
+          // Translate if new data is loaded
+          this.translationSub = this.translate.get([
+            'EVALUATION.MONTHS',
+            'EVALUATION.MONTH_LABEL',
+            'EVALUATION.YEAR',
+            'EVALUATION.AGGR_ANIMAL_GROUPS',
+            'EVALUATION.AGGR_EPIDEMICS_GROUPS',
+            'EVALUATION.COUNT',
+            'EVALUATION.QUARTER',
+            'EVALUATION.SHOW_ALL_NONE']).subscribe(
+              texts => {
+                this.months = texts['EVALUATION.MONTHS'];
+                this.yearLabel = texts['EVALUATION.YEAR_LABEL'];
+                this.count = texts['EVALUATION.COUNT'];
+                this.aggrEpidemicGroupLabel = texts['AGGR_EPIDEMICS_GROUPS'];
+                // this.aggrAnimalGroupLabel = texts['AGGR_ANIMAL_GROUPS'];
+                this.aggrAnimalGroupLabel = 'ZOOOO';
+                this.allLinesLabel = texts['EVALUATION.SHOW_ALL_NONE'];
+                this.timeLineChartData = this.extract(data, 'epidemic_group');
+                this.loaded = true;
+                this.drawChart();
+              }
+            );
+        }
       },
       err => console.log(err) // TODO: Improve Error handling
     );

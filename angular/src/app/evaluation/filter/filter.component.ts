@@ -114,7 +114,7 @@ export class FilterComponent implements OnInit, OnDestroy {
     );
   }
 
-  changeRoute(route: string): void {
+  changeTab(route: string): void {
     this._router.navigate(['evaluation' + route], { queryParamsHandling: 'merge' });
   }
 

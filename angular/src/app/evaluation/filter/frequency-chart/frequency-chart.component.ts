@@ -33,15 +33,17 @@ export class FrequencyChartComponent implements OnInit, OnDestroy {
     console.log(this.range(5, 19));
     this.dataSub = this._distributeDataServie.currentData.subscribe(
       data => {
-        this.ready = true;
-        this.reports = data;
-        this.translationSub = this.translate.get(['EVALUATION.SHOW_ALL_NONE'])
-          .subscribe(
-            texts => {
-              this.allLinesLabel = texts['EVALUATION.SHOW_ALL_NONE'];
-              this.drawChart(data, 'epidemic', this.extractPestFrequencies);
-            }
-          );
+        if (data) {
+          this.ready = true;
+          this.reports = data;
+          this.translationSub = this.translate.get(['EVALUATION.SHOW_ALL_NONE'])
+            .subscribe(
+              texts => {
+                this.allLinesLabel = texts['EVALUATION.SHOW_ALL_NONE'];
+                this.drawChart(data, 'epidemic', this.extractPestFrequencies);
+              }
+            );
+        }
       },
       err => console.log(err)
     );

@@ -25,7 +25,9 @@ PREFIX gont: <https://gont.ch/>
 PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 PREFIX blv-attribute: <http://ld.zazuko.com/animalpest/attribute/>
 PREFIX blv-dimension: <http://ld.zazuko.com/animalpest/dimension/>
-`
+PREFIX dct: <http://purl.org/dc/terms/>
+PREFIX schema: <http://schema.org/>
+`;
 
   constructor(
     private http: HttpClient,
@@ -33,22 +35,6 @@ PREFIX blv-dimension: <http://ld.zazuko.com/animalpest/dimension/>
 
   getReports(lang: string, from: string | Date, to: string | Date): Observable<Report[]> {
     const url = 'http://ld.zazuko.com/query';
-//     const query = `${this._prefix}
-//   SELECT *
-//   FROM <https://linked.opendata.swiss/graph/blv/animalpest> WHERE {
-//   ?sub a qb:Observation ;
-//     <http://ld.zazuko.com/animalpest/attribute/diagnose_datum> ?diagnose_datum;
-//     <http://ld.zazuko.com/animalpest/attribute/kanton_id>/rdfs:label ?kanton;
-//     <http://ld.zazuko.com/animalpest/attribute/gemeinde_id>/rdfs:label ?gemeinde;
-// 		<http://ld.zazuko.com/animalpest/dimension/tier-art>/rdfs:label ?tierart;
-//     <http://ld.zazuko.com/animalpest/dimension/tier-seuche> ?seuchen_uri.
-//       ?seuchen_uri rdfs:label ?seuche;
-//       skos:broader/rdfs:label ?seuchen_gruppe.
-//   FILTER(langMatches(lang(?tierart), "${lang}"))
-//   FILTER(langMatches(lang(?seuche), "${lang}"))
-//   FILTER(langMatches(lang(?seuchen_gruppe), "${lang}"))
-//   FILTER (?diagnose_datum >= "${this.checkDate(from)}"^^xsd:date && ?diagnose_datum <="${this.checkDate(to)}"^^xsd:date)
-// }`;
 
     const query = `${this._prefix}
     SELECT *
@@ -72,34 +58,74 @@ PREFIX blv-dimension: <http://ld.zazuko.com/animalpest/dimension/>
     FILTER(langMatches(lang(?seuchen_gruppe), "${lang}"))
     FILTER(langMatches(lang(?tier_gruppe), "${lang}"))
     FILTER (?diagnose_datum >= "${this.checkDate(from)}"^^xsd:date && ?diagnose_datum <="${this.checkDate(to)}"^^xsd:date)
-    }`
-    
+    }`;
+
     const params = new HttpParams()
       .set('url', url)
       .set('query', query);
     return this.http.get<Report[]>(this._api + 'getData', { params: params });
   }
 
-  // TODO: Types
   getCantonsWkt(): any {
-    const calls = [];
     const url = 'https://ld.geo.admin.ch/query';
-    Array(26).fill(1).map((x, i) => x + i).forEach(canton => {
+    // const calls = [];
+//     Array(26).fill(1).map((x, i) => x + i).forEach(canton => {
+//     const query = `${this._prefix}
+//   SELECT * WHERE { <https://ld.geo.admin.ch/boundaries/canton/${canton}> <http://purl.org/dc/terms/hasVersion> ?geomuniVersion .
+//     ?geomuniVersion <http://purl.org/dc/terms/issued> ?issued.
+//     ?geomuniVersion <http://www.opengis.net/ont/geosparql#hasGeometry> ?geometry.
+//     ?geometry <http://www.opengis.net/ont/geosparql#asWKT> ?wkt.
+//   }
+//   ORDER BY DESC(?issued)
+//   LIMIT 10
+// `;
+    //   const params = new HttpParams()
+    //   .set('url', url)
+    //   .set('query', query);
+    //   calls.push(this.http.get<any>(this._api + 'getData', { params: params }));
+    // });
+    // return forkJoin(...calls);
     const query = `${this._prefix}
-  SELECT * WHERE { <https://ld.geo.admin.ch/boundaries/canton/${canton}> <http://purl.org/dc/terms/hasVersion> ?geomuniVersion .
-    ?geomuniVersion <http://purl.org/dc/terms/issued> ?issued.
-    ?geomuniVersion <http://www.opengis.net/ont/geosparql#hasGeometry> ?geometry.
-    ?geometry <http://www.opengis.net/ont/geosparql#asWKT> ?wkt.
-  }
-  ORDER BY DESC(?issued)
-  LIMIT 10
-`;
-      const params = new HttpParams()
+SELECT * WHERE {
+      {
+        SELECT(max(?issued) AS ?mostRecentYear) WHERE {
+          <https://ld.geo.admin.ch/boundaries/canton/1> dct:hasVersion/dct:issued ?issued.
+        }
+      }
+	    ?canton <http://www.geonames.org/ontology#featureCode> <http://www.geonames.org/ontology#A.ADM1> ;
+      <http://purl.org/dc/terms/hasVersion> ?geomuniVersion .
+      ?geomuniVersion <http://purl.org/dc/terms/issued> ?mostRecentYear ;
+      <http://www.opengis.net/ont/geosparql#hasGeometry>/<http://www.opengis.net/ont/geosparql#asWKT> ?wkt .
+    }
+    `;
+    const params = new HttpParams()
       .set('url', url)
       .set('query', query);
-      calls.push(this.http.get<any>(this._api + 'getData', { params: params }));
-    });
-    return forkJoin(...calls);
+    return this.http.get<any>(this._api + 'getData', { params: params });
+  }
+
+  getMunicForCanton(canton: number): any {
+    const url = 'https://ld.geo.admin.ch/query';
+    const query = `${this._prefix}
+SELECT * WHERE {
+  {
+    SELECT (max(?issued) AS ?mostRecentYear) WHERE {
+    # Most recent year of municipality that is not likely to change (Bern)
+		<https://ld.geo.admin.ch/boundaries/municipality/351> dct:hasVersion/dct:issued ?issued.
+	}
+  }
+  	?municipality <http://www.geonames.org/ontology#featureCode> <http://www.geonames.org/ontology#A.ADM3> ;
+    <http://purl.org/dc/terms/hasVersion> ?geomuniVersion .
+
+    ?geomuniVersion <http://purl.org/dc/terms/issued> ?mostRecentYear ;
+    <http://www.geonames.org/ontology#parentADM1> <https://ld.geo.admin.ch/boundaries/canton/${canton}:2019>  ;
+    <http://www.opengis.net/ont/geosparql#hasGeometry>/<http://www.opengis.net/ont/geosparql#asWKT> ?wkt .
+  }
+    `;
+    const params = new HttpParams()
+      .set('url', url)
+      .set('query', query);
+    return this.http.get<any>(this._api + 'getData', { params: params });
   }
 
   private checkDate(date: string | Date): string {
