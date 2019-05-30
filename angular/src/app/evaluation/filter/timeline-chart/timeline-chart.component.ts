@@ -5,6 +5,7 @@ import { Subscription } from 'rxjs';
 import { DistributeDataService } from 'src/app/shared/distribute-data.service';
 import { ActivatedRoute } from '@angular/router';
 import { Report } from '../../../shared/models/report.model';
+import { Translations } from '../../../shared/models/translations.model';
 import { Line } from '../../../shared/models/line.model';
 import { HighchartService } from 'src/app/shared/highchart.service';
 import { uniq, uniqBy, range, countBy, mapKeys, get } from 'lodash';
@@ -19,11 +20,7 @@ export class TimelineChartComponent implements OnInit, OnDestroy {
   _paramSub: Subscription;
   data: Report[];
   timelineChart: Chart;
-  yearLabel: string;
   years: string;
-  months: string[];
-  count: string;
-  allLinesLabel: string;
   dataSub: Subscription;
   translationSub: Subscription;
   loaded = false;
@@ -31,8 +28,7 @@ export class TimelineChartComponent implements OnInit, OnDestroy {
   isMonth: boolean;
   isWeek: boolean;
   xAxis: string;
-  aggrEpidemicGroupLabel: string;
-  aggrAnimalGroupLabel: string;
+  trans: Translations;
   timeLineChartData: Line[];
   intervals = {
     minYear : 0,
@@ -71,22 +67,19 @@ export class TimelineChartComponent implements OnInit, OnDestroy {
           this.years = this.extractYears(data);
           // Translate if new data is loaded
           this.translationSub = this.translate.get([
-            'EVALUATION.MONTHS',
-            'EVALUATION.MONTH_LABEL',
-            'EVALUATION.YEAR',
-            'EVALUATION.AGGR_ANIMAL_GROUPS',
-            'EVALUATION.AGGR_EPIDEMICS_GROUPS',
-            'EVALUATION.COUNT',
-            'EVALUATION.QUARTER',
-            'EVALUATION.SHOW_ALL_NONE']).subscribe(
+            'EVAL.WEEK_LABEL',
+            'EVAL.MONTHS',
+            'EVAL.MONTH_LABEL',
+            'EVAL.YEAR',
+            'EVAL.YEAR_LABEL',
+            'EVAL.YEARS_LABEL',
+            'EVAL.AGGR_ANIMAL_GROUPS',
+            'EVAL.AGGR_EPIDEMIC_GROUPS',
+            'EVAL.COUNT',
+            'EVAL.SHOW_ALL_NONE']).subscribe(
               texts => {
-                this.months = texts['EVALUATION.MONTHS'];
-                this.yearLabel = texts['EVALUATION.YEAR_LABEL'];
-                this.count = texts['EVALUATION.COUNT'];
-                this.aggrEpidemicGroupLabel = texts['AGGR_EPIDEMICS_GROUPS'];
-                // this.aggrAnimalGroupLabel = texts['AGGR_ANIMAL_GROUPS'];
-                this.aggrAnimalGroupLabel = 'ZOOOO';
-                this.allLinesLabel = texts['EVALUATION.SHOW_ALL_NONE'];
+                // Obj that holds all tarnslations for this component
+                this.trans = texts;
                 this.timeLineChartData = this.extract(data, 'epidemic_group');
                 this.loaded = true;
                 this.drawChart();
@@ -120,7 +113,7 @@ export class TimelineChartComponent implements OnInit, OnDestroy {
       yAxis: {
         allowDecimals: false,
         title: {
-          text: this.count
+          text: this.trans['EVAL.COUNT']
         }
       },
       legend: {
@@ -159,7 +152,7 @@ export class TimelineChartComponent implements OnInit, OnDestroy {
        */
       series: this.timeLineChartData
         .concat({
-          name: this.allLinesLabel,
+          name: this.trans['EVAL.SHOW_ALL_NONE'],
           data: [],
           marker: { enabled: false }
         })
@@ -173,13 +166,19 @@ export class TimelineChartComponent implements OnInit, OnDestroy {
   private setCategories(): number[] | string[] {
     const countYears = this.years.length;
     if (this.isYear) {
-      this.xAxis = this.yearLabel;
+      this.xAxis = this.trans['EVAL.YEAR_LABEL'];
       return this.getInterval(this.intervals.minYear, this.intervals.maxYear);
-    } else if (this.isMonth) { // TODO: Replace hardcoded words
-      this.xAxis = (countYears === 1) ? `Monat (Jahr: ${this.years[0]})` : `Monat (Jahre: ${this.years[0]}, ${this.years[1]})`;
-      return this.getInterval(this.intervals.minMonth, this.intervals.maxMonth).map( (el: number) => this.numberToMonth(el, this.months));
+    } else if (this.isMonth) {
+      this.xAxis = (countYears === 1) ?
+        `${this.trans['EVAL.MONTH_LABEL']} (${this.trans['EVAL.YEAR_LABEL']}: ${this.years[0]})` :
+        `${this.trans['EVAL.MONTH_LABEL']} (${this.trans['EVAL.YEARS_LABEL']}: ${this.years[0]}, ${this.years[1]})`;
+      return this.getInterval(this.intervals.minMonth, this.intervals.maxMonth).map(
+        (el: number) => this.numberToMonth(el, this.trans['EVAL.MONTHS'])
+        );
     } else {
-      this.xAxis = (countYears === 1) ? `Woche (Jahr: ${this.years[0]})` : `Woche (Jahre: ${this.years[0]}, ${this.years[1]})`;
+      this.xAxis = (countYears === 1) ?
+        `${this.trans['EVAL.WEEK_LABEL']} (${this.trans['EVAL.YEAR_LABEL']}: ${this.years[0]})` :
+        `${this.trans['EVAL.WEEK_LABEL']} (${this.trans['EVAL.YEARS_LABEL']}: ${this.years[0]}, ${this.years[1]})`;
       return this.getInterval(this.intervals.minWeek, this.intervals.maxWeek);
     }
   }
@@ -254,25 +253,30 @@ export class TimelineChartComponent implements OnInit, OnDestroy {
       }
     );
 
+    // Define name of aggregated line depending on target
+    let name: string;
+    if (target === 'epidemic_group') {
+      name = this.trans['EVAL.AGGR_EPIDEMIC_GROUPS'];
+    } else {
+      name = this.trans['EVAL.AGGR_ANIMAL_GROUPS'];
+    }
     // Create obj that will hold the data for the aggregated line
     const tmpAggregatedTarget = {
-      'name': this.aggrEpidemicGroupLabel,
+      'name': name,
       'data': []
     };
     // Sum up for the value for every time unit
     for (let i = 0; i < timeUnit.length; i++) {
       let aggregat = 0;
-      lines.forEach((line, j) => {
+      lines.forEach((line: Line) => {
         aggregat += line.data[i];
       });
       tmpAggregatedTarget.data.push(aggregat);
     }
     // Add it as first line
     lines.unshift(tmpAggregatedTarget);
-
     // Output format: [{ data:[419, 654, 341, 0], name: "Aggregierte Seuchen" }, {...}]
     return lines;
-
   }
 
 
@@ -325,11 +329,11 @@ export class TimelineChartComponent implements OnInit, OnDestroy {
   }
 
   private extractMonths(data: Report[]): number {
-    return uniq(this.getDates(data).map(date => this.extractMonth(date))).sort( (a: number, b: number) => {
-      if (a > b)
+    return uniq(this.getDates(data).map(date => this.extractMonth(date))).sort((a: number, b: number) => {
+      if (a >= b) {
         return 1;
-      if (a < b)
-        return -1;
+      }
+      return -1;
     });
   }
 
@@ -399,7 +403,7 @@ export class TimelineChartComponent implements OnInit, OnDestroy {
   showEpidemics(): void {
     this.timeLineChartData = [];
     this.timeLineChartData = this.extract(this.data, 'epidemic_group');
-    if (this.timeLineChartData) {
+    if (this.timeLineChartData && this.loaded) {
       this.drawChart();
     }
   }
@@ -407,7 +411,7 @@ export class TimelineChartComponent implements OnInit, OnDestroy {
   showAnimals(): void {
     this.timeLineChartData = [];
     this.timeLineChartData = this.extract(this.data, 'animal_group');
-    if (this.timeLineChartData) {
+    if (this.timeLineChartData && this.loaded) {
       this.drawChart();
     }
   }

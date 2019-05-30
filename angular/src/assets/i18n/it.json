@@ -7,15 +7,24 @@
     },
     "HEADER": {
         "HOME": "Pagina iniziale",
-        "EVALUATION": "Strumenti di valutazione",
+        "EVALUATION": "Valutazione",
+        "BULLETIN": "Bollettino",
+        "INFORMATION": "Informazioni",
         "GO_HOME": "Torna alla pagina iniziale"
     },
-    "HOME": {
+    "INFO": {
+        "TITLE": "Informazioni su InfoSM",
+        "P1": "La banca dati InfoSM (Sistema d’informazione di notifica delle epizoozie) dell’USAV è uno strumento per la consultazione di dati concernenti tutti i focolai delle epizoozie presenti in Svizzera e soggette all’obbligo di notifica dal 1991.",
+        "P2": "Il Bollettino dell’USAV pubblica le attuali notifiche di epizoozie a scadenza settimanale.",
+        "P3": "In base all'obbligo di notifica (art. 61 dell'ordinanza sulle epizoozie), chi detiene, custodisce o cura animali ha l'obbligo di notificare a un veterinario la comparsa di un'epizoozia (art. 1 della legge sulle epizoozie) e qualsiasi fatto sospetto. L'obbligo di notifica vige anche per api, pesci e animali selvatici in libertà. La notifica può essere effettuata presso l'ispettore degli apiari, l'organo cantonale competente per i pesci o l'Ufficio veterinario cantonale.",
         "TEST": "Sperimentazione di un grafico SVG per il flusso di segnalazione di una notifica di una malattia animale."
     },
-    "EVALUATION": {
+    "EVAL": {
+        "WEEK_LABEL": "Settimana",
+        "MONTH_LABEL": "Mese",
         "YEAR_LABEL": "Anno",
-        "COUNT": "Quantità",
+        "YEARS_LABEL": "Anni",
+        "COUNT": "Casi per gruppo di epidemie",
         "DIAGNOSIS_DATE": "Data di diagnosi",
         "MUNICIPALITY": "Comune",
         "CANTON": "Cantone",
@@ -26,6 +35,11 @@
         "ANIMAL_SPECIES": "Specie aimale",
         "QUARTER": "Quartiere",
         "SHOW_ALL_NONE": "Mostra/Nascondi tutti",
+        "AGGR_EPIDEMIC_GROUPS": "Gruppo aggregate di epidemie",
+        "AGGR_ANIMAL_GROUPS": "Gruppo aggregate di animali",
+        "DATE_WRONG_ORDER": "Invalid: la data da deve essere maggiore di quella di data a",
+        "DATE_WRONG_FORMAT": "Invalid: Non è un formato di data valido. Prova: YYYY-MM-DD",
+        "DATE_TOO_SMALL": "Invalid: il periodo deve essere di almeno una settimana.",
         "MONTHS": ["Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Giugno", "Luglio", "Agosto", "Settembre", "Ottobre", "Novembre", "Dicembre"]
     },
     "ERROR": {
@@ -39,12 +53,28 @@
         "MAP": "Analisi geografica"
     },
     "FILTER": {
-        "FILTER": "Filtro",
+        "FILTER_TIME": "Filtrare per periodo",
+        "FROM": "da",
+        "TO": "a",
         "LASTWEEK": "settimana scorsa",
         "LASTMONTH": "ultimo mese",
         "LASTYEAR": "anno scorso",
         "LASTTHREEYEARS": "ultimi tre anni",
         "WHOLETIME": "tutto il periodo",
-        "PLACEHOLDERCANTON": "tutti i cantoni"
+        "PLACEHOLDER_CANTON": "tutti i cantoni",
+        "FILTER_ACTION": "Filtro",
+        "FILTER_BY_CATEGORY": "Filtrare per categoria",
+        "NO_ENTRIES": "Nessuna voce",
+        "PLACEHOLDER_MUNICIPALITY": "tutti i comuni",
+        "PLACEHOLDER_EPIDEMIC_GROUP": "tutti i gruppo di epidemie",
+        "PLACEHOLDER_EPIDEMIC": "tutte le epidemie",
+        "PLACEHOLDER_ANIMAL_GROUP": "tutti i gruppo di animali",
+        "PLACEHOLDER_ANIMAL_SPECIES": "tutte le specie",
+        "FILTER_PESTS": "Filtrare di epidemie",
+        "FILTER_PEST_GROUPS": "Filtrare i gruppo di epidemie",
+        "FILTER_CANTONS": "Filtrare le canton",
+        "FILTER_MUNICS": "Filtrare le comuni",
+        "FILTER_ANIMALS": "Filtrare le specie animali",
+        "FILTER_ANIMAL_GROUPS": "Filtrare il gruppo di animali"
     }
 }

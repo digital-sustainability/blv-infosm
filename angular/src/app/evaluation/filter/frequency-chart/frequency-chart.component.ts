@@ -36,10 +36,10 @@ export class FrequencyChartComponent implements OnInit, OnDestroy {
         if (data) {
           this.ready = true;
           this.reports = data;
-          this.translationSub = this.translate.get(['EVALUATION.SHOW_ALL_NONE'])
+          this.translationSub = this.translate.get(['EVAL.SHOW_ALL_NONE'])
             .subscribe(
               texts => {
-                this.allLinesLabel = texts['EVALUATION.SHOW_ALL_NONE'];
+                this.allLinesLabel = texts['EVAL.SHOW_ALL_NONE'];
                 this.drawChart(data, 'epidemic', this.extractPestFrequencies);
               }
             );

@@ -12,7 +12,7 @@
 }
 
 .filterContainer {
-    padding: 2%;
+    padding: 2% 1.5% 0 1.5%;
     margin-left: 8.5%;
     margin-top: 2%;
     margin-right: 8.5%;
@@ -63,4 +63,33 @@ i.fa {
   margin-right: 5%;
 }
 
+.err {
+  color: red;
+}
 
+.selction-label {
+  font-weight: bold;
+  /* margin-bottom: 0; */
+}
+
+.panel-info>.panel-heading {
+    color: black;
+    background-color: lightgrey;
+    border-color: lightgray;
+}
+
+.panel-info {
+    border-color: darkgrey;
+}
+
+:host /deep/ ngb-datepicker .ngb-dp-weekday{
+  color: red;
+}
+  
+:host /deep/ ngb-datepicker .btn-link {
+    color: red !important;
+}
+
+:host /deep/ ngb-datepicker .bg-primary {
+  background-color: red !important;
+}

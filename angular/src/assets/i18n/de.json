@@ -7,14 +7,29 @@
   },
   "HEADER": {
     "HOME": "Startseite",
-    "EVALUATION": "Auswertungstool",
+    "EVALUATION": "Auswertung",
+    "BULLETIN": "Bulletin",
+    "INFORMATION": "Information",
     "GO_HOME": "Zurück zur Startseite"
   },
-  "HOME": {
+  "INFO": {
+    "TITLE": "Informationen zum InfoSM",
+    "P1": "Die Datenbank InfoSM (= Informationssystem Seuchenmeldungen) des BLV enthält Angaben zu sämtlichen Ausbrüchen meldepflichtiger Tierseuchen in der Schweiz seit 1991.",
+    "P2": "Die Mitteilungen des Bundesamtes für Lebensmittelsicherheit und Veterinärwesen – kurz Bulletin – publizieren wöchentlich die aktuellen Seuchenmeldungen.",
+    "P3": "Die Meldepflicht (Tierseuchenverordnung Art. 61) verpflichtet alle Personen, die Tiere halten, betreuen oder behandeln dazu, Ausbrüche von Tierseuchen (Tierseuchengesetz Art. 1)  oder verdächtige Beobachtungen einer Tierärztin oder einem Tierarzt zu melden. Die Meldepflicht gilt auch für Bienen, Fische und freilebende Wildtiere. Meldestellen sind der Bieneninspektor, die für die Fischerei zuständige kantonale Stelle resp. das kantonale Veterinäramt.",
+
+    "P1.1": "Die Datenbank InfoSM (= Informationssystem Seuchenmeldungen) des BLV enthält Angaben zu sämtlichen Ausbrüchen meldepflichtiger Tierseuchen in der Schweiz seit 1991. Die Mitteilungen des Bundesamtes für Lebensmittelsicherheit und Veterinärwesen – kurz Bulletin – publizieren wöchentlich die aktuellen Seuchenmeldungen. Die Meldepflicht (Tierseuchenverordnung ",
+    "P1.L1": "Art. 61",
+    "P1.2": ") verpflichtet alle Personen, die Tiere halten, betreuen oder behandeln dazu, Ausbrüche von ",
+    "P1.L2": "Tierseuchen",
+    "P1.3": "(Tierseuchengesetz Art. 1)  oder verdächtige Beobachtungen einer Tierärztin oder einem Tierarzt zu melden. Die Meldepflicht gilt auch für Bienen, Fische und freilebende Wildtiere. Meldestellen sind der Bieneninspektor, die für die Fischerei zuständige kantonale Stelle resp. das kantonale Veterinäramt.",
     "TEST": "Testen einer SVG Grafik für den Meldefluss einer Tierseuchenmeldung."
   },
-  "EVALUATION": {
+  "EVAL": {
+    "WEEK_LABEL": "Woche",
+    "MONTH_LABEL": "Monat",
     "YEAR_LABEL": "Jahr",
+    "YEARS_LABEL": "Jahre",
     "COUNT": "Seuchenfälle pro Seuchengruppe",
     "DIAGNOSIS_DATE": "Diagnosedatum",
     "MUNICIPALITY": "Gemeinde",
@@ -26,21 +41,12 @@
     "ANIMAL_SPECIES": "Tierart",
     "QUARTER": "Quartal",
     "SHOW_ALL_NONE": "Alle ein-/ausblenden",
-    "AGGR_EPIDEMICS_GROUPS": "Zoooo",
-    "MONTHS": [
-      "Januar",
-      "Februar",
-      "März",
-      "April",
-      "Mai",
-      "Juni",
-      "Juli",
-      "August",
-      "September",
-      "Oktober",
-      "November",
-      "Dezember"
-    ]
+    "AGGR_EPIDEMIC_GROUPS": "Aggregierte Seuchengruppen",
+    "AGGR_ANIMAL_GROUPS": "Aggregierte Tiergruppen",
+    "DATE_WRONG_ORDER": "Ungültig: Datum 'von' muss größer sein als Datum 'bis'",
+    "DATE_WRONG_FORMAT": "Ungültig: Kein gültiges Datumsformat. Versuchen Sie: YYYY-MM-DD",
+    "DATE_TOO_SMALL": "Ungültig: Die Zeitspanne muss mindestens eine Woche betragen.",
+    "MONTHS": ["Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"]
   },
   "ERROR": {
     "OCCURED": "Ein Fehler ist aufgetreten.",
@@ -53,16 +59,15 @@
     "MAP": "Auswertung nach Geografie"
   },
   "FILTER": {
-    "FILTER": "Nach Zeitraum filtern",
+    "FILTER_TIME": "Nach Zeitraum filtern",
+    "FROM": "von",
+    "TO": "bis",
     "LASTWEEK": "letzte Woche",
     "LASTMONTH": "letzter Monat",
     "LASTYEAR": "letztes Jahr",
     "LASTTHREEYEARS": "letzte drei Jahre",
     "WHOLETIME": "ganzer Zeitraum",
-    "PLACEHOLDERCANTON": "alle Kantone",
-
-    "FROM": "von",
-    "TO": "bis",
+    "PLACEHOLDER_CANTON": "alle Kantone",
     "FILTER_ACTION": "Filtern",
     "FILTER_BY_CATEGORY": "Nach Kategorien filtern",
     "NO_ENTRIES": "Keine Einträge",
@@ -70,6 +75,12 @@
     "PLACEHOLDER_EPIDEMIC_GROUP": "alle Seuchengruppen",
     "PLACEHOLDER_EPIDEMIC": "alle Seuchen",
     "PLACEHOLDER_ANIMAL_GROUP": "alle Tiergruppen",
-    "PLACEHOLDER_ANIMAL_SPECIES": "alle Tierarten"
+    "PLACEHOLDER_ANIMAL_SPECIES": "alle Tierarten",
+    "FILTER_PESTS": "Seuchen filtern",
+    "FILTER_PEST_GROUPS": "Seuchengruppen filtern",
+    "FILTER_CANTONS": "Kantone filtern",
+    "FILTER_MUNICS": "Gemeinden filtern",
+    "FILTER_ANIMALS": "Tierarten filtern",
+    "FILTER_ANIMAL_GROUPS": "Tiergruppen filtern"
   }
 }

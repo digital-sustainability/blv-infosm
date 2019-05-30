@@ -7,15 +7,24 @@
     },
     "HEADER": {
         "HOME": "Page d'accueil",
-        "EVALUATION": "Outil d'évaluation",
+        "EVALUATION": " Évaluation",
+        "BULLETIN": "Bulletin",
+        "INFORMATION": "Information",
         "GO_HOME": "Retour à la page d'accueil"
     },
-    "HOME": {
+    "INFO": {
+        "TITLE": "Informations sur InfoSM",
+        "P1": "La banque de données InfoSM (= système d’information sur les annonces des cas d‘épizootie) de l’OSAV contient des informations sur tous les foyers d’épizooties soumises à l’annonce obligatoire recensés depuis 1991.",
+        "P2": "Le Bulletin de l'Office fédéral de la sécurité alimentaire et des affaires vétérinaires –  appelé aussi bulletin tout court – est le journal où sont publiés, à un intervalle régulier de 7 jours, les derniers cas d’épizooties.",
+        "P3": "Par « obligation d'annoncer » (ordonnance sur les épizooties art. 61) on entend l'obligation pour toute personne qui détient, assume la garde ou soigne des animaux d'annoncer sans délai à un vétérinaire l'apparition d'une épizootie (loi sur les épizooties, art. 1) et tout symptôme suspect pouvant en faire craindre l’éclosion. Les épizooties des abeilles, des poissons et des animaux sauvages vivant dans la nature doivent elles aussi être annoncées, respectivement à l'inspecteur des ruchers, à l'autorité cantonale compétente pour la pêche, au service vétérinaire cantonal.",
         "TEST": "Test d'un graphique SVG pour le flux de déclaration d'une notification de maladie animale."
     },
-    "EVALUATION": {
+    "EVAL": {
+        "WEEK_LABEL": "Semaine",
+        "MONTH_LABEL": "Mois",
         "YEAR_LABEL": "Année",
-        "COUNT": "Nombre",
+        "YEARS_LABEL": "Ans",
+        "COUNT": "Cas par groupe d'épidémie",
         "DIAGNOSIS_DATE": "Date du diagnostic",
         "MUNICIPALITY": "Commune",
         "CANTON": "Canton",
@@ -26,6 +35,11 @@
         "ANIMAL_SPECIES": "Catégorie animale",
         "QUARTER": "Quartier",
         "SHOW_ALL_NONE": "Montrer/Masquer tous",
+        "AGGR_EPIDEMIC_GROUPS": "Groupes d'épidémies agrégés ",
+        "AGGR_ANIMAL_GROUPS": "Groupes d'animaux agrégés",
+        "DATE_WRONG_ORDER": "Invalide : la date doit être supérieure à la date jusqu'au",
+        "DATE_WRONG_FORMAT": "Non valide: Le format de date n'est pas valide. Essayez: YYYY-MM-DD",
+        "DATE_TOO_SMALL": "Non valide: La période doit être d'au moins une semaine.",
         "MONTHS": ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"]
     },
     "ERROR": {
@@ -39,12 +53,28 @@
         "MAP": "Représentation selon l'emplacement géographique"
     },
     "FILTER": {
-        "FILTER": "Filtre",
+        "FILTER_TIME": "Filtrer par période",
+        "FROM": "du",
+        "TO": "au",
         "LASTWEEK": "semaine dernière",
         "LASTMONTH": "mois dernier",
         "LASTYEAR": "année dernière",
         "LASTTHREEYEARS": "trois années dernières",
         "WHOLETIME": "période complète",
-        "PLACEHOLDERCANTON": "touts les cantons"
+        "PLACEHOLDER_CANTON": "touts les cantons",
+        "FILTER_ACTION": "Filtrer",
+        "FILTER_BY_CATEGORY": "Filtrer par catégorie",
+        "NO_ENTRIES": "Aucune entrée",
+        "PLACEHOLDER_MUNICIPALITY": "toutes les municipalités",
+        "PLACEHOLDER_EPIDEMIC_GROUP": "tous les groupes d'épidémies",
+        "PLACEHOLDER_EPIDEMIC": "toutes les épidémies",
+        "PLACEHOLDER_ANIMAL_GROUP": "tous les groupes d'animaux",
+        "PLACEHOLDER_ANIMAL_SPECIES": "toutes les espèces",
+        "FILTER_PESTS": "Filtrer les épidémies",
+        "FILTER_PEST_GROUPS": "Filtrer les groupes d'épidémies",
+        "FILTER_CANTONS": "Filtrer les cantons",
+        "FILTER_MUNICS": "Filtrer les municipalités",
+        "FILTER_ANIMALS": "Filtrer les espèces",
+        "FILTER_ANIMAL_GROUPS": "Filtrer les groupes d'animaux"
     }
 }

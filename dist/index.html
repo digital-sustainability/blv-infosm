@@ -7,8 +7,15 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <!--
+    This prevents a stack overflow inside webcomponents-loader.
+    See https://github.com/webcomponents/webcomponentsjs/issues/972#issuecomment-406477046
+  -->
+  <script src="//cdn.polyfill.io/v2/polyfill.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/webcomponentsjs/2.2.10/custom-elements-es5-adapter.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/webcomponentsjs/2.2.10/webcomponents-loader.js"></script>
 <link rel="stylesheet" href="styles.1351dd7c7aec9a65f262.css"></head>
 <body>
   <app-root></app-root>
-<script type="text/javascript" src="runtime.26209474bfa8dc87a77c.js"></script><script type="text/javascript" src="polyfills.b2445005bd9a506c9af1.js"></script><script type="text/javascript" src="scripts.201cd8c2534507b4525e.js"></script><script type="text/javascript" src="main.524eea297ab2a10c2bc2.js"></script></body>
+<script type="text/javascript" src="runtime.26209474bfa8dc87a77c.js"></script><script type="text/javascript" src="polyfills.b2445005bd9a506c9af1.js"></script><script type="text/javascript" src="scripts.201cd8c2534507b4525e.js"></script><script type="text/javascript" src="main.3c3d55f5fbcd3888276a.js"></script></body>
 </html>

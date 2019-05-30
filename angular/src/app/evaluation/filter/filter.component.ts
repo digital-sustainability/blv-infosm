@@ -1,6 +1,7 @@
 
 import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { Report } from '../../shared/models/report.model';
+import { NgbDate } from '../../shared/models/ngbdate.model';
 import { LanguageService } from 'src/app/shared/language.service';
 import { Subscription } from 'rxjs';
 import { MatPaginator, MatTableDataSource, MatSort } from '@angular/material';
@@ -9,6 +10,7 @@ import { SparqlDataService } from 'src/app/shared/sparql-data.service';
 import { DistributeDataService } from 'src/app/shared/distribute-data.service';
 import { TranslateService } from '@ngx-translate/core';
 import { remove, uniq, map } from 'lodash';
+import { NgbDatepickerConfig } from '@ng-bootstrap/ng-bootstrap';
 import * as moment from 'moment';
 declare let $: any;
 
@@ -23,8 +25,8 @@ export class FilterComponent implements OnInit, OnDestroy {
   @ViewChild('d') datepicker;
   @ViewChild('c') datepicker2;
 
-  from;
-  to;
+  from: NgbDate;
+  to: NgbDate;
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
@@ -60,16 +62,15 @@ export class FilterComponent implements OnInit, OnDestroy {
     animal_species: []
   };
 
-
   constructor(
     private _sparqlDataService: SparqlDataService,
     private _langauageService: LanguageService,
     private _distributeDataService: DistributeDataService,
     private _route: ActivatedRoute,
     private _router: Router,
-    public translateService: TranslateService
+    public translateService: TranslateService,
+    public ngbDatepickerConfig: NgbDatepickerConfig
   ) { }
-
 
   ngOnInit() {
     this._paramSub = this._route.queryParams.subscribe(
@@ -112,9 +113,17 @@ export class FilterComponent implements OnInit, OnDestroy {
         console.log(err);
       }
     );
+
+    const today = new Date();
+    this.ngbDatepickerConfig.minDate = { year: 1991, month: 1, day: 1 };
+    this.ngbDatepickerConfig.maxDate = {
+      year: today.getFullYear(),
+      month: today.getMonth() + 1,
+      day: today.getDate() };
+    this.ngbDatepickerConfig.outsideDays = 'hidden';
   }
 
-  changeTab(route: string): void {
+  onChangeTab(route: string): void {
     this._router.navigate(['evaluation' + route], { queryParamsHandling: 'merge' });
   }
 
@@ -123,7 +132,6 @@ export class FilterComponent implements OnInit, OnDestroy {
     this._dataSub.unsubscribe();
     this._paramSub.unsubscribe();
   }
-
 
   toggleCheckbox($event: boolean, filterType: string) {
     const idSelector = function () { return this.id; };
@@ -144,7 +152,6 @@ export class FilterComponent implements OnInit, OnDestroy {
       }
       this.getList(this._filter.lang, this._filter.from, this._filter.to);
     }
-    console.log(this.filterConfig);
   }
 
   createFilterConfigDropdown(filterType: string, arrSelected: []) {
@@ -163,7 +170,6 @@ export class FilterComponent implements OnInit, OnDestroy {
     if (this.filterConfig.hasOwnProperty(`${filterType}`)) {
       this.filterConfig[`${filterType}`].push(selectedItem.toString());
     }
-    console.log(this.filterConfig);
     this.getList(this._filter.lang, this._filter.from, this._filter.to);
   }
 
@@ -174,7 +180,6 @@ export class FilterComponent implements OnInit, OnDestroy {
         return item !== $event.value;
       });
     }
-    console.log(this.filterConfig);
     this.getList(this._filter.lang, this._filter.from, this._filter.to);
   }
 
@@ -183,12 +188,11 @@ export class FilterComponent implements OnInit, OnDestroy {
     if (this.filterConfig.hasOwnProperty(`${filterType}`)) {
       this.filterConfig[filterType] = [];
     }
-    console.log(this.filterConfig);
     this.getList(this._filter.lang, this._filter.from, this._filter.to);
   }
 
   // changes the date based on radio buttons
-  changeDate(option: string) {
+  onChangeDate(option: string) {
     // TODO: One year too much because we don't have all the data
     this._filter.to = moment().subtract(1, 'y').format('YYYY-MM-DD');
     switch (option) {
@@ -211,12 +215,53 @@ export class FilterComponent implements OnInit, OnDestroy {
     });
   }
 
+  onGetFromToDates() {
+    // TODO: Change implementation JQuery -> Angular
+    // TODO: Translations prepared --> Use HTML pipe translation
+    const fromdate = this.datepicker._inputValue;
+    const todate = this.datepicker2._inputValue;
+    this.removeErrors();
+    if (moment(fromdate).isValid() && moment(todate).isValid() && fromdate.length === 10 && todate.length === 10) {
+      if (fromdate > todate) {
+        $('button.notValid').after(`<p class='err' style='color:red' style='color:red' id='datecompareerror'>Invalid: date from > date to</p>`);
+        return;
+      }
+      if ((moment(todate).diff(fromdate, 'days')) < 7) {
+        $('button.notValid').after(`<p class='err' style='color:red' id='dateuniterror'>Invalid: timespan has to be at least one week</p>`);
+        return;
+      }
+      this._filter.from = fromdate;
+      this._filter.to = todate;
+      this.updateRouteParams({
+        from: this._filter.from,
+        to: this._filter.to
+      });
+      // uncheck all radio buttons since either you search for period of for specific dates
+      $('.radio').prop('checked', false);
+      $('#dateformaterror').remove();
+    } else {
+      if (!($('#notValid').length)) {
+        $('button.notValid').after(`<p class='err' style='color:red' id='dateformaterror'>Invalid: Not a valid date format. Try: YYYY-MM-DD</p>`);
+      }
+    }
+  }
+
+  disableDateFilter() {
+    // (<HTMLInputElement>document.getElementById('from')).value = '';
+    // (<HTMLInputElement>document.getElementById('to')).value = '';
+  }
+
+  removeErrors() {
+    $('#dateformaterror').remove();
+    $('#datecompareerror').remove();
+    $('#dateuniterror').remove();
+  }
+
   private getList(lang: string, from: string | Date, to: string | Date): void {
     this._dataSub = this._sparqlDataService.getReports(lang, from, to).subscribe(
       data => {
         this.beautifiedData = [];
         this.transformData(data, false);
-        console.log(this.beautifiedData);
 
         this.filteredData = this.filterDataObjectBasedOnEventData(this.beautifiedData, this.filterConfig);
         this._distributeDataService.updateData(this.filteredData);
@@ -226,6 +271,9 @@ export class FilterComponent implements OnInit, OnDestroy {
         this.dataSource = new MatTableDataSource<any>(this.filteredData);
         this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;
+        // Set `from` and `to` for datepicker to match the current date selection
+        this.from = this.transformDate(from);
+        this.to = this.transformDate(to);
       }, err => {
         console.log(err);
         // TODO: Imporve error handling
@@ -333,7 +381,6 @@ export class FilterComponent implements OnInit, OnDestroy {
         });
       }
     }
-    console.log(filteredData);
     return filteredData;
   }
 
@@ -341,43 +388,8 @@ export class FilterComponent implements OnInit, OnDestroy {
     return (filterObject[type].length !== 0 && filterObject[type].includes(compare)) || filterObject[type].length === 0;
   }
 
-  getFromToDates() {
-    const fromdate = this.datepicker._inputValue;
-    const todate = this.datepicker2._inputValue;
-    this.removeErrors();
-    if (moment(fromdate).isValid() && moment(todate).isValid() && fromdate.length === 10 && todate.length === 10) {
-      if (fromdate > todate) {
-        $('button.notValid').after("<p style='color:red' id='datecompareerror'>*** error: date from > date to ***</p>");
-        return;
-      }
-      if ((moment(todate).diff(fromdate, 'days')) < 7) {
-        $('button.notValid').after("<p style='color:red' id='dateuniterror'>*** error: the smallest time unit to search for is one week ***</p>");
-        return;
-      }
-      this._filter.from = fromdate;
-      this._filter.to = todate;
-      this.updateRouteParams({
-        from: this._filter.from,
-        to: this._filter.to
-      });
-      // uncheck all radio buttons since either you search for period of for specific dates
-      $('.radio').prop('checked', false);
-      $('#dateformaterror').remove();
-    } else {
-      if (!($('#notValid').length)) {
-        $('button.notValid').after("<p style='color:red' id='dateformaterror'>*** not a valid date! right format: YYYY-MM-DD ***</p>");
-      }
-    }
-  }
-
-  disableDateFilter() {
-    // (<HTMLInputElement>document.getElementById('from')).value = '';
-    // (<HTMLInputElement>document.getElementById('to')).value = '';
-  }
-
-  removeErrors() {
-    $('#dateformaterror').remove();
-    $('#datecompareerror').remove();
-    $('#dateuniterror').remove();
+  private transformDate(date?: string | Date): NgbDate {
+    const d = new Date(date);
+    return { year: d.getFullYear(), month: d.getMonth() + 1, day: d.getDate() };
   }
 }

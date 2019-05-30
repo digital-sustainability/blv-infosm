@@ -7,15 +7,24 @@
     },
     "HEADER": {
         "HOME": "Landing Page",
-        "EVALUATION": "Evaluationtool",
+        "EVALUATION": "Evaluation",
+        "BULLETIN": "Bulletin",
+        "INFORMATION": "Information",
         "GO_HOME": "Go Back to Landing Page"
     },
-    "HOME": {
+    "INFO": {
+        "TITLE": "Information about InfoSM",
+        "P1": "On FSVO's database infoSM (= information system for cases of notifiable diseases) information on all outbreaks of notifiable diseases in Switzerland since 1991 is available.",
+        "P2": "In FSVO's bulletin the most recent notifications are published weekly.",
+        "P3": "The obligation to notify (Ordinance on Animal Epizootic Diseases Art. 61) obliges all persons holding animals to look after or treat outbreaks of epizootic diseases (Animal Epizootic Diseases Act Art. 1) or suspicious observations of a veterinarian. The registration requirement also applies to bees, fish and wild animals. Reporting offices are the bee inspector, the Cantonal body resp. the Cantonal veterinary office.",
         "TEST": "Testing an SVG graph for the reporting flow of an animal disease notification."
     },
-    "EVALUATION": {
+    "EVAL": {
+        "WEEK_LABEL": "Week",
+        "MONTH_LABEL": "Month",
         "YEAR_LABEL": "Year",
-        "COUNT": "Count",
+        "YEARS_LABEL": "Years",
+        "COUNT": "Cases per disease group",
         "DIAGNOSIS_DATE": "Diagnosis Date",
         "MUNICIPALITY": "Municipality",
         "CANTON": "Canton",
@@ -26,6 +35,11 @@
         "ANIMAL_SPECIES": "Animal Species",
         "QUARTER": "Quarter",
         "SHOW_ALL_NONE": "Show all/none",
+        "AGGR_EPIDEMIC_GROUPS": "Aggregated epidemic groups",
+        "AGGR_ANIMAL_GROUPS": "Aggregated animal groups",
+        "DATE_WRONG_ORDER": "Invalid: date 'from' needs to be greater then date 'to'",
+        "DATE_WRONG_FORMAT": "Invalid: Not a valid date format. Try: YYYY-MM-DD",
+        "DATE_TOO_SMALL": "Invalid: timespan has to be at least one week.",
         "MONTHS": ["January", "February", "March", "April", "May", "une", "July", "August", "September", "October", "November", "December"]
     },
     "ERROR": {
@@ -39,11 +53,28 @@
         "MAP": "Spatial evaluation"
     },
     "FILTER": {
+        "FILTER_TIME": "Filter by period",
+        "FROM": "from",
+        "TO": "to",
         "LASTWEEK": "last week",
         "LASTMONTH": "last month",
         "LASTYEAR": "last year",
         "LASTTHREEYEARS": "last three years",
         "WHOLETIME": "entire period",
-        "PLACEHOLDERCANTON": "all cantons"
+        "PLACEHOLDER_CANTON": "all cantons",
+        "FILTER_ACTION": "Filter",
+        "FILTER_BY_CATEGORY": "Filter by category",
+        "NO_ENTRIES": "No entries",
+        "PLACEHOLDER_MUNICIPALITY": "all municipalities",
+        "PLACEHOLDER_EPIDEMIC_GROUP": "all epidemic groups",
+        "PLACEHOLDER_EPIDEMIC": "all epidemics",
+        "PLACEHOLDER_ANIMAL_GROUP": "all animal groups",
+        "PLACEHOLDER_ANIMAL_SPECIES": "all species",
+        "FILTER_PESTS": "Filtern epidemics",
+        "FILTER_PEST_GROUPS": "Filter epidemic groups",
+        "FILTER_CANTONS": "Filter cantons",
+        "FILTER_MUNICS": "Filter municipalities",
+        "FILTER_ANIMALS": "Filter species",
+        "FILTER_ANIMAL_GROUPS": "Filter animal groups"
     }
 }

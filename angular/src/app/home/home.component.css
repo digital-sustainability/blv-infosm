@@ -1,3 +1,7 @@
 #home {
     height: 100vh;
 }
+
+.info-header {
+    padding-top: 20px;
+}
