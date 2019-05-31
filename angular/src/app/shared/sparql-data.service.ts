@@ -41,7 +41,9 @@ PREFIX schema: <http://schema.org/>
     FROM <https://linked.opendata.swiss/graph/blv/animalpest> WHERE {
     ?sub a qb:Observation ;
         blv-attribute:diagnose_datum ?diagnose_datum ;
+        blv-attribute:kanton_id ?canton_id ;
         blv-attribute:kanton_id/rdfs:label ?kanton ;
+        blv-attribute:gemeinde_id ?munic_id ;
         blv-attribute:gemeinde_id/rdfs:label ?gemeinde ;
         blv-dimension:tier-art ?tierartUri ;
 
@@ -96,6 +98,7 @@ SELECT * WHERE {
       <http://purl.org/dc/terms/hasVersion> ?geomuniVersion .
       ?geomuniVersion <http://purl.org/dc/terms/issued> ?mostRecentYear ;
       <http://www.opengis.net/ont/geosparql#hasGeometry>/<http://www.opengis.net/ont/geosparql#asWKT> ?wkt .
+      ?geomuniVersion <https://ld.geo.admin.ch/def/bfsNumber> ?canton_id .
     }
     `;
     const params = new HttpParams()
@@ -120,6 +123,7 @@ SELECT * WHERE {
     ?geomuniVersion <http://purl.org/dc/terms/issued> ?mostRecentYear ;
     <http://www.geonames.org/ontology#parentADM1> <https://ld.geo.admin.ch/boundaries/canton/${canton}:2019>  ;
     <http://www.opengis.net/ont/geosparql#hasGeometry>/<http://www.opengis.net/ont/geosparql#asWKT> ?wkt .
+    ?geomuniVersion <https://ld.geo.admin.ch/def/bfsNumber> ?munic_id .
   }
     `;
     const params = new HttpParams()

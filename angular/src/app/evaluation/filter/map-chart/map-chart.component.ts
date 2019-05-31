@@ -19,42 +19,44 @@ export class MapChartComponent implements OnInit {
 
 
   ngOnInit() {
-    // console.time('Get WKT');
-    // this._sparqlDataService.getCantonsWkt().subscribe(
-    //   wkts => {
-    //     const features = [];
-    //     wkts.map(w => {
-    //       features.push(
-    //         {
-    //           // id: w[0].wkt.value.length,
-    //           // wkt: w[0].wkt.value,
-    //           // Take Canton digit as ID. TODO: Retreive via query
-    //           id: Number(/\d+/.exec(w.canton.value)[0]),
-    //           wkt: w.wkt.value
-    //         }
-    //         );
-    //       });
-    //       this.featureData = features;
-    //     console.timeEnd('Get WKT');
-    //   },
-    //   err => console.log(err)
-    // );
-
-    this._sparqlDataService.getMunicForCanton(1).subscribe(
+    console.time('Get WKT');
+    this._sparqlDataService.getCantonsWkt().subscribe(
       wkts => {
         const features = [];
         wkts.map(w => {
-          features.push({
-            id: Number(/\d+/.exec(w.municipality.value)[0]),
-            wkt: w.wkt.value,
-            canton: 1
+          features.push(
+            {
+              // id: w[0].wkt.value.length,
+              // wkt: w[0].wkt.value,
+              // Take Canton digit as ID. TODO: Retreive via query
+              id: w.canton_id.value,
+              wkt: w.wkt.value,
+              canton: true
+            }
+            );
           });
-        });
-        this.featureData = features;
-        console.log(wkts);
+          this.featureData = features;
+        console.log(this.featureData);
+        console.timeEnd('Get WKT');
       },
       err => console.log(err)
     );
+
+    // this._sparqlDataService.getMunicForCanton(1).subscribe(
+    //   wkts => {
+    //     const features = [];
+    //     wkts.map(w => {
+    //       features.push({
+    //         id: w.munic_id.value,
+    //         wkt: w.wkt.value,
+    //         canton: false
+    //       });
+    //     });
+    //     this.featureData = features;
+    //     console.log(wkts);
+    //   },
+    //   err => console.log(err)
+    // );
   }
 
   getStackedStyle(feature) {

@@ -103,8 +103,8 @@
             <label class="selction-label" for="communities">{{ 'FILTER.FILTER_MUNICS' | translate }}</label>
             <ng-select [items]="communities" notFoundText="{{'FILTER.NO_ENTRIES' | translate}}" [multiple]="true"
               name="communities" placeholder="{{'FILTER.PLACEHOLDER_MUNICIPALITY' | translate}}"
-              (add)="onAdd($event, 'community')" (remove)="onRemove($event, 'community')"
-              (clear)="onClear($event, 'community')">
+              (add)="onAdd($event, 'munic')" (remove)="onRemove($event, 'munic')"
+              (clear)="onClear($event, 'munic')">
             </ng-select>
           </div>
           <!--        epidamic groups and epidemics-->
@@ -188,10 +188,10 @@
       <mat-cell *matCellDef="let element"> {{element.canton}} </mat-cell>
     </ng-container>
 
-    <ng-container matColumnDef="community">
+    <ng-container matColumnDef="munic">
       <mat-header-cell *matHeaderCellDef mat-sort-header>
         <strong>{{ 'EVAL.MUNICIPALITY' | translate }}</strong></mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{element.community}} </mat-cell>
+      <mat-cell *matCellDef="let element"> {{element.munic}} </mat-cell>
     </ng-container>
 
 

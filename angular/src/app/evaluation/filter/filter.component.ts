@@ -49,13 +49,13 @@ export class FilterComponent implements OnInit, OnDestroy {
   animal_species: String[];
   animal_group: String[];
 
-  displayedColumns: string[] = ['diagnosis_date', 'canton', 'community', 'epidemic', 'epidemic_group', 'animal_species'];
+  displayedColumns: string[] = ['diagnosis_date', 'canton', 'munic', 'epidemic', 'epidemic_group', 'animal_species'];
   dataSource: any;
   beautifiedData: any[] = [];
   filteredData: any[] = [];
   filterConfig = {
     canton: [],
-    community: [],
+    munic: [],
     epidemic_group: [],
     epidemic: [],
     animal_group: [],
@@ -274,6 +274,9 @@ export class FilterComponent implements OnInit, OnDestroy {
         // Set `from` and `to` for datepicker to match the current date selection
         this.from = this.transformDate(from);
         this.to = this.transformDate(to);
+        // console.log('RAW', data);
+        // console.log('BEAUTFIED', this.beautifiedData);
+        console.log('FILTERED', this.filteredData);
       }, err => {
         console.log(err);
         // TODO: Imporve error handling
@@ -281,18 +284,23 @@ export class FilterComponent implements OnInit, OnDestroy {
   }
 
   // transforms the data object properly to use it for the table,
-  // and beatifies the data that we will filter 
+  // and beatifies the data that we will filter
+  // TODO: Replace REGEX with real value from query
   private transformData(data: Object, originalData = false) {
-    for (let element in data) {
-      this.beautifiedData.push({
-        diagnosis_date: data[element].diagnose_datum.value,
-        canton: data[element].kanton.value,
-        community: data[element].gemeinde.value,
-        epidemic_group: data[element].seuchen_gruppe.value,
-        epidemic: data[element].seuche.value,
-        animal_group: data[element].tier_gruppe.value,
-        animal_species: data[element].tierart.value
-      })
+    for (const element in data) {
+      if (data.hasOwnProperty(element)) {
+        this.beautifiedData.push({
+          diagnosis_date: data[element].diagnose_datum.value,
+          canton: data[element].kanton.value,
+          canton_id: Number(/\d+/.exec(data[element].canton_id.value)[0]),
+          munic: data[element].gemeinde.value,
+          munic_id: Number(/\d+/.exec(data[element].munic_id.value)[0]),
+          epidemic_group: data[element].seuchen_gruppe.value,
+          epidemic: data[element].seuche.value,
+          animal_group: data[element].tier_gruppe.value,
+          animal_species: data[element].tierart.value
+        });
+      }
     }
   }
 
@@ -316,9 +324,9 @@ export class FilterComponent implements OnInit, OnDestroy {
   // extracts all the unique strings for every filter
   private extractFilterParts(data: Report[], filteredData) {
     this.cantons = uniq(map(data, 'kanton.value')).sort();
-    // this.communities = uniq(map(filteredData, 'community')).sort();
+    // this.communities = uniq(map(filteredData, 'munic')).sort();
     this.communities = [];
-    this.communities = uniq(this.extractSecondHierarchy(this.filterConfig.canton, 'canton', 'community')).sort();
+    this.communities = uniq(this.extractSecondHierarchy(this.filterConfig.canton, 'canton', 'munic')).sort();
     this.epidemics_group = uniq(map(data, 'seuchen_gruppe.value')).sort();
     // this.epidemics = uniq(map(filteredData, 'epidemic')).sort();
     this.epidemics = [];
@@ -354,7 +362,7 @@ export class FilterComponent implements OnInit, OnDestroy {
     for (let i = 0; i < data.length; i++) {
       let insideFilter = false;
       if ( this.checkFilter('canton', data[i]['canton'], filterObject) ) {
-        if ( this.checkFilter('community', data[i]['community'], filterObject) ) {
+        if ( this.checkFilter('munic', data[i]['munic'], filterObject) ) {
           if ( this.checkFilter('epidemic_group', data[i]['epidemic_group'], filterObject) ) {
             if ( this.checkFilter('epidemic', data[i]['epidemic'], filterObject) ) {
               if ( this.checkFilter('animal_group', data[i]['animal_group'], filterObject) ) {
@@ -373,11 +381,15 @@ export class FilterComponent implements OnInit, OnDestroy {
         filteredData.push({
           diagnosis_date: data[i]['diagnosis_date'],
           canton: data[i]['canton'],
-          community: data[i]['community'],
+          munic: data[i]['munic'],
           epidemic_group: data[i]['epidemic_group'],
           epidemic: data[i]['epidemic'],
           animal_group: data[i]['animal_group'],
           animal_species: data[i]['animal_species'],
+          // TODO: @Jonas does that make sense here?
+          // Add IDs to data for map component
+          canton_id: data[i]['canton_id'],
+          munic_id: data[i]['munic_id'],
         });
       }
     }
