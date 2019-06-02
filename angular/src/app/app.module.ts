@@ -41,6 +41,7 @@ import { HighchartService } from './shared/highchart.service';
 import '@openlayers-elements/core/ol-map';
 import '@openlayers-elements/maps/ol-layer-wkt';
 import '@openlayers-elements/maps/ol-layer-openstreetmap';
+import { DownloadComponent } from './evaluation/download/download.component';
 
 @NgModule({
   declarations: [
@@ -55,7 +56,8 @@ import '@openlayers-elements/maps/ol-layer-openstreetmap';
     ErrorComponent,
     FooterComponent,
     BulletinComponent,
-    BulletinDetailViewComponent
+    BulletinDetailViewComponent,
+    DownloadComponent
   ],
   imports: [
     BrowserModule,

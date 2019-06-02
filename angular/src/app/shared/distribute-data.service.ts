@@ -9,10 +9,22 @@ export class DistributeDataService {
 
   private _dataSrc = new BehaviorSubject([]);
   currentData = this._dataSrc.asObservable();
+  from: string | Date;
+  to: string | Date;
 
   constructor() { }
 
-  updateData(data: Report[]) {
+  updateData(data: Report[], from: string | Date, to: string | Date) {
     this._dataSrc.next(data);
+    this.from = from;
+    this.to = to;
+  }
+
+  getFrom(): string | Date {
+    return this.from;
+  }
+
+  getTo(): string | Date {
+    return this.to;
   }
 }

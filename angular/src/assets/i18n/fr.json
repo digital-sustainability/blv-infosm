@@ -42,6 +42,16 @@
         "DATE_TOO_SMALL": "Non valide: La période doit être d'au moins une semaine.",
         "MONTHS": ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"]
     },
+    "DOWNLOAD": {
+        "TITLE": "Notifications",
+        "DIAGNOSIS_DATE": "Date du diagnostic",
+        "CANTON": "Canton",
+        "MUNICIPALITY": "Commune",
+        "PEST_GROUP": "Groupe d'épizooties",
+        "PEST": "Peste",
+        "ANIMAL_GROUP": "Groupe animal",
+        "ANIMAL_SPECIES": "Catégorie animale"
+    },
     "ERROR": {
         "OCCURED": "Une erreur est survenue",
         "PAGE_NOT_FOUND": "Impossible d’afficher la page que vous voulez consulter. Vous avez sans doute saisi une mauvaise adresse (URL), le document n’existe pas ou son nom a été modifié.",

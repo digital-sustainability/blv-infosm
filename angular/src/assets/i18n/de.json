@@ -48,6 +48,16 @@
     "DATE_TOO_SMALL": "Ungültig: Die Zeitspanne muss mindestens eine Woche betragen.",
     "MONTHS": ["Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"]
   },
+  "DOWNLOAD": {
+    "TITLE": "Meldungen",
+    "DIAGNOSIS_DATE": "Diagnosedatum",
+    "CANTON": "Kanton",
+    "MUNICIPALITY": "Gemeinde",
+    "PEST_GROUP": "Seuchengruppe",
+    "PEST": "Seuche",
+    "ANIMAL_GROUP": "Tiergruppe",
+    "ANIMAL_SPECIES": "Tierart"
+  },
   "ERROR": {
     "OCCURED": "Ein Fehler ist aufgetreten.",
     "PAGE_NOT_FOUND": "Die aufgerufene Seite wurde leider nicht gefunden. Möglicherweise haben Sie eine falsche Adresse (URL) eingegeben, die Seite existiert nicht mehr oder der Name wurde geändert.",
