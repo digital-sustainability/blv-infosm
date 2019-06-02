@@ -42,6 +42,16 @@
         "DATE_TOO_SMALL": "Invalid: il periodo deve essere di almeno una settimana.",
         "MONTHS": ["Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Giugno", "Luglio", "Agosto", "Settembre", "Ottobre", "Novembre", "Dicembre"]
     },
+    "DOWNLOAD": {
+        "TITLE": "Notifiche",
+        "DIAGNOSIS_DATE": "Data di diagnosi",
+        "CANTON": "Cantone",
+        "MUNICIPALITY": "Comune",
+        "PEST_GROUP": "Gruppo epizoozia",
+        "PEST": "Epizoozia",
+        "ANIMAL_GROUP": "Gruppo animale",
+        "ANIMAL_SPECIES": "Specie aimale"
+    },
     "ERROR": {
         "OCCURED": "Error Page (404)",
         "PAGE_NOT_FOUND": "La pagina desiderata non è disponibile. È possibile che l’indirizzo URL immesso sia sbagliato o che il documento richiesto sia stato cancellato o rinominato.",

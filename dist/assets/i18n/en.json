@@ -42,6 +42,16 @@
         "DATE_TOO_SMALL": "Invalid: timespan has to be at least one week.",
         "MONTHS": ["January", "February", "March", "April", "May", "une", "July", "August", "September", "October", "November", "December"]
     },
+    "DOWNLOAD": {
+        "TITLE": "Notifications",
+        "DIAGNOSIS_DATE": "Diagnosis Date",
+        "CANTON": "Canton",
+        "MUNICIPALITY": "Municipality",
+        "PEST_GROUP": "Disease",
+        "PEST": "Group of Disease",
+        "ANIMAL_GROUP": "Animal Group",
+        "ANIMAL_SPECIES": "Animal Species"
+    },
     "ERROR": {
         "OCCURED": "Error Page (404)",
         "PAGE_NOT_FOUND": "The document you were looking for could not be found. Either you mistyped the adress (url) or the document does not exist or its name has changed.",
