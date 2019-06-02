@@ -41,6 +41,7 @@
     "jquery": "^3.3.1",
     "lodash": "^4.17.11",
     "moment": "^2.23.0",
+    "ngx-openlayers": "^0.8.22",
     "ol": "^5.3.1",
     "popper": "^1.0.1",
     "popper.js": "^1.14.7",

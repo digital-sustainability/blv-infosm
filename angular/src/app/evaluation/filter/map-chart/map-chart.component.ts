@@ -1,6 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ElementRef, ViewChildren, QueryList, ViewChild, Renderer2 } from '@angular/core';
 import { SparqlDataService } from '../../../shared/sparql-data.service';
+import { Report } from '../../../shared/models/report.model';
 import { Fill, Stroke, Style } from 'ol/style';
+import { Subscription } from 'rxjs';
+import { DistributeDataService } from 'src/app/shared/distribute-data.service';
 
 @Component({
   selector: 'app-map-chart',
@@ -11,66 +14,100 @@ export class MapChartComponent implements OnInit {
 
   height = 400;
 
+  dataSub: Subscription;
+  reports: Report[];
+
   featureData = [];
 
   constructor(
     private _sparqlDataService: SparqlDataService,
-  ) { }
+    private _distributeDataService: DistributeDataService,
+    ) { }
 
-
+  onClick(event) {
+    console.log(event);
+  }
   ngOnInit() {
-    console.time('Get WKT');
-    this._sparqlDataService.getCantonsWkt().subscribe(
-      wkts => {
-        const features = [];
-        wkts.map(w => {
-          features.push(
-            {
-              // id: w[0].wkt.value.length,
-              // wkt: w[0].wkt.value,
-              // Take Canton digit as ID. TODO: Retreive via query
-              id: w.canton_id.value,
-              wkt: w.wkt.value,
-              canton: true
-            }
-            );
-          });
-          this.featureData = features;
-        console.log(this.featureData);
-        console.timeEnd('Get WKT');
+    this.dataSub = this._distributeDataService.currentData.subscribe(
+      data => {
+        if (data) {
+          // this.ready = true;
+          this.reports = data;
+        }
       },
       err => console.log(err)
     );
-
-    // this._sparqlDataService.getMunicForCanton(1).subscribe(
+    // console.time('Get WKT');
+    // this._sparqlDataService.getCantonsWkt().subscribe(
     //   wkts => {
     //     const features = [];
     //     wkts.map(w => {
-    //       features.push({
-    //         id: w.munic_id.value,
-    //         wkt: w.wkt.value,
-    //         canton: false
-    //       });
+    //       features.push(
+    //         {
+    //           // id: w[0].wkt.value.length,
+    //           // wkt: w[0].wkt.value,
+    //           id: w.canton_id.value,
+    //           wkt: w.wkt.value,
+    //           canton: true
+    //         }
+    //       );
     //     });
     //     this.featureData = features;
-    //     console.log(wkts);
+    //     console.log(this.featureData);
+    //     console.timeEnd('Get WKT');
     //   },
     //   err => console.log(err)
     // );
+
+    this._sparqlDataService.getMunicForCanton(1).subscribe(
+      wkts => {
+        const features = [];
+        wkts.map(w => {
+          // TODO: add dynamic `belongsTo`
+          features.push({
+            id: w.munic_id.value,
+            wkt: w.wkt.value,
+            belongsTo: 1,
+            canton: false
+          });
+        });
+        this.featureData = features;
+        console.log(wkts);
+      },
+      err => console.log(err)
+    );
   }
 
-  getStackedStyle(feature) {
-    const fill = new Fill();
-    const style = new Style({
-      fill: fill,
-      stroke: new Stroke({
-        color: '#333',
-        width: 1,
-      }),
-    });
-    const id = feature.getId();
-    fill.setColor(`hsl(0, 59%, ${(id * 2).toFixed()}%)`);
-    return style;
+  // getStackedStyle(feature) {
+  //   const fill = new Fill();
+  //   const style = new Style({
+  //     fill: fill,
+  //     stroke: new Stroke({
+  //       color: '#333',
+  //       width: 1,
+  //     }),
+  //   });
+  //   const id = feature.getId();
+  //   console.log(feature);
+  //   fill.setColor('red');
+  //   return style;
+  // }
+
+  onSel(event) {
+    console.log('abc');
+    console.log(event);
+  }
+
+  private sumEpidemicsPerCanton(reports: Report[], cantonId: number): number {
+    return reports.filter(report => report.canton_id === cantonId).length;
+  }
+
+  private sumAllEpidemics(reports: Report[]): number {
+    return reports.length;
+  }
+
+  private getRelativeColor(percent: number): any {
+    return `hsl(0, 59%, ${(percent).toFixed()}%)`;
   }
 
 }

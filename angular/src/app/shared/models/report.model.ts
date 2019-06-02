@@ -7,4 +7,6 @@ export interface Report {
     infiziert: string;
     seuche: string;
     tierart: string;
+    canton_id: number;
+    munic_id: number;
 }

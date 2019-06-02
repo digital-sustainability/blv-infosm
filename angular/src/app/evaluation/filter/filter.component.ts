@@ -1,7 +1,7 @@
 
 import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { Report } from '../../shared/models/report.model';
-import { NgbDate } from '../../shared/models/ngbdate.model';
+import { NgbDate } from '../../shared/models/ngb-date.model';
 import { LanguageService } from 'src/app/shared/language.service';
 import { Subscription } from 'rxjs';
 import { MatPaginator, MatTableDataSource, MatSort } from '@angular/material';

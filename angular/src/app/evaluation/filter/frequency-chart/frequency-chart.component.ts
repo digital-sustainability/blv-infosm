@@ -2,6 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { DistributeDataService } from 'src/app/shared/distribute-data.service';
 import { Chart } from 'angular-highcharts';
 import { Report } from '../../../shared/models/report.model';
+import { Translations } from '../../../shared/models/translations.model';
 import { Frequency } from '../../../shared/models/frequency.model';
 import { get, countBy, mapKeys, uniqBy, orderBy } from 'lodash';
 import { HighchartService } from 'src/app/shared/highchart.service';
@@ -20,7 +21,7 @@ export class FrequencyChartComponent implements OnInit, OnDestroy {
   frequencyChart: Chart;
   ready = false;
   reports: Report[];
-  allLinesLabel: string;
+  trans: Translations;
 
   constructor(
     public translate: TranslateService,
@@ -30,19 +31,19 @@ export class FrequencyChartComponent implements OnInit, OnDestroy {
 
   // TODO: Enforce typing
   ngOnInit() {
-    console.log(this.range(5, 19));
     this.dataSub = this._distributeDataServie.currentData.subscribe(
       data => {
         if (data) {
           this.ready = true;
           this.reports = data;
-          this.translationSub = this.translate.get(['EVAL.SHOW_ALL_NONE'])
-            .subscribe(
-              texts => {
-                this.allLinesLabel = texts['EVAL.SHOW_ALL_NONE'];
-                this.drawChart(data, 'epidemic', this.extractPestFrequencies);
-              }
-            );
+          this.translationSub = this.translate.get([
+            'EVAL.SHOW_ALL_NONE'
+          ]).subscribe(
+            texts => {
+              this.trans = texts;
+              this.drawChart(data, 'epidemic', this.extractPestFrequencies);
+            }
+          );
         }
       },
       err => console.log(err)
@@ -114,7 +115,7 @@ export class FrequencyChartComponent implements OnInit, OnDestroy {
       },
       series: filterFn(data)
         .concat({
-          name: this.allLinesLabel,
+          name: this.trans['EVAL.SHOW_ALL_NONE'],
           data: [],
           // TODO: Change marker
         })

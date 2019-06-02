@@ -1,8 +1,17 @@
 <div style="border:1px solid lightgray;" class="container" *ngIf="featureData; else loadingPieChart">
   <ol-map zoom="7.5" lat="46.7985" lon="8.2318">
-    <!-- <ol-layer-openstreetmap></ol-layer-openstreetmap> -->
+    <ol-layer-openstreetmap></ol-layer-openstreetmap>
     <ol-layer-wkt id="wkt-layer" [featureData]="featureData" [featureStyle]="getStackedStyle"></ol-layer-wkt>
+    <ol-select (feature-selected)="onSel()"></ol-select>
   </ol-map>
+  <!-- <aol-map [width]="'100%'" [height]="'400'">
+    <aol-view [zoom]="7.5">
+      <aol-coordinate [x]="8.2318" [y]="46.7985" [srid]="'EPSG:4326'"></aol-coordinate>
+    </aol-view>
+    <aol-layer-tile>
+      <aol-source-osm></aol-source-osm>
+    </aol-layer-tile>
+  </aol-map> -->
 </div>
 <ng-template #loadingPieChart>
   <div class="loadingSign">

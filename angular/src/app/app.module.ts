@@ -26,6 +26,7 @@ import { ErrorComponent } from './error.component';
 import { FooterComponent } from './footer/footer.component';
 import { BulletinComponent } from './bulletin/bulletin.component';
 import { BulletinDetailViewComponent } from './bulletin-detail-view/bulletin-detail-view.component';
+import { AngularOpenlayersModule } from 'ngx-openlayers';
 
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { LanguageService } from './shared/language.service';
@@ -70,6 +71,7 @@ import '@openlayers-elements/maps/ol-layer-openstreetmap';
     MatSortModule,
     MatTooltipModule,
     NgbModule,
+    AngularOpenlayersModule,
     TranslateModule.forRoot({
       loader: {
         provide: TranslateLoader,
