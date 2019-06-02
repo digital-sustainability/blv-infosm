@@ -38,14 +38,16 @@
     "core-js": "^2.5.4",
     "font-awesome": "^4.7.0",
     "highcharts": "^6.2.0",
-    "jquery": "^3.3.1",
+    "jquery": "^3.4.1",
     "lodash": "^4.17.11",
     "moment": "^2.23.0",
+    "ngx-csv": "^0.3.1",
     "ol": "^5.3.1",
     "popper": "^1.0.1",
     "popper.js": "^1.14.7",
     "rxjs": "~6.4.0",
     "tslib": "^1.9.0",
+    "xlsx": "^0.14.3",
     "zone.js": "~0.8.29"
   },
   "devDependencies": {

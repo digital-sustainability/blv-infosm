@@ -264,7 +264,7 @@ export class FilterComponent implements OnInit, OnDestroy {
         this.transformData(data, false);
 
         this.filteredData = this.filterDataObjectBasedOnEventData(this.beautifiedData, this.filterConfig);
-        this._distributeDataService.updateData(this.filteredData);
+        this._distributeDataService.updateData(this.filteredData, from, to);
 
         this.extractFilterParts(data, this.filteredData);
 
