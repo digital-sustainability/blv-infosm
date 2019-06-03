@@ -92,5 +92,31 @@
     "FILTER_MUNICS": "Gemeinden filtern",
     "FILTER_ANIMALS": "Tierarten filtern",
     "FILTER_ANIMAL_GROUPS": "Tiergruppen filtern"
+  },
+  "GEO_DOWNLOAD": {
+    "TITLE": "Daten herunterladen",
+    "P1": "Unter dem Link \"Geodaten Download\" können, nach Bestätigung der Nutzungsbedingungen, alle Daten aus infoSM heruntergeladen werden. Bitte beachten Sie, dass es sich um einen umfangreichen Datensatz handelt und der Download daher mehrere Minuten in Anspruch nehmen kann. Die Daten sind aufgeteilt in mehrere csv-Dateien, die gemäss dem beiliegenden Datenmodell strukturiert und verbunden sind.",
+    "P2": "Der Datensatz \"meldepflichtige Tierseuchen\" zählt zu den Geobasisdaten des Bundesrechtes nach GeoIV. Er ist im Anhang der GeoIV aufgeführt.",
+    "LINK_TEXT": "Geodaten Download"
+  },
+  "GEO_DOWNLOAD_DETAIL": {
+    "TITLE": "Geodaten Download",
+    "P1": "Der Datensatz \"meldepflichtige Tierseuchen\" zählt zu den Geobasisdaten des Bundesrechtes nach GeoIV. Er ist im Anhang der GeoIV aufgeführt.",
+    "P2": "Bitte beachten Sie, dass es sich um einen umfangreichen Datensatz handelt und der Download daher mehrere Minuten in Anspruch nehmen kann. Die Daten werden in einer ZIP-Datei geladen, die auch eine Beschreibung des Datenmodells enthält. Geografische Referenz der anonymisierten Daten sind die aktuellen Gemeinden gemäss BfS. Vor Nutzung der Daten ist unbedingt die umfangreiche Dokumentation in der Beschreibung beachten, um Fehlinterpretationen zu vermeiden. Bei Fragen nutzen Sie bitte den Link \"Kontakt\" ganz unten auf dieser Seite.",
+    "NOTICE_TITLE": "Nutzungsbedingungen",
+    "NOTICE_P1": "Das Bundesamt für Lebensmittelsicherheit und Veterinärwesen (BLV) gewährt dem Kunden (Nutzer der Daten) zu den untenstehenden Bedingungen das Recht zur Nutzung des Datensatzes \"meldepflichtige Tierseuchen\". Das Recht ist übertragbar und nicht ausschliesslich. Auch wenn die Daten kostenlos zur Verfügung gestellt werden, sind sie nicht gemeinfrei (\"public domain\").",
+    "NOTICE_P2": "Unter Nutzung ist das Kopieren, Modifizieren und Veröffentlichen der Daten zu verstehen. Dieses wird wie folgt eingeschränkt:",
+    "NOTICE_B1": "Die Daten dürfen auf permanent zugängliche Speicher des Nutzers übertragen werden. Die Daten dürfen nur zusammen mit diesen Nutzungsbedingungen an Dritte weitergegeben werden.",
+    "NOTICE_B2": "Die Daten dürfen mit anderen Daten zusammengefügt werden. Sie unterliegen dann weiterhin diesen Nutzungsbedingungen.",
+    "NOTICE_B3": "Jede Veröffentlichung der Daten, von Teilen der Daten, von diesen Daten abgeleiteter Daten, oder Zusammenfügungen dieser Daten mit anderen Daten muss einen gut sichtbaren Quellvermerk enthalten, der das BLV, CH 3003 Bern benennt.",
+    "NOTICE_B4": "Verboten ist das Verkaufen, vermieten, Verleasen oder Lizensieren dieser Daten oder von diesen abgeleiteter Daten.",
+    "NOTICE_B5": "Das Löschen, verheimlichen oder abdecken von Copyright- und Quellenvermerken ist verboten.",
+    "NOTICE_P3": "Alle übrigen Nutzungsrechte verbleiben beim BLV, CH 3003 Bern.",
+    "NOTICE_P4": "Das BLV schliess ausdrücklich jede Haftung für Schäden, indirekte Schäden, Folgeschäden sowie für entgangenen Gewinn oder Ansprüche Dritter aus der Nutzung der Daten aus. Es wird keine Verantwortung für die Richtigkeit, Vollständigkeit und Aktualität der Daten übernommen. Die Daten entfalten keine Rechtswirkung. Massgebend sind die Originaldaten.",
+    "NOTICE_P5": "Die Verletzung dieser Nutzungsbedingungen führt zum Verlust aller Nutzungsrechte. Auf die Nutzungsbedingungen ist Schweizerisches Recht anwendbar. ",
+    "NOTICE_ACCEPT": "Nutzungsbedingungen akzeptieren",
+    "NOTICE_CANCEL": "Abbrechen",
+    "NOTICE_DOWNLOAD": "Download",
+    "NOTICE_WARNING": "Akzeptieren Sie bitte die Nutzungsbedingungen um den Download zu starten"
   }
 }

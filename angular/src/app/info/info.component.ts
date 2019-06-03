@@ -3,10 +3,10 @@ import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-home',
-  templateUrl: './home.component.html',
-  styleUrls: ['./home.component.css']
+  templateUrl: './info.component.html',
+  styleUrls: ['./info.component.css']
 })
-export class HomeComponent implements OnInit {
+export class InfoComponent implements OnInit {
 
   constructor(
     public translator: TranslateService,

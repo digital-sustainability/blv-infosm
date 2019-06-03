@@ -1,13 +1,14 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { HomeComponent } from './home/home.component';
+import { InfoComponent } from './info/info.component';
 import { ErrorComponent } from './error.component';
 import { EvaluationComponent } from './evaluation/evaluation.component';
 import { FrequencyChartComponent } from './evaluation/filter/frequency-chart/frequency-chart.component';
 import { TimelineChartComponent } from './evaluation/filter/timeline-chart/timeline-chart.component';
 import { MapChartComponent } from './evaluation/filter/map-chart/map-chart.component';
 import { BulletinComponent } from './bulletin/bulletin.component';
-import { BulletinDetailViewComponent} from './bulletin-detail-view/bulletin-detail-view.component';
+import { BulletinDetailComponent} from './bulletin-detail/bulletin-detail.component';
+import { GeoDownloadDetailComponent } from './geo-download-detail/geo-download-detail.component';
 
 const routes: Routes = [
   {
@@ -27,12 +28,17 @@ const routes: Routes = [
   },
   {
     path: 'bulletin/details',
-    component: BulletinDetailViewComponent,
+    component: BulletinDetailComponent,
+    pathMatch: 'full'
+  },
+  {
+    path: 'geo-download',
+    component: GeoDownloadDetailComponent,
     pathMatch: 'full'
   },
   {
     path: 'info',
-    component: HomeComponent,
+    component: InfoComponent,
     pathMatch: 'full'
   },
   {

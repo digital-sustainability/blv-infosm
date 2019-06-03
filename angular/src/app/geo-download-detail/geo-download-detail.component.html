@@ -1,0 +1,23 @@
+<div class="container-fluid">
+  <h1 id="geo-download-header">{{ 'GEO_DOWNLOAD_DETAIL.TITLE' | translate }}</h1>
+  <p>{{'GEO_DOWNLOAD_DETAIL.P1' | translate }}</p>
+  <p>{{'GEO_DOWNLOAD_DETAIL.P2' | translate }}</p>
+  <div class="notice">
+    <h2>{{'GEO_DOWNLOAD_DETAIL.NOTICE_TITLE' | translate }}</h2>
+    <p>{{'GEO_DOWNLOAD_DETAIL.NOTICE_P1' | translate }}</p>
+    <p>{{'GEO_DOWNLOAD_DETAIL.NOTICE_P2' | translate }}</p>
+    <ul>
+      <li>{{'GEO_DOWNLOAD_DETAIL.NOTICE_B1' | translate }}</li>
+      <li>{{'GEO_DOWNLOAD_DETAIL.NOTICE_B2' | translate }}</li>
+      <li>{{'GEO_DOWNLOAD_DETAIL.NOTICE_B3' | translate }}</li>
+      <li>{{'GEO_DOWNLOAD_DETAIL.NOTICE_B4' | translate }}</li>
+      <li>{{'GEO_DOWNLOAD_DETAIL.NOTICE_B5' | translate }}</li>
+    </ul>
+    <p>{{'GEO_DOWNLOAD_DETAIL.NOTICE_P3' | translate }}</p>
+    <p>{{'GEO_DOWNLOAD_DETAIL.NOTICE_P4' | translate }}</p>
+    <p>{{'GEO_DOWNLOAD_DETAIL.NOTICE_P5' | translate }}</p>
+    <input type="checkbox" name="accept" value="true"><span id="accept-notice">{{ 'GEO_DOWNLOAD_DETAIL.NOTICE_ACCEPT' | translate }}</span>
+  </div>
+  <Button class="btn btn-primary notice-input" ng-disabled="!accept" (click)="onDownload()" disabled>{{'GEO_DOWNLOAD_DETAIL.NOTICE_DOWNLOAD' | translate }}</Button>
+  <Button class="btn btn-primary notice-input" ng-disabled="!accept" (click)="onCancel()" disabled>{{'GEO_DOWNLOAD_DETAIL.NOTICE_CANCEL' | translate }}</Button>
+</div>

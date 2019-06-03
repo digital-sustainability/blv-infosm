@@ -86,5 +86,31 @@
         "FILTER_MUNICS": "Filtrer les municipalités",
         "FILTER_ANIMALS": "Filtrer les espèces",
         "FILTER_ANIMAL_GROUPS": "Filtrer les groupes d'animaux"
+    },
+    "GEO_DOWNLOAD": {
+        "TITLE": "Télécharger les données",
+        "P1": "Sous le lien «Télécharger les géodonnées», il est possible de télécharger toutes les données d’infoSM après avoir accepté les conditions d’utilisation. Veuillez noter qu’il s’agit de données volumineuses et que leur téléchargement peut nécessiter plusieurs minutes. Les données sont réparties en plusieurs fichiers csv qui sont structurés et reliés selon le modèle de fichiers ci-joint.",
+        "P2": "Le jeu de données «Epizooties soumises à notification» fait partie des géodonnées du droit fédéral selon OGéo. OGéo figure en annexe. ",
+        "LINK_TEXT": "Télécharger les géodonnées"
+    },
+    "GEO_DOWNLOAD_DETAIL": {
+        "TITLE": "Télécharger les géodonnées",
+        "P1": "Le jeu de données «Epizooties soumises à notification» fait partie des géodonnées du droit fédéral selon OGéo. Il figure en annexe à OGéo.",
+        "P2": "Veuillez noter qu’il s’agit de données volumineuses et que leur téléchargement peut nécessiter plu-sieurs minutes. Ces données sont chargées sous forme de fichier ZIP qui comporte aussi un descriptif du modèle de données. La référence géographique des fichiers anonymisés sont les communes actuelles selon l’OFS. Avant d’utiliser les données, veuillez impérativement tenir compte de l’importante documentation du descriptif afin d’éviter toute erreur d’interprétation. En cas de questions, veuillez utiliser le lien «Contact» en bas de cette page.",
+        "NOTICE_TITLE": "Conditions d’utilisation",
+        "NOTICE_P1": "L’Office fédéral de la sécurité alimentaire et des affaires vétérinaires (OSAV) octroie au client (utilisateur des données) le droit d’employer le jeu de données «Epizooties soumises à notification», conformément aux conditions cidessous. Ce droit est transmissible et non exclusif. Même si les données sont mises à disposition gratuitement, elles ne font pas partie du domaine public.",
+        "NOTICE_P2": "S’entendent sous utilisation, la copie, la modification et la publication des données. L’utilisation est soumise aux restrictions suivantes:",
+        "NOTICE_B1": "les données peuvent être copiées sur une mémoire de l’utilisateur accessible en permanence; les données peuvent seulement être transmises à des tiers, accompagnées des présentes conditions d’utilisation;",
+        "NOTICE_B2": "les données peuvent être associées à d’autres données; elles restent toutefois soumises aux présentes conditions d’utilisation;",
+        "NOTICE_B3": "toute publication complète ou partielle de ces données, de données qui en découlent ou de données associées à cellesci doivent comporter une mention de la source clairement visible citant l’OSAV, CH 3003 Berne;",
+        "NOTICE_B4": "la vente, la location, le leasing ou la licence de ces données ou de données en découlant ne sont pas autorisés;",
+        "NOTICE_B5": "la suppression, la dissimulation ou le recouvrement de l’indication de copyright et de la source sont interdits.",
+        "NOTICE_P3": "Tous les autres droits d’utilisation restent réservés à l’OSAV, CH 3003 Berne.",
+        "NOTICE_P4": "L’OSAV exclut expressément toute responsabilité en cas de dommages directs ou indirects, de conséquence de dommages ainsi que de manque à gagner ou de prétentions de tiers résultant de l’utilisation des données. Il décline toute responsabilité en ce qui concerne la justesse, l’exhaustivité et l’actualité des données. Les données ne peuvent donner lieu à aucun effet juridique. Les données originales sont déterminantes.",
+        "NOTICE_P5": "Toute atteinte à ces conditions d’utilisation entraîne la perte de tous les droits d’utilisation. Le droit suisse est applicable aux conditions d’utilisation.",
+        "NOTICE_ACCEPT": "Accepter conditions d'utilisation",
+        "NOTICE_CANCEL": "Annuler",
+        "NOTICE_DOWNLOAD": "Download",
+        "NOTICE_WARNING": "Accepter conditions d'utilisation"
     }
 }

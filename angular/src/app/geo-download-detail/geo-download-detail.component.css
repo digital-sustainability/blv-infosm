@@ -1,0 +1,22 @@
+#geo-download-header {
+    padding-top: 20px;
+}
+
+.notice {
+    background-color: #F5F5F5;
+    border: lightgrey;
+    border-width: 1px;
+    border-style: solid;
+    padding: 1em;
+    margin-top: 2em;
+    margin-bottom: 1em;
+}
+
+#accept-notice {
+    font-weight: bold;
+    padding-left: 1em;
+}
+
+.notice-input {
+    margin: 1em;
+}

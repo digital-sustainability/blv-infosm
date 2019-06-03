@@ -2,11 +2,11 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatPaginator, MatTableDataSource, MatSort, MatSortable } from '@angular/material';
 
 @Component({
-  selector: 'app-bulletin-detail-view',
-  templateUrl: './bulletin-detail-view.component.html',
-  styleUrls: ['./bulletin-detail-view.component.css']
+  selector: 'app-bulletin-detail',
+  templateUrl: './bulletin-detail.component.html',
+  styleUrls: ['./bulletin-detail.component.css']
 })
-export class BulletinDetailViewComponent implements OnInit {
+export class BulletinDetailComponent implements OnInit {
 
   dataFromRoute;
   metaDataFromRoute;

@@ -86,5 +86,31 @@
         "FILTER_MUNICS": "Filtrare le comuni",
         "FILTER_ANIMALS": "Filtrare le specie animali",
         "FILTER_ANIMAL_GROUPS": "Filtrare il gruppo di animali"
+    },
+    "GEO_DOWNLOAD": {
+        "TITLE": "Scaricare i dati",
+        "P1": "Sotto il link \"Download geodati\" è possibile scaricare tutti i dati da InfoSM, dopo aver confermato le Condizioni di utilizzo. Si prega di notare che si tratta di un record dati ampio e quindi il download può richiedere alcuni minuti. I dati sono suddivisi in diversi file CSV strutturati e collegati a seconda del modello di dati allegato. ",
+        "P2": "Il record dati \"Epizoozie soggette all'obbligo di notifica\" rientra tra i geodati di base del diritto federale conformemente a OGI ed è elencato nell'allegato dell'Ordinanza. ",
+        "LINK_TEXT": "Download geodati"
+    },
+    "GEO_DOWNLOAD_DETAIL": {
+        "TITLE": "Download geodati",
+        "P1": "Il record dati \"Epizoozie soggette all'obbligo di notifica\" rientra tra i geodati di base del diritto federale conformemente a OGI ed è elencato nell'allegato dell'Ordinanza.",
+        "P2": "Si prega di notare che si tratta di un record dati ampio e quindi il download può richiedere alcuni minuti. I dati vengono caricati in un file ZIP che contiene una descrizione del modello dei dati. Il riferimento geografico dei dati anonimi sono i comuni attuali secondo l'UST. Prima dell'uso dei dati è necessario tener conto dell'ampia documentazione indicata nella descrizione per evitare errori di interpretazione. In caso di domande utilizzate il link \"Contatto\" in fondo alla pagina.",
+        "NOTICE_TITLE": "Condizioni di utilizzo",
+        "NOTICE_P1": "L'Ufficio federale della sicurezza alimentare e di veterinaria (USAV) concede al cliente (utente dei dati) il diritto di utilizzare il record dati \"Epizoozie soggette all'obbligo di notifica\" alle condizioni illustrate di seguito. Il diritto è trasferibile e non esclusivo. Anche se i dati sono forniti gratuitamente, non sono di dominio pubblico (\"public domani\") ",
+        "NOTICE_P2": "Con uso si intendono la copia, modifica e la pubblicazione dei dati. A ciò si applicano le seguenti limitazioni:",
+        "NOTICE_B1": "I dati possono essere trasferiti su memorie costantemente accessibili dell'utente. I dati possono essere inoltrati a terzi solo unitamente alle presenti Condizioni d'utilizzo.",
+        "NOTICE_B2": "I dati possono essere combinati con altri dati. Tuttavia continuano ad essere soggetti alle pre-senti Condizioni d'utilizzo.",
+        "NOTICE_B3": "Qualsiasi pubblicazione e condivisione di questi dati o di dati da essi derivati oppure la combinazione di questi dati con altri dati deve recare un'indicazione ben visibile della fonte in cui sia nominato l'USAV, CH 3003 Berna.",
+        "NOTICE_B4": "Sono vietati la vendita, il noleggio, il leasing o la concessione in licenza di questi dati o di dati da essi derivati.",
+        "NOTICE_B5": "Inoltre è vietato cancellare, nascondere o coprire le indicazioni di copyright e fonte.",
+        "NOTICE_P3": "Tutti gli altri diritti di utilizzo restano dell'USAV, CH 3003 Berna",
+        "NOTICE_P4": "L'USAV declina espressamente qualsiasi responsabilità per danni, danni indiretti, danni consequen-ziali nonché per il mancato profitto o per i diritti di terzi derivanti dall'uso dei dati. Non ci assumiamo alcuna responsabilità per l'accuratezza, la completezza e l'attualità dei dati. I dati non hanno alcun effetto giuridico. Sono rilevanti solo dati originali.",
+        "NOTICE_P5": "La violazione di queste Condizioni d'utilizzo comporta la perdita di tutti i diritti di utilizzo. Le Condizioni d'utilizzo sono soggette al diritto svizzero. ",
+        "NOTICE_ACCEPT": "Accetta termini di utilizzo",
+        "NOTICE_CANCEL": "Interrompi",
+        "NOTICE_DOWNLOAD": "Download",
+        "NOTICE_WARNING": "Accetta termini di utilizzo"
     }
 }

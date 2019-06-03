@@ -78,20 +78,20 @@ export class MapChartComponent implements OnInit {
     );
   }
 
-  // getStackedStyle(feature) {
-  //   const fill = new Fill();
-  //   const style = new Style({
-  //     fill: fill,
-  //     stroke: new Stroke({
-  //       color: '#333',
-  //       width: 1,
-  //     }),
-  //   });
-  //   const id = feature.getId();
-  //   console.log(feature);
-  //   fill.setColor('red');
-  //   return style;
-  // }
+  getStackedStyle(feature) {
+    const fill = new Fill();
+    const style = new Style({
+      fill: fill,
+      stroke: new Stroke({
+        color: '#333',
+        width: 1,
+      }),
+    });
+    const id = feature.getId();
+    console.log(feature);
+    fill.setColor('red');
+    return style;
+  }
 
   onSel(event) {
     console.log('abc');

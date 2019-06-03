@@ -13,10 +13,11 @@ import { MatSortModule} from '@angular/material/sort';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { AngularOpenlayersModule } from 'ngx-openlayers';
 
 import { AppComponent } from './app.component';
 import { HeaderComponent } from './header/header.component';
-import { HomeComponent } from './home/home.component';
+import { InfoComponent } from './info/info.component';
 import { EvaluationComponent } from './evaluation/evaluation.component';
 import { FilterComponent } from './evaluation/filter/filter.component';
 import { TimelineChartComponent } from './evaluation/filter/timeline-chart/timeline-chart.component';
@@ -25,8 +26,10 @@ import { MapChartComponent } from './evaluation/filter/map-chart/map-chart.compo
 import { ErrorComponent } from './error.component';
 import { FooterComponent } from './footer/footer.component';
 import { BulletinComponent } from './bulletin/bulletin.component';
-import { BulletinDetailViewComponent } from './bulletin-detail-view/bulletin-detail-view.component';
-import { AngularOpenlayersModule } from 'ngx-openlayers';
+import { BulletinDetailComponent } from './bulletin-detail/bulletin-detail.component';
+import { DownloadComponent } from './evaluation/download/download.component';
+import { GeoDownloadComponent } from './info/geo-download/geo-download.component';
+import { GeoDownloadDetailComponent } from './geo-download-detail/geo-download-detail.component';
 
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { LanguageService } from './shared/language.service';
@@ -41,13 +44,12 @@ import { HighchartService } from './shared/highchart.service';
 import '@openlayers-elements/core/ol-map';
 import '@openlayers-elements/maps/ol-layer-wkt';
 import '@openlayers-elements/maps/ol-layer-openstreetmap';
-import { DownloadComponent } from './evaluation/download/download.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     HeaderComponent,
-    HomeComponent,
+    InfoComponent,
     EvaluationComponent,
     FilterComponent,
     TimelineChartComponent,
@@ -56,8 +58,10 @@ import { DownloadComponent } from './evaluation/download/download.component';
     ErrorComponent,
     FooterComponent,
     BulletinComponent,
-    BulletinDetailViewComponent,
-    DownloadComponent
+    BulletinDetailComponent,
+    DownloadComponent,
+    GeoDownloadComponent,
+    GeoDownloadDetailComponent
   ],
   imports: [
     BrowserModule,

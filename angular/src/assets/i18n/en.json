@@ -86,5 +86,31 @@
         "FILTER_MUNICS": "Filter municipalities",
         "FILTER_ANIMALS": "Filter species",
         "FILTER_ANIMAL_GROUPS": "Filter animal groups"
+    },
+    "GEO_DOWNLOAD": {
+        "TITLE": "Data downlaod",
+        "P1": "After accepting the terms of use the whole dataset from infoSM can be downloaded following the link \"GeoData download\". The download may take some minutes as it is an extensive dataset. The download will be in a ZIP-file and includes a description of the data model. In the ZIP-file there are several csv-files, which include the data according to the data model included.",
+        "P2": "The dataset \"notifiable diseases\" is part of the GeoBasis data according to federal law GeoIV. It is enlisted in the annex of the GeoIV.",
+        "LINK_TEXT": "Download Geodata"
+    },
+    "GEO_DOWNLOAD_DETAIL": {
+        "TITLE": "Download Geodata",
+        "P1": "The dataset \"notifiable diseases\" is part of the GeoBasis data according to federal law GeoIV. It is enlisted in the annex of the GeoIV.",
+        "P2": "The download may take some minutes as it is an extensive dataset. The download will be in a ZIP-file and includes a description of the data model. The records are anonymised and spatial reference is the current municipalities according to SFSO. Prior to usage of the dataset, please refer to the documentation and the description to avoid misinterpretation. In case of questions please use the \"contact\" link below on this page.",
+        "NOTICE_TITLE": "Terms of use",
+        "NOTICE_P1": "The Federal Food Safety and Veterinary Office (FSVO) allows the client (user of the data) the right to use the dataset “notifiable diseases” in respect of the following terms and conditions. This right can be transferred and is not exclusive. Albeit the data is available without charge, it is not public domain.",
+        "NOTICE_P2": "Use is to copy, modify and publish of the data. It is restricted as follows:",
+        "NOTICE_B1": "It is allowed to transfer the data to permanently available storage of the user. It is only al-lowed to distribute the data together with these terms of use.",
+        "NOTICE_B2": "The data can be mixed with other data. Then the terms of use have still to be followed.",
+        "NOTICE_B3": "Publication of the data, of parts of the data, of derived data or assembled data needs a reference to the FSVO, CH 3003 Berne.",
+        "NOTICE_B4": "Sale, leasing or licencing of the data, of parts of the data, of derived data or assembled data is prohibited.",
+        "NOTICE_B5": "To delete, manipulate or cover the copyright or reference is prohibited.",
+        "NOTICE_P3": "All other rights of use remain at the FSVO, CH 3003 Berne.",
+        "NOTICE_P4": "The FSVO excludes explicitly any liability for losses, indirect losses, consequential losses or unreal-ized profit or claims of third parties. The FSVO is not liable for the correctness, completeness and currentness of the data. The data have no legal effect. Authoritative are the raw data.",
+        "NOTICE_P5": "Violation of these terms of use will stop all rights of use. Swiss law is applicable on these terms of use. ",
+        "NOTICE_ACCEPT": "Accept the terms",
+        "NOTICE_CANCEL": "Cancel",
+        "NOTICE_DOWNLOAD": "Download",
+        "NOTICE_WARNING": "Accept the terms"
     }
 }

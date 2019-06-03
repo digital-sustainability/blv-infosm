@@ -70,7 +70,7 @@ export class FrequencyChartComponent implements OnInit, OnDestroy {
         min: 0,
         allowDecimals: false,
         title: {
-          text: 'Seuchen Pro Tierart'
+          text: 'Seuchen Pro Tierart' // TODO: i18n
         },
         stackLabels: {
           enabled: true,
