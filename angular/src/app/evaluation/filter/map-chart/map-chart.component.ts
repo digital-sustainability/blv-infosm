@@ -1,7 +1,6 @@
-import { Component, OnInit, AfterViewInit, ElementRef, ViewChildren, QueryList, ViewChild, Renderer2 } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { SparqlDataService } from '../../../shared/sparql-data.service';
 import { Report } from '../../../shared/models/report.model';
-import { Fill, Stroke, Style } from 'ol/style';
 import { Subscription } from 'rxjs';
 import { DistributeDataService } from 'src/app/shared/distribute-data.service';
 
@@ -76,26 +75,6 @@ export class MapChartComponent implements OnInit {
       },
       err => console.log(err)
     );
-  }
-
-  getStackedStyle(feature) {
-    const fill = new Fill();
-    const style = new Style({
-      fill: fill,
-      stroke: new Stroke({
-        color: '#333',
-        width: 1,
-      }),
-    });
-    const id = feature.getId();
-    console.log(feature);
-    fill.setColor('red');
-    return style;
-  }
-
-  onSel(event) {
-    console.log('abc');
-    console.log(event);
   }
 
   private sumEpidemicsPerCanton(reports: Report[], cantonId: number): number {

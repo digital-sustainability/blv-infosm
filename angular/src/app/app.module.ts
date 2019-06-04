@@ -41,10 +41,6 @@ import { DistributeDataService } from './shared/distribute-data.service';
 import { DatePickerI18nService } from './shared/date-picker-i18n.service';
 import { HighchartService } from './shared/highchart.service';
 
-import '@openlayers-elements/core/ol-map';
-import '@openlayers-elements/maps/ol-layer-wkt';
-import '@openlayers-elements/maps/ol-layer-openstreetmap';
-
 @NgModule({
   declarations: [
     AppComponent,

@@ -5,7 +5,7 @@ import { Translations } from '../../shared/models/translations.model';
 import { Subscription } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
 import { ngxCsv } from 'ngx-csv/ngx-csv';
-import * as XLSX from 'XLSX'
+import * as XLSX from 'xlsx';
 
 @Component({
   selector: 'app-download',
