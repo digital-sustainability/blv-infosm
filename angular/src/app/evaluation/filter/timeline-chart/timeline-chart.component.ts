@@ -378,7 +378,7 @@ export class TimelineChartComponent implements OnInit, OnDestroy {
   }
 
   private getIntervalUnit(from: Date, to: Date): void {
-    if ((Math.abs(moment(from).diff(to, 'years')) + 1) > 1) {
+    if ((Math.abs(moment(to).diff(from, 'years'))) > 1) {
       this.isYear = true;
       this.isMonth = false;
       this.isWeek = false;
