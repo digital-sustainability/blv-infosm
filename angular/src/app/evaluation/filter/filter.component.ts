@@ -11,6 +11,7 @@ import { DistributeDataService } from 'src/app/shared/distribute-data.service';
 import { TranslateService } from '@ngx-translate/core';
 import { remove, uniq, map } from 'lodash';
 import { NgbDatepickerConfig } from '@ng-bootstrap/ng-bootstrap';
+import { Translations } from '../../shared/models/translations.model';
 import * as moment from 'moment';
 declare let $: any;
 
@@ -35,6 +36,8 @@ export class FilterComponent implements OnInit, OnDestroy {
   private _paramSub: Subscription;
   private _langSub: Subscription;
   private _dataSub: Subscription;
+  private translationSub: Subscription;
+  trans: Translations;
   private _filter = {
     lang: '',
     from: '',
@@ -68,7 +71,7 @@ export class FilterComponent implements OnInit, OnDestroy {
     private _distributeDataService: DistributeDataService,
     private _route: ActivatedRoute,
     private _router: Router,
-    public translateService: TranslateService,
+    public translate: TranslateService,
     public ngbDatepickerConfig: NgbDatepickerConfig
   ) { }
 
@@ -81,7 +84,7 @@ export class FilterComponent implements OnInit, OnDestroy {
 
         // Sets parmas if none detected or one is misssing
         if (!params['lang'] || !params['from'] || !params['to']) {
-          const lang = this.translateService.currentLang;
+          const lang = this.translate.currentLang;
           const from = moment().subtract(1, 'y').format('YYYY-MM-DD');
           const to = moment().format('YYYY-MM-DD');
           this.updateRouteParams({
@@ -93,7 +96,7 @@ export class FilterComponent implements OnInit, OnDestroy {
         } else {
           // Load data according to URL-input by user
           this.getList(this._filter.lang, this._filter.from, this._filter.to);
-          if (this._filter.lang !== this.translateService.currentLang) {
+          if (this._filter.lang !== this.translate.currentLang) {
             this._langauageService.changeLang(this._filter.lang);
           }
         }
@@ -114,6 +117,17 @@ export class FilterComponent implements OnInit, OnDestroy {
       }
     );
 
+    this.translationSub = this.translate.get([
+      'FILTER.DATE_COMPARE_ERROR',
+      'FILTER.DATE_PERIOD_ERROR',
+      'FILTER.DATE_FROM_ERROR',
+      'FILTER.DATE_TO_ERROR',
+      'FILTER.DATE_FORMAT_ERROR']).subscribe(
+        texts => {
+          this.trans = texts;
+      }
+    );
+    
     const today = new Date();
     this.ngbDatepickerConfig.minDate = { year: 1991, month: 1, day: 1 };
     this.ngbDatepickerConfig.maxDate = {
@@ -223,11 +237,19 @@ export class FilterComponent implements OnInit, OnDestroy {
     this.removeErrors();
     if (moment(fromdate).isValid() && moment(todate).isValid() && fromdate.length === 10 && todate.length === 10) {
       if (fromdate > todate) {
-        $('button.notValid').after(`<p class='err' style='color:red' style='color:red' id='datecompareerror'>Invalid: date from > date to</p>`);
+        $('div.notValid').after(`<p class='err' style='color:red' style='color:red' id='datecompareerror'> ${this.trans['FILTER.DATE_COMPARE_ERROR']} </p>`);
         return;
       }
       if ((moment(todate).diff(fromdate, 'days')) < 7) {
-        $('button.notValid').after(`<p class='err' style='color:red' id='dateuniterror'>Invalid: timespan has to be at least one week</p>`);
+        $('div.notValid').after(`<p class='err' style='color:red; width=100%' id='dateuniterror'>${this.trans['FILTER.DATE_PERIOD_ERROR']} </p>`);
+        return;
+      }
+      if (moment(fromdate).diff(moment("1991-01-15")) < 0) {
+        $('div.notValid').after(`<p class='err' style='color:red; width=100%' id='datefromerror'>${this.trans['FILTER.DATE_FROM_ERROR']} </p>`);
+        return;
+      }
+      if (moment(todate).diff(moment()) > 0) {
+        $('div.notValid').after(`<p class='err' style='color:red' id='datetoerror'>${this.trans['FILTER.DATE_TO_ERROR']} </p>`);
         return;
       }
       this._filter.from = fromdate;
@@ -236,12 +258,12 @@ export class FilterComponent implements OnInit, OnDestroy {
         from: this._filter.from,
         to: this._filter.to
       });
-      // uncheck all radio buttons since either you search for period of for specific dates
+      // uncheck all radio buttons since either you search for period or for specific dates
       $('.radio').prop('checked', false);
       $('#dateformaterror').remove();
     } else {
       if (!($('#notValid').length)) {
-        $('button.notValid').after(`<p class='err' style='color:red' id='dateformaterror'>Invalid: Not a valid date format. Try: YYYY-MM-DD</p>`);
+        $('div.notValid').after(`<p class='err' style='color:red' id='dateformaterror'>${this.trans['FILTER.DATE_FORMAT_ERROR']} </p>`);
       }
     }
   }
@@ -255,6 +277,8 @@ export class FilterComponent implements OnInit, OnDestroy {
     $('#dateformaterror').remove();
     $('#datecompareerror').remove();
     $('#dateuniterror').remove();
+    $('#datefromerror').remove();
+    $('#datetoerror').remove();
   }
 
   private getList(lang: string, from: string | Date, to: string | Date): void {

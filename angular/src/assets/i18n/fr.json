@@ -85,7 +85,12 @@
         "FILTER_CANTONS": "Filtrer les cantons",
         "FILTER_MUNICS": "Filtrer les municipalités",
         "FILTER_ANIMALS": "Filtrer les espèces",
-        "FILTER_ANIMAL_GROUPS": "Filtrer les groupes d'animaux"
+        "FILTER_ANIMAL_GROUPS": "Filtrer les groupes d'animaux",
+        "DATE_COMPARE_ERROR": "Das Datum von ist grösser als das Datum bis.",
+        "DATE_PERIOD_ERROR": "Die kleinste Vergleichseinheit is eine Woche.",
+        "DATE_FROM_ERROR": "Das ältest mögliche Datum ist der 15.01.1995.",
+        "DATE_TO_ERROR": "Bitte wählen Sie ein Datum kleine oder gleich heute.",
+        "DATE_FORMAT_ERROR": "Das Datumsformat sollte TT.MM.JJJJ sein."
     },
     "GEO_DOWNLOAD": {
         "TITLE": "Télécharger les données",
