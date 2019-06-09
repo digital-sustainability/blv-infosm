@@ -13,7 +13,6 @@ import { MatSortModule} from '@angular/material/sort';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { AngularOpenlayersModule } from 'ngx-openlayers';
 
 import { AppComponent } from './app.component';
 import { HeaderComponent } from './header/header.component';
@@ -73,7 +72,6 @@ import { HighchartService } from './shared/highchart.service';
     MatSortModule,
     MatTooltipModule,
     NgbModule,
-    AngularOpenlayersModule,
     TranslateModule.forRoot({
       loader: {
         provide: TranslateLoader,

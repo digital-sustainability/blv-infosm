@@ -27,7 +27,7 @@ const routes: Routes = [
     pathMatch: 'full'
   },
   {
-    path: 'bulletin/details',
+    path: 'bulletin/detail',
     component: BulletinDetailComponent,
     pathMatch: 'full'
   },
