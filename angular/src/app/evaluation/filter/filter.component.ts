@@ -400,7 +400,7 @@ export class FilterComponent implements OnInit, OnDestroy {
     return (filterObject[type].length !== 0 && filterObject[type].includes(compare)) || filterObject[type].length === 0;
   }
 
-  private transformDate(date?: string | Date): NgbDate {
+  private transformDate(date: string | Date): NgbDate {
     const d = new Date(date);
     return { year: d.getFullYear(), month: d.getMonth() + 1, day: d.getDate() };
   }

@@ -39,6 +39,7 @@ import { MatPaginatorI18nService} from './shared/mat-paginator-i18n.service'
 import { DistributeDataService } from './shared/distribute-data.service';
 import { DatePickerI18nService } from './shared/date-picker-i18n.service';
 import { HighchartService } from './shared/highchart.service';
+import { ParamService } from './shared/param.service';
 
 @NgModule({
   declarations: [
@@ -85,6 +86,7 @@ import { HighchartService } from './shared/highchart.service';
     LanguageService,
     DistributeDataService,
     HighchartService,
+    ParamService,
     {
       provide: MatPaginatorIntl,
       useClass: MatPaginatorI18nService,

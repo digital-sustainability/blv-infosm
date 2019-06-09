@@ -1,13 +1,16 @@
 import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { MatPaginator, MatTableDataSource, MatSort, MatSortable } from '@angular/material';
 import { Report } from '../shared/models/report.model';
+import { ParamState } from '../shared/models/param-state.model';
 import { SparqlDataService } from 'src/app/shared/sparql-data.service';
 import { TranslateService } from '@ngx-translate/core';
 import { LanguageService } from 'src/app/shared/language.service';
 import { Router, ActivatedRoute } from '@angular/router';
+import { NgbDate } from '../shared/models/ngb-date.model';
 import { Subscription } from 'rxjs';
 import dayjs from 'dayjs';
 import weekOfYear from 'dayjs/plugin/weekOfYear';
+import { ParamService } from '../shared/param.service';
 dayjs.extend(weekOfYear);
 
 
@@ -25,15 +28,13 @@ export class BulletinComponent implements OnInit, OnDestroy {
   private _paramSub: Subscription;
   private _langSub: Subscription;
   private _dataSub: Subscription;
-  private _paramState = {
-    lang: '',
-    from: '',
-    to: ''
-  };
+  private _paramState: ParamState;
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
 
+  from: NgbDate;
+  to: NgbDate;
   dataSource: any;
   data: Report[];
   element_data: any[];
@@ -51,43 +52,43 @@ export class BulletinComponent implements OnInit, OnDestroy {
     private _sparqlDataService: SparqlDataService,
     private _langauageService: LanguageService,
     private _router: Router,
+    private _paramsService: ParamService,
     private _route: ActivatedRoute,
     public translateService: TranslateService,
   ) { }
 
   ngOnInit(): void {
+    this._paramState = { lang: '', from: '', to: '' };
     this._paramSub = this._route.queryParams.subscribe(
       params => {
-        // Set parmas if none detected or one is misssing
+        // set parmas if none detected or one is misssing
         if (!params['lang'] || !params['from'] || !params['to']) {
-          const lang = this.translateService.currentLang;
-          const from = dayjs(this.startOfBulletin).format('YYYY-MM-DD');
-          const to = dayjs().format('YYYY-MM-DD');
-          this.updateRouteParams({
-            lang: lang,
-            from: from,
-            to: to
-          });
-          // this.getList(lang, from, to);
-          // set params and get data accordning to URL input
+          this.updateInput({
+            lang: this.translateService.currentLang,
+            from: dayjs(this.startOfBulletin).format('YYYY-MM-DD'),
+            to: dayjs().format('YYYY-MM-DD')
+          }, this._paramState);
+        // set params and get data accordning to URL input
         } else {
-          this._paramState.lang = params['lang'];
-          this._paramState.from = params['from'];
-          this._paramState.to = params['to'];
           // load data according to URL-input by user
-          this.getList(this._paramState.lang, this._paramState.from, this._paramState.to);
+          this.updateInput({
+            lang: params['lang'],
+            from: params['from'],
+            to: params['to']
+          }, this._paramState);
+
           // in case the language in URL defers from the one currently set, change the langu
-          if (this._paramState.lang !== this.translateService.currentLang) {
+          if (this._paramState.lang !== this.translateService.currentLang) { // TODO: Check if this logic makes sense or needed at all
             this._langauageService.changeLang(this._paramState.lang);
           }
         }
-        // If the languare changes through click, update param
+        // If the language changes through click, update param
         this._langSub = this._langauageService.currentLang.subscribe(
           lang => {
             if (this._paramState.lang !== lang) {
               // TODO: reset filter if language changes
               console.log('ParamState: ' + this._paramState.lang + ' ≠ languageService: ' + lang);
-              this.updateRouteParams({ lang: lang });
+              this.updateInput({ lang: lang }, this._paramState);
             }
           }, err => {
             // TODO: Imporve error handling
@@ -109,7 +110,10 @@ export class BulletinComponent implements OnInit, OnDestroy {
       (data: Report[]) => {
         this.data = this.beautifyDataObject(data);
         this.splitDataToIntervals(from, to);
-        console.log(this.data);
+
+        // update the values in the two date-pickers
+        this.from = this.transformDate(from);
+        this.to = this.transformDate(to);
 
         // Prepare data for table
         this.element_data = [];
@@ -178,7 +182,7 @@ export class BulletinComponent implements OnInit, OnDestroy {
   }
 
   // distribute the data into the weekly intervals from the table
-  // returns an object key: number(vgl table) and value: array of objects which fall into the weelky interval 
+  // returns an object key: number(vgl table) and value: array of objects which fall into the weelky interval
   private distributeDataToIntervals(): void {
     const res = {};
     let counter = 0;
@@ -230,41 +234,32 @@ export class BulletinComponent implements OnInit, OnDestroy {
     this.endIntervals = [];
     const from = this.datepicker._inputValue;
     const to = this.datepicker2._inputValue;
-    this.getList(this._paramState.lang, from, to);
+    this.updateInput({ from: from, to: to }, this._paramState);
   }
 
   resetDates(): void {
     this.data = [];
     this.startIntervals = [];
     this.endIntervals = [];
-    this.getList(
-      this._paramState.lang,
-      dayjs(this.startOfBulletin).format('YYYY-MM-DD'),
-      dayjs().format('YYYY-MM-DD')
-    );
+    this.updateInput({
+      from: dayjs(this.startOfBulletin).format('YYYY-MM-DD'),
+      to: dayjs().format('YYYY-MM-DD')
+    }, this._paramState);
+  }
+
+  private updateInput(changes: { [s: string]: string; }, oldState: ParamState): void {
+    // check if old an new state are the same
+    if (JSON.stringify(changes) !== JSON.stringify(oldState)) {
+       this._paramState = this._paramsService.updateRouteParams(changes, oldState);
+       this.getList(this._paramState.lang, this._paramState.from, this._paramState.to);
+    }
+  }
+
+  private transformDate(date: string | Date): NgbDate {
+    const d = new Date(date);
+    return { year: d.getFullYear(), month: d.getMonth() + 1, day: d.getDate() };
   }
 
 
-  // update the route without having to reset all other route properties. all others stay untouched
-  private updateRouteParams(changes: { [s: string]: string; }): void {
-    let paramsChanged = false;
-    for (const key in changes) {
-      // update the paramstate if there have been any changes
-      if (this._paramState.hasOwnProperty(key) && changes[key] !== this._paramState[key]) {
-        this._paramState[key] = changes[key];
-        paramsChanged = true;
-      }
-    }
-    // get data if any params have changed
-    console.log(paramsChanged, 'paramschanged')
-    if (paramsChanged) {
-      this.getList(this._paramState.lang, this._paramState.from, this._paramState.to);
-    }
-    // set the params in the router
-    this._router.navigate(
-      [], {
-        queryParams: this._paramState,
-        relativeTo: this._route // stay on current route
-      });
-  }
+
 }
