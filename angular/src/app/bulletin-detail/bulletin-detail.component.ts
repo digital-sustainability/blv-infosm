@@ -1,5 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatPaginator, MatTableDataSource, MatSort, MatSortable } from '@angular/material';
+import { Location } from '@angular/common';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-bulletin-detail',
@@ -18,11 +20,15 @@ export class BulletinDetailComponent implements OnInit {
   displayedColumns: string[] = [ 'kanton', 'gemeinde', 'seuchen_gruppe', 'seuche', 'tierart', 'anzahl' ];
 
 
-  constructor() { }
+  constructor(
+    private _location: Location,
+    public translateService: TranslateService,
+  ) { }
 
   ngOnInit() {
     this.dataFromRoute = JSON.parse(localStorage.getItem('detailData'));
     this.metaDataFromRoute = JSON.parse(localStorage.getItem('metaData'));
+    console.log(this.dataFromRoute);
 
     this.element_data = [];
 
@@ -31,19 +37,24 @@ export class BulletinDetailComponent implements OnInit {
     this.dataSource = new MatTableDataSource<any>(this.element_data);
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
-    
+  }
+
+  onGoBack(): void {
+    this._location.back();
   }
 
   private transformDataToMaterializeTable() {
-    for (let element in this.dataFromRoute) {
-      this.element_data.push({
-        kanton: this.dataFromRoute[element].kanton,
-        gemeinde: this.dataFromRoute[element].gemeinde,
-        seuche: this.dataFromRoute[element].seuche,
-        seuchen_gruppe: this.dataFromRoute[element].seuchen_gruppe,
-        tierart: this.dataFromRoute[element].tierart,
-        anzahl: 1
-      });
+    for (const element in this.dataFromRoute) {
+      if (this.dataFromRoute[element]) {
+        this.element_data.push({
+          kanton: this.dataFromRoute[element].kanton,
+          gemeinde: this.dataFromRoute[element].gemeinde,
+          seuche: this.dataFromRoute[element].seuche,
+          seuchen_gruppe: this.dataFromRoute[element].seuchen_gruppe,
+          tierart: this.dataFromRoute[element].tierart,
+          anzahl: 1
+        });
+      }
     }
   }
 

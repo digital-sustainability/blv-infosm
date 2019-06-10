@@ -160,6 +160,8 @@ export class BulletinComponent implements OnInit, OnDestroy {
     }
   }
 
+  // TODO: Enforce typing. Solve the "Report-type-mess"
+  // TODO: Maybe we can increase performance by moving the "clean data" part to the sparql-service
   private beautifyDataObject(data: any[]) {
     const reducedDataObject: any[] = [];
     for (const el in data) {
@@ -225,7 +227,12 @@ export class BulletinComponent implements OnInit, OnDestroy {
     this.detailData = this.findNumberIdInDataObject(this.distributedData, id);
     localStorage.setItem('metaData', JSON.stringify(this.metaData));
     localStorage.setItem('detailData', JSON.stringify(this.detailData));
-    this._router.navigate(['bulletin/detail', { number: id }]);
+    this._router.navigate(['bulletin/detail', {
+      number: id,
+      lang: this._paramState.lang,
+      from: this._paramState.from,
+      to: this._paramState.to
+    }]);
   }
 
   getFromToDates(): void {
@@ -259,7 +266,5 @@ export class BulletinComponent implements OnInit, OnDestroy {
     const d = new Date(date);
     return { year: d.getFullYear(), month: d.getMonth() + 1, day: d.getDate() };
   }
-
-
 
 }
