@@ -1,10 +1,17 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { MatPaginator, MatTableDataSource, MatSort, MatSortable } from '@angular/material';
+import { Report } from '../shared/models/report.model';
+import { ParamState } from '../shared/models/param-state.model';
 import { SparqlDataService } from 'src/app/shared/sparql-data.service';
 import { TranslateService } from '@ngx-translate/core';
 import { LanguageService } from 'src/app/shared/language.service';
-import { Router } from '@angular/router';
-import * as moment from 'moment';
+import { Router, ActivatedRoute } from '@angular/router';
+import { NgbDate } from '../shared/models/ngb-date.model';
+import { Subscription } from 'rxjs';
+import { ParamService } from '../shared/param.service';
+import dayjs from 'dayjs';
+import weekOfYear from 'dayjs/plugin/weekOfYear';
+dayjs.extend(weekOfYear);
 
 
 @Component({
@@ -13,49 +20,101 @@ import * as moment from 'moment';
   styleUrls: ['./bulletin.component.css']
 })
 
-export class BulletinComponent implements OnInit {
-
+export class BulletinComponent implements OnInit, OnDestroy {
+  
   @ViewChild('d') datepicker;
   @ViewChild('c') datepicker2;
 
-  from;
-  to;
+  private _paramSub: Subscription;
+  private _langSub: Subscription;
+  private _dataSub: Subscription;
+  private _paramState: ParamState;
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
 
+  from: NgbDate;
+  to: NgbDate;
   dataSource: any;
-  data: Object[];
+  data: Report[];
   element_data: any[];
   displayedColumns: string[] = ['nummer', 'dateFrom', 'dateTo', 'action'];
   startIntervals = [];
   endIntervals = [];
-  startOfBulletin = moment('2008-11-17').format('YYYY-MM-DD');
-  today = moment().format('YYYY-MM-DD');
-  actionString = 'Details anzeigen';
+  startOfBulletin = '2008-11-17';
+  actionString = 'Details anzeigen'; // TODO: i18n
   distributedData = {};
   details: boolean;
-  detailData;
+  detailData; // TODO: types
   metaData = [];
 
   constructor(
     private _sparqlDataService: SparqlDataService,
-    public translateService: TranslateService,
     private _langauageService: LanguageService,
-    private router: Router
+    private _router: Router,
+    private _paramsService: ParamService,
+    private _route: ActivatedRoute,
+    public translateService: TranslateService,
   ) { }
 
-  ngOnInit() {
-    console.log(this._langauageService.currentLang);
-    this.getList('de', this.startOfBulletin, this.today);
+  ngOnInit(): void {
+    this._paramState = { lang: '', from: '', to: '' };
+    this._paramSub = this._route.queryParams.subscribe(
+      params => {
+        // set parmas if none detected or one is misssing
+        if (!params['lang'] || !params['from'] || !params['to']) {
+          this.updateInput({
+            lang: this.translateService.currentLang,
+            from: dayjs(this.startOfBulletin).format('YYYY-MM-DD'),
+            to: dayjs().format('YYYY-MM-DD')
+          }, this._paramState);
+        // set params and get data accordning to URL input
+        } else {
+          // load data according to URL-input by user
+          this.updateInput({
+            lang: params['lang'],
+            from: params['from'],
+            to: params['to']
+          }, this._paramState);
+
+          // in case the language in URL defers from the one currently set, change the language
+           // TODO: Check if this logic makes sense or needed at all. Also in Bulletin-detail
+          if (this._paramState.lang !== this.translateService.currentLang) {
+            this._langauageService.changeLang(this._paramState.lang);
+          }
+        }
+        // If the language changes through click, update param
+        this._langSub = this._langauageService.currentLang.subscribe(
+          lang => {
+            if (this._paramState.lang !== lang) {
+              // TODO: reset filter if language changes
+              console.log('ParamState: ' + this._paramState.lang + ' ≠ languageService: ' + lang);
+              this.updateInput({ lang: lang }, this._paramState);
+            }
+          }, err => {
+            // TODO: Imporve error handling
+            console.log(err);
+          }
+        );
+      }
+    );
+  }
+
+  ngOnDestroy(): void {
+    this._paramSub.unsubscribe();
+    this._dataSub.unsubscribe();
+    this._langSub.unsubscribe();
   }
 
   private getList(lang: string, from: string | Date, to: string | Date): void {
-    this._sparqlDataService.getReports(lang, from, to).subscribe(
-      data => {
+    this._dataSub = this._sparqlDataService.getReports(lang, from, to).subscribe(
+      (data: Report[]) => {
         this.data = this.beautifyDataObject(data);
         this.splitDataToIntervals(from, to);
-        console.log(this.data);
+
+        // update the values in the two date-pickers
+        this.from = this.transformDate(from);
+        this.to = this.transformDate(to);
 
         // Prepare data for table
         this.element_data = [];
@@ -64,7 +123,7 @@ export class BulletinComponent implements OnInit {
         this.dataSource.paginator = this.paginator;
         // change the default ordering of the table
         this.sort.sort(<MatSortable>{
-          id: 'nummer',
+          id: 'nummer', // TODO: i18n?
           start: 'desc'
         });
         this.dataSource.sort = this.sort;
@@ -79,40 +138,44 @@ export class BulletinComponent implements OnInit {
     let tmpDate = startDate;
     while (tmpDate <= endDate) {
       this.startIntervals.push(tmpDate);
-      this.endIntervals.push(moment(tmpDate).add(6, 'days').format('YYYY-MM-DD'));
-      tmpDate = moment(tmpDate).add(1, 'week').format('YYYY-MM-DD');
+      this.endIntervals.push(dayjs(tmpDate).add(6, 'day').format('YYYY-MM-DD'));
+      tmpDate = dayjs(tmpDate).add(1, 'week').format('YYYY-MM-DD');
     }
   }
 
-  private constructNumber(date: Date | string) {
-    const year = moment(date).year();
-    const week = moment(date).week();
+  private constructNumber(date: Date | string): string {
+    const year = dayjs(date).year();
+    const week = dayjs(date).week();
     const result = (week < 10) ? `${year}0${week}` : `${year}${week}`;
     return result;
   }
 
-  private transformDataToMaterializeTable() {
+  private transformDataToMaterializeTable(): void {
     for (let i = 0; i <= this.endIntervals.length - 1; i++) {
       this.element_data.push({
         nummer: this.constructNumber(this.startIntervals[i]),
         dateFrom: this.startIntervals[i],
         dateTo: this.endIntervals[i],
-        action: `${this.actionString}`
+        action: this.actionString
       });
     }
   }
 
-  private beautifyDataObject(data: Object) {
-    let reducedDataObject: any[] = [];
-    for (let el in data) {
-      reducedDataObject.push({
-        diagnose_datum: data[el].diagnose_datum.value,
-        kanton: data[el].kanton.value,
-        gemeinde: data[el].gemeinde.value,
-        seuche: data[el].seuche.value,
-        seuchen_gruppe: data[el].seuchen_gruppe.value,
-        tierart: data[el].tierart.value
-      })
+  // TODO: Enforce typing. Solve the "Report-type-mess"
+  // TODO: Maybe we can increase performance by moving the "clean data" part to the sparql-service
+  private beautifyDataObject(data: any[]) {
+    const reducedDataObject = [];
+    for (const el in data) {
+      if (data[el]) {
+        reducedDataObject.push({
+          diagnose_datum: data[el].diagnose_datum.value,
+          kanton: data[el].kanton.value,
+          gemeinde: data[el].gemeinde.value,
+          seuche: data[el].seuche.value,
+          seuchen_gruppe: data[el].seuchen_gruppe.value,
+          tierart: data[el].tierart.value
+        });
+      }
     }
     return reducedDataObject.sort((a, b) => {
       const adate = new Date(a['diagnose_datum']);
@@ -122,11 +185,11 @@ export class BulletinComponent implements OnInit {
   }
 
   // distribute the data into the weekly intervals from the table
-  // returns an object key: number(vgl table) and value: array of objects which fall into the weelky interval 
-  private distributeDataToIntervals() {
+  // returns an object key: number(vgl table) and value: array of objects which fall into the weelky interval
+  private distributeDataToIntervals(): void {
     const res = {};
     let counter = 0;
-    for (let o of this.data) {
+    for (const o of this.data) {
       if (o['diagnose_datum'] <= this.element_data[counter]['dateTo']) {
         if (!res[this.element_data[counter]['nummer']]) {
           res[this.element_data[counter]['nummer']] = [];
@@ -149,38 +212,60 @@ export class BulletinComponent implements OnInit {
     this.distributedData = res;
   }
 
-  findNumberIdInDataObject(object, id) {
+  private findNumberIdInDataObject(object: object, id: number) {
     let tmpObj = {};
     if (object.hasOwnProperty(id)) {
       tmpObj = object[id];
       return tmpObj;
     } else {
-      console.log(id + ' not found in the object');
+      console.log(id + ' not found in the object'); // TODO: Handle this error. What happens if no object returned?
     }
   }
 
-  goToDetail(id: number, datefrom, dateTo) {
+  goToDetail(id: number, bulletinFrom: string | Date, bulletinTo: string | Date): void {
     console.log('Hello Detail ID:' + id);
-    this.metaData.push([id, datefrom, dateTo]);
+    this.metaData.push([id, bulletinFrom, bulletinTo]);
     this.detailData = this.findNumberIdInDataObject(this.distributedData, id);
     localStorage.setItem('metaData', JSON.stringify(this.metaData));
     localStorage.setItem('detailData', JSON.stringify(this.detailData));
-    this.router.navigate(['bulletin/details', { number: id }]);
+    this._router.navigate([
+      'bulletin/detail',
+      this._paramState.lang,
+      bulletinFrom,
+      bulletinTo
+    ]);
   }
 
-  getFromToDates() {
+  getFromToDates(): void {
     this.data = [];
     this.startIntervals = [];
     this.endIntervals = [];
     const from = this.datepicker._inputValue;
     const to = this.datepicker2._inputValue;
-    this.getList('de', from, to);
+    this.updateInput({ from: from, to: to }, this._paramState);
   }
 
-  resetDates() {
+  resetDates(): void {
     this.data = [];
     this.startIntervals = [];
     this.endIntervals = [];
-    this.getList('de', this.startOfBulletin, this.today);
+    this.updateInput({
+      from: dayjs(this.startOfBulletin).format('YYYY-MM-DD'),
+      to: dayjs().format('YYYY-MM-DD')
+    }, this._paramState);
   }
+
+  private updateInput(changes: { [s: string]: string; }, oldState: ParamState): void {
+    // check if old an new state are the same
+    if (JSON.stringify(changes) !== JSON.stringify(oldState)) {
+       this._paramState = this._paramsService.updateRouteParams(changes, oldState);
+       this.getList(this._paramState.lang, this._paramState.from, this._paramState.to);
+    }
+  }
+
+  private transformDate(date: string | Date): NgbDate {
+    const d = new Date(date);
+    return { year: d.getFullYear(), month: d.getMonth() + 1, day: d.getDate() };
+  }
+
 }

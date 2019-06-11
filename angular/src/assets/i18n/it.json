@@ -42,6 +42,10 @@
         "DATE_TOO_SMALL": "Invalid: il periodo deve essere di almeno una settimana.",
         "MONTHS": ["Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Giugno", "Luglio", "Agosto", "Settembre", "Ottobre", "Novembre", "Dicembre"]
     },
+    "BULLETIN": {},
+    "BULLETIN-DETAIL": {
+        "BACK": "Indietro"
+    },
     "DOWNLOAD": {
         "TITLE": "Notifiche",
         "DIAGNOSIS_DATE": "Data di diagnosi",

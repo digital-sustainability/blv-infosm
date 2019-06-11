@@ -13,7 +13,6 @@ import { MatSortModule} from '@angular/material/sort';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { AngularOpenlayersModule } from 'ngx-openlayers';
 
 import { AppComponent } from './app.component';
 import { HeaderComponent } from './header/header.component';
@@ -40,6 +39,7 @@ import { MatPaginatorI18nService} from './shared/mat-paginator-i18n.service'
 import { DistributeDataService } from './shared/distribute-data.service';
 import { DatePickerI18nService } from './shared/date-picker-i18n.service';
 import { HighchartService } from './shared/highchart.service';
+import { ParamService } from './shared/param.service';
 
 @NgModule({
   declarations: [
@@ -73,7 +73,6 @@ import { HighchartService } from './shared/highchart.service';
     MatSortModule,
     MatTooltipModule,
     NgbModule,
-    AngularOpenlayersModule,
     TranslateModule.forRoot({
       loader: {
         provide: TranslateLoader,
@@ -87,6 +86,7 @@ import { HighchartService } from './shared/highchart.service';
     LanguageService,
     DistributeDataService,
     HighchartService,
+    ParamService,
     {
       provide: MatPaginatorIntl,
       useClass: MatPaginatorI18nService,

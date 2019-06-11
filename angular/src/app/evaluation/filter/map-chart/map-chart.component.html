@@ -1,15 +1,16 @@
-<!-- <div style="border:1px solid lightgray;" class="container" *ngIf="featureData; else loadingPieChart"> -->
-  <aol-map [width]="'100%'" [height]="height">
-    <aol-view [zoom]="7.5">
-      <aol-coordinate [x]="8.2318" [y]="46.7985" [srid]="'EPSG:4326'"></aol-coordinate>
-    </aol-view>
-    <aol-layer-tile>
-      <aol-source-osm></aol-source-osm>
-    </aol-layer-tile>
-  </aol-map>
-<!-- </div> -->
+<div style="border:1px solid lightgray;" class="contr">
+  <div>
+    <div id="ol-map"></div>
+  </div>
+</div>
+
+<!-- TODO: While loading data to display already show map but still loader in Legende place -->
+
+<!-- <div style="border:1px solid lightgray;" class="container" *ngIf="featureData; else loadingPieChart">
+</div> -->
 <!-- <ng-template #loadingPieChart>
   <div class="loadingSign">
     <fa name="refresh" size="4x" animation="spin"></fa>
   </div>
 </ng-template> -->
+

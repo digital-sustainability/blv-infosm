@@ -150,12 +150,12 @@ export class TimelineChartComponent implements OnInit, OnDestroy {
        * Array holding each line as `{ name: string, data: number[] }`
        * Concat another empty line to add an additional label for `toggleLegend()`
        */
-      series: this.timeLineChartData
-        .concat({
-          name: this.trans['EVAL.SHOW_ALL_NONE'],
-          data: [],
-          marker: { enabled: false }
-        })
+      series: this.timeLineChartData.concat({
+        name: this.trans['EVAL.SHOW_ALL_NONE'],
+        data: [],
+        marker: { enabled: false },
+        color: '#ffffff' // Hide line symbol
+      })
     });
   }
 

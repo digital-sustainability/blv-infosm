@@ -200,8 +200,8 @@ export class FilterComponent implements OnInit, OnDestroy {
         this._filter.from = moment().subtract(7, 'd').format('YYYY-MM-DD'); this.disableDateFilter(); break;
       case ('month'):
         this._filter.from = moment().subtract(1, 'm').format('YYYY-MM-DD'); this.disableDateFilter(); break;
-      case ('year'):
-        this._filter.from = moment().subtract(2, 'y').format('YYYY-MM-DD'); this.disableDateFilter(); break; // TODO: One year too much because we don't have all the data
+      case ('year'): // TODO: One year too much because we don't have all the data
+        this._filter.from = moment().subtract(2, 'y').format('YYYY-MM-DD'); this.disableDateFilter(); break; 
       case ('threeYears'):
         this._filter.from = moment().subtract(3, 'y').format('YYYY-MM-DD'); this.disableDateFilter(); break;
       case ('whole'):
@@ -400,7 +400,7 @@ export class FilterComponent implements OnInit, OnDestroy {
     return (filterObject[type].length !== 0 && filterObject[type].includes(compare)) || filterObject[type].length === 0;
   }
 
-  private transformDate(date?: string | Date): NgbDate {
+  private transformDate(date: string | Date): NgbDate {
     const d = new Date(date);
     return { year: d.getFullYear(), month: d.getMonth() + 1, day: d.getDate() };
   }

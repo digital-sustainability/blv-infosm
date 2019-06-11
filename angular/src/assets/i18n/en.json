@@ -42,6 +42,10 @@
         "DATE_TOO_SMALL": "Invalid: timespan has to be at least one week.",
         "MONTHS": ["January", "February", "March", "April", "May", "une", "July", "August", "September", "October", "November", "December"]
     },
+    "BULLETIN": {},
+    "BULLETIN-DETAIL": {
+        "BACK": "Back"
+    },
     "DOWNLOAD": {
         "TITLE": "Notifications",
         "DIAGNOSIS_DATE": "Diagnosis Date",

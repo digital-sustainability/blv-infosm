@@ -1,32 +1,81 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { SparqlDataService } from '../../../shared/sparql-data.service';
 import { Report } from '../../../shared/models/report.model';
 import { Subscription } from 'rxjs';
 import { DistributeDataService } from 'src/app/shared/distribute-data.service';
+
+
+import OlMap from 'ol/Map';
+import OlXYZ from 'ol/source/XYZ';
+import OlTileLayer from 'ol/layer/Tile';
+import WKT from 'ol/format/WKT';
+import OlView from 'ol/View';
+import { fromLonLat } from 'ol/proj';
+
+import olMap from 'ol/Map';
+import TileLayer from 'ol/layer/Tile';
+import View from 'ol/View';
+import OSM from 'ol/source/OSM.js';
+import XYZ from 'ol/source/XYZ';
+
 
 @Component({
   selector: 'app-map-chart',
   templateUrl: './map-chart.component.html',
   styleUrls: ['./map-chart.component.css']
 })
-export class MapChartComponent implements OnInit {
+export class MapChartComponent implements OnInit, AfterViewInit {
+// export class MapChartComponent implements OnInit, AfterViewInit {
 
-  height = 400;
+  height = 600;
 
   dataSub: Subscription;
   reports: Report[];
 
   featureData = [];
 
+
+  map: OlMap;
+  source: OlXYZ;
+  layer: OlTileLayer;
+  view: OlView;
+
+
   constructor(
     private _sparqlDataService: SparqlDataService,
     private _distributeDataService: DistributeDataService,
-    ) { }
+  ) { }
 
-  onClick(event) {
-    console.log(event);
+  ngAfterViewInit() {
+    const osmLayer = new TileLayer({
+      source: new OSM()
+    });
+
+    const xyzLayer = new TileLayer({
+      source: new XYZ({
+        url: 'http://tile.osm.org/{z}/{x}/{y}.png'
+      })
+    });
+    this.view = new View({
+      center: [-472202, 7530279],
+      zoom: 12
+    });
+
+    this.map = new olMap({
+      target: 'ol-map',
+      layers: [
+        osmLayer,
+        // xyzLayer
+      ],
+      view: this.view
+    });
   }
+
   ngOnInit() {
+
+
+
+
     this.dataSub = this._distributeDataService.currentData.subscribe(
       data => {
         if (data) {
