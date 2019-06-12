@@ -1,14 +1,13 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { Router } from '@angular/router';
-import { start } from 'repl';
 
 @Component({
   selector: 'app-geo-download-detail',
   templateUrl: './geo-download-detail.component.html',
   styleUrls: ['./geo-download-detail.component.css']
 })
-export class GeoDownloadDetailComponent implements OnInit {
+export class GeoDownloadDetailComponent {
 
   checked = false;
   hideWarning = true;
@@ -18,13 +17,11 @@ export class GeoDownloadDetailComponent implements OnInit {
     private _router: Router
   ) { }
 
-  ngOnInit(): void { }
-
-  onCheck(event): void {
+  onCheck(event: any): void {
     this.checked = event.target.checked;
   }
 
-  onDownload() {
+  onDownload(): void {
     if (this.checked) {
       console.log('Start download');
       this._router.navigate(['/info']);
@@ -33,7 +30,7 @@ export class GeoDownloadDetailComponent implements OnInit {
     }
   }
 
-  onCancel() {
+  onCancel(): void {
     this._router.navigate(['/info']);
   }
 

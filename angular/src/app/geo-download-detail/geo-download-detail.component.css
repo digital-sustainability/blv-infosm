@@ -17,10 +17,6 @@
     padding-left: 1em;
 }
 
-.notice-input {
-    margin: 1em;
-}
-
 .user-warning {
     display: inline-block;
     background-color: rgb(255, 243, 205);

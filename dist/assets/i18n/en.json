@@ -40,6 +40,9 @@
         "DATE_WRONG_ORDER": "Invalid: date 'from' needs to be greater then date 'to'",
         "DATE_WRONG_FORMAT": "Invalid: Not a valid date format. Try: YYYY-MM-DD",
         "DATE_TOO_SMALL": "Invalid: timespan has to be at least one week.",
+        "DATE_FROM_WRONG_RANGE": "Invalid: First message in our database dated 15-01-1991.",
+        "DATE_TO_WRONG_RANGE": "Invalid: Please select a date less than or equal to today.",
+        "DATEPICKER_PLACEHOLDER": "DD.MM.YYYY",
         "MONTHS": ["January", "February", "March", "April", "May", "une", "July", "August", "September", "October", "November", "December"]
     },
     "BULLETIN": {},
@@ -115,6 +118,6 @@
         "NOTICE_ACCEPT": "Accept the terms",
         "NOTICE_CANCEL": "Cancel",
         "NOTICE_DOWNLOAD": "Download",
-        "NOTICE_WARNING": "Accept the terms"
+        "NOTICE_WARNING": "Please accept the terms"
     }
 }

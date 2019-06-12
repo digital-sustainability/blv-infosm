@@ -40,6 +40,9 @@
         "DATE_WRONG_ORDER": "Invalid: la data da deve essere maggiore di quella di data a",
         "DATE_WRONG_FORMAT": "Invalid: Non è un formato di data valido. Prova: YYYY-MM-DD",
         "DATE_TOO_SMALL": "Invalid: il periodo deve essere di almeno una settimana.",
+        "DATE_FROM_WRONG_RANGE": "Invalid: Primo messaggio nel nostro database datato 15-01-1991.",
+        "DATE_TO_WRONG_RANGE": "Invalid: selezionare una data inferiore o uguale ad oggi.",
+        "DATEPICKER_PLACEHOLDER": "GG.MM.AAAA",
         "MONTHS": ["Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Giugno", "Luglio", "Agosto", "Settembre", "Ottobre", "Novembre", "Dicembre"]
     },
     "BULLETIN": {},
