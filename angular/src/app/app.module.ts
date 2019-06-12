@@ -40,6 +40,7 @@ import { DistributeDataService } from './shared/distribute-data.service';
 import { DatePickerI18nService } from './shared/date-picker-i18n.service';
 import { HighchartService } from './shared/highchart.service';
 import { ParamService } from './shared/param.service';
+import { ChDate } from './shared/pipes/ch-date.pipe';
 
 @NgModule({
   declarations: [
@@ -57,7 +58,8 @@ import { ParamService } from './shared/param.service';
     BulletinDetailComponent,
     DownloadComponent,
     GeoDownloadComponent,
-    GeoDownloadDetailComponent
+    GeoDownloadDetailComponent,
+    ChDate
   ],
   imports: [
     BrowserModule,

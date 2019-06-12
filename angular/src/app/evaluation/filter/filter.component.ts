@@ -10,20 +10,23 @@ import { SparqlDataService } from 'src/app/shared/sparql-data.service';
 import { DistributeDataService } from 'src/app/shared/distribute-data.service';
 import { TranslateService } from '@ngx-translate/core';
 import { remove, uniq, map } from 'lodash';
-import { NgbDatepickerConfig } from '@ng-bootstrap/ng-bootstrap';
+import { NgbDatepickerConfig, NgbDateParserFormatter } from '@ng-bootstrap/ng-bootstrap';
+import {  NgbDateCHFormatter } from '../../shared/formatters/ngb-ch-date-formatter';
+import { Translations } from '../../shared/models/translations.model';
 import * as moment from 'moment';
 declare let $: any;
 
 @Component({
   selector: 'app-filter',
   templateUrl: './filter.component.html',
-  styleUrls: ['./filter.component.css']
+  styleUrls: ['./filter.component.css'],
+  providers: [{provide: NgbDateParserFormatter, useClass: NgbDateCHFormatter}]
 })
 
 export class FilterComponent implements OnInit, OnDestroy {
 
-  @ViewChild('d') datepicker;
-  @ViewChild('c') datepicker2;
+  @ViewChild('fromPicker') datepickerFrom;
+  @ViewChild('toPicker') datepickerTo;
 
   from: NgbDate;
   to: NgbDate;
@@ -32,6 +35,7 @@ export class FilterComponent implements OnInit, OnDestroy {
   @ViewChild(MatSort) sort: MatSort;
 
   data: Report[];
+  private _translationSub: Subscription;
   private _paramSub: Subscription;
   private _langSub: Subscription;
   private _dataSub: Subscription;
@@ -40,6 +44,8 @@ export class FilterComponent implements OnInit, OnDestroy {
     from: '',
     to: ''
   };
+
+  trans: Translations;
 
   // arrays for filter information
   cantons: String[];
@@ -78,10 +84,12 @@ export class FilterComponent implements OnInit, OnDestroy {
         this._filter.lang = params['lang'];
         this._filter.from = params['from'];
         this._filter.to = params['to'];
+        console.log(this._filter.lang)
 
         // Sets parmas if none detected or one is misssing
         if (!params['lang'] || !params['from'] || !params['to']) {
           const lang = this.translateService.currentLang;
+          console.log(lang)
           const from = moment().subtract(1, 'y').format('YYYY-MM-DD');
           const to = moment().format('YYYY-MM-DD');
           this.updateRouteParams({
@@ -115,12 +123,14 @@ export class FilterComponent implements OnInit, OnDestroy {
     );
 
     const today = new Date();
-    this.ngbDatepickerConfig.minDate = { year: 1991, month: 1, day: 1 };
+    this.ngbDatepickerConfig.minDate = { year: 1991, month: 1, day: 15 };
     this.ngbDatepickerConfig.maxDate = {
       year: today.getFullYear(),
       month: today.getMonth() + 1,
       day: today.getDate() };
     this.ngbDatepickerConfig.outsideDays = 'hidden';
+
+    this.getTranslationsForErrorMessages();
   }
 
   onChangeTab(route: string): void {
@@ -131,36 +141,6 @@ export class FilterComponent implements OnInit, OnDestroy {
     this._langSub.unsubscribe();
     this._dataSub.unsubscribe();
     this._paramSub.unsubscribe();
-  }
-
-  toggleCheckbox($event: boolean, filterType: string) {
-    const idSelector = function () { return this.id; };
-    if (!$event) {
-      switch (filterType) {
-        case 'canton':
-          const selectedCantons = $(':checkbox:checked[name=canton]').attr('checked', true).map(idSelector).get();
-          this.createFilterConfigDropdown(filterType, selectedCantons);
-          break;
-        case 'epidemic_group':
-          const selectedEpidemics = $(':checkbox:checked[name=epidemic]').attr('checked', true).map(idSelector).get();
-          this.createFilterConfigDropdown(filterType, selectedEpidemics);
-          break;
-        case 'animal_group':
-          const selectedAnimals = $(':checkbox:checked[name=animal]').attr('checked', true).map(idSelector).get();
-          this.createFilterConfigDropdown(filterType, selectedAnimals);
-          break;
-      }
-      this.getList(this._filter.lang, this._filter.from, this._filter.to);
-    }
-  }
-
-  createFilterConfigDropdown(filterType: string, arrSelected: []) {
-    if (this.filterConfig.hasOwnProperty(`${filterType}`)) {
-      this.filterConfig[`${filterType}`] = [];
-      arrSelected.forEach(entry => {
-        this.filterConfig[`${filterType}`].push(entry);
-      });
-    }
   }
 
   // updates every time when the user adds an entry in the filter
@@ -197,16 +177,15 @@ export class FilterComponent implements OnInit, OnDestroy {
     this._filter.to = moment().subtract(1, 'y').format('YYYY-MM-DD');
     switch (option) {
       case ('week'):
-        this._filter.from = moment().subtract(7, 'd').format('YYYY-MM-DD'); this.disableDateFilter(); break;
+        this._filter.from = moment().subtract(7, 'd').format('YYYY-MM-DD'); break;
       case ('month'):
-        this._filter.from = moment().subtract(1, 'm').format('YYYY-MM-DD'); this.disableDateFilter(); break;
+        this._filter.from = moment().subtract(1, 'm').format('YYYY-MM-DD'); break;
       case ('year'): // TODO: One year too much because we don't have all the data
-        this._filter.from = moment().subtract(2, 'y').format('YYYY-MM-DD'); this.disableDateFilter(); break; 
+        this._filter.from = moment().subtract(2, 'y').format('YYYY-MM-DD'); break; 
       case ('threeYears'):
-        this._filter.from = moment().subtract(3, 'y').format('YYYY-MM-DD'); this.disableDateFilter(); break;
+        this._filter.from = moment().subtract(3, 'y').format('YYYY-MM-DD'); break;
       case ('whole'):
-        // TODO: replace with date from the first entry
-        this._filter.from = moment().subtract(30, 'y').format('YYYY-MM-DD'); this.disableDateFilter(); break;
+        this._filter.from = moment('1991-01-15').format('YYYY-MM-DD'); break;
     }
     // Subscription to params will update the data. No need to call getList()
     this.updateRouteParams({
@@ -217,17 +196,36 @@ export class FilterComponent implements OnInit, OnDestroy {
 
   onGetFromToDates() {
     // TODO: Change implementation JQuery -> Angular
-    // TODO: Translations prepared --> Use HTML pipe translation
-    const fromdate = this.datepicker._inputValue;
-    const todate = this.datepicker2._inputValue;
+    const fromdate = this.retransformDate(this.datepickerFrom._inputValue);
+    const todate = this.retransformDate(this.datepickerTo._inputValue);
+    console.log(fromdate, todate)
+    const dateOfFirstEntry = moment('1991-01-15').format('YYYY-MM-DD');
+    const today = moment().format('YYYY-MM-DD');
     this.removeErrors();
+    this.getTranslationsForErrorMessages();
     if (moment(fromdate).isValid() && moment(todate).isValid() && fromdate.length === 10 && todate.length === 10) {
       if (fromdate > todate) {
-        $('button.notValid').after(`<p class='err' style='color:red' style='color:red' id='datecompareerror'>Invalid: date from > date to</p>`);
+        $('.notValid').after(
+          `<p class='err' style='color:red' id='datecompareerror'>${this.trans['EVAL.DATE_WRONG_ORDER']}</p>`
+          );
         return;
       }
       if ((moment(todate).diff(fromdate, 'days')) < 7) {
-        $('button.notValid').after(`<p class='err' style='color:red' id='dateuniterror'>Invalid: timespan has to be at least one week</p>`);
+        $('.notValid').after(
+          `<p class='err' style='color:red' id='dateuniterror'>${this.trans['EVAL.DATE_TOO_SMALL']}</p>`
+          );
+        return;
+      }
+      if((moment(fromdate).diff(dateOfFirstEntry)) < 0) {
+        $('.notValid').after(
+          `<p class='err' style='color:red' id='datefromerror'>${this.trans['EVAL.DATE_FROM_WRONG_RANGE']}</p>`
+          );
+        return;
+      }
+      if((moment(todate).diff(today)) > 0) {
+        $('.notValid').after(
+          `<p class='err' style='color:red' id='datetoerror'>${this.trans['EVAL.DATE_TO_WRONG_RANGE']}</p>`
+          );
         return;
       }
       this._filter.from = fromdate;
@@ -238,23 +236,39 @@ export class FilterComponent implements OnInit, OnDestroy {
       });
       // uncheck all radio buttons since either you search for period of for specific dates
       $('.radio').prop('checked', false);
-      $('#dateformaterror').remove();
     } else {
-      if (!($('#notValid').length)) {
-        $('button.notValid').after(`<p class='err' style='color:red' id='dateformaterror'>Invalid: Not a valid date format. Try: YYYY-MM-DD</p>`);
+      if ( !(moment(fromdate).isValid()) || !(moment(todate).isValid()) ) {
+        $('.notValid').after(
+          `<p class='err' style='color:red' id='dateformaterror'>${this.trans['EVAL.DATE_WRONG_FORMAT']}</p>`
+          );
       }
     }
   }
 
-  disableDateFilter() {
-    // (<HTMLInputElement>document.getElementById('from')).value = '';
-    // (<HTMLInputElement>document.getElementById('to')).value = '';
+  getTranslationsForErrorMessages(): void {
+    this._translationSub = this.translateService.get([
+      'EVAL.DATE_WRONG_ORDER',
+      'EVAL.DATE_WRONG_FORMAT',
+      'EVAL.DATE_TOO_SMALL',
+      'EVAL.DATE_FROM_WRONG_RANGE',
+      'EVAL.DATE_TO_WRONG_RANGE'
+    ]).subscribe(
+      texts => {
+        this.trans = texts;
+      }
+    );
+  }
+
+  retransformDate(date: string | Date): string {
+    return date.toString().split('.').reverse().join("-");
   }
 
   removeErrors() {
     $('#dateformaterror').remove();
     $('#datecompareerror').remove();
     $('#dateuniterror').remove();
+    $('#datefromerror').remove();
+    $('#datetoerror').remove();
   }
 
   private getList(lang: string, from: string | Date, to: string | Date): void {
@@ -405,3 +419,34 @@ export class FilterComponent implements OnInit, OnDestroy {
     return { year: d.getFullYear(), month: d.getMonth() + 1, day: d.getDate() };
   }
 }
+
+
+// toggleCheckbox($event: boolean, filterType: string) {
+  //   const idSelector = function () { return this.id; };
+  //   if (!$event) {
+  //     switch (filterType) {
+  //       case 'canton':
+  //         const selectedCantons = $(':checkbox:checked[name=canton]').attr('checked', true).map(idSelector).get();
+  //         this.createFilterConfigDropdown(filterType, selectedCantons);
+  //         break;
+  //       case 'epidemic_group':
+  //         const selectedEpidemics = $(':checkbox:checked[name=epidemic]').attr('checked', true).map(idSelector).get();
+  //         this.createFilterConfigDropdown(filterType, selectedEpidemics);
+  //         break;
+  //       case 'animal_group':
+  //         const selectedAnimals = $(':checkbox:checked[name=animal]').attr('checked', true).map(idSelector).get();
+  //         this.createFilterConfigDropdown(filterType, selectedAnimals);
+  //         break;
+  //     }
+  //     this.getList(this._filter.lang, this._filter.from, this._filter.to);
+  //   }
+  // }
+
+  // createFilterConfigDropdown(filterType: string, arrSelected: []) {
+  //   if (this.filterConfig.hasOwnProperty(`${filterType}`)) {
+  //     this.filterConfig[`${filterType}`] = [];
+  //     arrSelected.forEach(entry => {
+  //       this.filterConfig[`${filterType}`].push(entry);
+  //     });
+  //   }
+  // }
