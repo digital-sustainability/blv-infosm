@@ -48,6 +48,12 @@
     "DATE_TOO_SMALL": "Ungültig: Die Zeitspanne muss mindestens eine Woche betragen.",
     "MONTHS": ["Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"]
   },
+  "BULLETIN": {
+
+  },
+  "BULLETIN-DETAIL": {
+    "BACK": "Zurück"
+  },
   "DOWNLOAD": {
     "TITLE": "Meldungen",
     "DIAGNOSIS_DATE": "Diagnosedatum",
