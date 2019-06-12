@@ -117,7 +117,7 @@ export class FrequencyChartComponent implements OnInit, OnDestroy {
         .concat({
           name: this.trans['EVAL.SHOW_ALL_NONE'],
           data: [],
-          // TODO: Change marker
+          color: '#ffffff' // Hide dot symbol
         })
     });
   }

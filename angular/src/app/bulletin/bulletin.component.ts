@@ -8,22 +8,25 @@ import { LanguageService } from 'src/app/shared/language.service';
 import { Router, ActivatedRoute } from '@angular/router';
 import { NgbDate } from '../shared/models/ngb-date.model';
 import { Subscription } from 'rxjs';
+import { ParamService } from '../shared/param.service';
+import { NgbDateParserFormatter } from '@ng-bootstrap/ng-bootstrap';
+import { NgbDateCHFormatter } from '../shared/formatters/ngb-ch-date-formatter';
 import dayjs from 'dayjs';
 import weekOfYear from 'dayjs/plugin/weekOfYear';
-import { ParamService } from '../shared/param.service';
 dayjs.extend(weekOfYear);
 
 
 @Component({
   selector: 'app-bulletin',
   templateUrl: './bulletin.component.html',
-  styleUrls: ['./bulletin.component.css']
+  styleUrls: ['./bulletin.component.css'],
+  providers: [{provide: NgbDateParserFormatter, useClass: NgbDateCHFormatter}]
 })
 
 export class BulletinComponent implements OnInit, OnDestroy {
-
-  @ViewChild('d') datepicker;
-  @ViewChild('c') datepicker2;
+  
+  @ViewChild('fromPicker') datepickerFrom;
+  @ViewChild('toPicker') datepickerTo;
 
   private _paramSub: Subscription;
   private _langSub: Subscription;
@@ -77,8 +80,9 @@ export class BulletinComponent implements OnInit, OnDestroy {
             to: params['to']
           }, this._paramState);
 
-          // in case the language in URL defers from the one currently set, change the langu
-          if (this._paramState.lang !== this.translateService.currentLang) { // TODO: Check if this logic makes sense or needed at all
+          // in case the language in URL defers from the one currently set, change the language
+           // TODO: Check if this logic makes sense or needed at all. Also in Bulletin-detail
+          if (this._paramState.lang !== this.translateService.currentLang) {
             this._langauageService.changeLang(this._paramState.lang);
           }
         }
@@ -155,13 +159,15 @@ export class BulletinComponent implements OnInit, OnDestroy {
         nummer: this.constructNumber(this.startIntervals[i]),
         dateFrom: this.startIntervals[i],
         dateTo: this.endIntervals[i],
-        action: `${this.actionString}`
+        action: this.actionString
       });
     }
   }
 
+  // TODO: Enforce typing. Solve the "Report-type-mess"
+  // TODO: Maybe we can increase performance by moving the "clean data" part to the sparql-service
   private beautifyDataObject(data: any[]) {
-    const reducedDataObject: any[] = [];
+    const reducedDataObject = [];
     for (const el in data) {
       if (data[el]) {
         reducedDataObject.push({
@@ -219,21 +225,26 @@ export class BulletinComponent implements OnInit, OnDestroy {
     }
   }
 
-  goToDetail(id: number, datefrom: string | Date, dateTo: string | Date): void {
+  goToDetail(id: number, bulletinFrom: string | Date, bulletinTo: string | Date): void {
     console.log('Hello Detail ID:' + id);
-    this.metaData.push([id, datefrom, dateTo]);
+    this.metaData.push([id, bulletinFrom, bulletinTo]);
     this.detailData = this.findNumberIdInDataObject(this.distributedData, id);
     localStorage.setItem('metaData', JSON.stringify(this.metaData));
     localStorage.setItem('detailData', JSON.stringify(this.detailData));
-    this._router.navigate(['bulletin/detail', { number: id }]);
+    this._router.navigate([
+      'bulletin/detail',
+      this._paramState.lang,
+      bulletinFrom,
+      bulletinTo
+    ]);
   }
 
   getFromToDates(): void {
     this.data = [];
     this.startIntervals = [];
     this.endIntervals = [];
-    const from = this.datepicker._inputValue;
-    const to = this.datepicker2._inputValue;
+    const from = this.retransformDate(this.datepickerFrom._inputValue);
+    const to = this.retransformDate(this.datepickerTo._inputValue);
     this.updateInput({ from: from, to: to }, this._paramState);
   }
 
@@ -255,11 +266,13 @@ export class BulletinComponent implements OnInit, OnDestroy {
     }
   }
 
+  private retransformDate(date: string | Date): string {
+    return date.toString().split('.').reverse().join("-");
+  }
+
   private transformDate(date: string | Date): NgbDate {
     const d = new Date(date);
     return { year: d.getFullYear(), month: d.getMonth() + 1, day: d.getDate() };
   }
-
-
 
 }

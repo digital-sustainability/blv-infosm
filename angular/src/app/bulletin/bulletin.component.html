@@ -9,11 +9,11 @@
                         <span class="input-group-text" id="inputGroup-sizing-default">von</span>
                     </div>
                     <div class="input-group" style="width: 40%">
-                        <input class="form-control" placeholder="YYYY-MM-DD" name="from" [(ngModel)]="from"
-                            ngbDatepicker #d="ngbDatepicker">
+                        <input class="form-control" placeholder="{{ 'EVAL.DATEPICKER_PLACEHOLDER' | translate }}" name="from" [(ngModel)]="from"
+                            ngbDatepicker #fromPicker="ngbDatepicker">
                     </div>
                     <div class="input-group-append" style="height:33.5px;">
-                        <button class="btn btn-outline-secondary calendar" (click)="d.toggle()" type="button"></button>
+                        <button class="btn btn-outline-secondary calendar" (click)="fromPicker.toggle()" type="button"></button>
                     </div>
                 </div>
             </form>
@@ -24,11 +24,11 @@
                         <span class="input-group-text" id="inputGroup-sizing-default">bis&nbsp;</span>
                     </div>
                     <div class="input-group" style="width: 40%">
-                        <input class="form-control" placeholder="YYYY-MM-DD" name="to" [(ngModel)]="to" ngbDatepicker
-                            #c="ngbDatepicker">
+                        <input class="form-control" placeholder="{{ 'EVAL.DATEPICKER_PLACEHOLDER' | translate }}" name="to" [(ngModel)]="to" ngbDatepicker
+                            #toPicker="ngbDatepicker">
                     </div>
                     <div class="input-group-append" style="height:33.5px;">
-                        <button class="btn btn-outline-secondary calendar" (click)="c.toggle()" type="button"></button>
+                        <button class="btn btn-outline-secondary calendar" (click)="toPicker.toggle()" type="button"></button>
                     </div>
                 </div>
             </form>
@@ -50,12 +50,12 @@
 
       <ng-container matColumnDef="dateFrom">
           <mat-header-cell *matHeaderCellDef mat-sort-header> <strong>Datum von</strong> </mat-header-cell>
-          <mat-cell *matCellDef="let element" > {{element.dateFrom}} </mat-cell>
+          <mat-cell *matCellDef="let element" > {{element.dateFrom | chDate}} </mat-cell>
       </ng-container>
 
       <ng-container matColumnDef="dateTo">
           <mat-header-cell *matHeaderCellDef mat-sort-header><strong>Datum bis</strong></mat-header-cell>
-          <mat-cell *matCellDef="let element"> {{element.dateTo}} </mat-cell>
+          <mat-cell *matCellDef="let element"> {{element.dateTo | chDate}} </mat-cell>
       </ng-container>
 
 
