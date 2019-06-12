@@ -6,6 +6,7 @@ import { Subscription } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
 import { ngxCsv } from 'ngx-csv/ngx-csv';
 import * as XLSX from 'xlsx';
+import { omit } from 'lodash';
 
 @Component({
   selector: 'app-download',
@@ -27,7 +28,8 @@ export class DownloadComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this._dataSub = this._distributeDataService.currentData.subscribe(
       reports => {
-        this._reports = reports;
+        // Remove unwanted properties from download
+        this._reports = reports.map(report => omit(report, ['munic_id', 'canton_id']));
         this.translationSub = this.translate.get([
           'DOWNLOAD.TITLE',
           'DOWNLOAD.DIAGNOSIS_DATE',
@@ -71,6 +73,10 @@ export class DownloadComponent implements OnInit, OnDestroy {
         this._trans,
         header);
     }
+  }
+
+  dataLoaded(): boolean {
+    return this._reports.length > 0;
   }
 
   private downlaodCsv(data: Report[], from: string | Date, to: string | Date, trans: Translations): void {

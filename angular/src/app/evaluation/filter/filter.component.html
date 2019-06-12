@@ -44,7 +44,7 @@
             </label>
           </div>
         </fieldset>
-        <div id="selectDateSection">
+        <div id="selectDateSection" class="notValid">
           <div class="input-group">
             <form class="form-inline">
               <div class="form-group">
@@ -52,12 +52,11 @@
                   <span class="input-group-text" id="inputGroup-sizing-default">{{ 'FILTER.FROM' | translate }}</span>
                 </div>
                 <div class="input-group" style="width: 40%">
-                  <!-- TODO: Make placeholder current dates-->
-                  <input class="form-control" placeholder="YYYY-MM-DD" name="from" [(ngModel)]="from" ngbDatepicker
-                    #d="ngbDatepicker">
+                  <input class="form-control" placeholder="{{ 'EVAL.DATEPICKER_PLACEHOLDER' | translate }}" name="from" [(ngModel)]="from" ngbDatepicker
+                    #fromPicker="ngbDatepicker">
                 </div>
                 <div class="input-group-append" style="height:33.5px;">
-                  <button class="btn btn-outline-secondary calendar" (click)="d.toggle()" type="button"></button>
+                  <button class="btn btn-outline-secondary calendar" (click)="fromPicker.toggle()" type="button"></button>
                 </div>
               </div>
             </form>
@@ -67,15 +66,14 @@
                   <span class="input-group-text" id="inputGroup-sizing-default">{{'FILTER.TO' | translate}}&nbsp;</span>
                 </div>
                 <div class="input-group" style="width: 40%">
-                  <input class="form-control" placeholder="YYYY-MM-DD" name="to" [(ngModel)]="to" ngbDatepicker
-                    #c="ngbDatepicker">
+                  <input class="form-control" placeholder="{{ 'EVAL.DATEPICKER_PLACEHOLDER' | translate }}" name="to" [(ngModel)]="to" ngbDatepicker #toPicker="ngbDatepicker">
                 </div>
                 <div class="input-group-append" style="height:33.5px;">
-                  <button class="btn btn-outline-secondary calendar" (click)="c.toggle()" type="button"></button>
+                  <button class="btn btn-outline-secondary calendar" (click)="toPicker.toggle()" type="button"></button>
                 </div>
               </div>
             </form>
-            <button style="height:35px; margin-top: 15px" class="btn btn-dark notValid" type="submit"
+            <button style="height:35px; margin-top: 15px" class="btn btn-dark" type="submit"
               (click)="onGetFromToDates()">{{'FILTER.FILTER_ACTION' | translate}}
             </button>
           </div>
@@ -179,7 +177,7 @@
     <ng-container matColumnDef="diagnosis_date">
       <mat-header-cell *matHeaderCellDef mat-sort-header><strong>{{ 'EVAL.DIAGNOSIS_DATE' | translate }}
         </strong></mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{element.diagnosis_date}} </mat-cell>
+      <mat-cell *matCellDef="let element"> {{element.diagnosis_date | chDate }} </mat-cell>
     </ng-container>
 
     <ng-container matColumnDef="canton">
@@ -221,23 +219,3 @@
 
   <mat-paginator [pageSize]="5" [hidePageSize]="true" showFirstLastButtons></mat-paginator>
 </div>
-<!-- <div style="height: 50px"></div> -->
-
-<!--
-    <div id="selectDateSection" style="margin-top: 2%; margin-bottom: 2%">
-        <strong>Nach spezifischem Datum filtern:</strong>
-        <div class="input-group mb-3 from">
-            <div class="input-group-prepend">
-                <span class="input-group-text" id="inputGroup-sizing-default">von</span>
-            </div>
-            <input id="from" type="text" class="form-control" aria-label="Default" placeholder="YYYY-MM-DD">
-        </div>
-        <div class="input-group mb-3 to">
-            <div class="input-group-prepend">
-                <span class="input-group-text" id="inputGroup-sizing-default">bis&nbsp;</span>
-            </div>
-            <input id="to" class="to" type="text" class="form-control" aria-label="Default" placeholder="YYYY-MM-DD">
-        </div>
-        <button class="btn btn-dark notValid" type="submit" (click)="getFromToDates()">Filtern</button>
-    </div> 
-    -->
