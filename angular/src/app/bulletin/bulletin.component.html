@@ -1,7 +1,79 @@
 <div style="margin-left: 2%; margin-right: 2%; margin-top: 2%">
-    <h3>Anzeigeoptionen</h3>
+  <h3 style="text-align: center">{{ 'BULLETIN.OPTIONS' | translate}}</h3>
+  <hr>
+  <div style="text-align: center">
+    <p> {{ 'BULLETIN.FILTER_MESSAGE' | translate}} </p>
+    <ngb-datepicker #dp [minDate]="{year: 2008, month: 11, day:17}" [maxDate]="maxDate" [showWeekNumbers]="true"
+      [startDate]="startDate" [(ngModel)]="model" (ngModelChange)="getDate()">
+    </ngb-datepicker>
+  </div>
+
+
+  <div style="margin-left: 2%; margin-right: 2%; margin-top: 2%">
+    <h5 style="text-align: center"><strong>{{ 'BULLETIN.NOTICES' | translate}} {{ fromDate | chDate }} -
+        {{  toDate | chDate }}</strong></h5>
     <hr>
-    <div id="selectDateSection" style="margin-top: 2%; margin-bottom: 2%">
+    <h6 style="text-align: center">{{ 'BULLETIN.NUMBER' | translate}} {{ bulletinNumber }} <span
+        *ngIf="actualBulletin"><i>({{ 'BULLETIN.ACTUAL_BULLETIN' | translate }})</i></span> </h6>
+  </div>
+
+  <div *ngIf="bulletinEntries.length === 0" class="noMessages">
+      {{ 'BULLETIN.NO_BULLETINS' | translate }}
+  </div>
+
+  <div class="mat-elevation-z8" style="margin-left:2%; margin-right:2%">
+    <mat-table class="mat-elevation-z8" [dataSource]="dataS" matSort>
+      <ng-container matColumnDef="diagnose_datum">
+        <mat-header-cell *matHeaderCellDef mat-sort-header> <strong>{{ 'EVAL.DIAGNOSIS_DATE' | translate }}</strong>
+        </mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{element.diagnose_datum | chDate }} </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="kanton">
+        <mat-header-cell *matHeaderCellDef mat-sort-header> <strong>{{ 'EVAL.CANTON' | translate }}</strong>
+        </mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{element.kanton}} </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="gemeinde">
+        <mat-header-cell *matHeaderCellDef mat-sort-header><strong>{{ 'EVAL.MUNICIPALITY' | translate }}</strong>
+        </mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{element.gemeinde}} </mat-cell>
+      </ng-container>
+
+
+      <ng-container matColumnDef="seuchen_gruppe">
+        <mat-header-cell *matHeaderCellDef mat-sort-header> <strong>{{ 'EVAL.PEST' | translate }}</strong>
+        </mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{element.seuche}} </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="seuche">
+        <mat-header-cell *matHeaderCellDef mat-sort-header> <strong>{{ 'EVAL.PEST_GROUP' | translate }}</strong>
+        </mat-header-cell>
+        <mat-cell *matCellDef="let element">{{element.seuchen_gruppe}}</mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="tierart">
+        <mat-header-cell *matHeaderCellDef mat-sort-header> <strong>{{ 'EVAL.ANIMAL_SPECIES' | translate }}</strong>
+        </mat-header-cell>
+        <mat-cell *matCellDef="let element">{{element.tierart}} </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="anzahl">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>
+          <strong>{{ 'BULLETIN.NUMBER_OF_NOTICES' | translate}}</strong></mat-header-cell>
+        <mat-cell *matCellDef="let element">{{element.anzahl}}</mat-cell>
+      </ng-container>
+
+      <mat-header-row *matHeaderRowDef="displayedCols"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: displayedCols;"></mat-row>
+    </mat-table>
+
+    <mat-paginator [pageSize]="10" [hidePageSize]="true" showFirstLastButtons></mat-paginator>
+  </div>
+</div>
+<!-- <div id="selectDateSection" style="margin-top: 2%; margin-bottom: 2%">
         <div class="input-group" >
             <form class="form-inline" >
                 <div class="form-group" >
@@ -43,7 +115,7 @@
 
 <div class="mat-elevation-z8" style="margin-left:2%; margin-right: 2%">
   <mat-table class="mat-elevation-z8" [dataSource]="dataSource" matSort>
-      <ng-container matColumnDef="nummer">
+      <ng-container matColumnDef="number">
           <mat-header-cell *matHeaderCellDef> <strong>Nummer</strong></mat-header-cell>
           <mat-cell *matCellDef="let element"> {{element.nummer}} </mat-cell>
       </ng-container>
@@ -69,5 +141,4 @@
       <mat-row *matRowDef="let row; columns: displayedColumns;" ></mat-row>
   </mat-table>
 
-  <mat-paginator [pageSize]="15" [hidePageSize]="true" showFirstLastButtons></mat-paginator>
-</div>
+  <mat-paginator [pageSize]="15" [hidePageSize]="true" showFirstLastButtons></mat-paginator> -->
