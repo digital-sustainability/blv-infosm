@@ -45,7 +45,15 @@
         "DATEPICKER_PLACEHOLDER": "GG.MM.AAAA",
         "MONTHS": ["Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Giugno", "Luglio", "Agosto", "Settembre", "Ottobre", "Novembre", "Dicembre"]
     },
-    "BULLETIN": {},
+    "BULLETIN": {
+        "OPTIONS": "Opzioni di visualizzazione",
+        "NOTICES": "Malattie animali: nuovi focolai nel periodo da",
+        "NUMBER": "Numero del bollettino:",
+        "NUMBER_OF_NOTICES": "Numero di messaggi",
+        "ACTUAL_BULLETIN": "Ultimo bollettino",
+        "FILTER_MESSAGE": "Seleziona la data di un bollettino di tuo interesse:",
+        "NO_BULLETINS": "Nessun messaggio in questo periodo!"
+    },
     "BULLETIN-DETAIL": {
         "BACK": "Indietro"
     },

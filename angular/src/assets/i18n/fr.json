@@ -45,7 +45,15 @@
         "DATEPICKER_PLACEHOLDER": "JJ.MM.AAAA",
         "MONTHS": ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"]
     },
-    "BULLETIN": {},
+    "BULLETIN": {
+        "OPTIONS": "Possibilités de visualisation",
+        "NOTICES": "Maladies animales: nouveaux foyers au cours de la période allant du",
+        "NUMBER": "Numéro du bulletin:",
+        "NUMBER_OF_NOTICES": "Nombre de messages",
+        "ACTUAL_BULLETIN": "Dernier Bulletin",
+        "FILTER_MESSAGE": "Sélectionnez la date d'un bulletin qui vous intéresse:",
+        "NO_BULLETINS": "Aucun message dans cette période!"
+    },
     "BULLETIN-DETAIL": {
         "BACK": "Retour"
     },
