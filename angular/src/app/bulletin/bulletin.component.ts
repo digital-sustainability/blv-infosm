@@ -117,7 +117,7 @@ export class BulletinComponent implements OnInit, OnDestroy {
     this._langSub.unsubscribe();
   }
 
-  private getDate(): void {
+  getDate(): void {
     const selectedDate = this.model.year + '-' + this.model.month + '-' + this.model.day;
     this.actualBulletin = this.checkActualBulletin(selectedDate);
     this.fromDate = dayjs(selectedDate, "YYYY-MM-DD").day(1).format("YYYY-MM-DD");
