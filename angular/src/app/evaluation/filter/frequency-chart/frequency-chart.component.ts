@@ -134,7 +134,7 @@ export class FrequencyChartComponent implements OnInit, OnDestroy {
     mapKeys(count, (value: string, key: number): void => {
       result.push({
         name: key,
-        y: value
+        y: value 
       });
     });
     return result;

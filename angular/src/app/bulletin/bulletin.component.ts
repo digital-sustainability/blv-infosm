@@ -9,6 +9,8 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { NgbDate } from '../shared/models/ngb-date.model';
 import { Subscription } from 'rxjs';
 import { ParamService } from '../shared/param.service';
+import { NgbDateParserFormatter } from '@ng-bootstrap/ng-bootstrap';
+import { NgbDateCHFormatter } from '../shared/formatters/ngb-ch-date-formatter';
 import dayjs from 'dayjs';
 import weekOfYear from 'dayjs/plugin/weekOfYear';
 dayjs.extend(weekOfYear);
@@ -17,13 +19,14 @@ dayjs.extend(weekOfYear);
 @Component({
   selector: 'app-bulletin',
   templateUrl: './bulletin.component.html',
-  styleUrls: ['./bulletin.component.css']
+  styleUrls: ['./bulletin.component.css'],
+  providers: [{provide: NgbDateParserFormatter, useClass: NgbDateCHFormatter}]
 })
 
 export class BulletinComponent implements OnInit, OnDestroy {
   
-  @ViewChild('d') datepicker;
-  @ViewChild('c') datepicker2;
+  @ViewChild('fromPicker') datepickerFrom;
+  @ViewChild('toPicker') datepickerTo;
 
   private _paramSub: Subscription;
   private _langSub: Subscription;
@@ -240,8 +243,8 @@ export class BulletinComponent implements OnInit, OnDestroy {
     this.data = [];
     this.startIntervals = [];
     this.endIntervals = [];
-    const from = this.datepicker._inputValue;
-    const to = this.datepicker2._inputValue;
+    const from = this.retransformDate(this.datepickerFrom._inputValue);
+    const to = this.retransformDate(this.datepickerTo._inputValue);
     this.updateInput({ from: from, to: to }, this._paramState);
   }
 
@@ -261,6 +264,10 @@ export class BulletinComponent implements OnInit, OnDestroy {
        this._paramState = this._paramsService.updateRouteParams(changes, oldState);
        this.getList(this._paramState.lang, this._paramState.from, this._paramState.to);
     }
+  }
+
+  private retransformDate(date: string | Date): string {
+    return date.toString().split('.').reverse().join("-");
   }
 
   private transformDate(date: string | Date): NgbDate {

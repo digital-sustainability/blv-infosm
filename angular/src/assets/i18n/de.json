@@ -44,8 +44,11 @@
     "AGGR_EPIDEMIC_GROUPS": "Aggregierte Seuchengruppen",
     "AGGR_ANIMAL_GROUPS": "Aggregierte Tiergruppen",
     "DATE_WRONG_ORDER": "Ungültig: Datum 'von' muss größer sein als Datum 'bis'",
-    "DATE_WRONG_FORMAT": "Ungültig: Kein gültiges Datumsformat. Versuchen Sie: YYYY-MM-DD",
+    "DATE_WRONG_FORMAT": "Ungültig: Kein gültiges Datumsformat. Versuchen Sie: TT.MM.JJJJ",
     "DATE_TOO_SMALL": "Ungültig: Die Zeitspanne muss mindestens eine Woche betragen.",
+    "DATE_FROM_WRONG_RANGE": "Ungültig: Die erste Meldung in unserer Datenbank datiert vom 15-01-1991.",
+    "DATE_TO_WRONG_RANGE": "Ungültig: Bitte wählen Sie ein Datum kleiner oder gleich heute.",
+    "DATEPICKER_PLACEHOLDER": "TT.MM.JJJJ",
     "MONTHS": ["Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"]
   },
   "BULLETIN": {
