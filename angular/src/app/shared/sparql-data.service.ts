@@ -63,15 +63,15 @@ PREFIX schema: <http://schema.org/>
   }
 
   getCantonsWkt(): any {
-    const session = sessionStorage.getItem('canton');
-    console.log('i found in session: ', session);
-    if (session) {
-      return Observable.create(function subscribe(observer) {
-        console.log('I returned early');
-        observer.next(session);
-      });
-    }
-    console.log('I should only be called once');
+    // TODO: Maybe reuse if trying to store WKTs in this service. But the service call will have to be done from filter.component.ts
+    // const session = sessionStorage.getItem('canton');
+    // console.log('i found in session: ', session);
+    // if (session) {
+    //   return Observable.create(function subscribe(observer) {
+    //     console.log('I returned early');
+    //     observer.next(session);
+    //   });
+    // }
     const url = 'https://ld.geo.admin.ch/query';
     const query = `${this._prefix}
 SELECT * WHERE {
