@@ -117,8 +117,8 @@ export class BulletinComponent implements OnInit, OnDestroy {
     this._langSub.unsubscribe();
   }
 
-  getDate(): void {
-    const selectedDate = this.model.year + '-' + this.model.month + '-' + this.model.day;
+  updateDatesAndData(model: NgbDate): void {
+    const selectedDate = model.year + '-' + model.month + '-' + model.day;
     this.actualBulletin = this.checkActualBulletin(selectedDate);
     this.fromDate = dayjs(selectedDate, "YYYY-MM-DD").day(1).format("YYYY-MM-DD");
     this.toDate = dayjs(selectedDate, "YYYY-MM-DD").day(7).format("YYYY-MM-DD");
@@ -153,7 +153,7 @@ export class BulletinComponent implements OnInit, OnDestroy {
     return this.countOccuranceInBulletin(foundEntriesOfBulletin);
   }
 
-  private countOccuranceInBulletin(bulletinEntries: Report[]) {
+  private countOccuranceInBulletin(bulletinEntries: Report[]): Report[] {
     if(!bulletinEntries || bulletinEntries.length === 0) {
       return [];
     }
@@ -181,7 +181,7 @@ export class BulletinComponent implements OnInit, OnDestroy {
   }
 
   private isEquivalentEntry(a, b): boolean {
-    return (JSON.stringify(a) === JSON.stringify(b)) ? true : false;
+    return ( JSON.stringify(a) === JSON.stringify(b) );
 }
 
   private dateToInt(date: string | Date): number {
@@ -202,7 +202,7 @@ export class BulletinComponent implements OnInit, OnDestroy {
     this._dataSub = this._sparqlDataService.getReports(lang, from, to).subscribe(
       (data: Report[]) => {
         this.data = this.beautifyDataObject(data);
-        this.getDate();
+        this.updateDatesAndData(this.model);
       }, err => {
         console.log(err);
         // TODO: Imporve error handling
