@@ -1,7 +1,7 @@
 .contr {
     border: 1px solid lightgray;
     width: 100%;
-    height: 400px;
+    /* height: 400px; */
 }
 
 
@@ -9,5 +9,6 @@
 
 .ol-map {
     width: 100%;
-    height: 100vh;
+    height: 500px;
+    /* height: 100vh; */
 }

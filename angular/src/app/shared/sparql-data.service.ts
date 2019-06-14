@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable, forkJoin } from 'rxjs';
+import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { Report } from './models/report.model';
 import * as moment from 'moment';
@@ -9,12 +9,6 @@ import * as moment from 'moment';
 export class SparqlDataService {
 
   private _api = environment.api;
-//   private _prefix = `BASE <https://blv.ld.admin.ch/animalpest/>
-// PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-// PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-// PREFIX qb: <http://purl.org/linked-data/cube#>
-// PREFIX gont: <https://gont.ch/>
-// PREFIX skos: <http://www.w3.org/2004/02/skos/core#>`;
 
 private _prefix = `
 BASE <https://blv.ld.admin.ch/animalpest/>
@@ -69,24 +63,16 @@ PREFIX schema: <http://schema.org/>
   }
 
   getCantonsWkt(): any {
+    const session = sessionStorage.getItem('canton');
+    console.log('i found in session: ', session);
+    if (session) {
+      return Observable.create(function subscribe(observer) {
+        console.log('I returned early');
+        observer.next(session);
+      });
+    }
+    console.log('I should only be called once');
     const url = 'https://ld.geo.admin.ch/query';
-    // const calls = [];
-//     Array(26).fill(1).map((x, i) => x + i).forEach(canton => {
-//     const query = `${this._prefix}
-//   SELECT * WHERE { <https://ld.geo.admin.ch/boundaries/canton/${canton}> <http://purl.org/dc/terms/hasVersion> ?geomuniVersion .
-//     ?geomuniVersion <http://purl.org/dc/terms/issued> ?issued.
-//     ?geomuniVersion <http://www.opengis.net/ont/geosparql#hasGeometry> ?geometry.
-//     ?geometry <http://www.opengis.net/ont/geosparql#asWKT> ?wkt.
-//   }
-//   ORDER BY DESC(?issued)
-//   LIMIT 10
-// `;
-    //   const params = new HttpParams()
-    //   .set('url', url)
-    //   .set('query', query);
-    //   calls.push(this.http.get<any>(this._api + 'getData', { params: params }));
-    // });
-    // return forkJoin(...calls);
     const query = `${this._prefix}
 SELECT * WHERE {
       {
@@ -135,4 +121,5 @@ SELECT * WHERE {
   private checkDate(date: string | Date): string {
     return (moment(date).isValid()) ? moment(date).format('YYYY-MM-DD') : moment().format('YYYY-MM-DD');
   }
+
 }
