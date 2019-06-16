@@ -51,7 +51,15 @@
         "DATEPICKER_PLACEHOLDER": "DD.MM.YYYY",
         "MONTHS": ["January", "February", "March", "April", "May", "une", "July", "August", "September", "October", "November", "December"]
     },
-    "BULLETIN": {},
+    "BULLETIN": {
+        "OPTIONS": "Display options",
+        "NOTICES": "Animal diseases: new outbreaks in the period from",
+        "NUMBER": "Bulletin number:",
+        "NUMBER_OF_NOTICES": "Number of messages",
+        "ACTUAL_BULLETIN": "Latest Bulletin",
+        "FILTER_MESSAGE": "Select the date of a bulletin you are interested in:",
+        "NO_BULLETINS": "No messages in this period!"
+    },
     "BULLETIN-DETAIL": {
         "BACK": "Back"
     },
