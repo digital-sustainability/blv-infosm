@@ -100,7 +100,7 @@ export class MapChartComponent implements OnInit, AfterViewInit {
       return this.style;
     };
 
-    if (this.cantonShapes.length > 0) {
+    if (this.cantonVectorLayer) {
       this.cantonVectorLayer.setStyle(addColor);
     }
   }
@@ -131,7 +131,7 @@ export class MapChartComponent implements OnInit, AfterViewInit {
         // load data for canton shapes and simultaniously load for municipalites
         this._sparqlDataService.getCantonsWkt().subscribe(
             // TODO: use RXJS pipe/map
-            wkts => {
+            cantonWkts => {
               /**
                * TODO: Cache is too big to be kept in session-/loaclStorage. It can still be tried for the data loaded by the filter
                * but has to be implemented with an exeption handler in case the cache exeeds the browsers maxium. It might still be
@@ -142,69 +142,50 @@ export class MapChartComponent implements OnInit, AfterViewInit {
                * - Cache the WKTs in our backend so it does not have to be refetched from LINDAS too often
                * - Cache the "fetch-all" query daily in the backend so speed up this request
                * - Memoize heavy functions
+               * - Add lazy loading for small bundle
                // check if shapes have been loaded into sessions or if already loaded into component
               if (!sessionStorage.getItem('canton')) {
                 console.log('I saved to storage: ', shapes);
                 // Set a session cache. Stringify because the cache can only handle string key/value pairs
                 sessionStorage.setItem('canton', JSON.stringify(shapes));
               }
-              console.log('I received ', JSON.parse(cantonShapes));
               */
 
-            const features = [];
-            wkts.map(w => {
-              features.push(
-                {
-                  id: w.canton_id.value,
-                  wkt: w.wkt.value,
-                  canton: true
-                }
-              );
-            });
-
-
-            // TODO: Add for-loop for all shapes
-            // TODO: Extract to own method and usable for munic as well
-            const format = new WKT();
-            features.forEach(f => {
-              const feature = format.readFeature(f.wkt);
-              feature.getGeometry().transform('EPSG:4326', 'EPSG:3857');
-              this.cantonShapes.push(feature);
-            });
-            // const feature = format.readFeature(features[18].wkt);
-            // feature.getGeometry().transform('EPSG:4326', 'EPSG:3857');
-            // this.cantonShapes.push(feature);
-            this.cantonVectorLayer = new OlVectorLayer({
-              source: new Vector({
-                features: this.cantonShapes
-              })
-            });
-            console.warn('This function should only be called once');
-            this.map.addLayer(this.cantonVectorLayer); // TODO: Remove layer when switching to munic
-        // this.map.on('click', (evt) => {
-        //   this.map.forEachFeatureAtPixel(evt.pixel,
-        //     function (feature) {
-        //       // console.log(feature);
-        //     });
-        // });
-
+              this.cantonVectorLayer = new OlVectorLayer({
+                source: new Vector({
+                  features: this.createShapes(cantonWkts, true)
+                })
+              });
+              console.log('This function should only be called once');
+              this.map.addLayer(this.cantonVectorLayer); // TODO: Remove layer when switching to munic
+              // this.map.on('click', (evt) => {
+              //   this.map.forEachFeatureAtPixel(evt.pixel,
+              //     function (feature) {
+              //       // console.log(feature);
+              //     });
+              // });
 
               this.updateLayers();
             },
-            // TODO: I only want you called on first load
             // TODO: Handle if no canton shapes received
             err => console.log(err)
           );
           }
 
           // only get munic shapes if none exist
-          // if (!this.municVectorLayer) {
-          //   this._sparqlDataService.getCantonsWkt().subscribe(
-          //     municShapes => console.log(municShapes),
-          //     // TODO: handle if no munic shapes come in
-          //     err => console.log(err)
-          //   );
-          // }
+          if (!this.municVectorLayer) {
+            this._sparqlDataService.getMunicForCanton(1).subscribe(
+              municWkts => {
+                this.municVectorLayer = new OlVectorLayer({
+                  source: new Vector({
+                    features: this.createShapes(municWkts, false)
+                  })
+                });
+              },
+              // TODO: handle if no munic shapes come in
+              err => console.log(err)
+            );
+          }
 
 
 
@@ -212,32 +193,6 @@ export class MapChartComponent implements OnInit, AfterViewInit {
       }, // TODO: handle if no reports come in
       err => console.log(err)
     );
-
-
-
-
-
-
-
-
-
-    // const xyzLayer = new TileLayer({
-    //   source: new XYZ({
-    //     url: 'http://tile.osm.org/{z}/{x}/{y}.png'
-    //   })
-    // });
-    // const format = new WKT();
-    // const feature = format.readFeature('POLYGON((10.689697265625 -25.0927734375, 34.595947265625 ' +
-    //   '-20.1708984375, 38.814697265625 -35.6396484375, 13.502197265625 ' +
-    //   '-39.1552734375, 10.689697265625 -25.0927734375))');
-    // feature.getGeometry().transform('EPSG:4326', 'EPSG:3857');
-
-    // const vectorLayer = new OlVectorLayer({
-    //   source: new Vector({
-    //     features: [feature]
-    //   })
-    // });
-
 
 
 
@@ -265,42 +220,32 @@ export class MapChartComponent implements OnInit, AfterViewInit {
         // *************************
 
 
-
-
-    // this._sparqlDataService.getMunicForCanton(1).subscribe(
-    //   wkts => {
-    //     const features = [];
-    //     wkts.map(w => {
-    //       // TODO: add dynamic `belongsTo`
-    //       features.push({
-    //         id: w.munic_id.value,
-    //         wkt: w.wkt.value,
-    //         belongsTo: 1,
-    //         canton: false
-    //       });
-    //     });
-    //     this.featureData = features;
-    //     console.log(wkts);
-
-    //   },
-    //   err => console.log(err)
-    // );
+  }
+  onShowCantons() {
+    console.log('cantons');
   }
 
-  addColor(feature: any) {
-    const chance = new Date().getTime() % 2;
-    console.log('chance', chance);
-    if (chance > 0 ) {
-      this.fill.setColor('red');
-    } else {
-      this.fill.setColor('green');
-    }
-    return this.style;
+  onShowMunics() {
+    console.log('munics');
   }
 
-  onChance() {
-    console.log('chance');
-    this.cantonVectorLayer.source.refresh();
+
+  // transform format to WKT and in the right projection
+  private createShapes(features: any[], isCanton: boolean): any[] { // TODO: type
+    const format = new WKT();
+    return features.map(f => {
+      const feature = format.readFeature(f.wkt.value);
+      feature.getGeometry().transform('EPSG:4326', 'EPSG:3857');
+      feature.setId(Number(f.shape_id.value));
+      feature.setProperties({
+        'name': f.shape_id.value, // TODO: Replace by actual name
+        'isCanton': isCanton,
+      });
+      // TODO: If munic, add a belongs to value
+      // feature.set('belongsTo', cantonId); e
+      // feature.get('name'); // Get the set values
+      return feature;
+    });
   }
 
   private sumEpidemicsPerCanton(reports: Report[], cantonId: number): number {

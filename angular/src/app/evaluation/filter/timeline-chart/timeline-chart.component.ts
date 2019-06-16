@@ -400,7 +400,7 @@ export class TimelineChartComponent implements OnInit, OnDestroy {
     return '...';
   }
 
-  showEpidemics(): void {
+  onShowEpidemics(): void {
     this.timeLineChartData = [];
     this.timeLineChartData = this.extract(this.data, 'epidemic_group');
     if (this.timeLineChartData && this.loaded) {
@@ -408,7 +408,7 @@ export class TimelineChartComponent implements OnInit, OnDestroy {
     }
   }
 
-  showAnimals(): void {
+  onShowAnimals(): void {
     this.timeLineChartData = [];
     this.timeLineChartData = this.extract(this.data, 'animal_group');
     if (this.timeLineChartData && this.loaded) {

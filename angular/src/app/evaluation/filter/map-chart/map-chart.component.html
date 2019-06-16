@@ -1,8 +1,13 @@
-<div style="border:1px solid lightgray;" class="contr">
-  <div>
-    <div id="ol-map"></div>
-    <p>some more text or legend</p>
-    <button (click)="onChance()" disabled>Take Chance</button>
+<div class="main-chart-container">
+  <div id="ol-map"></div>
+  <p>add legende here</p>
+  <div class="chart-button-container">
+    <button class="btn btn-dark mr-2" type="submit" (click)="onShowCantons()">
+      {{ 'EVAL.SHOW_CANTONS' | translate }}
+    </button>
+    <button class="btn btn-dark ml-2" type="submit" (click)="onShowMunics()">
+      {{ 'EVAL.SHOW_MUNICS' | translate }}
+    </button>
   </div>
 </div>
 
@@ -15,4 +20,3 @@
     <fa name="refresh" size="4x" animation="spin"></fa>
   </div>
 </ng-template> -->
-
