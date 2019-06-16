@@ -15,7 +15,7 @@ import { fromLonLat, transform } from 'ol/proj';
 import proj4 from 'proj4';
 import { register } from 'ol/proj/proj4';
 import { transformExtent } from 'ol/proj';
-import { Fill, Style } from 'ol/style.js';
+import { Fill, Style, Stroke } from 'ol/style.js';
 
 import olMap from 'ol/Map';
 import TileLayer from 'ol/layer/Tile';
@@ -47,13 +47,19 @@ export class MapChartComponent implements OnInit, AfterViewInit {
   fill = new Fill();
   style = new Style({
     fill: this.fill,
+    stroke: new Stroke({
+      color: '#333',
+      width: 1
+    })
   });
+  opacity = 0.6;
 
   cantonShapes = [];
   municShapes = [];
 
-  cantonVectorLayer: any;
-  municVectorLayer: any;
+  cantonVectorLayer: OlVectorLayer;
+  municVectorLayer: OlVectorLayer;
+  currentLayer: OlVectorLayer;
 
 
   constructor(
@@ -62,50 +68,6 @@ export class MapChartComponent implements OnInit, AfterViewInit {
   ) { }
 
   ngOnInit(): void { }
-
-  initMap() {
-    const osmLayer = new TileLayer({
-      source: new OSM()
-    });
-    // limit where the user can pan [minx, miny, maxx, maxy]
-    const maxExtent = transformExtent([5.888672, 45.644768, 11.030273, 47.975214], 'EPSG:4326', 'EPSG:3857');
-
-    this.view = new View({
-      // OL default projection Web Mercator (EPSG:3857). gather coordinat information from https://epsg.io/
-      center: fromLonLat([8.349609, 46.867703]),
-      zoom: 7.5,
-      minZoom: 7,
-      extent: maxExtent
-    });
-
-    this.map = new olMap({
-      target: 'ol-map',
-      layers: [osmLayer], // TODO: Get swisstopo style layer
-      view: this.view,
-    });
-
-  }
-
-  updateLayers() {
-    // console.log('I got new data');
-    const addColor = (feature: any) => {
-      // console.log('feature', feature);
-      const chance = new Date().getTime() % 2;
-      // console.log('chance', chance);
-      if (chance > 0) {
-        this.fill.setColor('red');
-      } else {
-        this.fill.setColor('green');
-      }
-      return this.style;
-    };
-
-    if (this.cantonVectorLayer) {
-      this.cantonVectorLayer.setStyle(addColor);
-    }
-  }
-
-
   /**
   * IDEE
   * Je nach ausgewähltem Tab (Kanton || Gemeinde), werden die entsprechenden Shapes angezeigt.
@@ -115,17 +77,17 @@ export class MapChartComponent implements OnInit, AfterViewInit {
   */
   ngAfterViewInit(): void {
     this.initMap();
-    // this.dataSub = this._distributeDataService.currentData.subscribe(
-    //   data => {
-    //     // Only proceed if data is emitted or data has changed (deep comparison)
-    //     if (data.length && !isEqual(this.reports, data)) {
-    //       this.reports = data;
-    //       // Only call when shapes are loaded or reports have changed
-    //       if (this.cantonVectorLayer) {
-    //         this.updateLayers();
-    //       }
+    this.dataSub = this._distributeDataService.currentData.subscribe(
+      data => {
+        // Only proceed if data is emitted or data has changed (deep comparison)
+        if (data.length && !isEqual(this.reports, data)) {
+          this.reports = data;
+          // Only call when shapes are loaded or reports have changed
+          if (this.cantonVectorLayer) {
+            this.updateLayers(this.currentLayer);
+          }
 
-    //     }
+        }
         // only get canton shapes if none exist
         if (!this.cantonVectorLayer) {
         // load data for canton shapes and simultaniously load for municipalites
@@ -154,8 +116,11 @@ export class MapChartComponent implements OnInit, AfterViewInit {
               this.cantonVectorLayer = new OlVectorLayer({
                 source: new Vector({
                   features: this.createShapes(cantonWkts, true)
-                })
+                }),
+                opacity: this.opacity
               });
+              // First time a layer is initialized it is set to `currentLayer`
+              this.currentLayer = this.cantonVectorLayer;
               console.log('This function should only be called once');
               this.map.addLayer(this.cantonVectorLayer); // TODO: Remove layer when switching to munic
               // this.map.on('click', (evt) => {
@@ -165,7 +130,7 @@ export class MapChartComponent implements OnInit, AfterViewInit {
               //     });
               // });
 
-              this.updateLayers();
+              this.updateLayers(this.cantonVectorLayer);
             },
             // TODO: Handle if no canton shapes received
             err => console.log(err)
@@ -179,7 +144,8 @@ export class MapChartComponent implements OnInit, AfterViewInit {
                 this.municVectorLayer = new OlVectorLayer({
                   source: new Vector({
                     features: this.createShapes(municWkts, false)
-                  })
+                  }),
+                  opacity: this.opacity
                 });
               },
               // TODO: handle if no munic shapes come in
@@ -190,9 +156,9 @@ export class MapChartComponent implements OnInit, AfterViewInit {
 
 
 
-    //   }, // TODO: handle if no reports come in
-    //   err => console.log(err)
-    // );
+      }, // TODO: handle if no reports come in
+      err => console.log(err)
+    );
 
 
 
@@ -221,12 +187,52 @@ export class MapChartComponent implements OnInit, AfterViewInit {
 
 
   }
-  onShowCantons() {
-    console.log('cantons');
+  onSwitchLayer(layer: OlVectorLayer): void {
+    this.map.removeLayer(this.currentLayer);
+    this.currentLayer = layer;
+    this.map.addLayer(this.currentLayer);
+    this.updateLayers(this.currentLayer);
   }
 
-  onShowMunics() {
-    console.log('munics');
+  private updateLayers(layer: OlVectorLayer) {
+    const addColor = (feature: any) => {
+      // console.log('feature', feature);
+      const chance = new Date().getTime() % 2;
+      // console.log('chance', chance);
+      if (chance > 0) {
+        this.fill.setColor('red');
+      } else {
+        this.fill.setColor('green');
+      }
+      return this.style;
+    };
+
+    if (this.cantonVectorLayer || this.municVectorLayer) {
+      layer.setStyle(addColor);
+    }
+  }
+
+  private initMap() {
+    const osmLayer = new TileLayer({
+      source: new OSM()
+    });
+    // limit where the user can pan [minx, miny, maxx, maxy]
+    const maxExtent = transformExtent([5.888672, 45.644768, 11.030273, 47.975214], 'EPSG:4326', 'EPSG:3857');
+
+    this.view = new View({
+      // OL default projection Web Mercator (EPSG:3857). gather coordinat information from https://epsg.io/
+      center: fromLonLat([8.349609, 46.867703]),
+      zoom: 7.5,
+      minZoom: 7,
+      extent: maxExtent
+    });
+
+    this.map = new olMap({
+      target: 'ol-map',
+      layers: [osmLayer], // TODO: Get swisstopo style layer
+      view: this.view,
+    });
+
   }
 
 

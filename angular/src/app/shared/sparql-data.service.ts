@@ -85,8 +85,7 @@ SELECT * WHERE {
       ?geomuniVersion <http://purl.org/dc/terms/issued> ?mostRecentYear ;
       <http://www.opengis.net/ont/geosparql#hasGeometry>/<http://www.opengis.net/ont/geosparql#asWKT> ?wkt .
       ?geomuniVersion <https://ld.geo.admin.ch/def/bfsNumber> ?shape_id .
-    }
-    `;
+    }`;
     const params = new HttpParams()
       .set('url', url)
       .set('query', query);
@@ -110,8 +109,7 @@ SELECT * WHERE {
     <http://www.geonames.org/ontology#parentADM1> <https://ld.geo.admin.ch/boundaries/canton/${canton}:2019>  ;
     <http://www.opengis.net/ont/geosparql#hasGeometry>/<http://www.opengis.net/ont/geosparql#asWKT> ?wkt .
     ?geomuniVersion <https://ld.geo.admin.ch/def/bfsNumber> ?shape_id .
-  }
-    `;
+  }`;
     const params = new HttpParams()
       .set('url', url)
       .set('query', query);

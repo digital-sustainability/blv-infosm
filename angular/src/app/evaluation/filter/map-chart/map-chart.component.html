@@ -4,10 +4,10 @@
   <div class="map-info" *ngIf="cantonVectorLayer; else loadingMapData">
     <p>add legende here</p>
     <div class="chart-button-container">
-      <button class="btn btn-dark mr-2" type="submit" (click)="onShowCantons()">
+      <button class="btn btn-dark mr-2" type="submit" (click)="onSwitchLayer(cantonVectorLayer)" [disabled]="!cantonVectorLayer">
         {{ 'EVAL.SHOW_CANTONS' | translate }}
       </button>
-      <button class="btn btn-dark ml-2" type="submit" (click)="onShowMunics()">
+      <button class="btn btn-dark ml-2" type="submit" (click)="onSwitchLayer(municVectorLayer)" [disabled]="!municVectorLayer">
         {{ 'EVAL.SHOW_MUNICS' | translate }}
       </button>
     </div>
