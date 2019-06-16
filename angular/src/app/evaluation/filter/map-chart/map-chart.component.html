@@ -3,6 +3,7 @@
   <!-- TODO: While loading data to display already show map but still loader in Legende place -->
   <div class="map-info" *ngIf="cantonVectorLayer; else loadingMapData">
     <p>add legende here</p>
+    <p>ID of selected area: <strong>{{ area }}</strong></p>
     <div class="chart-button-container">
       <button class="btn btn-dark mr-2" type="submit" (click)="onSwitchLayer(cantonVectorLayer)" [disabled]="!cantonVectorLayer">
         {{ 'EVAL.SHOW_CANTONS' | translate }}

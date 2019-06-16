@@ -1,19 +1,19 @@
-import { Component, OnInit, AfterViewInit } from '@angular/core';
+import { Component, AfterViewInit } from '@angular/core';
 import { SparqlDataService } from '../../../shared/sparql-data.service';
 import { Report } from '../../../shared/models/report.model';
 import { Subscription } from 'rxjs';
 import { DistributeDataService } from 'src/app/shared/distribute-data.service';
 
-
 import OlMap from 'ol/Map';
 import OlXYZ from 'ol/source/XYZ';
 import OlTileLayer from 'ol/layer/Tile';
 import OlVectorLayer from 'ol/layer/Vector';
+import Select from 'ol/interaction/Select.js';
+import { click, pointerMove } from 'ol/events/condition.js';
+import { defaults as defaultControls, Attribution } from 'ol/control.js';
 import WKT from 'ol/format/WKT';
 import OlView from 'ol/View';
-import { fromLonLat, transform } from 'ol/proj';
-import proj4 from 'proj4';
-import { register } from 'ol/proj/proj4';
+import { fromLonLat } from 'ol/proj';
 import { transformExtent } from 'ol/proj';
 import { Fill, Style, Stroke } from 'ol/style.js';
 
@@ -21,7 +21,6 @@ import olMap from 'ol/Map';
 import TileLayer from 'ol/layer/Tile';
 import View from 'ol/View';
 import OSM from 'ol/source/OSM.js';
-import XYZ from 'ol/source/XYZ';
 import Vector from 'ol/source/Vector';
 
 import { isEqual } from 'lodash';
@@ -32,7 +31,7 @@ import { isEqual } from 'lodash';
   templateUrl: './map-chart.component.html',
   styleUrls: ['./map-chart.component.css']
 })
-export class MapChartComponent implements OnInit, AfterViewInit {
+export class MapChartComponent implements AfterViewInit {
 
   height = 600;
 
@@ -44,6 +43,7 @@ export class MapChartComponent implements OnInit, AfterViewInit {
   layer: OlTileLayer;
   view: OlView;
 
+  // base style for all shapes
   fill = new Fill();
   style = new Style({
     fill: this.fill,
@@ -54,25 +54,39 @@ export class MapChartComponent implements OnInit, AfterViewInit {
   });
   opacity = 0.6;
 
-  cantonShapes = [];
-  municShapes = [];
+  selectStyle = new Style({
+    fill: this.fill,
+    stroke: new Stroke({
+      color: 'yellow',
+      width: 4
+    })
+  });
+
+
+  // select interaction working on "pointermove"
+  select = new Select({
+    condition: pointerMove,
+    style: this.selectStyle
+  });
+
+  attribution = new Attribution({
+    collapsible: true
+  });
 
   cantonVectorLayer: OlVectorLayer;
   municVectorLayer: OlVectorLayer;
   currentLayer: OlVectorLayer;
 
+  // Temp
+  area;
 
   constructor(
     private _sparqlDataService: SparqlDataService,
     private _distributeDataService: DistributeDataService,
   ) { }
 
-  ngOnInit(): void { }
   /**
-  * IDEE
-  * Je nach ausgewähltem Tab (Kanton || Gemeinde), werden die entsprechenden Shapes angezeigt.
-  * Unter der Karte befindet sich eine Farblegende und eine Anzeige mit Detailinfos
-  * (Leer: Klicken sie auf eine Gemeine um Detail Infos zu erhalten)
+  * IDEA:
   * Maybe display name on hover and display info on click. Only make the ones with data clickable. Or dispaly at all
   */
   ngAfterViewInit(): void {
@@ -84,7 +98,7 @@ export class MapChartComponent implements OnInit, AfterViewInit {
           this.reports = data;
           // Only call when shapes are loaded or reports have changed
           if (this.cantonVectorLayer) {
-            this.updateLayers(this.currentLayer);
+            this.updateLayer(this.currentLayer);
           }
 
         }
@@ -122,15 +136,16 @@ export class MapChartComponent implements OnInit, AfterViewInit {
               // First time a layer is initialized it is set to `currentLayer`
               this.currentLayer = this.cantonVectorLayer;
               console.log('This function should only be called once');
-              this.map.addLayer(this.cantonVectorLayer); // TODO: Remove layer when switching to munic
-              // this.map.on('click', (evt) => {
-              //   this.map.forEachFeatureAtPixel(evt.pixel,
-              //     function (feature) {
-              //       // console.log(feature);
-              //     });
-              // });
+              // Add cantons as initial layer
+              this.map.addLayer(this.cantonVectorLayer);
+              this.map.addInteraction(this.select);
+              this.select.on('select', event => { // TODO: Add click event that will freeze the selection
+                if (event.selected.length > 0) {
+                  this.area = event.selected[0].getId();
+                }
+              });
 
-              this.updateLayers(this.cantonVectorLayer);
+              this.updateLayer(this.cantonVectorLayer);
             },
             // TODO: Handle if no canton shapes received
             err => console.log(err)
@@ -139,7 +154,7 @@ export class MapChartComponent implements OnInit, AfterViewInit {
 
           // only get munic shapes if none exist
           if (!this.municVectorLayer) {
-            this._sparqlDataService.getMunicForCanton(1).subscribe(
+            this._sparqlDataService.getMunicForCanton(2).subscribe(
               municWkts => {
                 this.municVectorLayer = new OlVectorLayer({
                   source: new Vector({
@@ -168,33 +183,20 @@ export class MapChartComponent implements OnInit, AfterViewInit {
 
     // NOTE: Was in "new WKT()" etc.
         // *************************
-        // Only update the info, if feature changes
-        // this.map.on('pointermove', (evt) => {
-        //   this.map.forEachFeatureAtPixel(evt.pixel,
-        //     function (feature) {
-        //       console.log(feature);
-        //     });
-        // });
 
-        // When mouse leaves the map
-        // this.map.getViewport().addEventListener('mouseout', (evt) => {
-        //   this.map.forEachFeatureAtPixel(evt.pixel,
-        //     function (feature) {
-        //       console.log(feature);
-        //     });
-        // });
         // *************************
 
 
   }
+
   onSwitchLayer(layer: OlVectorLayer): void {
     this.map.removeLayer(this.currentLayer);
     this.currentLayer = layer;
     this.map.addLayer(this.currentLayer);
-    this.updateLayers(this.currentLayer);
+    this.updateLayer(this.currentLayer);
   }
 
-  private updateLayers(layer: OlVectorLayer) {
+  private updateLayer(layer: OlVectorLayer) {
     const addColor = (feature: any) => {
       // console.log('feature', feature);
       const chance = new Date().getTime() % 2;
@@ -231,13 +233,14 @@ export class MapChartComponent implements OnInit, AfterViewInit {
       target: 'ol-map',
       layers: [osmLayer], // TODO: Get swisstopo style layer
       view: this.view,
+      controls: defaultControls({ attribution: false }).extend([this.attribution])
     });
 
   }
 
 
   // transform format to WKT and in the right projection
-  private createShapes(features: any[], isCanton: boolean): any[] { // TODO: type
+  private createShapes(features: any[], isCanton: boolean): Vector[] { // TODO: type
     const format = new WKT();
     return features.map(f => {
       const feature = format.readFeature(f.wkt.value);

@@ -20,6 +20,12 @@
         "TEST": "Testing an SVG graph for the reporting flow of an animal disease notification."
     },
     "EVAL": {
+        "SHOW_CANTONS": "Show Cantons",
+        "SHOW_MUNICS": "Show Municipalities",
+        "SHOW_ANIMALS": "Show Animal Species",
+        "SHOW_EPIDEMICS": "Show Epidemics",
+        "SHOW_ANIMAL_GROUPS": "Show Animal Groups",
+        "SHOW_EPIDEMIC_GROUPS": "Show Epidemic Groups",
         "WEEK_LABEL": "Week",
         "MONTH_LABEL": "Month",
         "YEAR_LABEL": "Year",

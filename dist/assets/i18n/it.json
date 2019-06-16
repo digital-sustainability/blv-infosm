@@ -20,6 +20,12 @@
         "TEST": "Sperimentazione di un grafico SVG per il flusso di segnalazione di una notifica di una malattia animale."
     },
     "EVAL": {
+        "SHOW_CANTONS": "Mostra cantoni",
+        "SHOW_MUNICS": "Mostra comuni",
+        "SHOW_ANIMALS": "Mostra specie animali",
+        "SHOW_EPIDEMICS": "Mostra epidemie",
+        "SHOW_ANIMALS_GROUPS": "Mostra gruppo di animali",
+        "SHOW_EPIDEMIC_GROUPS": "Mostra gruppi di malattie",
         "WEEK_LABEL": "Settimana",
         "MONTH_LABEL": "Mese",
         "YEAR_LABEL": "Anno",
