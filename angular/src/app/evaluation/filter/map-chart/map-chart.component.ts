@@ -115,17 +115,17 @@ export class MapChartComponent implements OnInit, AfterViewInit {
   */
   ngAfterViewInit(): void {
     this.initMap();
-    this.dataSub = this._distributeDataService.currentData.subscribe(
-      data => {
-        // Only proceed if data is emitted or data has changed (deep comparison)
-        if (data.length && !isEqual(this.reports, data)) {
-          this.reports = data;
-          // Only call when shapes are loaded or reports have changed
-          if (this.cantonVectorLayer) {
-            this.updateLayers();
-          }
+    // this.dataSub = this._distributeDataService.currentData.subscribe(
+    //   data => {
+    //     // Only proceed if data is emitted or data has changed (deep comparison)
+    //     if (data.length && !isEqual(this.reports, data)) {
+    //       this.reports = data;
+    //       // Only call when shapes are loaded or reports have changed
+    //       if (this.cantonVectorLayer) {
+    //         this.updateLayers();
+    //       }
 
-        }
+    //     }
         // only get canton shapes if none exist
         if (!this.cantonVectorLayer) {
         // load data for canton shapes and simultaniously load for municipalites
@@ -190,9 +190,9 @@ export class MapChartComponent implements OnInit, AfterViewInit {
 
 
 
-      }, // TODO: handle if no reports come in
-      err => console.log(err)
-    );
+    //   }, // TODO: handle if no reports come in
+    //   err => console.log(err)
+    // );
 
 
 

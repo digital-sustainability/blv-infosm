@@ -23,7 +23,6 @@ export class TimelineChartComponent implements OnInit, OnDestroy {
   years: string;
   dataSub: Subscription;
   translationSub: Subscription;
-  loaded = false;
   isYear: boolean;
   isMonth: boolean;
   isWeek: boolean;
@@ -63,7 +62,6 @@ export class TimelineChartComponent implements OnInit, OnDestroy {
     this.dataSub = this._distributeDataService.currentData.subscribe(
       data => {
         if (data) {
-          this.loaded = true;
           this.reports = data;
           this.years = this.extractYears(data);
           // Translate if new data is loaded
@@ -403,7 +401,7 @@ export class TimelineChartComponent implements OnInit, OnDestroy {
   onShowEpidemics(): void {
     this.timeLineChartData = [];
     this.timeLineChartData = this.extract(this.reports, 'epidemic_group');
-    if (this.timeLineChartData && this.loaded) {
+    if (this.timeLineChartData) {
       this.drawChart();
     }
   }
@@ -411,7 +409,7 @@ export class TimelineChartComponent implements OnInit, OnDestroy {
   onShowAnimals(): void {
     this.timeLineChartData = [];
     this.timeLineChartData = this.extract(this.reports, 'animal_group');
-    if (this.timeLineChartData && this.loaded) {
+    if (this.timeLineChartData) {
       this.drawChart();
     }
   }
