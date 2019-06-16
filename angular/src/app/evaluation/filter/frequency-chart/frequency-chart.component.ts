@@ -19,7 +19,7 @@ export class FrequencyChartComponent implements OnInit, OnDestroy {
   dataSub: Subscription;
   translationSub: Subscription;
   frequencyChart: Chart;
-  ready = false;
+  loaded = false;
   reports: Report[];
   trans: Translations;
 
@@ -34,7 +34,7 @@ export class FrequencyChartComponent implements OnInit, OnDestroy {
     this.dataSub = this._distributeDataServie.currentData.subscribe(
       data => {
         if (data) {
-          this.ready = true;
+          this.loaded = true;
           this.reports = data;
           this.translationSub = this.translate.get([
             'EVAL.SHOW_ALL_NONE'

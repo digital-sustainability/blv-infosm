@@ -1,22 +1,20 @@
 <div class="main-chart-container">
   <div id="ol-map"></div>
-  <p>add legende here</p>
-  <div class="chart-button-container">
-    <button class="btn btn-dark mr-2" type="submit" (click)="onShowCantons()">
-      {{ 'EVAL.SHOW_CANTONS' | translate }}
-    </button>
-    <button class="btn btn-dark ml-2" type="submit" (click)="onShowMunics()">
-      {{ 'EVAL.SHOW_MUNICS' | translate }}
-    </button>
+  <!-- TODO: While loading data to display already show map but still loader in Legende place -->
+  <div class="map-info" *ngIf="cantonVectorLayer; else loadingMapData">
+    <p>add legende here</p>
+    <div class="chart-button-container">
+      <button class="btn btn-dark mr-2" type="submit" (click)="onShowCantons()">
+        {{ 'EVAL.SHOW_CANTONS' | translate }}
+      </button>
+      <button class="btn btn-dark ml-2" type="submit" (click)="onShowMunics()">
+        {{ 'EVAL.SHOW_MUNICS' | translate }}
+      </button>
+    </div>
   </div>
+  <ng-template #loadingMapData>
+    <div class="loadingSign">
+      <fa name="refresh" size="4x" animation="spin"></fa>
+    </div>
+  </ng-template>
 </div>
-
-<!-- TODO: While loading data to display already show map but still loader in Legende place -->
-
-<!-- <div style="border:1px solid lightgray;" class="container" *ngIf="featureData; else loadingPieChart">
-</div> -->
-<!-- <ng-template #loadingPieChart>
-  <div class="loadingSign">
-    <fa name="refresh" size="4x" animation="spin"></fa>
-  </div>
-</ng-template> -->
