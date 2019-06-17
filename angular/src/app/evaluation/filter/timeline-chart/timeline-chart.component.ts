@@ -3,6 +3,7 @@ import { Chart } from 'angular-highcharts';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 import { DistributeDataService } from 'src/app/shared/distribute-data.service';
+import { NotificationService } from '../../../shared/notification.service';
 import { ActivatedRoute } from '@angular/router';
 import { Report } from '../../../shared/models/report.model';
 import { Translations } from '../../../shared/models/translations.model';
@@ -44,6 +45,7 @@ export class TimelineChartComponent implements OnInit, OnDestroy {
     private _distributeDataService: DistributeDataService,
     private _route: ActivatedRoute,
     private _highChartService: HighchartService,
+    private _notification: NotificationService
   ) { }
 
   ngOnInit() {
@@ -87,7 +89,8 @@ export class TimelineChartComponent implements OnInit, OnDestroy {
             );
         }
       },
-      err => console.log(err) // TODO: Improve Error handling
+      // TODO: Improve Error handling
+      err => this._notification.errorMessage(err.statusText + '<br>' + err.message , err.name)
     );
   }
 

@@ -4,6 +4,7 @@ import { Report } from '../../shared/models/report.model';
 import { Translations } from '../../shared/models/translations.model';
 import { Subscription } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
+import { NotificationService } from '../../shared/notification.service';
 import { ngxCsv } from 'ngx-csv/ngx-csv';
 import * as XLSX from 'xlsx';
 import { omit } from 'lodash';
@@ -22,6 +23,7 @@ export class DownloadComponent implements OnInit, OnDestroy {
   constructor(
     public translate: TranslateService,
     private _distributeDataService: DistributeDataService,
+    private _notification: NotificationService
   ) { }
 
   // TODO: Error handling and notify the user
@@ -41,10 +43,10 @@ export class DownloadComponent implements OnInit, OnDestroy {
           'DOWNLOAD.ANIMAL_SPECIES',
         ]).subscribe(
           texts => this._trans = texts,
-          err => console.log(err)
+          err => this._notification.errorMessage(err.statusText + '<br>' + err.message , err.name)
         );
       },
-      err => console.log(err)
+      err => this._notification.errorMessage(err.statusText + '<br>' + err.message , err.name)
     );
   }
 

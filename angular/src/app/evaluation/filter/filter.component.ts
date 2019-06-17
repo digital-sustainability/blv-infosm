@@ -9,6 +9,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { SparqlDataService } from 'src/app/shared/sparql-data.service';
 import { DistributeDataService } from 'src/app/shared/distribute-data.service';
 import { TranslateService } from '@ngx-translate/core';
+import { NotificationService } from '../../shared/notification.service';
 import { remove, uniq, map } from 'lodash';
 import { NgbDatepickerConfig, NgbDateParserFormatter } from '@ng-bootstrap/ng-bootstrap';
 import {  NgbDateCHFormatter } from '../../shared/formatters/ngb-ch-date-formatter';
@@ -74,6 +75,7 @@ export class FilterComponent implements OnInit, OnDestroy {
     private _distributeDataService: DistributeDataService,
     private _route: ActivatedRoute,
     private _router: Router,
+    private _notification: NotificationService,
     public translateService: TranslateService,
     public ngbDatepickerConfig: NgbDatepickerConfig
   ) { }
@@ -118,6 +120,7 @@ export class FilterComponent implements OnInit, OnDestroy {
         }
       }, err => {
         // TODO: Imporve error handling
+        this._notification.errorMessage(err.statusText + '<br>' + err.message , err.name);
         console.log(err);
       }
     );
@@ -293,6 +296,7 @@ export class FilterComponent implements OnInit, OnDestroy {
         console.log('FILTERED', this.filteredData);
       }, err => {
         console.log(err);
+        this._notification.errorMessage(err.statusText + '<br>' + err.message , err.name);
         // TODO: Imporve error handling
       });
   }
