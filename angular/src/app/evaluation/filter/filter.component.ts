@@ -71,9 +71,9 @@ export class FilterComponent implements OnInit, OnDestroy {
     animal_group: [],
     animal_species: []
   };
-  sortItem: string = "";
-  sortDirection: string = "";
-  sorted: boolean = true;
+  sortItem: string;
+  sortDirection: string;
+  sorted: boolean;
 
   constructor(
     private _sparqlDataService: SparqlDataService,
@@ -140,6 +140,11 @@ export class FilterComponent implements OnInit, OnDestroy {
     this.ngbDatepickerConfig.outsideDays = 'hidden';
 
     this.getTranslations();
+
+    // set the initial state of the sorted table
+    this.sortItem = this.trans['EVAL.DIAGNOSIS_DATE'];
+    this.sortDirection = 'asc';
+    this.sorted = true;
   }
 
   onChangeTab(route: string): void {
@@ -305,6 +310,7 @@ export class FilterComponent implements OnInit, OnDestroy {
         // console.log('RAW', data);
         // console.log('BEAUTFIED', this.beautifiedData);
         console.log('FILTERED', this.filteredData);
+        this.getTranslations();
       }, err => {
         console.log(err);
         this._notification.errorMessage(err.statusText + '<br>' + err.message , err.name);
@@ -316,10 +322,10 @@ export class FilterComponent implements OnInit, OnDestroy {
     this.getTranslations();
     const column = $event['active'];
     const direction = $event['direction'];
-    if (direction === "asc") {
+    if (direction === 'asc') {
       this.sortDirection = this.trans['EVAL.ORDER_ASCENDING']; 
       this.sorted = true;
-    } else if (direction === "desc") {
+    } else if (direction === 'desc') {
       this.sortDirection = this.trans['EVAL.ORDER_DESCENDING']; 
       this.sorted = true;
     } else {
