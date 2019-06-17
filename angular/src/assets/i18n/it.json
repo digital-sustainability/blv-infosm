@@ -133,5 +133,9 @@
         "NOTICE_CANCEL": "Interrompi",
         "NOTICE_DOWNLOAD": "Download",
         "NOTICE_WARNING": "Accetta termini di utilizzo"
+    },
+    "ERROR_HANDLING": {
+        "TITLE": "",
+        "MESSAGE": ""
     }
 }
