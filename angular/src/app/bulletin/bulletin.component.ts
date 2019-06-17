@@ -1,15 +1,16 @@
-import { Component, OnInit, OnDestroy, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { MatPaginator, MatTableDataSource, MatSort, MatSortable } from '@angular/material';
 import { Report } from '../shared/models/report.model';
 import { ParamState } from '../shared/models/param-state.model';
 import { SparqlDataService } from 'src/app/shared/sparql-data.service';
 import { TranslateService } from '@ngx-translate/core';
 import { LanguageService } from 'src/app/shared/language.service';
+import { NotificationService } from '../shared/notification.service';
 import { Router, ActivatedRoute } from '@angular/router';
 import { NgbDate } from '../shared/models/ngb-date.model';
-import { Subscription } from 'rxjs';
+import { Subscription} from 'rxjs';
 import { ParamService } from '../shared/param.service';
-import { NgbDateParserFormatter, NgbDateStruct, NgbDatepicker } from '@ng-bootstrap/ng-bootstrap';
+import { NgbDateParserFormatter, NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
 import { NgbDateCHFormatter } from '../shared/formatters/ngb-ch-date-formatter';
 import { inRange } from 'lodash';
 import dayjs from 'dayjs';
@@ -46,7 +47,7 @@ export class BulletinComponent implements OnInit, OnDestroy {
   startDate: NgbDateStruct;
   displayedCols: string[] = ['diagnose_datum', 'kanton', 'gemeinde', 'seuchen_gruppe', 'seuche', 'tierart', 'anzahl'];
   bulletinNumber: string;
-  bulletinEntries: Report[];
+  bulletinEntries: Report[] = [];
   dataS: MatTableDataSource<[]>;
   actualBulletin: boolean= true;
 
@@ -57,11 +58,12 @@ export class BulletinComponent implements OnInit, OnDestroy {
     private _router: Router,
     private _paramsService: ParamService,
     private _route: ActivatedRoute,
-    public translateService: TranslateService,
+    private _notification: NotificationService,
+    public translateService: TranslateService
   ) { }
 
   ngOnInit(): void {
-
+    
     // max possible date is today
     this.maxDate = this.transformDate(dayjs().day(0).format("YYYY-MM-DD"));
     // the start date is the actual bulletin from last week
@@ -104,6 +106,7 @@ export class BulletinComponent implements OnInit, OnDestroy {
             }
           }, err => {
             // TODO: Imporve error handling
+            this._notification.errorMessage(err.statusText + '<br>' + err.message , err.name);
             console.log(err);
           }
         );
@@ -198,14 +201,15 @@ export class BulletinComponent implements OnInit, OnDestroy {
     this.dataS.sort = this.sort;
   }
 
-  private getList(lang: string, from: string | Date, to: string | Date):void {
+  private getList(lang: string, from: string | Date, to: string | Date): void {
     this._dataSub = this._sparqlDataService.getReports(lang, from, to).subscribe(
       (data: Report[]) => {
         this.data = this.beautifyDataObject(data);
         this.updateDatesAndData(this.model);
       }, err => {
-        console.log(err);
         // TODO: Imporve error handling
+        this._notification.errorMessage(err.statusText + '<br>' + err.message , err.name);
+        console.log(err);
       });
   }
 
