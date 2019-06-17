@@ -27,7 +27,6 @@
               "node_modules/bootstrap/dist/js/bootstrap.min.js"
             ],
             "styles": [
-              "node_modules/ngx-toastr/toastr.css",
               "node_modules/swiss-styleguide/build/css/admin.css",
               "node_modules/font-awesome/css/font-awesome.css",
               "node_modules/bootstrap/dist/css/bootstrap.min.css",
