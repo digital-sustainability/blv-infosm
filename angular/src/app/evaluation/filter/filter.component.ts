@@ -4,7 +4,7 @@ import { Report } from '../../shared/models/report.model';
 import { NgbDate } from '../../shared/models/ngb-date.model';
 import { LanguageService } from 'src/app/shared/language.service';
 import { Subscription } from 'rxjs';
-import { MatPaginator, MatTableDataSource, MatSort } from '@angular/material';
+import { MatPaginator, MatTableDataSource, MatSort, MatSortable } from '@angular/material';
 import { ActivatedRoute, Router } from '@angular/router';
 import { SparqlDataService } from 'src/app/shared/sparql-data.service';
 import { DistributeDataService } from 'src/app/shared/distribute-data.service';
@@ -287,6 +287,10 @@ export class FilterComponent implements OnInit, OnDestroy {
 
         this.dataSource = new MatTableDataSource<any>(this.filteredData);
         this.dataSource.paginator = this.paginator;
+        this.sort.sort(<MatSortable>{
+          id: 'diagnosis_date', 
+          start: 'desc'
+        });
         this.dataSource.sort = this.sort;
         // Set `from` and `to` for datepicker to match the current date selection
         this.from = this.transformDate(from);

@@ -139,7 +139,8 @@ export class BulletinComponent implements OnInit, OnDestroy {
     const today = dayjs(new Date()).subtract(7, 'd').format("YYYY-MM-DD");
     const from =  dayjs(today).day(1).format("YYYY-MM-DD");
     const to = dayjs(today).day(7).format("YYYY-MM-DD");
-    return ( dayjs(selectedDate).isBefore(to) && dayjs(selectedDate).isAfter(from) );
+    return ( (dayjs(selectedDate).isBefore(to) || dayjs(selectedDate).isSame(to) )
+                && ( dayjs(selectedDate).isAfter(from) ||  dayjs(selectedDate).isSame(from) ) );
   }
 
   private searchEntries(from: string | Date, to: string | Date, data: Report[]): Report[] {
@@ -195,7 +196,7 @@ export class BulletinComponent implements OnInit, OnDestroy {
     this.dataS = new MatTableDataSource<any>(bulletinEntries);
     this.dataS.paginator = this.paginator;
     this.sort.sort(<MatSortable>{
-      id: 'number', 
+      id: 'diagnose_datum', 
       start: 'desc'
     });
     this.dataS.sort = this.sort;
