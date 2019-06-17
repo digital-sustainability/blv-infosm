@@ -26,6 +26,12 @@
     "TEST": "Testen einer SVG Grafik für den Meldefluss einer Tierseuchenmeldung."
   },
   "EVAL": {
+    "SHOW_CANTONS": "Kantone darstellen",
+    "SHOW_MUNICS": "Gemeinden darstellen",
+    "SHOW_ANIMALS": "Tierarten darstellen",
+    "SHOW_EPIDEMICS": "Seuchen darstellen",
+    "SHOW_ANIMALS_GROUPS": "Tiergruppen darstellen",
+    "SHOW_EPIDEMIC_GROUPS": "Seuchengruppen darstellen",
     "WEEK_LABEL": "Woche",
     "MONTH_LABEL": "Monat",
     "YEAR_LABEL": "Jahr",

@@ -19,12 +19,19 @@ if (config.cors) app.use(cors());
 app.use('/node_modules', express.static(__dirname + '/node_modules/'));
 app.use(express.static(path.join(__dirname, 'dist')));
 
+// error handling
+app.use((err, req, res, next) => {
+    if (err) {
+        return res.status(500).json(err);
+    }
+})
+
 // serve angular index.html
 app.get('/', (req, res) => {
     res.sendFile(__dirname + '/dist/index.html');
 });
 
-app.get('/getData', wrap( async (req, res) => {
+app.get('/getData', wrap( async (req, res, next) => {
     if (!req.query.query || !req.query.url) {
         throw new BadRequestError('No Sparql Endpoint or SPARQL Query defined'); // sorted by next catch
     }
@@ -43,7 +50,12 @@ app.get('/getData', wrap( async (req, res) => {
         if (err || !resp.statusCode === 200) {
             return res.status(500).json(err);
         }
-        return res.json(JSON.parse(body).results.bindings);
+        try {
+            return res.json(JSON.parse(body).results.bindings);
+        // in case body is empty or other errors
+        } catch (err) {
+            next(err)
+        }
     });
 }));
 
@@ -51,13 +63,6 @@ app.get('/getData', wrap( async (req, res) => {
 app.get('/*', (req, res) => {
     res.sendFile(__dirname + '/dist/index.html');
 });
-
-// error handling
-app.use((err, req, res, next) => {
-    if (err) {
-        return res.status(500).json(err);
-    }
-})
 
 // set default port
 app.listen(5000, () => {

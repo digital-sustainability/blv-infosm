@@ -19,12 +19,11 @@ import * as moment from 'moment';
 })
 export class TimelineChartComponent implements OnInit, OnDestroy {
   _paramSub: Subscription;
-  data: Report[];
+  reports: Report[];
   timelineChart: Chart;
   years: string;
   dataSub: Subscription;
   translationSub: Subscription;
-  loaded = false;
   isYear: boolean;
   isMonth: boolean;
   isWeek: boolean;
@@ -65,7 +64,7 @@ export class TimelineChartComponent implements OnInit, OnDestroy {
     this.dataSub = this._distributeDataService.currentData.subscribe(
       data => {
         if (data) {
-          this.data = data;
+          this.reports = data;
           this.years = this.extractYears(data);
           // Translate if new data is loaded
           this.translationSub = this.translate.get([
@@ -83,7 +82,6 @@ export class TimelineChartComponent implements OnInit, OnDestroy {
                 // Obj that holds all tarnslations for this component
                 this.trans = texts;
                 this.timeLineChartData = this.extract(data, 'epidemic_group');
-                this.loaded = true;
                 this.drawChart();
               }
             );
@@ -403,18 +401,18 @@ export class TimelineChartComponent implements OnInit, OnDestroy {
     return '...';
   }
 
-  showEpidemics(): void {
+  onShowEpidemics(): void {
     this.timeLineChartData = [];
-    this.timeLineChartData = this.extract(this.data, 'epidemic_group');
-    if (this.timeLineChartData && this.loaded) {
+    this.timeLineChartData = this.extract(this.reports, 'epidemic_group');
+    if (this.timeLineChartData) {
       this.drawChart();
     }
   }
 
-  showAnimals(): void {
+  onShowAnimals(): void {
     this.timeLineChartData = [];
-    this.timeLineChartData = this.extract(this.data, 'animal_group');
-    if (this.timeLineChartData && this.loaded) {
+    this.timeLineChartData = this.extract(this.reports, 'animal_group');
+    if (this.timeLineChartData) {
       this.drawChart();
     }
   }

@@ -6,6 +6,11 @@
 
 
 @import "~@ng-select/ng-select/themes/default.theme.css";
+
+html, body {
+  margin: 0;
+}
+
 body {
   padding: 20px;
 }
@@ -31,4 +36,16 @@ input[type=radio]:focus,
   margin: 50px 0 50px 0;
   display: flex;
   justify-content: center;
+}
+
+.main-chart-container {
+  border: 1px solid lightgray;
+  width: 100%;
+}
+
+.chart-button-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2%
 }
