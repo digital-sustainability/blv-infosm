@@ -24,7 +24,7 @@
         "SHOW_MUNICS": "Mostra comuni",
         "SHOW_ANIMALS": "Mostra specie animali",
         "SHOW_EPIDEMICS": "Mostra epidemie",
-        "SHOW_ANIMALS_GROUPS": "Mostra gruppo di animali",
+        "SHOW_ANIMAL_GROUPS": "Mostra gruppo di animali",
         "SHOW_EPIDEMIC_GROUPS": "Mostra gruppi di malattie",
         "WEEK_LABEL": "Settimana",
         "MONTH_LABEL": "Mese",
@@ -49,7 +49,12 @@
         "DATE_FROM_WRONG_RANGE": "Invalid: Primo messaggio nel nostro database datato 15-01-1991.",
         "DATE_TO_WRONG_RANGE": "Invalid: selezionare una data inferiore o uguale ad oggi.",
         "DATEPICKER_PLACEHOLDER": "GG.MM.AAAA",
-        "MONTHS": ["Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Giugno", "Luglio", "Agosto", "Settembre", "Ottobre", "Novembre", "Dicembre"]
+        "MONTHS": ["Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Giugno", "Luglio", "Agosto", "Settembre", "Ottobre", "Novembre", "Dicembre"],
+        "ORDER_DESCENDING": "decrescente",
+        "ORDER_ASCENDING": "ascensionale",
+        "ORDER_BY": "ordinati per",
+        "VISU_DATA": "Dati visualizzati",
+        "NOT_SORTED": "Fare clic sull'intestazione di una colonna per ordinare i dati."
     },
     "BULLETIN": {
         "OPTIONS": "Opzioni di visualizzazione",

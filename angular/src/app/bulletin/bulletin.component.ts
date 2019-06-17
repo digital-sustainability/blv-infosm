@@ -49,7 +49,7 @@ export class BulletinComponent implements OnInit, OnDestroy {
   bulletinNumber: string;
   bulletinEntries: Report[] = [];
   dataS: MatTableDataSource<[]>;
-  actualBulletin: boolean= true;
+  actualBulletin: boolean = true;
 
 
   constructor(
