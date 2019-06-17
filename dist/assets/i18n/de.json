@@ -139,5 +139,9 @@
     "NOTICE_CANCEL": "Abbrechen",
     "NOTICE_DOWNLOAD": "Download",
     "NOTICE_WARNING": "Akzeptieren Sie bitte die Nutzungsbedingungen um den Download zu starten"
+  },
+  "ERROR_HANDLING": {
+    "TITLE": "Fehler: ",
+    "MESSAGE": ""
   }
 }

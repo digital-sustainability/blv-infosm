@@ -133,5 +133,9 @@
         "NOTICE_CANCEL": "Annuler",
         "NOTICE_DOWNLOAD": "Download",
         "NOTICE_WARNING": "Accepter conditions d'utilisation"
+    },
+    "ERROR_HANDLING": {
+        "TITLE": "",
+        "MESSAGE": ""
     }
 }
