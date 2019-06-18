@@ -89,52 +89,53 @@
     <div class="panel-body">
       <div id="filterCategories" class="collapse" style="margin-top: 10px">
         <div class="flex-container">
+
           <!-- cantons and communities -->
           <div class="select-wrapper">
-            <label class="selction-label" for="cantons">{{ 'FILTER.FILTER_CANTONS' | translate }}</label>
-            <ng-select [items]="cantons" notFoundText="{{'FILTER.NO_ENTRIES' | translate}}" [multiple]="true"
-              name="cantons" placeholder="{{'FILTER.PLACEHOLDER_CANTON' | translate}}" (add)="onAdd($event, 'canton')"
+            <label class="selction-label" for="inputCantons">{{ 'FILTER.FILTER_CANTONS' | translate }}</label>
+            <ng-select [items]="inputCantons" notFoundText="{{'FILTER.NO_ENTRIES' | translate}}" [multiple]="true"
+              name="inputCantons" placeholder="{{'FILTER.PLACEHOLDER_CANTON' | translate}}" (add)="onAdd($event, 'canton')"
               (remove)="onRemove($event, 'canton')" (clear)="onClear($event, 'canton')">
             </ng-select>
           </div>
           <div class="select-wrapper">
-            <label class="selction-label" for="communities">{{ 'FILTER.FILTER_MUNICS' | translate }}</label>
-            <ng-select [items]="communities" notFoundText="{{'FILTER.NO_ENTRIES' | translate}}" [multiple]="true"
-              name="communities" placeholder="{{'FILTER.PLACEHOLDER_MUNICIPALITY' | translate}}"
+            <label class="selction-label" for="inputCommunities">{{ 'FILTER.FILTER_MUNICS' | translate }}</label>
+            <ng-select [items]="inputCommunities" notFoundText="{{'FILTER.NO_ENTRIES' | translate}}" [multiple]="true"
+              name="inputCommunities" placeholder="{{'FILTER.PLACEHOLDER_MUNICIPALITY' | translate}}"
               (add)="onAdd($event, 'munic')" (remove)="onRemove($event, 'munic')"
               (clear)="onClear($event, 'munic')">
             </ng-select>
           </div>
-          <!--        epidamic groups and epidemics-->
+          <!-- epidemic groups and epidemics-->
           <div class="select-wrapper">
-            <label class="selction-label" for="epidemic_groups">{{ 'FILTER.FILTER_PEST_GROUPS' | translate }}</label>
-            <ng-select [items]="epidemics_group" notFoundText="{{'FILTER.NO_ENTRIES' | translate}}" [multiple]="true"
-              name="epidamic_groups" placeholder="{{'FILTER.PLACEHOLDER_EPIDEMIC_GROUP' | translate}}"
+            <label class="selction-label" for="inputEpidemicsGroup">{{ 'FILTER.FILTER_PEST_GROUPS' | translate }}</label>
+            <ng-select [items]="inputEpidemicsGroup" notFoundText="{{'FILTER.NO_ENTRIES' | translate}}" [multiple]="true"
+              name="inputEpidemicsGroup" placeholder="{{'FILTER.PLACEHOLDER_EPIDEMIC_GROUP' | translate}}"
               (add)="onAdd($event, 'epidemic_group')" (remove)="onRemove($event, 'epidemic_group')"
               (clear)="onClear($event, 'epidemic_group')">
             </ng-select>
           </div>
           <div class="select-wrapper">
-            <label class="selction-label" for="epidemics">{{ 'FILTER.FILTER_PESTS' | translate }}</label>
-            <ng-select [items]="epidemics" notFoundText="{{'FILTER.NO_ENTRIES' | translate}}" [multiple]="true"
-              name="epidemics" placeholder="{{'FILTER.PLACEHOLDER_EPIDEMIC' | translate}}"
+            <label class="selction-label" for="inputEpidemics">{{ 'FILTER.FILTER_PESTS' | translate }}</label>
+            <ng-select [items]="inputEpidemics" notFoundText="{{'FILTER.NO_ENTRIES' | translate}}" [multiple]="true"
+              name="inputEpidemics" placeholder="{{'FILTER.PLACEHOLDER_EPIDEMIC' | translate}}"
               (add)="onAdd($event, 'epidemic')" (remove)="onRemove($event, 'epidemic')"
               (clear)="onClear($event, 'epidemic')">
             </ng-select>
           </div>
           <!-- animal groups and animal species  -->
           <div class="select-wrapper">
-            <label class="selction-label" for="animal_groups">{{ 'FILTER.FILTER_ANIMAL_GROUPS' | translate }}</label>
-            <ng-select [items]="animal_group" notFoundText="{{'FILTER.NO_ENTRIES' | translate}}" [multiple]="true"
-              name="animal_groups" placeholder="{{'FILTER.PLACEHOLDER_ANIMAL_GROUP' | translate}}"
+            <label class="selction-label" for="inputAnimalGroups">{{ 'FILTER.FILTER_ANIMAL_GROUPS' | translate }}</label>
+            <ng-select [items]="inputAnimalGroups" notFoundText="{{'FILTER.NO_ENTRIES' | translate}}" [multiple]="true"
+              name="inputAnimalGroups" placeholder="{{'FILTER.PLACEHOLDER_ANIMAL_GROUP' | translate}}"
               (add)="onAdd($event, 'animal_group')" (remove)="onRemove($event, 'animal_group')"
               (clear)="onClear($event, 'animal_group')">
             </ng-select>
           </div>
           <div class="select-wrapper">
-            <label class="selction-label" for="animals">{{ 'FILTER.FILTER_ANIMALS' | translate }}</label>
-            <ng-select [items]="animal_species" notFoundText="{{'FILTER.NO_ENTRIES' | translate}}" [multiple]="true"
-              name="animals" placeholder="{{'FILTER.PLACEHOLDER_ANIMAL_SPECIES' | translate}}"
+            <label class="selction-label" for="inputAnimals">{{ 'FILTER.FILTER_ANIMALS' | translate }}</label>
+            <ng-select [items]="inputAnimals" notFoundText="{{'FILTER.NO_ENTRIES' | translate}}" [multiple]="true"
+              name="inputAnimals" placeholder="{{'FILTER.PLACEHOLDER_ANIMAL_SPECIES' | translate}}"
               (add)="onAdd($event, 'animal_species')" (remove)="onRemove($event, 'animal_species')"
               (clear)="onClear($event, 'animal_species')">
             </ng-select>

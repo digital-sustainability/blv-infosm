@@ -8,7 +8,7 @@ import * as moment from 'moment';
 @Injectable()
 export class SparqlDataService {
 
-  private _api = environment.api;
+private _api = environment.api;
 
 private _prefix = `
 BASE <https://blv.ld.admin.ch/animalpest/>
@@ -23,6 +23,13 @@ PREFIX dct: <http://purl.org/dc/terms/>
 PREFIX schema: <http://schema.org/>
 `;
 
+  private _uniqueQueriesPrefix = `
+  PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+  PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+  PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+  PREFIX gont: <https://gont.ch/>
+  `;
+  
   constructor(
     private http: HttpClient,
     ) { }
@@ -60,6 +67,91 @@ PREFIX schema: <http://schema.org/>
       .set('url', url)
       .set('query', query);
     return this.http.get<Report[]>(this._api + 'getData', { params: params });
+  }
+
+  getUniqueCantons(): Observable<any> {
+    const url = 'http://ld.zazuko.com/query';
+    const query = `${this._uniqueQueriesPrefix}
+    SELECT DISTINCT ?kanton
+    FROM <https://linked.opendata.swiss/graph/blv/animalpest>
+    WHERE {
+      ?kantonUri a gont:Canton ;
+        rdfs:label ?kanton .
+    }`;
+    const params = new HttpParams().set('url', url).set('query', query);
+    return this.http.get<any[]>(this._api + 'getData', { params: params })
+  }
+
+  getUniqueMunicipalities(): Observable<any> {
+    const url = 'http://ld.zazuko.com/query';
+    const query = `${this._uniqueQueriesPrefix}
+    SELECT DISTINCT ?gemeindeUri ?gemeinde
+    FROM <https://linked.opendata.swiss/graph/blv/animalpest>
+    WHERE {
+      ?gemeindeUri a gont:Municipality ;
+        rdfs:label ?gemeinde .
+    }`;
+    const params = new HttpParams().set('url', url).set('query', query);
+    return this.http.get<any[]>(this._api + 'getData', { params: params })
+  }
+
+  getUniqueEpidemicGroups(lang: string): Observable<any> {
+    const url = 'http://ld.zazuko.com/query';
+    const query = `${this._uniqueQueriesPrefix}
+    SELECT DISTINCT ?seuchengruppeUri ?seuchen_gruppe
+    FROM <https://linked.opendata.swiss/graph/blv/animalpest>
+    WHERE {
+    ?seuchengruppeUri skos:inScheme <http://ld.zazuko.com/animalpest/scheme/Seuchengruppe> ;
+        rdfs:label ?seuchen_gruppe .
+  
+    FILTER(langMatches(lang(?seuchen_gruppe), "de"))
+    }
+    `;
+    const params = new HttpParams().set('url', url).set('query', query);
+    return this.http.get<any[]>(this._api + 'getData', { params: params })
+  }
+
+  getUniqueEpidemics(lang: string): Observable<any> {
+    const url = 'http://ld.zazuko.com/query';
+    const query = `${this._uniqueQueriesPrefix}
+    SELECT DISTINCT ?tierseucheUri ?tier_seuche
+    FROM <https://linked.opendata.swiss/graph/blv/animalpest>
+    WHERE {
+      ?tierseucheUri skos:inScheme <http://ld.zazuko.com/animalpest/scheme/Tierseuche> ;
+        rdfs:label ?tier_seuche .
+    FILTER(langMatches(lang( ?tier_seuche), "${lang}"))
+    }`;
+    const params = new HttpParams().set('url', url).set('query', query);
+    return this.http.get<any[]>(this._api + 'getData', { params: params })
+  }
+
+  getUniqueAnimalGroups(lang: string): Observable<any> {
+    const url = 'http://ld.zazuko.com/query';
+    const query = `${this._uniqueQueriesPrefix}
+    SELECT DISTINCT ?tiergruppeUri ?tier_gruppe
+    FROM <https://linked.opendata.swiss/graph/blv/animalpest>
+    WHERE {
+      ?tiergruppeUri skos:inScheme <http://ld.zazuko.com/animalpest/scheme/Tiergruppe> ;
+        rdfs:label ?tier_gruppe .
+    FILTER(langMatches(lang( ?tier_gruppe), "${lang}"))
+    }`;
+    const params = new HttpParams().set('url', url).set('query', query);
+    return this.http.get<any[]>(this._api + 'getData', { params: params })
+  }
+
+  getUniqueAnimals(lang: string): Observable<any> {
+    const url = 'http://ld.zazuko.com/query';
+    const query = `${this._uniqueQueriesPrefix}
+    SELECT DISTINCT ?tierartUri ?tier_art
+    FROM <https://linked.opendata.swiss/graph/blv/animalpest>
+    WHERE {
+      ?tierartUri skos:inScheme <http://ld.zazuko.com/animalpest/scheme/Tierart> ;
+        rdfs:label ?tier_art .
+  
+    FILTER(langMatches(lang( ?tier_art), "${lang}"))
+    }`;
+    const params = new HttpParams().set('url', url).set('query', query);
+    return this.http.get<any[]>(this._api + 'getData', { params: params })
   }
 
   getCantonsWkt(): any {
