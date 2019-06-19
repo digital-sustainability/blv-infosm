@@ -4,6 +4,7 @@
   <div class="map-info" *ngIf="cantonVectorLayer; else loadingMapData">
     <p>add legende here</p>
     <p>ID of selected area: <strong>{{ area }}</strong></p>
+    <p>Disease count per area: <strong>{{ countPerShape }}</strong></p>
     <div class="chart-button-container">
       <button class="btn btn-dark mr-2" type="submit" (click)="onSwitchLayer(cantonVectorLayer)" [disabled]="!cantonVectorLayer">
         {{ 'EVAL.SHOW_CANTONS' | translate }}

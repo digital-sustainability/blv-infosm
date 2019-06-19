@@ -15,7 +15,7 @@ import WKT from 'ol/format/WKT';
 import OlView from 'ol/View';
 import { fromLonLat } from 'ol/proj';
 import { transformExtent } from 'ol/proj';
-import { Fill, Style, Stroke } from 'ol/style.js';
+import { Fill, Style, Stroke, opacity } from 'ol/style.js';
 
 import olMap from 'ol/Map';
 import TileLayer from 'ol/layer/Tile';
@@ -23,7 +23,7 @@ import View from 'ol/View';
 import OSM from 'ol/source/OSM.js';
 import Vector from 'ol/source/Vector';
 
-import { isEqual } from 'lodash';
+import { isEqual, has } from 'lodash';
 
 
 @Component({
@@ -34,6 +34,7 @@ import { isEqual } from 'lodash';
 export class MapChartComponent implements AfterViewInit {
 
   height = 600;
+  initialized = false;
 
   dataSub: Subscription;
   reports: Report[];
@@ -55,13 +56,14 @@ export class MapChartComponent implements AfterViewInit {
   opacity = 0.6;
 
   selectStyle = new Style({
-    fill: this.fill,
+    fill: new Fill({
+      color: 'rgba(247, 247, 160, 0.6)'
+    }),
     stroke: new Stroke({
-      color: 'yellow',
-      width: 4
-    })
+      color: '#333',
+      width: 2,
+    }),
   });
-
 
   // select interaction working on "pointermove"
   select = new Select({
@@ -78,19 +80,30 @@ export class MapChartComponent implements AfterViewInit {
   currentLayer: OlVectorLayer;
 
   // Temp
-  area;
+  area: string;
+  countPerShape: number;
+
+
+  styleFn = (feature) => {
+    this.fill.setColor(this.getColor(feature));
+    return this.style;
+  }
+
+  // TODO: Evt. set style and change it back on un-selections
+  // selectStyleFn = (feature) => {
+  //   this.fill.setColor(this.getColor(feature));
+  //   return this.selectStyle;
+  // }
 
   constructor(
     private _sparqlDataService: SparqlDataService,
     private _distributeDataService: DistributeDataService,
   ) { }
 
-  /**
-  * IDEA:
-  * Maybe display name on hover and display info on click. Only make the ones with data clickable. Or dispaly at all
-  */
   ngAfterViewInit(): void {
-    this.initMap();
+    if (!this.initialized) {
+      this.initMap();
+    }
     this.dataSub = this._distributeDataService.currentData.subscribe(
       data => {
         // Only proceed if data is emitted or data has changed (deep comparison)
@@ -103,9 +116,10 @@ export class MapChartComponent implements AfterViewInit {
 
         }
         // only get canton shapes if none exist
-        if (!this.cantonVectorLayer) {
-        // load data for canton shapes and simultaniously load for municipalites
-        this._sparqlDataService.getCantonsWkt().subscribe(
+        if (!this.cantonVectorLayer && !this.initialized) {
+          this.initialized = true;
+          // load data for canton shapes and simultaniously load for municipalites
+          this._sparqlDataService.getCantonsWkt().subscribe(
             // TODO: use RXJS pipe/map
             cantonWkts => {
               /**
@@ -115,10 +129,6 @@ export class MapChartComponent implements AfterViewInit {
                *
                * MORE PERFORMANCE IDEAS:
                * - Cache the WKTs in one of the filters service, to minimize refetching
-               * - Cache the WKTs in our backend so it does not have to be refetched from LINDAS too often
-               * - Cache the "fetch-all" query daily in the backend so speed up this request
-               * - Memoize heavy functions
-               * - Add lazy loading for small bundle
                // check if shapes have been loaded into sessions or if already loaded into component
               if (!sessionStorage.getItem('canton')) {
                 console.log('I saved to storage: ', shapes);
@@ -131,6 +141,7 @@ export class MapChartComponent implements AfterViewInit {
                 source: new Vector({
                   features: this.createShapes(cantonWkts, true)
                 }),
+                style: this.styleFn,
                 opacity: this.opacity
               });
               // First time a layer is initialized it is set to `currentLayer`
@@ -139,13 +150,21 @@ export class MapChartComponent implements AfterViewInit {
               // Add cantons as initial layer
               this.map.addLayer(this.cantonVectorLayer);
               this.map.addInteraction(this.select);
-              this.select.on('select', event => { // TODO: Add click event that will freeze the selection
+              this.select.on('select', event => {
                 if (event.selected.length > 0) {
-                  this.area = event.selected[0].getId();
+                  const feature = event.selected[0];
+                  const id = feature.getId();
+                  this.area = feature.get('name');
+                  this.countPerShape = this.reports.filter(r => {
+                    if (feature.get('isCanton')) {
+                      return id === r.canton_id;
+                    } else {
+                      return id === r.munic_id;
+                    }
+                  }).length;
+                  console.log(this.countPerShape);
                 }
               });
-
-              this.updateLayer(this.cantonVectorLayer);
             },
             // TODO: Handle if no canton shapes received
             err => console.log(err)
@@ -175,18 +194,6 @@ export class MapChartComponent implements AfterViewInit {
       err => console.log(err)
     );
 
-
-
-
-
-
-
-    // NOTE: Was in "new WKT()" etc.
-        // *************************
-
-        // *************************
-
-
   }
 
   onSwitchLayer(layer: OlVectorLayer): void {
@@ -196,22 +203,10 @@ export class MapChartComponent implements AfterViewInit {
     this.updateLayer(this.currentLayer);
   }
 
-  private updateLayer(layer: OlVectorLayer) {
-    const addColor = (feature: any) => {
-      // console.log('feature', feature);
-      const chance = new Date().getTime() % 2;
-      // console.log('chance', chance);
-      if (chance > 0) {
-        this.fill.setColor('red');
-      } else {
-        this.fill.setColor('green');
+  private updateLayer(layer: OlVectorLayer): void {
+      if (this.reports && (this.cantonVectorLayer || this.municVectorLayer)) {
+        layer.setStyle(this.styleFn);
       }
-      return this.style;
-    };
-
-    if (this.cantonVectorLayer || this.municVectorLayer) {
-      layer.setStyle(addColor);
-    }
   }
 
   private initMap() {
@@ -257,16 +252,26 @@ export class MapChartComponent implements AfterViewInit {
     });
   }
 
-  private sumEpidemicsPerCanton(reports: Report[], cantonId: number): number {
-    return reports.filter(report => report.canton_id === cantonId).length;
-  }
-
-  private sumAllEpidemics(reports: Report[]): number {
-    return reports.length;
-  }
-
   private getRelativeColor(percent: number): any {
     return `hsl(0, 59%, ${(percent).toFixed()}%)`;
   }
+
+  private getColor(feature): string {
+    const id = feature.getId();
+    const cases = this.reports.filter(r => {
+      if (feature.get('isCanton')) {
+        return id === r.canton_id;
+      } else {
+        return id === r.munic_id;
+      }
+    });
+    if (cases.length === 0) {
+      return 'white';
+    } else {
+      // the canton / munic has mentions
+      return this.getRelativeColor((cases.length * 3) / 10);
+    }
+  }
+
 
 }
