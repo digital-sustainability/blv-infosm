@@ -49,7 +49,12 @@
         "DATE_FROM_WRONG_RANGE": "Invalid: First message in our database dated 15-01-1991.",
         "DATE_TO_WRONG_RANGE": "Invalid: Please select a date less than or equal to today.",
         "DATEPICKER_PLACEHOLDER": "DD.MM.YYYY",
-        "MONTHS": ["January", "February", "March", "April", "May", "une", "July", "August", "September", "October", "November", "December"]
+        "MONTHS": ["January", "February", "March", "April", "May", "une", "July", "August", "September", "October", "November", "December"],
+        "ORDER_DESCENDING": "descending",
+        "ORDER_ASCENDING": "ascending",
+        "ORDER_BY": "sorted by",
+        "VISU_DATA": "Visualized data",
+        "NOT_SORTED": "Click the header of a column to sort the data."
     },
     "BULLETIN": {
         "OPTIONS": "Display options",
@@ -133,5 +138,9 @@
         "NOTICE_CANCEL": "Cancel",
         "NOTICE_DOWNLOAD": "Download",
         "NOTICE_WARNING": "Please accept the terms"
+    },
+    "ERROR_HANDLING": {
+        "TITLE": "",
+        "MESSAGE": ""
     }
 }

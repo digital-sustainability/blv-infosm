@@ -11,7 +11,7 @@
   },
   "private": true,
   "dependencies": {
-    "@angular/animations": "^7.2.7",
+    "@angular/animations": "^7.2.15",
     "@angular/cdk": "^7.2.2",
     "@angular/common": "~7.2.7",
     "@angular/compiler": "~7.2.7",
@@ -42,6 +42,8 @@
     "lodash": "^4.17.11",
     "moment": "^2.23.0",
     "ngx-csv": "^0.3.1",
+    "ngx-toaster": "^1.0.1",
+    "ngx-toastr": "^10.0.4",
     "ol": "^5.3.3",
     "popper": "^1.0.1",
     "popper.js": "^1.14.7",

@@ -24,7 +24,7 @@
         "SHOW_MUNICS": "Afficher Communes",
         "SHOW_ANIMALS": "Afficher espèces",
         "SHOW_EPIDEMICS": "Afficher épidémies",
-        "SHOW_ANIMALS_GROUPS": "Afficher Catégories Animale",
+        "SHOW_ANIMAL_GROUPS": "Afficher Catégories Animale",
         "SHOW_EPIDEMIC_GROUPS": "Afficher Groupe d'épizooties",
         "WEEK_LABEL": "Semaine",
         "MONTH_LABEL": "Mois",
@@ -49,7 +49,12 @@
         "DATE_FROM_WRONG_RANGE": "Invalide : Premier message dans notre base de données daté du 15-01-1991.",
         "DATE_TO_WRONG_RANGE": "Non valide : Veuillez choisir une date inférieure ou égale à aujourd'hui.",
         "DATEPICKER_PLACEHOLDER": "JJ.MM.AAAA",
-        "MONTHS": ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"]
+        "MONTHS": ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"],
+        "ORDER_DESCENDING": "descendant",
+        "ORDER_ASCENDING": "ascendant",
+        "ORDER_BY": "trié par",
+        "VISU_DATA": "Données visualisées",
+        "NOT_SORTED": "Cliquez sur l'en-tête d'une colonne pour trier les données."
     },
     "BULLETIN": {
         "OPTIONS": "Possibilités de visualisation",
@@ -133,5 +138,9 @@
         "NOTICE_CANCEL": "Annuler",
         "NOTICE_DOWNLOAD": "Download",
         "NOTICE_WARNING": "Accepter conditions d'utilisation"
+    },
+    "ERROR_HANDLING": {
+        "TITLE": "",
+        "MESSAGE": ""
     }
 }
