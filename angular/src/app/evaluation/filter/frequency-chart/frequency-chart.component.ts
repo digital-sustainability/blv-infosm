@@ -6,6 +6,7 @@ import { Translations } from '../../../shared/models/translations.model';
 import { Frequency } from '../../../shared/models/frequency.model';
 import { get, countBy, mapKeys, uniqBy, orderBy } from 'lodash';
 import { HighchartService } from 'src/app/shared/highchart.service';
+import {  NotificationService } from '../../../shared/notification.service';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 
@@ -26,6 +27,7 @@ export class FrequencyChartComponent implements OnInit, OnDestroy {
     public translate: TranslateService,
     private _distributeDataServie: DistributeDataService,
     private _highChartService: HighchartService,
+    private _notification: NotificationService,
   ) { }
 
   // TODO: Enforce typing
@@ -44,7 +46,7 @@ export class FrequencyChartComponent implements OnInit, OnDestroy {
           );
         }
       },
-      err => console.log(err)
+      err => this._notification.errorMessage(err.statusText + '<br>' + err.message , err.name)
     );
   }
 

@@ -74,7 +74,7 @@
               </div>
             </form>
             <button style="height:35px; margin-top: 15px" class="btn btn-dark" type="submit"
-              (click)="onGetFromToDates()">{{'FILTER.FILTER_ACTION' | translate}}
+              (click)="onGetFromToDates(from, to)">{{'FILTER.FILTER_ACTION' | translate}}
             </button>
           </div>
         </div>
@@ -172,8 +172,11 @@
   </div>
 </ng-template>
 
-<div class="mat-elevation-z8" style="margin:5%">
-  <mat-table class="mat-elevation-z8" [dataSource]="dataSource" matSort>
+<div class="table">
+  <p *ngIf="sorted">{{ 'EVAL.VISU_DATA' | translate }} <i>{{ sortDirection }}</i> {{ 'EVAL.ORDER_BY' | translate }}: <i>{{ sortItem }}</i></p>
+  <p *ngIf="!sorted">{{  'EVAL.NOT_SORTED' | translate }}</p>
+<div class="mat-elevation-z8" style="margin:5% 5%; margin-top:1%">
+  <mat-table class="mat-elevation-z8" [dataSource]="dataSource" matSort (matSortChange)="getSortItemAndOrder($event)">
     <ng-container matColumnDef="diagnosis_date">
       <mat-header-cell *matHeaderCellDef mat-sort-header><strong>{{ 'EVAL.DIAGNOSIS_DATE' | translate }}
         </strong></mat-header-cell>
@@ -183,7 +186,7 @@
     <ng-container matColumnDef="canton">
       <mat-header-cell *matHeaderCellDef mat-sort-header><strong>{{ 'EVAL.CANTON' | translate }}</strong>
       </mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{element.canton}} </mat-cell>
+      <mat-cell *matCellDef="let element">{{element.canton}} </mat-cell>
     </ng-container>
 
     <ng-container matColumnDef="munic">
@@ -193,14 +196,14 @@
     </ng-container>
 
 
-    <ng-container matColumnDef="epidemic">
+    <ng-container matColumnDef="epidemic_group">
       <mat-header-cell *matHeaderCellDef mat-sort-header><strong>{{ 'EVAL.PEST_GROUP' | translate }}
         </strong></mat-header-cell>
       <mat-cell *matCellDef="let element"> {{element.epidemic_group}} </mat-cell>
     </ng-container>
 
 
-    <ng-container matColumnDef="epidemic_group">
+    <ng-container matColumnDef="epidemic">
       <mat-header-cell *matHeaderCellDef mat-sort-header><strong>{{ 'EVAL.PEST' | translate }}</strong>
       </mat-header-cell>
       <mat-cell *matCellDef="let element"> {{element.epidemic}} </mat-cell>
@@ -218,4 +221,5 @@
   </mat-table>
 
   <mat-paginator [pageSize]="5" [hidePageSize]="true" showFirstLastButtons></mat-paginator>
+</div>
 </div>

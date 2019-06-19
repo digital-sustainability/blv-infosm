@@ -2,6 +2,12 @@
 
 @import "~@ng-select/ng-select/themes/default.theme.css";
 
+@import '~ngx-toastr/toastr.css'; 
+.toast-container .ngx-toastr {
+  background-color: #F7001D !important;
+}
+
+
 html, body {
   margin: 0;
 }

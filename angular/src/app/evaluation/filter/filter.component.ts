@@ -4,16 +4,19 @@ import { Report } from '../../shared/models/report.model';
 import { NgbDate } from '../../shared/models/ngb-date.model';
 import { LanguageService } from 'src/app/shared/language.service';
 import { Subscription } from 'rxjs';
-import { MatPaginator, MatTableDataSource, MatSort } from '@angular/material';
+import { MatPaginator, MatTableDataSource, MatSort, MatSortable } from '@angular/material';
 import { ActivatedRoute, Router } from '@angular/router';
 import { SparqlDataService } from 'src/app/shared/sparql-data.service';
 import { DistributeDataService } from 'src/app/shared/distribute-data.service';
 import { TranslateService } from '@ngx-translate/core';
+import { NotificationService } from '../../shared/notification.service';
 import { remove, uniq, map } from 'lodash';
-import { NgbDatepickerConfig, NgbDateParserFormatter } from '@ng-bootstrap/ng-bootstrap';
-import {  NgbDateCHFormatter } from '../../shared/formatters/ngb-ch-date-formatter';
+import { NgbDatepickerConfig, NgbDateParserFormatter, NgbDatepicker } from '@ng-bootstrap/ng-bootstrap';
+import { NgbDateCHFormatter } from '../../shared/formatters/ngb-ch-date-formatter';
 import { Translations } from '../../shared/models/translations.model';
+import { FilterConfig } from '../../shared/models/filterConfig.model';
 import * as moment from 'moment';
+import dayjs from 'dayjs';
 declare let $: any;
 
 @Component({
@@ -25,16 +28,14 @@ declare let $: any;
 
 export class FilterComponent implements OnInit, OnDestroy {
 
-  @ViewChild('fromPicker') datepickerFrom;
-  @ViewChild('toPicker') datepickerTo;
+  @ViewChild('fromPicker') datepickerFrom: NgbDatepicker;
+  @ViewChild('toPicker') datepickerTo: NgbDatepicker;
+  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatSort) sort: MatSort;
 
   from: NgbDate;
   to: NgbDate;
 
-  @ViewChild(MatPaginator) paginator: MatPaginator;
-  @ViewChild(MatSort) sort: MatSort;
-
-  data: Report[];
   private _translationSub: Subscription;
   private _paramSub: Subscription;
   private _langSub: Subscription;
@@ -47,7 +48,8 @@ export class FilterComponent implements OnInit, OnDestroy {
 
   trans: Translations;
 
-  // arrays for filter information
+  // arrays for initial finning of input fields
+  // NOTE: also values that never occured are included (e.g. all the communities of Switzerland)
   cantons: String[];
   epidemics: String[];
   epidemics_group: String[];
@@ -55,11 +57,13 @@ export class FilterComponent implements OnInit, OnDestroy {
   animal_species: String[];
   animal_group: String[];
 
+  data: Report[];
   displayedColumns: string[] = ['diagnosis_date', 'canton', 'munic', 'epidemic', 'epidemic_group', 'animal_species'];
-  dataSource: any;
+  dataSource: MatTableDataSource<[]>;
+  // TODO: TYPES!!!
   beautifiedData: any[] = [];
   filteredData: any[] = [];
-  filterConfig = {
+  filterConfig: FilterConfig = {
     canton: [],
     munic: [],
     epidemic_group: [],
@@ -67,6 +71,9 @@ export class FilterComponent implements OnInit, OnDestroy {
     animal_group: [],
     animal_species: []
   };
+  sortItem: string;
+  sortDirection: string;
+  sorted: boolean;
 
   constructor(
     private _sparqlDataService: SparqlDataService,
@@ -74,6 +81,7 @@ export class FilterComponent implements OnInit, OnDestroy {
     private _distributeDataService: DistributeDataService,
     private _route: ActivatedRoute,
     private _router: Router,
+    private _notification: NotificationService,
     public translateService: TranslateService,
     public ngbDatepickerConfig: NgbDatepickerConfig
   ) { }
@@ -91,7 +99,7 @@ export class FilterComponent implements OnInit, OnDestroy {
           const lang = this.translateService.currentLang;
           console.log(lang)
           const from = moment().subtract(1, 'y').format('YYYY-MM-DD');
-          const to = moment().format('YYYY-MM-DD');
+          const to = dayjs().format('YYYY-MM-DD');
           this.updateRouteParams({
             lang: lang,
             from: from,
@@ -118,6 +126,7 @@ export class FilterComponent implements OnInit, OnDestroy {
         }
       }, err => {
         // TODO: Imporve error handling
+        this._notification.errorMessage(err.statusText + '<br>' + err.message , err.name);
         console.log(err);
       }
     );
@@ -130,21 +139,26 @@ export class FilterComponent implements OnInit, OnDestroy {
       day: today.getDate() };
     this.ngbDatepickerConfig.outsideDays = 'hidden';
 
-    this.getTranslationsForErrorMessages();
+    this.getTranslations();
+
+    // set the initial state of the sorted table
+    this.sortItem = this.trans['EVAL.DIAGNOSIS_DATE'];
+    this.sortDirection = 'asc';
+    this.sorted = true;
   }
 
   onChangeTab(route: string): void {
     this._router.navigate(['evaluation' + route], { queryParamsHandling: 'merge' });
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this._langSub.unsubscribe();
     this._dataSub.unsubscribe();
     this._paramSub.unsubscribe();
   }
 
   // updates every time when the user adds an entry in the filter
-  onAdd($event, filterType: string) {
+  onAdd($event, filterType: string): void {
     let selectedItem = [];
     selectedItem = $event.split();
     if (this.filterConfig.hasOwnProperty(`${filterType}`)) {
@@ -154,7 +168,7 @@ export class FilterComponent implements OnInit, OnDestroy {
   }
 
   // updates every time when the user removes an entry in the filter
-  onRemove($event, filterType: string) {
+  onRemove($event, filterType: string): void {
     if (this.filterConfig.hasOwnProperty(`${filterType}`)) {
       this.filterConfig[`${filterType}`] = remove(this.filterConfig[`${filterType}`], (item: string) => {
         return item !== $event.value;
@@ -164,7 +178,7 @@ export class FilterComponent implements OnInit, OnDestroy {
   }
 
 
-  onClear($event: {}, filterType: string) {
+  onClear($event: {}, filterType: string): void {
     if (this.filterConfig.hasOwnProperty(`${filterType}`)) {
       this.filterConfig[filterType] = [];
     }
@@ -172,20 +186,20 @@ export class FilterComponent implements OnInit, OnDestroy {
   }
 
   // changes the date based on radio buttons
-  onChangeDate(option: string) {
+  onChangeDate(option: string): void {
     // TODO: One year too much because we don't have all the data
-    this._filter.to = moment().subtract(1, 'y').format('YYYY-MM-DD');
+    this._filter.to = dayjs().subtract(1, 'y').format('YYYY-MM-DD');
     switch (option) {
       case ('week'):
-        this._filter.from = moment().subtract(7, 'd').format('YYYY-MM-DD'); break;
+        this._filter.from = dayjs().subtract(7, 'd').format('YYYY-MM-DD'); break;
       case ('month'):
-        this._filter.from = moment().subtract(1, 'm').format('YYYY-MM-DD'); break;
+        this._filter.from = dayjs().subtract(1, 'm').format('YYYY-MM-DD'); break;
       case ('year'): // TODO: One year too much because we don't have all the data
-        this._filter.from = moment().subtract(2, 'y').format('YYYY-MM-DD'); break; 
+        this._filter.from = dayjs().subtract(2, 'y').format('YYYY-MM-DD'); break; 
       case ('threeYears'):
-        this._filter.from = moment().subtract(3, 'y').format('YYYY-MM-DD'); break;
+        this._filter.from = dayjs().subtract(3, 'y').format('YYYY-MM-DD'); break;
       case ('whole'):
-        this._filter.from = moment('1991-01-15').format('YYYY-MM-DD'); break;
+        this._filter.from = dayjs('1991-01-15').format('YYYY-MM-DD'); break;
     }
     // Subscription to params will update the data. No need to call getList()
     this.updateRouteParams({
@@ -194,16 +208,16 @@ export class FilterComponent implements OnInit, OnDestroy {
     });
   }
 
-  onGetFromToDates() {
-    // TODO: Change implementation JQuery -> Angular
-    const fromdate = this.retransformDate(this.datepickerFrom._inputValue);
-    const todate = this.retransformDate(this.datepickerTo._inputValue);
-    console.log(fromdate, todate)
-    const dateOfFirstEntry = moment('1991-01-15').format('YYYY-MM-DD');
-    const today = moment().format('YYYY-MM-DD');
+  // changes the date based on the datepickers
+  onGetFromToDates(from: NgbDate, to: NgbDate): void {
+    const fromdate =  dayjs(from.year + '-' + from.month + '-' + from.day).format('YYYY-MM-DD');
+    const todate = dayjs(to.year + '-' + to.month + '-' + to.day).format('YYYY-MM-DD');
+    console.log(fromdate, todate);
+    const dateOfFirstEntry = dayjs('1991-01-15').format('YYYY-MM-DD');
+    const today = dayjs().format('YYYY-MM-DD');
     this.removeErrors();
-    this.getTranslationsForErrorMessages();
-    if (moment(fromdate).isValid() && moment(todate).isValid() && fromdate.length === 10 && todate.length === 10) {
+    this.getTranslations();
+    if (dayjs(fromdate).isValid() && dayjs(todate).isValid() && fromdate.length === 10 && todate.length === 10) {
       if (fromdate > todate) {
         $('.notValid').after(
           `<p class='err' style='color:red' id='datecompareerror'>${this.trans['EVAL.DATE_WRONG_ORDER']}</p>`
@@ -216,7 +230,7 @@ export class FilterComponent implements OnInit, OnDestroy {
           );
         return;
       }
-      if((moment(fromdate).diff(dateOfFirstEntry)) < 0) {
+      if ((moment(fromdate).diff(dateOfFirstEntry)) < 0) {
         $('.notValid').after(
           `<p class='err' style='color:red' id='datefromerror'>${this.trans['EVAL.DATE_FROM_WRONG_RANGE']}</p>`
           );
@@ -237,7 +251,7 @@ export class FilterComponent implements OnInit, OnDestroy {
       // uncheck all radio buttons since either you search for period of for specific dates
       $('.radio').prop('checked', false);
     } else {
-      if ( !(moment(fromdate).isValid()) || !(moment(todate).isValid()) ) {
+      if ( !(dayjs(fromdate).isValid()) || !(dayjs(todate).isValid()) ) {
         $('.notValid').after(
           `<p class='err' style='color:red' id='dateformaterror'>${this.trans['EVAL.DATE_WRONG_FORMAT']}</p>`
           );
@@ -245,13 +259,31 @@ export class FilterComponent implements OnInit, OnDestroy {
     }
   }
 
-  getTranslationsForErrorMessages(): void {
+  removeErrors(): void {
+    $('#dateformaterror').remove();
+    $('#datecompareerror').remove();
+    $('#dateuniterror').remove();
+    $('#datefromerror').remove();
+    $('#datetoerror').remove();
+  }
+
+  getTranslations(): void {
     this._translationSub = this.translateService.get([
       'EVAL.DATE_WRONG_ORDER',
       'EVAL.DATE_WRONG_FORMAT',
       'EVAL.DATE_TOO_SMALL',
       'EVAL.DATE_FROM_WRONG_RANGE',
-      'EVAL.DATE_TO_WRONG_RANGE'
+      'EVAL.DATE_TO_WRONG_RANGE',
+      'EVAL.ORDER_DESCENDING',
+      'EVAL.ORDER_ASCENDING',
+      'EVAL.ORDER_BY',
+      'EVAL.VISU_DATA',
+      'EVAL.CANTON',
+      'EVAL.MUNICIPALITY',
+      'EVAL.PEST',
+      'EVAL.PEST_GROUP',
+      'EVAL.ANIMAL_SPECIES',
+      'EVAL.DIAGNOSIS_DATE'
     ]).subscribe(
       texts => {
         this.trans = texts;
@@ -263,44 +295,57 @@ export class FilterComponent implements OnInit, OnDestroy {
     return date.toString().split('.').reverse().join("-");
   }
 
-  removeErrors() {
-    $('#dateformaterror').remove();
-    $('#datecompareerror').remove();
-    $('#dateuniterror').remove();
-    $('#datefromerror').remove();
-    $('#datetoerror').remove();
-  }
-
   private getList(lang: string, from: string | Date, to: string | Date): void {
     this._dataSub = this._sparqlDataService.getReports(lang, from, to).subscribe(
       data => {
         this.beautifiedData = [];
         this.transformData(data, false);
-
         this.filteredData = this.filterDataObjectBasedOnEventData(this.beautifiedData, this.filterConfig);
         this._distributeDataService.updateData(this.filteredData, from, to);
-
         this.extractFilterParts(data, this.filteredData);
-
-        this.dataSource = new MatTableDataSource<any>(this.filteredData);
-        this.dataSource.paginator = this.paginator;
-        this.dataSource.sort = this.sort;
+        this.constructTable(this.filteredData);
         // Set `from` and `to` for datepicker to match the current date selection
         this.from = this.transformDate(from);
         this.to = this.transformDate(to);
         // console.log('RAW', data);
         // console.log('BEAUTFIED', this.beautifiedData);
         console.log('FILTERED', this.filteredData);
+        this.getTranslations();
       }, err => {
         console.log(err);
+        this._notification.errorMessage(err.statusText + '<br>' + err.message , err.name);
         // TODO: Imporve error handling
       });
+  }
+
+  getSortItemAndOrder($event: Object): void {
+    this.getTranslations();
+    const column = $event['active'];
+    const direction = $event['direction'];
+    if (direction === 'asc') {
+      this.sortDirection = this.trans['EVAL.ORDER_ASCENDING']; 
+      this.sorted = true;
+    } else if (direction === 'desc') {
+      this.sortDirection = this.trans['EVAL.ORDER_DESCENDING']; 
+      this.sorted = true;
+    } else {
+      this.sorted= false;
+      return;
+    }
+    switch (column) {
+      case 'canton': this.sortItem = this.trans['EVAL.CANTON']; break;
+      case 'munic': this.sortItem = this.trans['EVAL.MUNICIPALITY']; break;
+      case 'epidemic': this.sortItem =this.trans['EVAL.PEST']; break;
+      case 'epidemic_group': this.sortItem = this.trans['EVAL.PEST_GROUP']; break;
+      case 'animal_species': this.sortItem = this.trans['EVAL.ANIMAL_SPECIES']; break;
+      default : this.sortItem = this.trans['EVAL.DIAGNOSIS_DATE'];
+    }
   }
 
   // transforms the data object properly to use it for the table,
   // and beatifies the data that we will filter
   // TODO: Replace REGEX with real value from query
-  private transformData(data: Object, originalData = false) {
+  private transformData(data: any[], originalData = false) {
     for (const element in data) {
       if (data.hasOwnProperty(element)) {
         this.beautifiedData.push({
@@ -333,6 +378,16 @@ export class FilterComponent implements OnInit, OnDestroy {
         // queryParamsHandling: 'merge', // remove to replace all query params by provided
         relativeTo: this._route // stay on current route
       });
+  }
+
+  private constructTable(filteredData: any[]): void {
+    this.dataSource = new MatTableDataSource<any>(filteredData);
+    this.dataSource.paginator = this.paginator;
+    this.sort.sort(<MatSortable>{
+      id: 'diagnosis_date', 
+      start: 'desc'
+    });
+    this.dataSource.sort = this.sort;
   }
 
   // extracts all the unique strings for every filter
@@ -369,7 +424,7 @@ export class FilterComponent implements OnInit, OnDestroy {
 
   // filters the data object based on the selected entries from
   // the user in the currentFilter array
-  // TODO: check function when multiple filters selected, at the moment
+  // TODO: check function when multiple filters selected, at the dayjs
   // every entry of the currentFilter is filtered separately
   private filterDataObjectBasedOnEventData(data: Report[], filterObject) {
     const filteredData = [];
@@ -410,7 +465,7 @@ export class FilterComponent implements OnInit, OnDestroy {
     return filteredData;
   }
 
-  private checkFilter(type: string, compare: string, filterObject) {
+  private checkFilter(type: string, compare: string, filterObject): boolean {
     return (filterObject[type].length !== 0 && filterObject[type].includes(compare)) || filterObject[type].length === 0;
   }
 

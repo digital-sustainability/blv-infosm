@@ -30,7 +30,7 @@
     "SHOW_MUNICS": "Gemeinden darstellen",
     "SHOW_ANIMALS": "Tierarten darstellen",
     "SHOW_EPIDEMICS": "Seuchen darstellen",
-    "SHOW_ANIMALS_GROUPS": "Tiergruppen darstellen",
+    "SHOW_ANIMAL_GROUPS": "Tiergruppen darstellen",
     "SHOW_EPIDEMIC_GROUPS": "Seuchengruppen darstellen",
     "WEEK_LABEL": "Woche",
     "MONTH_LABEL": "Monat",
@@ -55,7 +55,12 @@
     "DATE_FROM_WRONG_RANGE": "Ungültig: Die erste Meldung in unserer Datenbank datiert vom 15-01-1991.",
     "DATE_TO_WRONG_RANGE": "Ungültig: Bitte wählen Sie ein Datum kleiner oder gleich heute.",
     "DATEPICKER_PLACEHOLDER": "TT.MM.JJJJ",
-    "MONTHS": ["Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"]
+    "MONTHS": ["Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"],
+    "ORDER_DESCENDING": "absteigend",
+    "ORDER_ASCENDING": "aufsteigend",
+    "ORDER_BY": "sortiert nach",
+    "VISU_DATA": "Visualisierte Daten",
+    "NOT_SORTED": "Klicken Sie auf die Kopfzeile einer Spalte, um die Daten zu sortieren."
   },
   "BULLETIN": {
     "OPTIONS": "Anzeigeoptionen",
@@ -139,5 +144,9 @@
     "NOTICE_CANCEL": "Abbrechen",
     "NOTICE_DOWNLOAD": "Download",
     "NOTICE_WARNING": "Akzeptieren Sie bitte die Nutzungsbedingungen um den Download zu starten"
+  },
+  "ERROR_HANDLING": {
+    "TITLE": "Fehler: ",
+    "MESSAGE": ""
   }
 }

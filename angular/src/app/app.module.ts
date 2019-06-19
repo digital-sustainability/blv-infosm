@@ -8,7 +8,9 @@ import { ChartModule } from 'angular-highcharts';
 import { AngularFontAwesomeModule } from 'angular-font-awesome';
 import { MatTableModule } from '@angular/material';
 import { MatPaginatorModule } from '@angular/material/paginator';
-import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+// import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { ToastrModule } from 'ngx-toastr';   
 import { MatSortModule} from '@angular/material/sort';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { NgSelectModule } from '@ng-select/ng-select';
@@ -41,6 +43,8 @@ import { DatePickerI18nService } from './shared/date-picker-i18n.service';
 import { HighchartService } from './shared/highchart.service';
 import { ParamService } from './shared/param.service';
 import { ChDate } from './shared/pipes/ch-date.pipe';
+import { NotificationService } from './shared/notification.service';
+
 
 @NgModule({
   declarations: [
@@ -71,7 +75,7 @@ import { ChDate } from './shared/pipes/ch-date.pipe';
     AngularFontAwesomeModule,
     MatTableModule,
     MatPaginatorModule,
-    NoopAnimationsModule,
+    //NoopAnimationsModule,
     MatSortModule,
     MatTooltipModule,
     NgbModule,
@@ -82,6 +86,12 @@ import { ChDate } from './shared/pipes/ch-date.pipe';
         deps: [HttpClient]
       }
     }),
+    BrowserAnimationsModule,
+    ToastrModule.forRoot({
+      disableTimeOut: true,
+      positionClass:'toast-center-center',   
+      enableHtml: true 
+    })
   ],
   providers: [
     SparqlDataService,
@@ -96,7 +106,8 @@ import { ChDate } from './shared/pipes/ch-date.pipe';
     {
       provide: NgbDatepickerI18n,
       useClass: DatePickerI18nService
-    }
+    },
+    NotificationService
   ],
   schemas: [
     CUSTOM_ELEMENTS_SCHEMA

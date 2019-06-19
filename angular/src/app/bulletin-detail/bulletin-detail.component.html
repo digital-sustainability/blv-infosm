@@ -1,5 +1,4 @@
 <div>
-  <!-- TODO: Add back icon -->
   <button class="btn btn-primary m-3" (click)="onGoBack()">{{ 'BULLETIN-DETAIL.BACK' | translate }}</button>
 </div>
 
@@ -11,10 +10,7 @@
 
 <div class="mat-elevation-z8" style="margin-left:2%; margin-right:2%">
   <mat-table class="mat-elevation-z8" [dataSource]="dataSource" matSort>
-    <!-- <ng-container matColumnDef="diagnose_datum">
-      <mat-header-cell *matHeaderCellDef mat-sort-header> <strong>Diagnosedatum</strong></mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{element.diagnose_datum}} </mat-cell>
-    </ng-container> -->
+ 
 
     <ng-container matColumnDef="kanton">
       <mat-header-cell *matHeaderCellDef mat-sort-header> <strong>Kanton</strong> </mat-header-cell>

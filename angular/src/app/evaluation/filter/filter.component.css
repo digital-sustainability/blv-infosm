@@ -93,3 +93,13 @@ i.fa {
 :host /deep/ ngb-datepicker .bg-primary {
   background-color: red !important;
 }
+
+p {
+  margin-left: 5%; 
+  margin-right:5%; 
+  margin-bottom: 0%
+}
+
+.table {
+  margin-top: 3%
+}
