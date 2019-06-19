@@ -52,11 +52,12 @@
                   <span class="input-group-text" id="inputGroup-sizing-default">{{ 'FILTER.FROM' | translate }}</span>
                 </div>
                 <div class="input-group" style="width: 40%">
-                  <input class="form-control" placeholder="{{ 'EVAL.DATEPICKER_PLACEHOLDER' | translate }}" name="from" [(ngModel)]="from" ngbDatepicker
-                    #fromPicker="ngbDatepicker">
+                  <input class="form-control" placeholder="{{ 'EVAL.DATEPICKER_PLACEHOLDER' | translate }}" name="from"
+                    [(ngModel)]="from" ngbDatepicker #fromPicker="ngbDatepicker">
                 </div>
                 <div class="input-group-append" style="height:33.5px;">
-                  <button class="btn btn-outline-secondary calendar" (click)="fromPicker.toggle()" type="button"></button>
+                  <button class="btn btn-outline-secondary calendar" (click)="fromPicker.toggle()"
+                    type="button"></button>
                 </div>
               </div>
             </form>
@@ -66,7 +67,8 @@
                   <span class="input-group-text" id="inputGroup-sizing-default">{{'FILTER.TO' | translate}}&nbsp;</span>
                 </div>
                 <div class="input-group" style="width: 40%">
-                  <input class="form-control" placeholder="{{ 'EVAL.DATEPICKER_PLACEHOLDER' | translate }}" name="to" [(ngModel)]="to" ngbDatepicker #toPicker="ngbDatepicker">
+                  <input class="form-control" placeholder="{{ 'EVAL.DATEPICKER_PLACEHOLDER' | translate }}" name="to"
+                    [(ngModel)]="to" ngbDatepicker #toPicker="ngbDatepicker">
                 </div>
                 <div class="input-group-append" style="height:33.5px;">
                   <button class="btn btn-outline-secondary calendar" (click)="toPicker.toggle()" type="button"></button>
@@ -101,8 +103,7 @@
             <label class="selction-label" for="communities">{{ 'FILTER.FILTER_MUNICS' | translate }}</label>
             <ng-select [items]="communities" notFoundText="{{'FILTER.NO_ENTRIES' | translate}}" [multiple]="true"
               name="communities" placeholder="{{'FILTER.PLACEHOLDER_MUNICIPALITY' | translate}}"
-              (add)="onAdd($event, 'munic')" (remove)="onRemove($event, 'munic')"
-              (clear)="onClear($event, 'munic')">
+              (add)="onAdd($event, 'munic')" (remove)="onRemove($event, 'munic')" (clear)="onClear($event, 'munic')">
             </ng-select>
           </div>
           <!--        epidamic groups and epidemics-->
@@ -149,15 +150,15 @@
 <div style="margin-top: 15px; width:100%" class="row">
   <div class="col-sm-10 col-sm-offset-1">
     <ul class="nav nav-tabs">
-      <li id="frequency">
+      <li class="chart-tab" id="frequency">
         <a data-toggle="tab" (click)="onChangeTab('/frequency')">{{ 'FILTERCHARTS.FREQUENCY' | translate }}
         </a>
       </li>
-      <li id="timeline">
+      <li class="chart-tab" id="timeline">
         <a data-toggle="tab" (click)="onChangeTab('/timeline')">{{ 'FILTERCHARTS.TIMELINE' | translate }}
         </a>
       </li>
-      <li id="map">
+      <li class="chart-tab" id="map">
         <a data-toggle="tab" (click)="onChangeTab('/map')">{{ 'FILTERCHARTS.MAP' | translate }}
         </a>
       </li>
@@ -173,53 +174,58 @@
 </ng-template>
 
 <div class="table">
-  <p *ngIf="sorted">{{ 'EVAL.VISU_DATA' | translate }} <i>{{ sortDirection }}</i> {{ 'EVAL.ORDER_BY' | translate }}: <i>{{ sortItem }}</i></p>
+  <p *ngIf="sorted">{{ 'EVAL.VISU_DATA' | translate }} <i>{{ sortDirection }}</i> {{ 'EVAL.ORDER_BY' | translate }}:
+    <i>{{ sortItem }}</i></p>
   <p *ngIf="!sorted">{{  'EVAL.NOT_SORTED' | translate }}</p>
-<div class="mat-elevation-z8" style="margin:5% 5%; margin-top:1%">
-  <mat-table class="mat-elevation-z8" [dataSource]="dataSource" matSort (matSortChange)="getSortItemAndOrder($event)">
-    <ng-container matColumnDef="diagnosis_date">
-      <mat-header-cell *matHeaderCellDef mat-sort-header><strong>{{ 'EVAL.DIAGNOSIS_DATE' | translate }}
-        </strong></mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{element.diagnosis_date | chDate }} </mat-cell>
-    </ng-container>
+  <div class="mat-elevation-z8" style="margin:5% 5%; margin-top:1%">
+    <mat-table class="mat-elevation-z8" [dataSource]="dataSource" matSort (matSortChange)="getSortItemAndOrder($event)">
+      <ng-container matColumnDef="diagnosis_date">
+        <mat-header-cell *matHeaderCellDef mat-sort-header><strong>{{ 'EVAL.DIAGNOSIS_DATE' | translate }}
+          </strong></mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{ element.diagnosis_date | chDate }} </mat-cell>
+      </ng-container>
 
-    <ng-container matColumnDef="canton">
-      <mat-header-cell *matHeaderCellDef mat-sort-header><strong>{{ 'EVAL.CANTON' | translate }}</strong>
-      </mat-header-cell>
-      <mat-cell *matCellDef="let element">{{element.canton}} </mat-cell>
-    </ng-container>
+      <ng-container matColumnDef="canton">
+        <mat-header-cell *matHeaderCellDef mat-sort-header><strong>{{ 'EVAL.CANTON' | translate }}</strong>
+        </mat-header-cell>
+        <mat-cell *matCellDef="let element">{{ element.canton }} </mat-cell>
+      </ng-container>
 
-    <ng-container matColumnDef="munic">
-      <mat-header-cell *matHeaderCellDef mat-sort-header>
-        <strong>{{ 'EVAL.MUNICIPALITY' | translate }}</strong></mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{element.munic}} </mat-cell>
-    </ng-container>
-
-
-    <ng-container matColumnDef="epidemic_group">
-      <mat-header-cell *matHeaderCellDef mat-sort-header><strong>{{ 'EVAL.PEST_GROUP' | translate }}
-        </strong></mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{element.epidemic_group}} </mat-cell>
-    </ng-container>
+      <ng-container matColumnDef="munic">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>
+          <strong>{{ 'EVAL.MUNICIPALITY' | translate }}</strong></mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{ element.munic }} </mat-cell>
+      </ng-container>
 
 
-    <ng-container matColumnDef="epidemic">
-      <mat-header-cell *matHeaderCellDef mat-sort-header><strong>{{ 'EVAL.PEST' | translate }}</strong>
-      </mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{element.epidemic}} </mat-cell>
-    </ng-container>
+      <ng-container matColumnDef="epidemic_group">
+        <mat-header-cell *matHeaderCellDef mat-sort-header><strong>{{ 'EVAL.PEST_GROUP' | translate }}
+          </strong></mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{ element.epidemic_group }} </mat-cell>
+      </ng-container>
 
-    <ng-container matColumnDef="animal_species">
-      <mat-header-cell *matHeaderCellDef mat-sort-header>
-        <strong>{{ 'EVAL.ANIMAL_SPECIES' | translate }}</strong>
-      </mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{element.animal_species}}</mat-cell>
-    </ng-container>
 
-    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-    <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
-  </mat-table>
+      <ng-container matColumnDef="epidemic">
+        <mat-header-cell *matHeaderCellDef mat-sort-header><strong>{{ 'EVAL.PEST' | translate }}</strong>
+        </mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{ element.epidemic }} </mat-cell>
+      </ng-container>
 
-  <mat-paginator [pageSize]="5" [hidePageSize]="true" showFirstLastButtons></mat-paginator>
-</div>
+      <ng-container matColumnDef="animal_species">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>
+          <strong>{{ 'EVAL.ANIMAL_SPECIES' | translate }}</strong>
+        </mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{ element.animal_species }}</mat-cell>
+      </ng-container>
+
+      <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+    </mat-table>
+
+    <mat-paginator [pageSize]="5" [hidePageSize]="true" showFirstLastButtons></mat-paginator>
+  </div>
+  <div class="clearfix">
+    <small class="pull-right scroll-link"><a class="icon icon--before icon--power"
+        (click)="onScrollUp()">{{ 'GENERAL.GO_UP' | translate }}</a></small>
+  </div>
 </div>

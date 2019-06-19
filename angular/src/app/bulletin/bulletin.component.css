@@ -44,19 +44,19 @@ button.calendar, button.calendar:active {
 }
 
 :host /deep/ ngb-datepicker .ngb-dp-weekday{
-    color: red;
+    color: #DC0018;
   }
     
   :host /deep/ ngb-datepicker .btn-link {
-      color: red !important;
+      color: #DC0018 !important;
   }
   
   :host /deep/ ngb-datepicker .bg-primary {
-    background-color: red !important;
+    background-color: #DC0018 !important;
   }
 
   .noMessages {
-    color:red; 
+    color:#DC0018; 
     text-align: center; 
     margin: 3%; 
     border-style: solid; 

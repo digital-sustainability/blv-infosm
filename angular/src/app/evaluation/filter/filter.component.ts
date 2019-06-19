@@ -295,6 +295,10 @@ export class FilterComponent implements OnInit, OnDestroy {
     return date.toString().split('.').reverse().join("-");
   }
 
+  onScrollUp(): void {
+    window.scrollTo(0, 0);
+  }
+
   private getList(lang: string, from: string | Date, to: string | Date): void {
     this._dataSub = this._sparqlDataService.getReports(lang, from, to).subscribe(
       data => {

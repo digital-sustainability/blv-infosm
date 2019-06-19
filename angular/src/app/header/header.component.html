@@ -4,25 +4,25 @@
       <h2 class="sr-only">Language selection</h2>
       <nav class="nav-lang">
         <ul>
-          <li><a
+          <li class="lang-link"><a
             (click)="onLangChange('de');"
             [ngClass]="this.selectedLang==='de' ? 'active' : 'notActive'"
             lang="de"
             title="Deutsch"
             aria-label="Deutsch">DE</a></li>
-          <li><a
+          <li class="lang-link"><a
             (click)="onLangChange('fr');"
             [ngClass]="this.selectedLang==='fr' ? 'active' : 'notActive'"
             lang="fr"
             title="Français"
             aria-label="Français">FR</a></li>
-          <li><a
+          <li class="lang-link"><a
             (click)="onLangChange('it');"
             [ngClass]="this.selectedLang==='it' ? 'active' : 'notActive'"
             lang="it"
             title="Italiano"
             aria-label="Italiano">IT</a></li>
-          <li><a
+          <li class="lang-link"><a
             (click)="onLangChange('en');"
             [ngClass]="selectedLang==='en' ? 'active' : 'notActive'"
             lang="en"

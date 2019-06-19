@@ -3,7 +3,8 @@
     "BLV": "BLV",
     "BLV_FULL": "Bundesamt für Lebensmittelsicherheit und Veterinärwesen",
     "CONTACT": "Kontakt",
-    "LEGAL_FRAMEWORK": "Rechtliche Grundlagen"
+    "LEGAL_FRAMEWORK": "Rechtliche Grundlagen",
+    "GO_UP": "Zum Seitenanfang"
   },
   "HEADER": {
     "HOME": "Startseite",
@@ -60,7 +61,8 @@
     "ORDER_ASCENDING": "aufsteigend",
     "ORDER_BY": "sortiert nach",
     "VISU_DATA": "Visualisierte Daten",
-    "NOT_SORTED": "Klicken Sie auf die Kopfzeile einer Spalte, um die Daten zu sortieren."
+    "NOT_SORTED": "Klicken Sie auf die Kopfzeile einer Spalte, um die Daten zu sortieren.",
+    "LEGEND" : "Legende für Anzahl Seuchenvorkommnisse"
   },
   "BULLETIN": {
     "OPTIONS": "Anzeigeoptionen",
@@ -90,9 +92,9 @@
     "YOUR_OPTIONS": "Für die Suche in diesem Internet-Angebot stehen folgende Möglichkeiten offen:"
   },
   "FILTERCHARTS": {
-    "FREQUENCY": "Auswertung nach Häufigkeit",
-    "TIMELINE": "Zeitliche Auswertung",
-    "MAP": "Auswertung nach Geografie"
+    "FREQUENCY": "Häufigkeit",
+    "TIMELINE": "Zeitraum",
+    "MAP": "Geografie"
   },
   "FILTER": {
     "FILTER_TIME": "Nach Zeitraum filtern",

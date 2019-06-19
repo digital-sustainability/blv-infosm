@@ -72,6 +72,11 @@
 
     <mat-paginator [pageSize]="10" [hidePageSize]="true" showFirstLastButtons></mat-paginator>
   </div>
+
+  <div class="clearfix">
+    <small class="pull-right scroll-link"><a class="icon icon--before icon--power" (click)="onScrollUp()">{{ 'GENERAL.GO_UP' | translate }}</a></small>
+  </div>
+
 </div>
 <!-- <div id="selectDateSection" style="margin-top: 2%; margin-bottom: 2%">
         <div class="input-group" >

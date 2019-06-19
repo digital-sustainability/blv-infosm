@@ -76,6 +76,7 @@ i.fa {
     color: black;
     background-color: lightgrey;
     border-color: lightgray;
+    cursor: pointer;
 }
 
 .panel-info {
@@ -102,4 +103,8 @@ p {
 
 .table {
   margin-top: 3%
+}
+
+.chart-tab {
+  cursor: pointer;
 }
