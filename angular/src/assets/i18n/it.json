@@ -3,7 +3,8 @@
         "BLV": "USAV",
         "BLV_FULL": "Ufficio federale della sicurezza alimentare e di veterinaria",
         "CONTACT": "Contatto",
-        "LEGAL_FRAMEWORK": "Basi legali"
+        "LEGAL_FRAMEWORK": "Basi legali",
+        "GO_UP": "Inizio pagina"
     },
     "HEADER": {
         "HOME": "Pagina iniziale",
@@ -54,7 +55,8 @@
         "ORDER_ASCENDING": "ascensionale",
         "ORDER_BY": "ordinati per",
         "VISU_DATA": "Dati visualizzati",
-        "NOT_SORTED": "Fare clic sull'intestazione di una colonna per ordinare i dati."
+        "NOT_SORTED": "Fare clic sull'intestazione di una colonna per ordinare i dati.",
+        "LEGENDE": "Legenda numero di episodi di epizoozia"
     },
     "BULLETIN": {
         "OPTIONS": "Opzioni di visualizzazione",
@@ -84,9 +86,9 @@
         "YOUR_OPTIONS": "Su questo sito internet la ricerca di contenuti può essere effettuata attraverso i seguenti canali:"
     },
     "FILTERCHARTS": {
-        "FREQUENCY": "Analisi frequenziale",
-        "TIMELINE": "Analisi temporale",
-        "MAP": "Analisi geografica"
+        "FREQUENCY": "Frequenza",
+        "TIMELINE": "Epoca",
+        "MAP": "Geografica"
     },
     "FILTER": {
         "FILTER_TIME": "Filtrare per periodo",

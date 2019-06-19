@@ -34,4 +34,8 @@ export class GeoDownloadDetailComponent {
     this._router.navigate(['/info']);
   }
 
+  onScrollUp(): void {
+    window.scrollTo(0, 0);
+  }
+
 }

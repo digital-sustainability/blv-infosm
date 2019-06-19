@@ -135,6 +135,10 @@ export class BulletinComponent implements OnInit, OnDestroy {
     this.constructTable(this.bulletinEntries);
   }
 
+  onScrollUp(): void {
+    window.scrollTo(0, 0);
+  }
+
   private checkActualBulletin(selectedDate: string | Date): boolean {
     const today = dayjs(new Date()).subtract(7, 'd').format("YYYY-MM-DD");
     const from =  dayjs(today).day(1).format("YYYY-MM-DD");
@@ -256,6 +260,7 @@ export class BulletinComponent implements OnInit, OnDestroy {
     const d = new Date(date);
     return { year: d.getFullYear(), month: d.getMonth() + 1, day: d.getDate() };
   }
+
 }
 
 // OLD CODE:
