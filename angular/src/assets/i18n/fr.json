@@ -111,7 +111,9 @@
         "FILTER_CANTONS": "Filtrer les cantons",
         "FILTER_MUNICS": "Filtrer les municipalités",
         "FILTER_ANIMALS": "Filtrer les espèces",
-        "FILTER_ANIMAL_GROUPS": "Filtrer les groupes d'animaux"
+        "FILTER_ANIMAL_GROUPS": "Filtrer les groupes d'animaux",
+        "SHOW_NONE": "Effacer tout",
+        "SHOW_ALL": "Sélectionner tout"
     },
     "GEO_DOWNLOAD": {
         "TITLE": "Télécharger les données",

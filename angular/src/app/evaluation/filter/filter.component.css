@@ -103,3 +103,9 @@ p {
 .table {
   margin-top: 3%
 }
+
+.test {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+}

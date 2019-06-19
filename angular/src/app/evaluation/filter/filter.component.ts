@@ -1,5 +1,5 @@
 
-import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, AfterViewChecked } from '@angular/core';
 import { Report } from '../../shared/models/report.model';
 import { NgbDate } from '../../shared/models/ngb-date.model';
 import { InputField} from '../../shared/models/inputfield.model';
@@ -16,6 +16,7 @@ import { NgbDatepickerConfig, NgbDateParserFormatter, NgbDatepicker } from '@ng-
 import { NgbDateCHFormatter } from '../../shared/formatters/ngb-ch-date-formatter';
 import { Translations } from '../../shared/models/translations.model';
 import { FilterConfig } from '../../shared/models/filterConfig.model';
+import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import * as moment from 'moment';
 import dayjs from 'dayjs';
 declare let $: any;
@@ -57,6 +58,13 @@ export class FilterComponent implements OnInit, OnDestroy {
 
   trans: Translations;
 
+  formCant: FormGroup;
+  formMunic: FormGroup;
+  formEpidG: FormGroup;
+  formEpid: FormGroup;
+  formAniG: FormGroup;
+  formAni: FormGroup;
+
   // arrays for initial finning of input fields
   // NOTE: also values that never occured are included (e.g. all the communities of Switzerland)
   allCantons: string[];
@@ -81,7 +89,11 @@ export class FilterComponent implements OnInit, OnDestroy {
   inputEpidemics: InputField[];
   inputAnimalGroups: InputField[];
   inputAnimals: InputField[];
-  
+
+  // booleans to control the logic which part of the filter is displayed first
+  cantonsComminities: boolean = false;
+  epidemicsAndGroups: boolean = false;
+  animalsAndGroups: boolean = false;
 
   data: Report[];
   displayedColumns: string[] = ['diagnosis_date', 'canton', 'munic', 'epidemic', 'epidemic_group', 'animal_species'];
@@ -99,6 +111,8 @@ export class FilterComponent implements OnInit, OnDestroy {
   };
   sortItem: string;
   sortDirection: string;
+  sortAsc: string;
+  sortDesc: string;
   sorted: boolean;
 
   constructor(
@@ -109,7 +123,8 @@ export class FilterComponent implements OnInit, OnDestroy {
     private _router: Router,
     private _notification: NotificationService,
     public translateService: TranslateService,
-    public ngbDatepickerConfig: NgbDatepickerConfig
+    public ngbDatepickerConfig: NgbDatepickerConfig,
+    private fb: FormBuilder
   ) { }
 
   ngOnInit() {
@@ -168,9 +183,17 @@ export class FilterComponent implements OnInit, OnDestroy {
     this.getTranslations();
 
     // set the initial state of the sorted table
-    this.sortItem = this.trans['EVAL.DIAGNOSIS_DATE'];
     this.sortDirection = 'asc';
     this.sorted = true;
+  }
+
+  ngAfterViewInit(): void {
+    this.formCant = this.fb.group({canton: '',});
+    this.formMunic = this.fb.group({munic:'',});
+    this.formEpidG = this.fb.group({epidemicG:""});
+    this.formEpid = this.fb.group({epidemic:''});
+    this.formAniG = this.fb.group({animalG:''});
+    this.formAni = this.fb.group({animal:''});
   }
 
   onChangeTab(route: string): void {
@@ -236,7 +259,14 @@ export class FilterComponent implements OnInit, OnDestroy {
     this.getList(this._filter.lang, this._filter.from, this._filter.to);
   }
 
-  
+  onSelectAll(input: InputField[], formControlName: string, form: FormGroup): void {
+    const selected = input.filter(item => !(item['disabled']));
+    form.get(formControlName).patchValue(selected);
+  }
+
+  onClearAll(formControlName: string, form: FormGroup): void {
+    form.get(formControlName).patchValue([]);
+  }
 
   // transforms the data object properly to use it for the table,
   // and beatifies the data that we will filter
@@ -428,7 +458,7 @@ export class FilterComponent implements OnInit, OnDestroy {
     });
   }
 
-  getTranslations(): void {
+ getTranslations(): void {
     this._translationSub = this.translateService.get([
       'EVAL.DATE_WRONG_ORDER',
       'EVAL.DATE_WRONG_FORMAT',
@@ -446,8 +476,11 @@ export class FilterComponent implements OnInit, OnDestroy {
       'EVAL.ANIMAL_SPECIES',
       'EVAL.DIAGNOSIS_DATE'
     ]).subscribe(
-      texts => {
-        this.trans = texts;
+      async (texts) => {
+        this.trans = await texts;
+        this.sortItem = this.trans['EVAL.DIAGNOSIS_DATE'];
+        this.sortAsc = this.trans['EVAL.ORDER_ASCENDING'];
+        this.sortDesc = this.trans['EVAL.ORDER_DESCENDING']
       }
     );
   }
@@ -461,10 +494,10 @@ export class FilterComponent implements OnInit, OnDestroy {
     const column = $event['active'];
     const direction = $event['direction'];
     if (direction === 'asc') {
-      this.sortDirection = this.trans['EVAL.ORDER_ASCENDING']; 
+      this.sortDirection = this.sortAsc; 
       this.sorted = true;
     } else if (direction === 'desc') {
-      this.sortDirection = this.trans['EVAL.ORDER_DESCENDING']; 
+      this.sortDirection = this.sortDesc; 
       this.sorted = true;
     } else {
       this.sorted= false;
@@ -484,7 +517,6 @@ export class FilterComponent implements OnInit, OnDestroy {
   onGetFromToDates(from: NgbDate, to: NgbDate): void {
     const fromdate =  dayjs(from.year + '-' + from.month + '-' + from.day).format('YYYY-MM-DD');
     const todate = dayjs(to.year + '-' + to.month + '-' + to.day).format('YYYY-MM-DD');
-    console.log(fromdate, todate);
     const dateOfFirstEntry = dayjs('1991-01-15').format('YYYY-MM-DD');
     const today = dayjs().format('YYYY-MM-DD');
     this.removeErrors();
