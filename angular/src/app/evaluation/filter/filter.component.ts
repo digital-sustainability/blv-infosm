@@ -349,7 +349,7 @@ export class FilterComponent implements OnInit, OnDestroy {
   // transforms the data object properly to use it for the table,
   // and beatifies the data that we will filter
   // TODO: Replace REGEX with real value from query
-  private transformData(data: any[], originalData = false) {
+  private transformData(data: any[], originalData = false) { // TODO: Move this to a map function in service. Only one Report implementation
     for (const element in data) {
       if (data.hasOwnProperty(element)) {
         this.beautifiedData.push({

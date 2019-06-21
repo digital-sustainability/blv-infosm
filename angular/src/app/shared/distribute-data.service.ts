@@ -14,7 +14,7 @@ export class DistributeDataService {
 
   constructor() { }
 
-  updateData(data: Report[], from: string | Date, to: string | Date) {
+  updateData(data: Report[], from: string | Date, to: string | Date): void {
     this._dataSrc.next(data);
     this.from = from;
     this.to = to;

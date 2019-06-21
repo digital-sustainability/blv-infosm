@@ -64,6 +64,9 @@ export class TimelineChartComponent implements OnInit, OnDestroy {
     this.dataSub = this._distributeDataService.currentData.subscribe(
       data => {
         if (data) {
+          /**
+           * TODO: Only need for Epidemic group && Animal group
+           */
           this.reports = data;
           this.years = this.extractYears(data);
           // Translate if new data is loaded
