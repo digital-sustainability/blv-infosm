@@ -8,9 +8,8 @@ import { ChartModule } from 'angular-highcharts';
 import { AngularFontAwesomeModule } from 'angular-font-awesome';
 import { MatTableModule } from '@angular/material';
 import { MatPaginatorModule } from '@angular/material/paginator';
-// import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { ToastrModule } from 'ngx-toastr';   
+import { ToastrModule } from 'ngx-toastr';
 import { MatSortModule} from '@angular/material/sort';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { NgSelectModule } from '@ng-select/ng-select';
@@ -27,7 +26,6 @@ import { MapChartComponent } from './evaluation/filter/map-chart/map-chart.compo
 import { ErrorComponent } from './error.component';
 import { FooterComponent } from './footer/footer.component';
 import { BulletinComponent } from './bulletin/bulletin.component';
-import { BulletinDetailComponent } from './bulletin-detail/bulletin-detail.component';
 import { DownloadComponent } from './evaluation/download/download.component';
 import { GeoDownloadComponent } from './info/geo-download/geo-download.component';
 import { GeoDownloadDetailComponent } from './geo-download-detail/geo-download-detail.component';
@@ -59,7 +57,6 @@ import { NotificationService } from './shared/notification.service';
     ErrorComponent,
     FooterComponent,
     BulletinComponent,
-    BulletinDetailComponent,
     DownloadComponent,
     GeoDownloadComponent,
     GeoDownloadDetailComponent,
@@ -75,7 +72,6 @@ import { NotificationService } from './shared/notification.service';
     AngularFontAwesomeModule,
     MatTableModule,
     MatPaginatorModule,
-    //NoopAnimationsModule,
     MatSortModule,
     MatTooltipModule,
     NgbModule,
@@ -89,8 +85,8 @@ import { NotificationService } from './shared/notification.service';
     BrowserAnimationsModule,
     ToastrModule.forRoot({
       disableTimeOut: true,
-      positionClass:'toast-center-center',   
-      enableHtml: true 
+      positionClass: 'toast-center-center',
+      enableHtml: true
     })
   ],
   providers: [
@@ -99,6 +95,7 @@ import { NotificationService } from './shared/notification.service';
     DistributeDataService,
     HighchartService,
     ParamService,
+    NotificationService,
     {
       provide: MatPaginatorIntl,
       useClass: MatPaginatorI18nService,
@@ -107,12 +104,8 @@ import { NotificationService } from './shared/notification.service';
       provide: NgbDatepickerI18n,
       useClass: DatePickerI18nService
     },
-    NotificationService
   ],
-  schemas: [
-    CUSTOM_ELEMENTS_SCHEMA
-],
-
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

@@ -349,8 +349,7 @@ export class TimelineChartComponent implements OnInit, OnDestroy {
     const dates: string[] = [];
     for (const e of data) {
       if (e['diagnosis_date']) {
-        // dates.push(e.diagnose_datum['value']); // TODO: Change interface
-        dates.push(e['diagnosis_date']);
+        dates.push(<string>e['diagnosis_date']);
       }
     }
     return dates;

@@ -4,6 +4,7 @@ import { Report } from '../../shared/models/report.model';
 import { NgbDate } from '../../shared/models/ngb-date.model';
 import { LanguageService } from 'src/app/shared/language.service';
 import { Subscription } from 'rxjs';
+import { map as rxjsmap } from 'rxjs/operators';
 import { MatPaginator, MatTableDataSource, MatSort, MatSortable } from '@angular/material';
 import { ActivatedRoute, Router } from '@angular/router';
 import { SparqlDataService } from 'src/app/shared/sparql-data.service';
@@ -61,7 +62,7 @@ export class FilterComponent implements OnInit, OnDestroy {
   displayedColumns: string[] = ['diagnosis_date', 'canton', 'munic', 'epidemic', 'epidemic_group', 'animal_species'];
   dataSource: MatTableDataSource<[]>;
   // TODO: TYPES!!!
-  beautifiedData: any[] = [];
+  beautifiedData: Report[];
   filteredData: any[] = [];
   filterConfig: FilterConfig = {
     canton: [],
@@ -301,9 +302,21 @@ export class FilterComponent implements OnInit, OnDestroy {
 
   private getList(lang: string, from: string | Date, to: string | Date): void {
     this._dataSub = this._sparqlDataService.getReports(lang, from, to).subscribe(
-      data => {
-        this.beautifiedData = [];
-        this.transformData(data, false);
+      (data: any[]) => {
+        this.beautifiedData = data.map(report => {
+          return {
+            diagnosis_date: report.diagnose_datum.value,
+            canton: report.kanton.value,
+            canton_id: Number(/\d+/.exec(report.canton_id.value)[0]),
+            munic: report.gemeinde.value,
+            munic_id: Number(/\d+/.exec(report.munic_id.value)[0]),
+            epidemic_group: report.seuchen_gruppe.value,
+            epidemic: report.seuche.value,
+            animal_group: report.tier_gruppe.value,
+            animal_species: report.tierart.value
+          } as Report;
+        });
+        // this.transformData(data, false);
         this.filteredData = this.filterDataObjectBasedOnEventData(this.beautifiedData, this.filterConfig);
         this._distributeDataService.updateData(this.filteredData, from, to);
         this.extractFilterParts(data, this.filteredData);
@@ -348,24 +361,23 @@ export class FilterComponent implements OnInit, OnDestroy {
 
   // transforms the data object properly to use it for the table,
   // and beatifies the data that we will filter
-  // TODO: Replace REGEX with real value from query
-  private transformData(data: any[], originalData = false) { // TODO: Move this to a map function in service. Only one Report implementation
-    for (const element in data) {
-      if (data.hasOwnProperty(element)) {
-        this.beautifiedData.push({
-          diagnosis_date: data[element].diagnose_datum.value,
-          canton: data[element].kanton.value,
-          canton_id: Number(/\d+/.exec(data[element].canton_id.value)[0]),
-          munic: data[element].gemeinde.value,
-          munic_id: Number(/\d+/.exec(data[element].munic_id.value)[0]),
-          epidemic_group: data[element].seuchen_gruppe.value,
-          epidemic: data[element].seuche.value,
-          animal_group: data[element].tier_gruppe.value,
-          animal_species: data[element].tierart.value
-        });
-      }
-    }
-  }
+  // private transformData(data: any[], originalData = false) {
+  //   for (const element in data) {
+  //     if (data.hasOwnProperty(element)) {
+  //       this.beautifiedData.push({
+  //         diagnosis_date: data[element].diagnose_datum.value,
+  //         canton: data[element].kanton.value,
+  //         canton_id: Number(/\d+/.exec(data[element].canton_id.value)[0]),
+  //         munic: data[element].gemeinde.value,
+  //         munic_id: Number(/\d+/.exec(data[element].munic_id.value)[0]),
+  //         epidemic_group: data[element].seuchen_gruppe.value,
+  //         epidemic: data[element].seuche.value,
+  //         animal_group: data[element].tier_gruppe.value,
+  //         animal_species: data[element].tierart.value
+  //       });
+  //     }
+  //   }
+  // }
 
   // Update the route without having to reset all other route properties
   // All others stay untouched
@@ -411,20 +423,14 @@ export class FilterComponent implements OnInit, OnDestroy {
   }
 
   private extractSecondHierarchy(keys: string[], firstOrder: string, secondOrder: string) {
+    // TODO: Document && return type
     if (keys.length !== 0) {
-      let items = [];
-      items = this.beautifiedData
-      .filter((el) => keys.includes(el[firstOrder]))
-      .map(obj => obj[secondOrder]);
-      return(items);
-    } else {
-      let items = [];
-      items = this.beautifiedData.map(el => {
-        return el[secondOrder];
-      });
-      return(items);
+      return this.beautifiedData
+        .filter((el) => keys.includes(el[firstOrder]))
+        .map(obj => obj[secondOrder]);
+      }
+      return this.beautifiedData.map(el => el[secondOrder]);
     }
-  }
 
   // filters the data object based on the selected entries from
   // the user in the currentFilter array

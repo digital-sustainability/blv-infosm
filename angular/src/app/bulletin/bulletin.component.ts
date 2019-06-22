@@ -8,7 +8,8 @@ import { LanguageService } from 'src/app/shared/language.service';
 import { NotificationService } from '../shared/notification.service';
 import { Router, ActivatedRoute } from '@angular/router';
 import { NgbDate } from '../shared/models/ngb-date.model';
-import { Subscription} from 'rxjs';
+import { Subscription } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { ParamService } from '../shared/param.service';
 import { NgbDateParserFormatter, NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
 import { NgbDateCHFormatter } from '../shared/formatters/ngb-ch-date-formatter';
@@ -41,15 +42,15 @@ export class BulletinComponent implements OnInit, OnDestroy {
   private _dataSub: Subscription;
   private _paramState: ParamState;
 
-  data: Report[];
+  data: Report[]; // TODO: TYPE!
   model: NgbDateStruct;
-  maxDate : NgbDateStruct;
+  maxDate: NgbDateStruct;
   startDate: NgbDateStruct;
-  displayedCols: string[] = ['diagnose_datum', 'kanton', 'gemeinde', 'seuchen_gruppe', 'seuche', 'tierart', 'anzahl'];
+  displayedCols = ['diagnosis_date', 'canton', 'munic', 'epidemic_group', 'epidemic', 'animal_species', 'count'];
   bulletinNumber: string;
   bulletinEntries: Report[] = [];
   dataS: MatTableDataSource<[]>;
-  actualBulletin: boolean = true;
+  actualBulletin = true;
 
 
   constructor(
@@ -63,11 +64,10 @@ export class BulletinComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit(): void {
-    
     // max possible date is today
-    this.maxDate = this.transformDate(dayjs().day(0).format("YYYY-MM-DD"));
+    this.maxDate = this.transformDate(dayjs().day(0).format('YYYY-MM-DD'));
     // the start date is the actual bulletin from last week
-    this.startDate = this.transformDate(dayjs().subtract(7, 'd').format("YYYY-MM-DD"));
+    this.startDate = this.transformDate(dayjs().subtract(7, 'd').format('YYYY-MM-DD'));
     // start by setting the model of the date picker to the start date
     this.model = this.startDate;
 
@@ -78,7 +78,7 @@ export class BulletinComponent implements OnInit, OnDestroy {
         if (!params['lang'] || !params['from'] || !params['to']) {
           this.updateInput({
             lang: this.translateService.currentLang,
-            from: dayjs().subtract(7, 'd').format("YYYY-MM-DD"),
+            from: dayjs().subtract(7, 'd').format('YYYY-MM-DD'),
             to: dayjs().format('YYYY-MM-DD')
           }, this._paramState);
         // set params and get data accordning to URL input
@@ -111,7 +111,7 @@ export class BulletinComponent implements OnInit, OnDestroy {
           }
         );
       }
-    );    
+    );
   }
 
   ngOnDestroy(): void {
@@ -123,8 +123,8 @@ export class BulletinComponent implements OnInit, OnDestroy {
   updateDatesAndData(model: NgbDate): void {
     const selectedDate = model.year + '-' + model.month + '-' + model.day;
     this.actualBulletin = this.checkActualBulletin(selectedDate);
-    this.fromDate = dayjs(selectedDate, "YYYY-MM-DD").day(1).format("YYYY-MM-DD");
-    this.toDate = dayjs(selectedDate, "YYYY-MM-DD").day(7).format("YYYY-MM-DD");
+    this.fromDate = dayjs(selectedDate, 'YYYY-MM-DD').day(1).format('YYYY-MM-DD');
+    this.toDate = dayjs(selectedDate, 'YYYY-MM-DD').day(7).format('YYYY-MM-DD');
     this.bulletinNumber = this.constructNumber(selectedDate);
     this.updateInput({
       lang: this.translateService.currentLang,
@@ -140,50 +140,51 @@ export class BulletinComponent implements OnInit, OnDestroy {
   }
 
   private checkActualBulletin(selectedDate: string | Date): boolean {
-    const today = dayjs(new Date()).subtract(7, 'd').format("YYYY-MM-DD");
-    const from =  dayjs(today).day(1).format("YYYY-MM-DD");
-    const to = dayjs(today).day(7).format("YYYY-MM-DD");
+    const today = dayjs(new Date()).subtract(7, 'd').format('YYYY-MM-DD');
+    const from =  dayjs(today).day(1).format('YYYY-MM-DD');
+    const to = dayjs(today).day(7).format('YYYY-MM-DD');
     return ( (dayjs(selectedDate).isBefore(to) || dayjs(selectedDate).isSame(to) )
                 && ( dayjs(selectedDate).isAfter(from) ||  dayjs(selectedDate).isSame(from) ) );
   }
 
   private searchEntries(from: string | Date, to: string | Date, data: Report[]): Report[] {
-    let parsedFromDate = this.dateToInt(from);
-    let parsedToDate = this.dateToInt(to);
-    let foundEntriesOfBulletin: Report[] = [];
+    const parsedFromDate = this.dateToInt(from);
+    const parsedToDate = this.dateToInt(to);
+    const foundEntriesOfBulletin: Report[] = [];
     for (const entry of data) {
-      let parsedDateOfEntry = this.dateToInt(entry['diagnose_datum']);
-      if( inRange(parsedDateOfEntry, parsedFromDate, parsedToDate) ) {
-        entry.anzahl = 1;
+      let parsedDateOfEntry = this.dateToInt(entry['diagnosis_date']);
+      if(inRange(parsedDateOfEntry, parsedFromDate, parsedToDate)) {
+        entry.count = 1;
         foundEntriesOfBulletin.push(entry);
-      } 
+      }
     }
     return this.countOccuranceInBulletin(foundEntriesOfBulletin);
   }
 
   private countOccuranceInBulletin(bulletinEntries: Report[]): Report[] {
-    if(!bulletinEntries || bulletinEntries.length === 0) {
+    if (!bulletinEntries || bulletinEntries.length === 0) {
       return [];
     }
     let tmp = bulletinEntries;
     const entriesToRemove = [];
     const countedBulletinEntries: Report[] = [];
-    bulletinEntries.forEach((entry) => {
+    bulletinEntries.forEach(entry => {
       let count = 0;
       tmp.forEach((el) => {
-        if(this.isEquivalentEntry(entry, el)) {
-          if(entry !== el) {
+        if (this.isEquivalentEntry(entry, el)) {
+          if (entry !== el) {
             entriesToRemove.push(el);
-          };
+          }
           count++;
         }
       });
-      entry['anzahl'] = count;
+      entry['count'] = count;
       tmp = tmp.filter((el) => {
         return !entriesToRemove.includes(el);
       });
-      if(!entriesToRemove.includes(entry))
+      if (!entriesToRemove.includes(entry)) {
         countedBulletinEntries.push(entry);
+      }
     });
     return countedBulletinEntries;
   }
@@ -193,14 +194,14 @@ export class BulletinComponent implements OnInit, OnDestroy {
 }
 
   private dateToInt(date: string | Date): number {
-    return parseInt(date.toString().split("-").join(""));
+    return parseInt(date.toString().split('-').join(''));
   }
 
   private constructTable(bulletinEntries: Report[]): void {
     this.dataS = new MatTableDataSource<any>(bulletinEntries);
     this.dataS.paginator = this.paginator;
     this.sort.sort(<MatSortable>{
-      id: 'diagnose_datum', 
+      id: 'diagnosis_date',
       start: 'desc'
     });
     this.dataS.sort = this.sort;
@@ -208,8 +209,22 @@ export class BulletinComponent implements OnInit, OnDestroy {
 
   private getList(lang: string, from: string | Date, to: string | Date): void {
     this._dataSub = this._sparqlDataService.getReports(lang, from, to).subscribe(
-      (data: Report[]) => {
-        this.data = this.beautifyDataObject(data);
+      data => {
+        this.data = this.beautifyDataObject(
+          data.map(report => {
+            return {
+              diagnosis_date: report.diagnose_datum.value,
+              canton: report.kanton.value,
+              canton_id: Number(/\d+/.exec(report.canton_id.value)[0]),
+              munic: report.gemeinde.value,
+              munic_id: Number(/\d+/.exec(report.munic_id.value)[0]),
+              epidemic_group: report.seuchen_gruppe.value,
+              epidemic: report.seuche.value,
+              animal_group: report.tier_gruppe.value,
+              animal_species: report.tierart.value
+            } as Report;
+          })
+        );
         this.updateDatesAndData(this.model);
       }, err => {
         // TODO: Imporve error handling
@@ -225,25 +240,23 @@ export class BulletinComponent implements OnInit, OnDestroy {
     return result;
   }
 
-  // TODO: Enforce typing. Solve the "Report-type-mess"
-  // TODO: Maybe we can increase performance by moving the "clean data" part to the sparql-service
   private beautifyDataObject(data: Report[]): Report[] {
-    const reducedDataObject = [];
-    for (const el in data) {
-      if (data[el]) {
-        reducedDataObject.push({
-          diagnose_datum: data[el].diagnose_datum['value'],
-          kanton: data[el].kanton['value'],
-          gemeinde: data[el].gemeinde['value'],
-          seuche: data[el].seuche['value'],
-          seuchen_gruppe: data[el].seuchen_gruppe['value'],
-          tierart: data[el].tierart['value']
-        });
-      }
-    }
-    return reducedDataObject.sort((a, b) => {
-      const adate = new Date(a['diagnose_datum']);
-      const bdate = new Date(b['diagnose_datum']);
+    // const reducedDataObject = [];
+    // for (const el in data) {
+    //   if (data[el]) {
+    //     reducedDataObject.push({
+    //       diagnose_datum: data[el].diagnose_datum['value'],
+    //       kanton: data[el].kanton['value'],
+    //       gemeinde: data[el].gemeinde['value'],
+    //       seuche: data[el].seuche['value'],
+    //       seuchen_gruppe: data[el].seuchen_gruppe['value'],
+    //       tierart: data[el].tierart['value']
+    //     });
+    //   }
+    // }
+    return data.sort((a, b) => {
+      const adate = new Date(a['diagnosis_date']);
+      const bdate = new Date(b['diagnosis_date']);
       return (adate < bdate) ? -1 : (adate > bdate) ? 1 : 0;
     });
   }
@@ -262,129 +275,3 @@ export class BulletinComponent implements OnInit, OnDestroy {
   }
 
 }
-
-// OLD CODE:
-
-// element_data: any[];
-  // //displayedColumns: string[] = ['number', 'dateFrom', 'dateTo', 'action'];
-  // startIntervals = [];
-  // endIntervals = [];
-  // startOfBulletin = '2008-11-17';
-  // actionString = 'Details anzeigen'; // TODO: i18n
-  // distributedData = {};
-  // details: boolean;
-  // detailData; // TODO: types
-  // metaData = [];
-
-// update the values in the two date-pickers
-        // this.from = this.transformDate(from);
-        // this.to = this.transformDate(to);
-
-        // Prepare data for table
-        // this.element_data = [];
-        // this.transformDataToMaterializeTable();
-        // this.dataSource = new MatTableDataSource<any>(this.element_data);
-        // this.dataSource.paginator = this.paginator;
-        // // change the default ordering of the table
-        // this.sort.sort(<MatSortable>{
-        //   id: 'number', 
-        //   start: 'desc'
-        // });
-        // this.dataSource.sort = this.sort;
-        //this.distributeDataToIntervals();
-        
-   // private transformDataToMaterializeTable(): void {
-  //   for (let i = 0; i <= this.endIntervals.length - 1; i++) {
-  //     this.element_data.push({
-  //       nummer: this.constructNumber(this.startIntervals[i]),
-  //       dateFrom: this.startIntervals[i],
-  //       dateTo: this.endIntervals[i],
-  //       action: this.actionString
-  //     });
-  //   }
-  // }
-
-  // creates two arrays of start and end dates
-  // private splitDataToIntervals(startDate: Date | string, endDate: Date | string) {
-  //   let tmpDate = startDate;
-  //   while (tmpDate <= endDate) {
-  //     this.startIntervals.push(tmpDate);
-  //     this.endIntervals.push(dayjs(tmpDate).add(6, 'day').format('YYYY-MM-DD'));
-  //     tmpDate = dayjs(tmpDate).add(1, 'week').format('YYYY-MM-DD');
-  //   }
-  // }
-
-  // private retransformDate(date: string | Date): string {
-  //   return date.toString().split('.').reverse().join("-");
-  // }
-
-  // distribute the data into the weekly intervals from the table
-  // returns an object key: number(vgl table) and value: array of objects which fall into the weelky interval
-  // private distributeDataToIntervals(): void {
-  //   const res = {};
-  //   let counter = 0;
-  //   for (const o of this.data) {
-  //     if (o['diagnose_datum'] <= this.element_data[counter]['dateTo']) {
-  //       if (!res[this.element_data[counter]['nummer']]) {
-  //         res[this.element_data[counter]['nummer']] = [];
-  //       }
-  //       res[this.element_data[counter]['nummer']].push(o);
-  //     } else {
-  //       while (o['diagnose_datum'] >= this.element_data[counter]['dateTo']) {
-  //         counter++;
-  //         if (o['diagnose_datum'] <= this.element_data[counter]['dateTo']) {
-  //           if (!res[this.element_data[counter]['nummer']]) {
-  //             res[this.element_data[counter]['nummer']] = [];
-  //           }
-  //           res[this.element_data[counter]['nummer']].push(o);
-  //         } else {
-  //           res[this.element_data[counter]['nummer']] = [];
-  //         }
-  //       }
-  //     }
-  //   }
-  //   this.distributedData = res;
-  // }
-
-  // private findNumberIdInDataObject(object: object, id: number) {
-  //   let tmpObj = {};
-  //   if (object.hasOwnProperty(id)) {
-  //     tmpObj = object[id];
-  //     return tmpObj;
-  //   } else {
-  //     console.log(id + ' not found in the object'); // TODO: Handle this error. What happens if no object returned?
-  //   }
-  // }
-
-  // goToDetail(id: number, bulletinFrom: string | Date, bulletinTo: string | Date): void {
-  //   console.log('Hello Detail ID:' + id);
-  //   this.metaData.push([id, bulletinFrom, bulletinTo]);
-  //   this.detailData = this.findNumberIdInDataObject(this.distributedData, id);
-  //   localStorage.setItem('metaData', JSON.stringify(this.metaData));
-  //   localStorage.setItem('detailData', JSON.stringify(this.detailData));
-  //   this._router.navigate([
-  //     'bulletin/detail',
-  //     this._paramState.lang,
-  //     bulletinFrom,
-  //     bulletinTo
-  //   ]);
-  // }
-
-  // getFromToDates(): void {
-  //   this.data = [];
-  //   this.startIntervals = [];
-  //   this.endIntervals = [];
-  //   const from = this.retransformDate(this.datepickerFrom._inputValue);
-  //   const to = this.retransformDate(this.datepickerTo._inputValue);
-  //   this.updateInput({ from: from, to: to }, this._paramState);
-  // }
-
-  // resetDates(): void {
-  //   this.data = [];
-  //   this.startIntervals = [];
-  //   this.endIntervals = [];
-  //   this.updateInput({
-  //     from: dayjs(this.startOfBulletin).format('YYYY-MM-DD'),
-  //     to: dayjs().format('YYYY-MM-DD')
-  //   }, this._paramState);
-  // }
