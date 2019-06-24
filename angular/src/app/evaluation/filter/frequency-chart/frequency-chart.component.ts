@@ -78,7 +78,7 @@ export class FrequencyChartComponent implements OnInit, OnDestroy {
         text: undefined
       },
       xAxis: {
-        categories: this.limitCollection(data, barName).concat([this.trans['EVAL.OTHER']]).map(s => s[0].toUpperCase() + s.slice(1))
+        categories: this.limitCollection(data, barName).concat([this.trans['EVAL.OTHER']])
       },
       yAxis: {
         min: 0,
@@ -123,7 +123,7 @@ export class FrequencyChartComponent implements OnInit, OnDestroy {
           name: this.trans['EVAL.SHOW_ALL_NONE'],
           data: [],
           color: '#ffffff' // Hide dot symbol on backgroud
-        }).map(o => ({ ...o, name: o.name[0].toUpperCase() + o.name.slice(1) })) // Captitalize first letter
+        })
     });
   }
 
