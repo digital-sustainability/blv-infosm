@@ -76,6 +76,7 @@ i.fa {
     color: black;
     background-color: lightgrey;
     border-color: lightgray;
+    cursor: pointer;
 }
 
 .panel-info {
@@ -126,4 +127,8 @@ p {
   background-color: rgba(0,0,0,0.5); 
   z-index: 2; 
   cursor: pointer; 
+}
+
+.chart-tab {
+  cursor: pointer;
 }

@@ -5,6 +5,7 @@ import { NgbDate } from '../../shared/models/ngb-date.model';
 import { InputField } from '../../shared/models/inputfield.model';
 import { LanguageService } from 'src/app/shared/language.service';
 import { Subscription } from 'rxjs';
+import { map as rxjsmap } from 'rxjs/operators';
 import { MatPaginator, MatTableDataSource, MatSort, MatSortable } from '@angular/material';
 import { ActivatedRoute, Router } from '@angular/router';
 import { SparqlDataService } from 'src/app/shared/sparql-data.service';
@@ -129,7 +130,7 @@ export class FilterComponent implements OnInit, OnDestroy {
   displayedColumns: string[] = ['diagnosis_date', 'canton', 'munic', 'epidemic', 'epidemic_group', 'animal_species'];
   dataSource: MatTableDataSource<[]>;
   // TODO: TYPES!!!
-  beautifiedData: any[] = [];
+  beautifiedData: Report[];
   filteredData: any[] = [];
   filterConfig: FilterConfig = {
     canton: { filter: [], hierarchy: 0, position: 0 },
@@ -241,36 +242,36 @@ export class FilterComponent implements OnInit, OnDestroy {
     this._paramSub.unsubscribe();
   }
 
-  private getList(lang: string, from: string | Date, to: string | Date): void {
-    this._dataSub = this._sparqlDataService.getReports(lang, from, to).subscribe(
-      data => {
+  // private getList(lang: string, from: string | Date, to: string | Date): void {
+  //   this._dataSub = this._sparqlDataService.getReports(lang, from, to).subscribe(
+  //     data => {
         
-        this.beautifiedData = [];
-        this.transformData(data);
-        console.log(this.beautifiedData)
-        this.getAllPossibleValues(lang);
+  //       this.beautifiedData = [];
+  //       //this.transformData(data);
+  //       console.log(this.beautifiedData)
+  //       this.getAllPossibleValues(lang);
 
-        this.filteredData = this.filterDataObjectBasedOnEventData(this.beautifiedData, this.filterConfig);
-        this._distributeDataService.updateData(this.filteredData, from, to);
+  //       this.filteredData = this.filterDataObjectBasedOnEventData(this.beautifiedData, this.filterConfig);
+  //       this._distributeDataService.updateData(this.filteredData, from, to);
 
-        this.extractFilterParts(data, this.filteredData);
-        this.noFilter = false;
+  //       this.extractFilterParts(data, this.filteredData);
+  //       this.noFilter = false;
 
 
-        this.constructTable(this.filteredData);
-        // Set `from` and `to` for datepicker to match the current date selection
-        this.from = this.transformDate(from);
-        this.to = this.transformDate(to);
-        // console.log('RAW', data);
-        // console.log('BEAUTFIED', this.beautifiedData);
-        console.log('FILTERED', this.filteredData);
-        this.getTranslations();
-      }, err => {
-        console.log(err);
-        this._notification.errorMessage(err.statusText + '<br>' + err.message, err.name);
-        // TODO: Imporve error handling
-      });
-  }
+  //       this.constructTable(this.filteredData);
+  //       // Set `from` and `to` for datepicker to match the current date selection
+  //       this.from = this.transformDate(from);
+  //       this.to = this.transformDate(to);
+  //       // console.log('RAW', data);
+  //       // console.log('BEAUTFIED', this.beautifiedData);
+  //       console.log('FILTERED', this.filteredData);
+  //       this.getTranslations();
+  //     }, err => {
+  //       console.log(err);
+  //       this._notification.errorMessage(err.statusText + '<br>' + err.message, err.name);
+  //       // TODO: Imporve error handling
+  //     });
+  // }
 
   removeLowerHierarchies(reset: boolean) {
     this.showAlert = false;
@@ -515,23 +516,23 @@ export class FilterComponent implements OnInit, OnDestroy {
   // transforms the data object properly to use it for the table,
   // and beatifies the data that we will filter
   // TODO: Replace REGEX with real value from query
-  private transformData(data: any[], originalData = false) {
-    for (const el in data) {
-      if (data.hasOwnProperty(el)) {
-        this.beautifiedData.push({
-          diagnosis_date: data[el].diagnose_datum.value,
-          canton: data[el].kanton.value,
-          canton_id: Number(/\d+/.exec(data[el].canton_id.value)[0]),
-          munic: data[el].gemeinde.value,
-          munic_id: Number(/\d+/.exec(data[el].munic_id.value)[0]),
-          epidemic_group: data[el].seuchen_gruppe.value,
-          epidemic: data[el].seuche.value,
-          animal_group: data[el].tier_gruppe.value,
-          animal_species: data[el].tierart.value
-        });
-      }
-    }
-  }
+  // private transformData(data: any[], originalData = false) {
+  //   for (const el in data) {
+  //     if (data.hasOwnProperty(el)) {
+  //       this.beautifiedData.push({
+  //         diagnosis_date: data[el].diagnose_datum.value,
+  //         canton: data[el].kanton.value,
+  //         canton_id: Number(/\d+/.exec(data[el].canton_id.value)[0]),
+  //         munic: data[el].gemeinde.value,
+  //         munic_id: Number(/\d+/.exec(data[el].munic_id.value)[0]),
+  //         epidemic_group: data[el].seuchen_gruppe.value,
+  //         epidemic: data[el].seuche.value,
+  //         animal_group: data[el].tier_gruppe.value,
+  //         animal_species: data[el].tierart.value
+  //       });
+  //     }
+  //   }
+  // }
 
   // extracts all the unique strings for every filter
   private extractFilterParts(data: Report[], filteredData) {
@@ -772,29 +773,6 @@ export class FilterComponent implements OnInit, OnDestroy {
     return date.toString().split('.').reverse().join("-");
   }
 
-  async getSortItemAndOrder($event: Object) {
-    await this.getTranslations();
-    const column = $event['active'];
-    const direction = $event['direction'];
-    if (direction === 'asc') {
-      this.sortDirection = this.trans['EVAL.ORDER_ASCENDING'];;
-      this.sorted = true;
-    } else if (direction === 'desc') {
-      this.sortDirection = this.trans['EVAL.ORDER_DESCENDING'];
-      this.sorted = true;
-    } else {
-      this.sorted = false;
-      return;
-    }
-    switch (column) {
-      case 'canton': this.sortItem = this.trans['EVAL.CANTON']; break;
-      case 'munic': this.sortItem = this.trans['EVAL.MUNICIPALITY']; break;
-      case 'epidemic': this.sortItem = this.trans['EVAL.PEST']; break;
-      case 'epidemic_group': this.sortItem = this.trans['EVAL.PEST_GROUP']; break;
-      case 'animal_species': this.sortItem = this.trans['EVAL.ANIMAL_SPECIES']; break;
-      default: this.sortItem = this.trans['EVAL.DIAGNOSIS_DATE'];
-    }
-  }
 
   // changes the date based on the datepickers
   onGetFromToDates(from: NgbDate, to: NgbDate): void {
@@ -873,6 +851,70 @@ export class FilterComponent implements OnInit, OnDestroy {
       }
     );
   }
+  onScrollUp(): void {
+    window.scrollTo(0, 0);
+  }
+
+  private getList(lang: string, from: string | Date, to: string | Date): void {
+    this._dataSub = this._sparqlDataService.getReports(lang, from, to).subscribe(
+      (data: any[]) => {
+        this.beautifiedData = data.map(report => {
+          return {
+            diagnosis_date: report.diagnose_datum.value,
+            canton: report.kanton.value,
+            canton_id: Number(/\d+/.exec(report.canton_id.value)[0]),
+            munic: report.gemeinde.value,
+            munic_id: Number(/\d+/.exec(report.munic_id.value)[0]),
+            epidemic_group: report.seuchen_gruppe.value,
+            epidemic: report.seuche.value,
+            animal_group: report.tier_gruppe.value,
+            animal_species: report.tierart.value
+          } as Report;
+        });
+        this.getAllPossibleValues(lang);
+        // this.transformData(data, false);
+        this.filteredData = this.filterDataObjectBasedOnEventData(this.beautifiedData, this.filterConfig);
+        this._distributeDataService.updateData(this.filteredData, from, to);
+        this.extractFilterParts(data, this.filteredData);
+        this.constructTable(this.filteredData);
+        // Set `from` and `to` for datepicker to match the current date selection
+        this.from = this.transformDate(from);
+        this.to = this.transformDate(to);
+        // console.log('RAW', data);
+        // console.log('BEAUTFIED', this.beautifiedData);
+        console.log('FILTERED', this.filteredData);
+        this.getTranslations();
+      }, err => {
+        console.log(err);
+        this._notification.errorMessage(err.statusText + '<br>' + err.message , err.name);
+        // TODO: Imporve error handling
+      });
+  }
+
+  getSortItemAndOrder($event: Object): void {
+    this.getTranslations();
+    const column = $event['active'];
+    const direction = $event['direction'];
+    if (direction === 'asc') {
+      this.sortDirection = this.trans['EVAL.ORDER_ASCENDING']; 
+      this.sorted = true;
+    } else if (direction === 'desc') {
+      this.sortDirection = this.trans['EVAL.ORDER_DESCENDING']; 
+      this.sorted = true;
+    } else {
+      this.sorted= false;
+      return;
+    }
+    switch (column) {
+      case 'canton': this.sortItem = this.trans['EVAL.CANTON']; break;
+      case 'munic': this.sortItem = this.trans['EVAL.MUNICIPALITY']; break;
+      case 'epidemic': this.sortItem =this.trans['EVAL.PEST']; break;
+      case 'epidemic_group': this.sortItem = this.trans['EVAL.PEST_GROUP']; break;
+      case 'animal_species': this.sortItem = this.trans['EVAL.ANIMAL_SPECIES']; break;
+      default : this.sortItem = this.trans['EVAL.DIAGNOSIS_DATE'];
+    }
+  }
+
 
   private getUniqueMunicipalities(): void {
     this._municSub = this._sparqlDataService.getUniqueMunicipalities().subscribe(
@@ -895,6 +937,15 @@ export class FilterComponent implements OnInit, OnDestroy {
       }
     );
   }
+  // private extractSecondHierarchy(keys: string[], firstOrder: string, secondOrder: string) {
+  //   // TODO: Document && return type
+  //   if (keys.length !== 0) {
+  //     return this.beautifiedData
+  //       .filter((el) => keys.includes(el[firstOrder]))
+  //       .map(obj => obj[secondOrder]);
+  //     }
+  //     return this.beautifiedData.map(el => el[secondOrder]);
+  //   }
 
   private getUniqueEpidemics(lang: string): void {
     this._epidemicsSub = this._sparqlDataService.getUniqueEpidemics(lang).subscribe(

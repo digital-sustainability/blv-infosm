@@ -9,6 +9,7 @@ import { HighchartService } from 'src/app/shared/highchart.service';
 import {  NotificationService } from '../../../shared/notification.service';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
+import { retry } from 'rxjs/operators';
 
 @Component({
   selector: 'app-frequency-chart',
@@ -32,10 +33,17 @@ export class FrequencyChartComponent implements OnInit, OnDestroy {
 
   // TODO: Enforce typing
   ngOnInit() {
+
+  // TODO: Check if all services are unsubscribed on destroy
     this.dataSub = this._distributeDataServie.currentData.subscribe(
-      data => {
+      (data: Report[]) => {
         if (data) {
           this.reports = data;
+          // this.reports = data.filter((d: Report) => {
+            // return {
+              // 'epidemic': d.epidemic,
+            // };
+          // }); // TODO: Map to only relevant data
           this.translationSub = this.translate.get([
             'EVAL.SHOW_ALL_NONE'
           ]).subscribe(
@@ -56,6 +64,7 @@ export class FrequencyChartComponent implements OnInit, OnDestroy {
   }
 
   drawChart(data: Report[], filterTarget: string, filterFn: (d: Report[]) => Frequency[]): void {
+    // TODO: Check if data has changed at all. Only proceed if it did change
     this.frequencyChart = new Chart({
       chart: {
         type: 'column'
@@ -64,7 +73,7 @@ export class FrequencyChartComponent implements OnInit, OnDestroy {
         text: undefined
       },
       xAxis: {
-        categories: this.limitCollection(filterTarget, data).concat(['Other'])
+        categories: this.limitCollection(filterTarget, data).concat(['Other']) // TODO: i18n
       },
       yAxis: {
         min: 0,
@@ -89,13 +98,6 @@ export class FrequencyChartComponent implements OnInit, OnDestroy {
       credits: {
         enabled: false
       },
-      // tooltip: {
-      //   formatter: function () {
-      //     return '<b>' + this.x + '</b><br/>' +
-      //       this.series.name + ': ' + this.y + '<br/>' +
-      //       'Total: ' + this.point.stackTotal;
-      //   }
-      // },
       colors: this._highChartService.getColors(),
       plotOptions: {
         column: {
@@ -127,20 +129,22 @@ export class FrequencyChartComponent implements OnInit, OnDestroy {
   }
 
   private countOccurance(target: string, reports: Report[]): Frequency[] {
-    const result = [];
+    let result = [];
     // countBy: count orrurence in array
     // get(obj, pathToValue, defaultValue): check if property exists
     const count = countBy(reports.map(pest => get(pest, target, 'not defined')));
     mapKeys(count, (value: string, key: number): void => {
-      result.push({
+      result = result.concat({
         name: key,
-        y: value 
+        y: value
       });
     });
     return result;
   }
 
   private extractPestFrequencies = (reports: any): Frequency[] => {
+    console.log('ONCE PLEASE!');
+    console.time('perf');
     const animals = reports.map(r => {
       if (this.limitCollection('epidemic', reports).includes(r.epidemic)) {
         return {
@@ -231,7 +235,7 @@ export class FrequencyChartComponent implements OnInit, OnDestroy {
         data: data
       });
     });
-    // console.log('frequency', result)
+    console.timeEnd('perf');
     return result;
   }
 

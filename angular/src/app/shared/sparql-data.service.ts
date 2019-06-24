@@ -34,7 +34,8 @@ PREFIX schema: <http://schema.org/>
     private http: HttpClient,
     ) { }
 
-  getReports(lang: string, from: string | Date, to: string | Date): Observable<Report[]> {
+  // TODO: Create new sparql-report type
+  getReports(lang: string, from: string | Date, to: string | Date): Observable<any> {
     const url = 'http://ld.zazuko.com/query';
 
     const query = `${this._prefix}
@@ -154,7 +155,11 @@ PREFIX schema: <http://schema.org/>
     return this.http.get<any[]>(this._api + 'getData', { params: params })
   }
 
-  getCantonsWkt(): any {
+
+  getWkt(division): any {
+    if (division !== 'ADM1' && division !== 'ADM3') {
+      division = 'ADM1';
+    }
     // TODO: Maybe reuse if trying to store WKTs in this service. But the service call will have to be done from filter.component.ts
     // const session = sessionStorage.getItem('canton');
     // console.log('i found in session: ', session);
@@ -172,7 +177,7 @@ SELECT * WHERE {
           <https://ld.geo.admin.ch/boundaries/canton/1> dct:hasVersion/dct:issued ?issued.
         }
       }
-	    ?canton <http://www.geonames.org/ontology#featureCode> <http://www.geonames.org/ontology#A.ADM1> ;
+	    ?canton <http://www.geonames.org/ontology#featureCode> <http://www.geonames.org/ontology#A.${division}> ;
       <http://purl.org/dc/terms/hasVersion> ?geomuniVersion .
       ?geomuniVersion <http://purl.org/dc/terms/issued> ?mostRecentYear ;
       <http://www.opengis.net/ont/geosparql#hasGeometry>/<http://www.opengis.net/ont/geosparql#asWKT> ?wkt .

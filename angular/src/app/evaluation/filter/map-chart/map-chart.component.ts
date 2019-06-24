@@ -1,29 +1,30 @@
-import { Component, AfterViewInit } from '@angular/core';
+import { Component, AfterViewInit, OnDestroy } from '@angular/core';
 import { SparqlDataService } from '../../../shared/sparql-data.service';
 import { Report } from '../../../shared/models/report.model';
 import { Subscription } from 'rxjs';
 import { DistributeDataService } from 'src/app/shared/distribute-data.service';
+
+import { click, pointerMove } from 'ol/events/condition.js';
+import { defaults as defaultControls, Attribution } from 'ol/control.js';
+import { fromLonLat } from 'ol/proj';
+import { transformExtent } from 'ol/proj';
+import { Fill, Style, Stroke } from 'ol/style.js';
 
 import OlMap from 'ol/Map';
 import OlXYZ from 'ol/source/XYZ';
 import OlTileLayer from 'ol/layer/Tile';
 import OlVectorLayer from 'ol/layer/Vector';
 import Select from 'ol/interaction/Select.js';
-import { click, pointerMove } from 'ol/events/condition.js';
-import { defaults as defaultControls, Attribution } from 'ol/control.js';
-import WKT from 'ol/format/WKT';
 import OlView from 'ol/View';
-import { fromLonLat } from 'ol/proj';
-import { transformExtent } from 'ol/proj';
-import { Fill, Style, Stroke, opacity } from 'ol/style.js';
-
+import WKT from 'ol/format/WKT';
 import olMap from 'ol/Map';
 import TileLayer from 'ol/layer/Tile';
 import View from 'ol/View';
 import OSM from 'ol/source/OSM.js';
 import Vector from 'ol/source/Vector';
+import Feature from 'ol/Feature';
 
-import { isEqual, has } from 'lodash';
+import { isEqual } from 'lodash';
 
 
 @Component({
@@ -31,18 +32,23 @@ import { isEqual, has } from 'lodash';
   templateUrl: './map-chart.component.html',
   styleUrls: ['./map-chart.component.css']
 })
-export class MapChartComponent implements AfterViewInit {
+export class MapChartComponent implements AfterViewInit, OnDestroy {
 
+  // map height
   height = 600;
   initialized = false;
 
   dataSub: Subscription;
+  wktCantonSub: Subscription;
+  wktMunicSub: Subscription;
   reports: Report[];
 
   map: OlMap;
   source: OlXYZ;
   layer: OlTileLayer;
   view: OlView;
+  // of base shapes
+  opacity = 0.6;
 
   // base style for all shapes
   fill = new Fill();
@@ -53,17 +59,18 @@ export class MapChartComponent implements AfterViewInit {
       width: 1
     })
   });
-  opacity = 0.6;
 
+  // style for the currently selected shape
   selectStyle = new Style({
     fill: new Fill({
-      color: 'rgba(247, 247, 160, 0.6)'
+      // can't display selected shape with opacity, thus using the alpha value of RGBA
+      color: 'rgba(0,0, 0, 0.1)'
     }),
     stroke: new Stroke({
       color: '#333',
       width: 2,
     }),
-  });
+  });3
 
   // select interaction working on "pointermove"
   select = new Select({
@@ -71,26 +78,28 @@ export class MapChartComponent implements AfterViewInit {
     style: this.selectStyle
   });
 
+  // attribution for OSM layer
   attribution = new Attribution({
     collapsible: true
   });
 
   cantonVectorLayer: OlVectorLayer;
   municVectorLayer: OlVectorLayer;
+  // shapes that are currently displayed to the user
   currentLayer: OlVectorLayer;
 
-  // Temp
+  // temp
   area: string;
   countPerShape: number;
 
-
-  styleFn = (feature) => {
+  // function that is passed to each shape in the layer
+  styleFn = (feature: Feature) => {
     this.fill.setColor(this.getColor(feature));
     return this.style;
   }
 
   // TODO: Evt. set style and change it back on un-selections
-  // selectStyleFn = (feature) => {
+  // selectStyleFn = (feature: Feature) => {
   //   this.fill.setColor(this.getColor(feature));
   //   return this.selectStyle;
   // }
@@ -105,11 +114,14 @@ export class MapChartComponent implements AfterViewInit {
       this.initMap();
     }
     this.dataSub = this._distributeDataService.currentData.subscribe(
-      data => {
-        // Only proceed if data is emitted or data has changed (deep comparison)
+      (data: Report[]) => {
+        // only proceed if data is emitted or data has changed (deep comparison)
         if (data.length && !isEqual(this.reports, data)) {
+          // this.reports = data.map(d => {
+          //   return
+          // })
           this.reports = data;
-          // Only call when shapes are loaded or reports have changed
+          // only call when shapes are loaded or reports have changed
           if (this.cantonVectorLayer) {
             this.updateLayer(this.currentLayer);
           }
@@ -119,7 +131,8 @@ export class MapChartComponent implements AfterViewInit {
         if (!this.cantonVectorLayer && !this.initialized) {
           this.initialized = true;
           // load data for canton shapes and simultaniously load for municipalites
-          this._sparqlDataService.getCantonsWkt().subscribe(
+          // ADM1 --> Cantons
+          this.wktCantonSub = this._sparqlDataService.getWkt('ADM1').subscribe(
             // TODO: use RXJS pipe/map
             cantonWkts => {
               /**
@@ -172,8 +185,9 @@ export class MapChartComponent implements AfterViewInit {
           }
 
           // only get munic shapes if none exist
-          if (!this.municVectorLayer) {
-            this._sparqlDataService.getMunicForCanton(2).subscribe(
+          if (!this.municVectorLayer) { // TODO: Close subscription on first()
+            // ADM3 --> Municipalities
+            this.wktMunicSub = this._sparqlDataService.getWkt('ADM3').subscribe(
               municWkts => {
                 this.municVectorLayer = new OlVectorLayer({
                   source: new Vector({
@@ -194,6 +208,12 @@ export class MapChartComponent implements AfterViewInit {
       err => console.log(err)
     );
 
+  }
+
+  ngOnDestroy(): void {
+    this.dataSub.unsubscribe();
+    this.wktCantonSub.unsubscribe();
+    this.wktMunicSub.unsubscribe();
   }
 
   onSwitchLayer(layer: OlVectorLayer): void {
@@ -235,7 +255,7 @@ export class MapChartComponent implements AfterViewInit {
 
 
   // transform format to WKT and in the right projection
-  private createShapes(features: any[], isCanton: boolean): Vector[] { // TODO: type
+  private createShapes(features: Feature[], isCanton: boolean): Vector[] {
     const format = new WKT();
     return features.map(f => {
       const feature = format.readFeature(f.wkt.value);
@@ -252,11 +272,12 @@ export class MapChartComponent implements AfterViewInit {
     });
   }
 
-  private getRelativeColor(percent: number): any {
-    return `hsl(0, 59%, ${(percent).toFixed()}%)`;
-  }
+  // private getRelativeColor(percent: number): any {
+  //   return `hsl(0, 59%, ${(percent).toFixed()}%)`;
+  // }
 
-  private getColor(feature): string {
+  // calculate the color that the shape is supposed to have based on animal diseases per area
+  private getColor(feature: Feature): string {
     const id = feature.getId();
     const cases = this.reports.filter(r => {
       if (feature.get('isCanton')) {
@@ -265,12 +286,15 @@ export class MapChartComponent implements AfterViewInit {
         return id === r.munic_id;
       }
     });
-    if (cases.length === 0) {
-      return 'white';
-    } else {
-      // the canton / munic has mentions
-      return this.getRelativeColor((cases.length * 3) / 10);
-    }
+    const x = cases.length;
+    if (x === 0) return 'white';
+    if (x <= 5) return 'rgb(210, 245, 60)';
+    if (x <= 25) return 'rgb(255, 255, 102)';
+    if (x <= 50) return 'rgb(255, 195, 0)';
+    if (x <= 100) return 'rgb(255, 87, 51, 0.6)';
+    if (x <= 500) return 'rgb(255, 0, 0, 1)';
+    if (x <= 1000) return 'rgb(199, 0, 57, 0.6)';
+    else return 'rgb(88, 24, 69)';
   }
 
 

@@ -64,6 +64,9 @@ export class TimelineChartComponent implements OnInit, OnDestroy {
     this.dataSub = this._distributeDataService.currentData.subscribe(
       data => {
         if (data) {
+          /**
+           * TODO: Only need for Epidemic group && Animal group
+           */
           this.reports = data;
           this.years = this.extractYears(data);
           // Translate if new data is loaded
@@ -346,8 +349,7 @@ export class TimelineChartComponent implements OnInit, OnDestroy {
     const dates: string[] = [];
     for (const e of data) {
       if (e['diagnosis_date']) {
-        // dates.push(e.diagnose_datum['value']); // TODO: Change interface
-        dates.push(e['diagnosis_date']);
+        dates.push(<string>e['diagnosis_date']);
       }
     }
     return dates;

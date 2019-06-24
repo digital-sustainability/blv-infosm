@@ -56,5 +56,15 @@ input[type=radio]:focus,
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 2%
+  padding: 2%;
+}
+
+.scroll-link {
+  margin: 10px 10px 10px 10px;
+  color: #005580;
+  cursor: pointer;
+}
+
+.scroll-link:hover {
+  text-decoration: underline;
 }

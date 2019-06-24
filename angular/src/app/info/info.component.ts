@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 
 @Component({
@@ -6,13 +6,14 @@ import { TranslateService } from '@ngx-translate/core';
   templateUrl: './info.component.html',
   styleUrls: ['./info.component.css']
 })
-export class InfoComponent implements OnInit {
+export class InfoComponent {
 
   constructor(
     public translator: TranslateService,
   ) { }
 
-  ngOnInit() {
+  onScrollUp(): void {
+    window.scrollTo(0, 0);
   }
 
 }

@@ -23,47 +23,47 @@
 
   <div class="mat-elevation-z8" style="margin-left:2%; margin-right:2%">
     <mat-table class="mat-elevation-z8" [dataSource]="dataS" matSort>
-      <ng-container matColumnDef="diagnose_datum">
+      <ng-container matColumnDef="diagnosis_date">
         <mat-header-cell *matHeaderCellDef mat-sort-header> <strong>{{ 'EVAL.DIAGNOSIS_DATE' | translate }}</strong>
         </mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{element.diagnose_datum | chDate }} </mat-cell>
+        <mat-cell *matCellDef="let element"> {{element.diagnosis_date | chDate }} </mat-cell>
       </ng-container>
 
-      <ng-container matColumnDef="kanton">
+      <ng-container matColumnDef="canton">
         <mat-header-cell *matHeaderCellDef mat-sort-header> <strong>{{ 'EVAL.CANTON' | translate }}</strong>
         </mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{element.kanton}} </mat-cell>
+        <mat-cell *matCellDef="let element"> {{element.canton}} </mat-cell>
       </ng-container>
 
-      <ng-container matColumnDef="gemeinde">
+      <ng-container matColumnDef="munic">
         <mat-header-cell *matHeaderCellDef mat-sort-header><strong>{{ 'EVAL.MUNICIPALITY' | translate }}</strong>
         </mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{element.gemeinde}} </mat-cell>
+        <mat-cell *matCellDef="let element"> {{element.munic}} </mat-cell>
       </ng-container>
 
 
-      <ng-container matColumnDef="seuchen_gruppe">
+      <ng-container matColumnDef="epidemic_group">
         <mat-header-cell *matHeaderCellDef mat-sort-header> <strong>{{ 'EVAL.PEST' | translate }}</strong>
         </mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{element.seuche}} </mat-cell>
+        <mat-cell *matCellDef="let element"> {{element.epidemic}} </mat-cell>
       </ng-container>
 
-      <ng-container matColumnDef="seuche">
+      <ng-container matColumnDef="epidemic">
         <mat-header-cell *matHeaderCellDef mat-sort-header> <strong>{{ 'EVAL.PEST_GROUP' | translate }}</strong>
         </mat-header-cell>
-        <mat-cell *matCellDef="let element">{{element.seuchen_gruppe}}</mat-cell>
+        <mat-cell *matCellDef="let element">{{element.epidemic_group}}</mat-cell>
       </ng-container>
 
-      <ng-container matColumnDef="tierart">
+      <ng-container matColumnDef="animal_species">
         <mat-header-cell *matHeaderCellDef mat-sort-header> <strong>{{ 'EVAL.ANIMAL_SPECIES' | translate }}</strong>
         </mat-header-cell>
-        <mat-cell *matCellDef="let element">{{element.tierart}} </mat-cell>
+        <mat-cell *matCellDef="let element">{{element.animal_species}} </mat-cell>
       </ng-container>
 
-      <ng-container matColumnDef="anzahl">
+      <ng-container matColumnDef="count">
         <mat-header-cell *matHeaderCellDef mat-sort-header>
           <strong>{{ 'BULLETIN.NUMBER_OF_NOTICES' | translate}}</strong></mat-header-cell>
-        <mat-cell *matCellDef="let element">{{element.anzahl}}</mat-cell>
+        <mat-cell *matCellDef="let element">{{element.count}}</mat-cell>
       </ng-container>
 
       <mat-header-row *matHeaderRowDef="displayedCols"></mat-header-row>
@@ -72,73 +72,9 @@
 
     <mat-paginator [pageSize]="10" [hidePageSize]="true" showFirstLastButtons></mat-paginator>
   </div>
+
+  <div class="clearfix">
+    <small class="pull-right scroll-link"><a class="icon icon--before icon--power" (click)="onScrollUp()">{{ 'GENERAL.GO_UP' | translate }}</a></small>
+  </div>
+
 </div>
-<!-- <div id="selectDateSection" style="margin-top: 2%; margin-bottom: 2%">
-        <div class="input-group" >
-            <form class="form-inline" >
-                <div class="form-group" >
-                    <div class="input-group-prepend">
-                        <span class="input-group-text" id="inputGroup-sizing-default">von</span>
-                    </div>
-                    <div class="input-group" style="width: 40%">
-                        <input class="form-control" placeholder="{{ 'EVAL.DATEPICKER_PLACEHOLDER' | translate }}" name="from" [(ngModel)]="from"
-                            ngbDatepicker #fromPicker="ngbDatepicker">
-                    </div>
-                    <div class="input-group-append" style="height:33.5px;">
-                        <button class="btn btn-outline-secondary calendar" (click)="fromPicker.toggle()" type="button"></button>
-                    </div>
-                </div>
-            </form>
-
-            <form class="form-inline">
-                <div class="form-group" >
-                    <div class="input-group-prepend">
-                        <span class="input-group-text" id="inputGroup-sizing-default">bis&nbsp;</span>
-                    </div>
-                    <div class="input-group" style="width: 40%">
-                        <input class="form-control" placeholder="{{ 'EVAL.DATEPICKER_PLACEHOLDER' | translate }}" name="to" [(ngModel)]="to" ngbDatepicker
-                            #toPicker="ngbDatepicker">
-                    </div>
-                    <div class="input-group-append" style="height:33.5px;">
-                        <button class="btn btn-outline-secondary calendar" (click)="toPicker.toggle()" type="button"></button>
-                    </div>
-                </div>
-            </form>
-        </div>
-        <button class="btn btn-dark notValid" type="submit" (click)="getFromToDates()" style="margin-right: 3%">Filtern</button>
-        <button class="btn btn-danger notValid" type="submit" (click)="resetDates()">Filter zurücksetzen</button>
-    </div> 
-    
-    <hr>
-    Liste der Bulletins:
-</div>
-
-<div class="mat-elevation-z8" style="margin-left:2%; margin-right: 2%">
-  <mat-table class="mat-elevation-z8" [dataSource]="dataSource" matSort>
-      <ng-container matColumnDef="number">
-          <mat-header-cell *matHeaderCellDef> <strong>Nummer</strong></mat-header-cell>
-          <mat-cell *matCellDef="let element"> {{element.nummer}} </mat-cell>
-      </ng-container>
-
-      <ng-container matColumnDef="dateFrom">
-          <mat-header-cell *matHeaderCellDef mat-sort-header> <strong>Datum von</strong> </mat-header-cell>
-          <mat-cell *matCellDef="let element" > {{element.dateFrom | chDate}} </mat-cell>
-      </ng-container>
-
-      <ng-container matColumnDef="dateTo">
-          <mat-header-cell *matHeaderCellDef mat-sort-header><strong>Datum bis</strong></mat-header-cell>
-          <mat-cell *matCellDef="let element"> {{element.dateTo | chDate}} </mat-cell>
-      </ng-container>
-
-
-      <ng-container matColumnDef="action">
-          <mat-header-cell *matHeaderCellDef > <strong>Aktion</strong></mat-header-cell>
-          <mat-cell *matCellDef="let element" (click)="$event.stopPropagation()"> <button mat-button (click)="goToDetail(element.nummer, element.dateFrom, element.dateTo)">
-            <span class="glyphicon glyphicon-info-sign"></span>  &nbsp;<mat-icon>{{ element.action}}</mat-icon>  </button> </mat-cell>
-      </ng-container>
-
-      <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-      <mat-row *matRowDef="let row; columns: displayedColumns;" ></mat-row>
-  </mat-table>
-
-  <mat-paginator [pageSize]="15" [hidePageSize]="true" showFirstLastButtons></mat-paginator> -->

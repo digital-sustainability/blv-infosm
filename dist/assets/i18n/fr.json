@@ -3,7 +3,8 @@
         "BLV": "OSAV",
         "BLV_FULL": "Office fédéral de la sécurité alimentaire et des affaires vétérinaires",
         "CONTACT": "Contact",
-        "LEGAL_FRAMEWORK": "Informations juridiques"
+        "LEGAL_FRAMEWORK": "Informations juridiques",
+        "GO_UP": "Début de la page"
     },
     "HEADER": {
         "HOME": "Page d'accueil",
@@ -54,7 +55,8 @@
         "ORDER_ASCENDING": "ascendant",
         "ORDER_BY": "trié par",
         "VISU_DATA": "Données visualisées",
-        "NOT_SORTED": "Cliquez sur l'en-tête d'une colonne pour trier les données."
+        "NOT_SORTED": "Cliquez sur l'en-tête d'une colonne pour trier les données.",
+        "LEGEND": "Légende nombre d'incidents liés à l'épidémie"
     },
     "BULLETIN": {
         "OPTIONS": "Possibilités de visualisation",
@@ -84,9 +86,9 @@
         "YOUR_OPTIONS": "Les moyens de recherche suivant sont à votre disposition:"
     },
     "FILTERCHARTS": {
-        "FREQUENCY": "Représentation selon la fréquence",
-        "TIMELINE": "Représentation temporelle",
-        "MAP": "Représentation selon l'emplacement géographique"
+        "FREQUENCY": "Fréquence",
+        "TIMELINE": "Époque",
+        "MAP": "Géographie"
     },
     "FILTER": {
         "FILTER_TIME": "Filtrer par période",

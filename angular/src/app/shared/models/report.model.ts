@@ -1,15 +1,14 @@
-// TODO: Check if needed
 export interface Report {
-    diagnose_datum?: string | Date;
-    diagnosis_date: string;
-    kanton: string;
-    gemeinde: string;
-    getoetet: number;
-    infiziert: string;
-    seuche: string;
-    seuchen_gruppe: string;
-    tierart: string;
+    diagnosis_date: string | Date;
+    canton: string;
+    munic: string;
+    killed: number;
+    infected: string;
+    epidemic_group: string;
+    epidemic: string;
+    animal_group: string;
+    animal_species: string;
     canton_id: number;
     munic_id: number;
-    anzahl: number;
+    count: number;
 }
