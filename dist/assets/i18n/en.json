@@ -56,7 +56,11 @@
         "ORDER_BY": "sorted by",
         "VISU_DATA": "Visualized data",
         "NOT_SORTED": "Click the header of a column to sort the data.",
-        "LEGEND": "Legend for number of disease incidents"
+        "LEGEND": "Legend for number of disease incidents",
+        "OTHER": "Other",
+        "EPIDEMIC_PER_ANIMLAL": "Epidemics per Animal Species",
+        "ANIMLAL_PER_EPIDEMIC": "Animal Species per Epidemic",
+        "NO_DATA": "No data available for this selection."
     },
     "BULLETIN": {
         "OPTIONS": "Display options",
@@ -113,7 +117,10 @@
         "FILTER_CANTONS": "Filter cantons",
         "FILTER_MUNICS": "Filter municipalities",
         "FILTER_ANIMALS": "Filter species",
-        "FILTER_ANIMAL_GROUPS": "Filter animal groups"
+        "FILTER_ANIMAL_GROUPS": "Filter animal groups",
+        "SHOW_NONE": "Clear all",
+        "SHOW_ALL": "Select all",
+        "RESET": "Reset filter"
     },
     "GEO_DOWNLOAD": {
         "TITLE": "Data downlaod",

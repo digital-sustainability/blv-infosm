@@ -56,7 +56,11 @@
         "ORDER_BY": "ordinati per",
         "VISU_DATA": "Dati visualizzati",
         "NOT_SORTED": "Fare clic sull'intestazione di una colonna per ordinare i dati.",
-        "LEGENDE": "Legenda numero di episodi di epizoozia"
+        "LEGENDE": "Legenda numero di episodi di epizoozia",
+        "OTHER": "Altro",
+        "EPIDEMIC_PER_ANIMLAL": "Epidemie per specie animale",
+        "ANIMLAL_PER_EPIDEMIC": "Specie animali per epidemia",
+        "NO_DATA": "Nessun dato disponibile per questa selezione."
     },
     "BULLETIN": {
         "OPTIONS": "Opzioni di visualizzazione",
@@ -113,7 +117,10 @@
         "FILTER_CANTONS": "Filtrare le canton",
         "FILTER_MUNICS": "Filtrare le comuni",
         "FILTER_ANIMALS": "Filtrare le specie animali",
-        "FILTER_ANIMAL_GROUPS": "Filtrare il gruppo di animali"
+        "FILTER_ANIMAL_GROUPS": "Filtrare il gruppo di animali",
+        "SHOW_NONE": "Cancella tutto",
+        "SHOW_ALL": "Seleziona tutti",
+        "RESET": "Azzera filtro"
     },
     "GEO_DOWNLOAD": {
         "TITLE": "Scaricare i dati",

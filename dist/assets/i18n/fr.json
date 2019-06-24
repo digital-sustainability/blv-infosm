@@ -56,7 +56,11 @@
         "ORDER_BY": "trié par",
         "VISU_DATA": "Données visualisées",
         "NOT_SORTED": "Cliquez sur l'en-tête d'une colonne pour trier les données.",
-        "LEGEND": "Légende nombre d'incidents liés à l'épidémie"
+        "LEGEND": "Légende nombre d'incidents liés à l'épidémie",
+        "OTHER": "Autre",
+        "EPIDEMIC_PER_ANIMLAL": "Épidémies par espèce animale",
+        "ANIMLAL_PER_EPIDEMIC": "Espèces animales par épidémie",
+        "NO_DATA": "Aucune donnée disponible pour cette sélection."
     },
     "BULLETIN": {
         "OPTIONS": "Possibilités de visualisation",
@@ -113,7 +117,10 @@
         "FILTER_CANTONS": "Filtrer les cantons",
         "FILTER_MUNICS": "Filtrer les municipalités",
         "FILTER_ANIMALS": "Filtrer les espèces",
-        "FILTER_ANIMAL_GROUPS": "Filtrer les groupes d'animaux"
+        "FILTER_ANIMAL_GROUPS": "Filtrer les groupes d'animaux",
+        "SHOW_NONE": "Effacer tout",
+        "SHOW_ALL": "Sélectionner tout",
+        "RESET": "Réinitialiser le filtre"
     },
     "GEO_DOWNLOAD": {
         "TITLE": "Télécharger les données",

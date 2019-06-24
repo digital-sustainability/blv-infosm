@@ -62,7 +62,11 @@
     "ORDER_BY": "sortiert nach",
     "VISU_DATA": "Visualisierte Daten",
     "NOT_SORTED": "Klicken Sie auf die Kopfzeile einer Spalte, um die Daten zu sortieren.",
-    "LEGEND" : "Legende für Anzahl Seuchenvorkommnisse"
+    "LEGEND" : "Legende für Anzahl Seuchenvorkommnisse",
+    "OTHER": "Sonstige",
+    "EPIDEMIC_PER_ANIMLAL": "Seuchen pro Tierart",
+    "ANIMLAL_PER_EPIDEMIC": "Tierarten pro Seuche",
+    "NO_DATA": "Keine Daten für diese Auswahl vorhanden."
   },
   "BULLETIN": {
     "OPTIONS": "Anzeigeoptionen",
@@ -119,7 +123,10 @@
     "FILTER_CANTONS": "Kantone filtern",
     "FILTER_MUNICS": "Gemeinden filtern",
     "FILTER_ANIMALS": "Tierarten filtern",
-    "FILTER_ANIMAL_GROUPS": "Tiergruppen filtern"
+    "FILTER_ANIMAL_GROUPS": "Tiergruppen filtern",
+    "SHOW_NONE": "Alle löschen",
+    "SHOW_ALL": "Alle auswählen",
+    "RESET": "Filter zurücksetzen"
   },
   "GEO_DOWNLOAD": {
     "TITLE": "Daten herunterladen",
