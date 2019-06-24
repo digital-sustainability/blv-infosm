@@ -9,6 +9,7 @@ import { HighchartService } from 'src/app/shared/highchart.service';
 import {  NotificationService } from '../../../shared/notification.service';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
+import { retry } from 'rxjs/operators';
 
 @Component({
   selector: 'app-frequency-chart',
@@ -35,9 +36,14 @@ export class FrequencyChartComponent implements OnInit, OnDestroy {
 
   // TODO: Check if all services are unsubscribed on destroy
     this.dataSub = this._distributeDataServie.currentData.subscribe(
-      data => {
+      (data: Report[]) => {
         if (data) {
-          this.reports = data; // TODO: Map to only relevant data
+          this.reports = data;
+          // this.reports = data.filter((d: Report) => {
+            // return {
+              // 'epidemic': d.epidemic,
+            // };
+          // }); // TODO: Map to only relevant data
           this.translationSub = this.translate.get([
             'EVAL.SHOW_ALL_NONE'
           ]).subscribe(
