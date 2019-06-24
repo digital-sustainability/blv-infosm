@@ -1,8 +1,29 @@
 export interface FilterConfig {
-    canton: string[],
-    munic: string[],
-    epidemic_group: string[],
-    epidemic: string[],
-    animal_group: string[],
-    animal_species: string[]
+    canton: {
+        filter: string[],
+        hierarchy: number,
+        position?: number
+    },
+    munic: {
+        filter: string[],
+        hierarchy: number
+    },
+    epidemic_group: {
+        filter: string[],
+        hierarchy: number,
+        position?: number
+    },
+    epidemic: {
+        filter: string[],
+        hierarchy: number,
+    },
+    animal_group: {
+        filter: string[],
+        hierarchy: number,
+        position?: number
+    },
+    animal_species: {
+        filter: string[],
+        hierarchy: number
+    },
 }

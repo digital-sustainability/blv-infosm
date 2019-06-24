@@ -1,11 +1,19 @@
 /* You can add global styles to this file, and also import other style files */
 
-@import "~@ng-select/ng-select/themes/default.theme.css";
 
+@import "~@ng-select/ng-select/themes/default.theme.css";
 @import '~ngx-toastr/toastr.css'; 
-.toast-container .ngx-toastr {
-  background-color: #F7001D !important;
+
+
+.ng-select .ng-select-container .ng-value-container {
+  max-height: 50px;
+  overflow-y: scroll;
 }
+
+ .toast-container .ngx-toastr {
+  background-color: #F7001D !important; 
+}
+
 
 
 html, body {

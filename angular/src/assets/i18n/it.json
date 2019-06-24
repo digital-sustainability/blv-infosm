@@ -113,7 +113,8 @@
         "FILTER_ANIMALS": "Filtrare le specie animali",
         "FILTER_ANIMAL_GROUPS": "Filtrare il gruppo di animali",
         "SHOW_NONE": "Cancella tutto",
-        "SHOW_ALL": "Seleziona tutti"
+        "SHOW_ALL": "Seleziona tutti",
+        "RESET": "Azzera filtro"
     },
     "GEO_DOWNLOAD": {
         "TITLE": "Scaricare i dati",

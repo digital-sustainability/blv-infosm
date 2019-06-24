@@ -89,61 +89,88 @@
       <i class="fa fa-fw fa-chevron-right"></i>{{'FILTER.FILTER_BY_CATEGORY' | translate}}
     </div>
     <div class="panel-body">
+
       <div id="filterCategories" class="collapse" style="margin-top: 10px">
         <div class="flex-container">
           <div class="btn-group" style="width:100%">
-            <button type="button" class="btn" id="cantonEntrypoint"
-              (click)="cantonsComminities = true">{{ 'EVAL.CANTON' | translate }}</button>
-            <button type="button" class="btn" id="epidemicEntryPoint"
-              (click)="epidemicsAndGroups = true">{{ 'EVAL.PEST_GROUP' | translate }}</button>
-            <button type="button" class="btn" id="animalEntryPoint"
-              (click)="animalsAndGroups = true">{{ 'DOWNLOAD.ANIMAL_GROUP' | translate }}</button>
+            <button type="button" class="btn btn-dark" id="cantonEntrypoint"
+              (click)="orderItems('where', '#cantonEntrypoint','canton')">{{ 'EVAL.CANTON' | translate }}
+              <span *ngIf="filterConfig.canton.position > 0">({{ filterConfig.canton.position }})</span></button>
+            <button type="button" class="btn btn-dark" id="epidemicEntryPoint"
+              (click)="orderItems('what', '#epidemicEntryPoint', 'epidemic_group')">{{ 'EVAL.PEST_GROUP' | translate }}
+              <span
+                *ngIf="filterConfig.epidemic_group.position > 0">({{ filterConfig.epidemic_group.position }})</span></button>
+            <button type="button" class="btn btn-dark" id="animalEntryPoint"
+              (click)="orderItems('who', '#animalEntryPoint', 'animal_group')">{{ 'DOWNLOAD.ANIMAL_GROUP' | translate }}
+              <span
+                *ngIf="filterConfig.animal_group.position > 0">({{ filterConfig.animal_group.position }})</span></button>
+            <button class="btn btn-danger"
+              (click)="onReset('who','what', 'where')">{{ 'FILTER.RESET' | translate }}</button>
           </div>
           <!-- cantons and communities -->
-          <div *ngIf="cantonsComminities" class="test">
+          <!-- <div *ngIf="cantonsComminities" class="test" id="where"> -->
+          <div class="test" id="where">
             <div class="select-wrapper">
               <div [formGroup]="formCant" novalidate>
                 <label class="selction-label" for="inputCantons">{{ 'FILTER.FILTER_CANTONS' | translate }}</label>
-                <ng-select [items]="inputCantons" notFoundText="{{'FILTER.NO_ENTRIES' | translate}}" [multiple]="true"
-                  name="inputCantons" placeholder="{{'FILTER.PLACEHOLDER_CANTON' | translate}}"
+                <ng-select [items]="inputCantons" [(ngModel)]="selectedCantons"
+                  notFoundText="{{'FILTER.NO_ENTRIES' | translate}}" [multiple]="true" name="inputCantons"
+                  bindLabel="label" placeholder="{{'FILTER.PLACEHOLDER_CANTON' | translate}}"
                   (add)="onAdd($event, 'canton')" (remove)="onRemove($event, 'canton')"
                   (clear)="onClear($event, 'canton')" formControlName="canton">
                   <ng-template ng-header-tmp>
                     <div>
                       <button class="btn btn-link"
                         (click)="onSelectAll(this.inputCantons, 'canton', this.formCant)">{{ 'FILTER.SHOW_ALL' | translate }}</button>
-                      <button class="btn btn-link" (click)="onClearAll('canton', this.formCant)">{{ 'FILTER.SHOW_NONE' | translate }}</button>
+                      <!-- <button class="btn btn-link"
+                        (click)="onClearAll('canton', this.formCant)">{{ 'FILTER.SHOW_NONE' | translate }}</button> -->
                     </div>
                   </ng-template>
                 </ng-select>
               </div>
             </div>
+
+            <!-- <button *ngIf="!showMunic" class="btn btn-link moreMunic"
+                (click)="showMunic = true; showCanton = false; toggleDisableInput(this.formCant, 'canton')">Gemeinden
+                hinzufügen</button>
+            </div> -->
+            <!-- *ngIf="showMunic" -->
             <div class="select-wrapper">
               <div [formGroup]="formMunic" novalidate>
                 <label class="selction-label" for="inputCommunities">{{ 'FILTER.FILTER_MUNICS' | translate }}</label>
-                <ng-select [items]="inputCommunities" notFoundText="{{'FILTER.NO_ENTRIES' | translate}}"
-                  [multiple]="true" name="inputCommunities"
+                <ng-select [items]="inputCommunities" [(ngModel)]="selectedMunic" bindLabel="label"
+                  notFoundText="{{'FILTER.NO_ENTRIES' | translate}}" [multiple]="true" name="inputCommunities"
                   placeholder="{{'FILTER.PLACEHOLDER_MUNICIPALITY' | translate}}" (add)="onAdd($event, 'munic')"
                   (remove)="onRemove($event, 'munic')" (clear)="onClear($event, 'munic')" formControlName="munic">
                   <ng-template ng-header-tmp>
                     <div>
                       <button class="btn btn-link"
                         (click)="onSelectAll(this.inputCommunities, 'munic', this.formMunic)">{{ 'FILTER.SHOW_ALL' | translate }}</button>
-                      <button class="btn btn-link" (click)="onClearAll('munic', this.formMunic)">{{ 'FILTER.SHOW_NONE' | translate }}</button>
+                      <!-- <button class="btn btn-link"
+                        (click)="onClearAll('munic', this.formMunic)">{{ 'FILTER.SHOW_NONE' | translate }}</button> -->
                     </div>
                   </ng-template>
                 </ng-select>
               </div>
             </div>
+            <!-- <div *ngIf="showCanton" style="width:10%; margin-top:7%;">
+              <i class="fa fa-check" aria-hidden="true"
+                (click)="toggleDisableAddSecondHierarchy('.moreMunic', this.formCant, 'canton')"></i>
+            </div>
+            <div *ngIf="showMunic" style="width:10%; margin-top:7%;">
+              <i class="fa fa-check" aria-hidden="true" (click)="toggleDisableInput(this.formMunic, 'munic')"></i>
+              <i class="fa fa-times" aria-hidden="true" (click)="toggleDisableInput(this.formCant, 'canton')"></i>
+            </div> -->
           </div>
           <!-- epidemic groups and epidemics-->
-          <div *ngIf="epidemicsAndGroups" class="test">
+          <!-- <div *ngIf="epidemicsAndGroups" class="test" id="what"> -->
+          <div class="test" id="what">
             <div class="select-wrapper">
               <div [formGroup]="formEpidG" novalidate>
                 <label class="selction-label"
                   for="inputEpidemicsGroup">{{ 'FILTER.FILTER_PEST_GROUPS' | translate }}</label>
-                <ng-select [items]="inputEpidemicsGroup" notFoundText="{{'FILTER.NO_ENTRIES' | translate}}"
-                  [multiple]="true" name="inputEpidemicsGroup"
+                <ng-select [items]="inputEpidemicsGroup" [(ngModel)]="selectedEpidemicG" bindLabel="label"
+                  notFoundText="{{'FILTER.NO_ENTRIES' | translate}}" [multiple]="true" name="inputEpidemicsGroup"
                   placeholder="{{'FILTER.PLACEHOLDER_EPIDEMIC_GROUP' | translate}}"
                   (add)="onAdd($event, 'epidemic_group')" (remove)="onRemove($event, 'epidemic_group')"
                   (clear)="onClear($event, 'epidemic_group')" formControlName="epidemicG">
@@ -151,7 +178,8 @@
                     <div>
                       <button class="btn btn-link"
                         (click)="onSelectAll(this.inputEpidemicsGroup, 'epidemicG', this.formEpidG)">{{ 'FILTER.SHOW_ALL' | translate }}</button>
-                      <button class="btn btn-link" (click)="onClearAll('epidemicG', this.formEpidG)">{{ 'FILTER.SHOW_NONE' | translate }}</button>
+                      <!-- <button class="btn btn-link"
+                        (click)="onClearAll('epidemicG', this.formEpidG)">{{ 'FILTER.SHOW_NONE' | translate }}</button> -->
                     </div>
                   </ng-template>
                 </ng-select>
@@ -160,15 +188,17 @@
             <div class="select-wrapper">
               <div [formGroup]="formEpid" novalidate>
                 <label class="selction-label" for="inputEpidemics">{{ 'FILTER.FILTER_PESTS' | translate }}</label>
-                <ng-select [items]="inputEpidemics" notFoundText="{{'FILTER.NO_ENTRIES' | translate}}" [multiple]="true"
-                  name="inputEpidemics" placeholder="{{'FILTER.PLACEHOLDER_EPIDEMIC' | translate}}"
-                  (add)="onAdd($event, 'epidemic')" (remove)="onRemove($event, 'epidemic')"
-                  (clear)="onClear($event, 'epidemic')" formControlName="epidemic">
+                <ng-select [items]="inputEpidemics" [(ngModel)]="selectedEpidemic" bindLabel="label"
+                  notFoundText="{{'FILTER.NO_ENTRIES' | translate}}" [multiple]="true" name="inputEpidemics"
+                  placeholder="{{'FILTER.PLACEHOLDER_EPIDEMIC' | translate}}" (add)="onAdd($event, 'epidemic')"
+                  (remove)="onRemove($event, 'epidemic')" (clear)="onClear($event, 'epidemic')"
+                  formControlName="epidemic">
                   <ng-template ng-header-tmp>
                     <div>
                       <button class="btn btn-link"
                         (click)="onSelectAll(this.inputEpidemics, 'epidemic', this.formEpid)">{{ 'FILTER.SHOW_ALL' | translate }}</button>
-                      <button class="btn btn-link" (click)="onClearAll('epidemic', this.formEpid)">{{ 'FILTER.SHOW_NONE' | translate }}</button>
+                      <!-- <button class="btn btn-link"
+                        (click)="onClearAll('epidemic', this.formEpid)">{{ 'FILTER.SHOW_NONE' | translate }}</button> -->
                     </div>
                   </ng-template>
                 </ng-select>
@@ -176,13 +206,14 @@
             </div>
           </div>
           <!-- animal groups and animal species  -->
-          <div *ngIf="animalsAndGroups" class="test" id="cantonsComminitiesWrapper">
+          <!-- <div *ngIf="animalsAndGroups" class="test" id="who"> -->
+          <div class="test" id="who">
             <div class="select-wrapper">
               <div [formGroup]="formAniG" novalidate>
                 <label class="selction-label"
                   for="inputAnimalGroups">{{ 'FILTER.FILTER_ANIMAL_GROUPS' | translate }}</label>
-                <ng-select [items]="inputAnimalGroups" notFoundText="{{'FILTER.NO_ENTRIES' | translate}}"
-                  [multiple]="true" name="inputAnimalGroups"
+                <ng-select [items]="inputAnimalGroups" [(ngModel)]="selectedAnimalG" bindLabel="label"
+                  notFoundText="{{'FILTER.NO_ENTRIES' | translate}}" [multiple]="true" name="inputAnimalGroups"
                   placeholder="{{'FILTER.PLACEHOLDER_ANIMAL_GROUP' | translate}}" (add)="onAdd($event, 'animal_group')"
                   (remove)="onRemove($event, 'animal_group')" (clear)="onClear($event, 'animal_group')"
                   formControlName="animalG">
@@ -190,7 +221,8 @@
                     <div>
                       <button class="btn btn-link"
                         (click)="onSelectAll(this.inputAnimalGroups, 'animalG', this.formAniG)">{{ 'FILTER.SHOW_ALL' | translate }}</button>
-                      <button class="btn btn-link" (click)="onClearAll('animalG', this.formAniG)">{{ 'FILTER.SHOW_NONE' | translate }}</button>
+                      <!-- <button class="btn btn-link"
+                        (click)="onClearAll('animalG', this.formAniG)">{{ 'FILTER.SHOW_NONE' | translate }}</button> -->
                     </div>
                   </ng-template>
                 </ng-select>
@@ -199,15 +231,17 @@
             <div class="select-wrapper">
               <div [formGroup]="formAni" novalidate>
                 <label class="selction-label" for="inputAnimals">{{ 'FILTER.FILTER_ANIMALS' | translate }}</label>
-                <ng-select [items]="inputAnimals" notFoundText="{{'FILTER.NO_ENTRIES' | translate}}" [multiple]="true"
-                  name="inputAnimals" placeholder="{{'FILTER.PLACEHOLDER_ANIMAL_SPECIES' | translate}}"
+                <ng-select [items]="inputAnimals" [(ngModel)]="selectedAnimal" bindLabel="label"
+                  notFoundText="{{'FILTER.NO_ENTRIES' | translate}}" [multiple]="true" name="inputAnimals"
+                  placeholder="{{'FILTER.PLACEHOLDER_ANIMAL_SPECIES' | translate}}"
                   (add)="onAdd($event, 'animal_species')" (remove)="onRemove($event, 'animal_species')"
                   (clear)="onClear($event, 'animal_species')" formControlName="animal">
                   <ng-template ng-header-tmp>
                     <div>
                       <button class="btn btn-link"
                         (click)="onSelectAll(this.inputAnimals, 'animal', this.formAni)">{{ 'FILTER.SHOW_ALL' | translate }}</button>
-                      <button class="btn btn-link" (click)="onClearAll('animal', this.formAni)">{{ 'FILTER.SHOW_NONE' | translate }}</button>
+                      <button class="btn btn-link"
+                        (click)="onClearAll('animal', this.formAni)">{{ 'FILTER.SHOW_NONE' | translate }}</button>
                     </div>
                   </ng-template>
                 </ng-select>
@@ -218,28 +252,60 @@
       </div>
     </div>
   </div>
+</div>
 
+<div *ngIf="showAlert" class="modal overlay" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Filterinformation</h5>
+      </div>
+      <div class="modal-body">
+        <div *ngIf="showAlert" id="alert" class="alert alert-info" role="alert">
+          <p>Wenn Sie, diesen Filter hinzufügen, werden alle darunterliegenden Filtereinstellungen entfernt,
+            da der Filter hierarchisch aufgebaut ist.</p>
 
-  <div style="margin-top: 15px; width:100%" class="row">
-    <div class="col-sm-10 col-sm-offset-1">
-      <ul class="nav nav-tabs">
-        <li id="frequency">
-          <a data-toggle="tab" (click)="onChangeTab('/frequency')">{{ 'FILTERCHARTS.FREQUENCY' | translate }}
-          </a>
-        </li>
-        <li id="timeline">
-          <a data-toggle="tab" (click)="onChangeTab('/timeline')">{{ 'FILTERCHARTS.TIMELINE' | translate }}
-          </a>
-        </li>
-        <li id="map">
-          <a data-toggle="tab" (click)="onChangeTab('/map')">{{ 'FILTERCHARTS.MAP' | translate }}
-          </a>
-        </li>
-      </ul>
-      <router-outlet></router-outlet>
+          <div class="radio radio--left">
+            <label for="radio">
+              <input type="radio" name="radios" id="radioAccept" value="accept"
+                (click)="removeLowerHierarchies('true')">
+              Akzeptieren
+            </label>
+          </div>
+
+          <div class="radio radio--left">
+            <label for="radio2">
+              <input type="radio" name="radios" id="radioDeny" value="deny" (click)="removeLowerHierarchies('true')">
+              Ablehnen
+            </label>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </div>
+
+
+<div style="margin-top: 15px; width:100%" class="row">
+  <div class="col-sm-10 col-sm-offset-1">
+    <ul class="nav nav-tabs">
+      <li id="frequency">
+        <a data-toggle="tab" (click)="onChangeTab('/frequency')">{{ 'FILTERCHARTS.FREQUENCY' | translate }}
+        </a>
+      </li>
+      <li id="timeline">
+        <a data-toggle="tab" (click)="onChangeTab('/timeline')">{{ 'FILTERCHARTS.TIMELINE' | translate }}
+        </a>
+      </li>
+      <li id="map">
+        <a data-toggle="tab" (click)="onChangeTab('/map')">{{ 'FILTERCHARTS.MAP' | translate }}
+        </a>
+      </li>
+    </ul>
+    <router-outlet></router-outlet>
+  </div>
+</div>
+
 
 <ng-template #loadingList>
   <div class="loadingSign">

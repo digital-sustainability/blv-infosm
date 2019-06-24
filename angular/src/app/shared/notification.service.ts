@@ -14,4 +14,8 @@ export class NotificationService {
     this.toastr.error(message, title);
   }
 
+  infoMessage(message: string, title: string) {
+    this.toastr.info(message, title);
+  }
+
 }
