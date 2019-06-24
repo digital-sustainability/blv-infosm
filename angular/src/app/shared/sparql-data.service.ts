@@ -27,7 +27,8 @@ PREFIX schema: <http://schema.org/>
     private http: HttpClient,
     ) { }
 
-  getReports(lang: string, from: string | Date, to: string | Date): Observable<Report[]> {
+  // TODO: Create new sparql-report type
+  getReports(lang: string, from: string | Date, to: string | Date): Observable<any> {
     const url = 'http://ld.zazuko.com/query';
 
     const query = `${this._prefix}

@@ -1,4 +1,4 @@
-import { Component, AfterViewInit } from '@angular/core';
+import { Component, AfterViewInit, OnDestroy } from '@angular/core';
 import { SparqlDataService } from '../../../shared/sparql-data.service';
 import { Report } from '../../../shared/models/report.model';
 import { Subscription } from 'rxjs';
@@ -32,13 +32,15 @@ import { isEqual } from 'lodash';
   templateUrl: './map-chart.component.html',
   styleUrls: ['./map-chart.component.css']
 })
-export class MapChartComponent implements AfterViewInit {
+export class MapChartComponent implements AfterViewInit, OnDestroy {
 
   // map height
   height = 600;
   initialized = false;
 
   dataSub: Subscription;
+  wktCantonSub: Subscription;
+  wktMunicSub: Subscription;
   reports: Report[];
 
   map: OlMap;
@@ -112,9 +114,12 @@ export class MapChartComponent implements AfterViewInit {
       this.initMap();
     }
     this.dataSub = this._distributeDataService.currentData.subscribe(
-      data => {
+      (data: Report[]) => {
         // only proceed if data is emitted or data has changed (deep comparison)
         if (data.length && !isEqual(this.reports, data)) {
+          // this.reports = data.map(d => {
+          //   return
+          // })
           this.reports = data;
           // only call when shapes are loaded or reports have changed
           if (this.cantonVectorLayer) {
@@ -127,7 +132,7 @@ export class MapChartComponent implements AfterViewInit {
           this.initialized = true;
           // load data for canton shapes and simultaniously load for municipalites
           // ADM1 --> Cantons
-          this._sparqlDataService.getWkt('ADM1').subscribe(
+          this.wktCantonSub = this._sparqlDataService.getWkt('ADM1').subscribe(
             // TODO: use RXJS pipe/map
             cantonWkts => {
               /**
@@ -180,9 +185,9 @@ export class MapChartComponent implements AfterViewInit {
           }
 
           // only get munic shapes if none exist
-          if (!this.municVectorLayer) {
+          if (!this.municVectorLayer) { // TODO: Close subscription on first()
             // ADM3 --> Municipalities
-            this._sparqlDataService.getWkt('ADM3').subscribe(
+            this.wktMunicSub = this._sparqlDataService.getWkt('ADM3').subscribe(
               municWkts => {
                 this.municVectorLayer = new OlVectorLayer({
                   source: new Vector({
@@ -203,6 +208,12 @@ export class MapChartComponent implements AfterViewInit {
       err => console.log(err)
     );
 
+  }
+
+  ngOnDestroy(): void {
+    this.dataSub.unsubscribe();
+    this.wktCantonSub.unsubscribe();
+    this.wktMunicSub.unsubscribe();
   }
 
   onSwitchLayer(layer: OlVectorLayer): void {
