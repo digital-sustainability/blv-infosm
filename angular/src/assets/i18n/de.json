@@ -62,7 +62,11 @@
     "ORDER_BY": "sortiert nach",
     "VISU_DATA": "Visualisierte Daten",
     "NOT_SORTED": "Klicken Sie auf die Kopfzeile einer Spalte, um die Daten zu sortieren.",
-    "LEGEND" : "Legende für Anzahl Seuchenvorkommnisse"
+    "LEGEND" : "Legende für Anzahl Seuchenvorkommnisse",
+    "OTHER": "Sonstige",
+    "EPIDEMIC_PER_ANIMLAL": "Seuchen pro Tierart",
+    "ANIMLAL_PER_EPIDEMIC": "Tierarten pro Seuche",
+    "NO_DATA": "Keine Daten für diese Auswahl vorhanden."
   },
   "BULLETIN": {
     "OPTIONS": "Anzeigeoptionen",

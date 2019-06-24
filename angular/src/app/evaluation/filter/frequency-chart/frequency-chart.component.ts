@@ -4,12 +4,11 @@ import { Chart } from 'angular-highcharts';
 import { Report } from '../../../shared/models/report.model';
 import { Translations } from '../../../shared/models/translations.model';
 import { Frequency } from '../../../shared/models/frequency.model';
-import { get, countBy, mapKeys, uniqBy, orderBy } from 'lodash';
+import { get, countBy, mapKeys, uniqBy, orderBy, find } from 'lodash';
 import { HighchartService } from 'src/app/shared/highchart.service';
-import {  NotificationService } from '../../../shared/notification.service';
+import { NotificationService } from '../../../shared/notification.service';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
-import { retry } from 'rxjs/operators';
 
 @Component({
   selector: 'app-frequency-chart',
@@ -23,6 +22,8 @@ export class FrequencyChartComponent implements OnInit, OnDestroy {
   frequencyChart: Chart;
   reports: Report[];
   trans: Translations;
+  yLabel: string;
+  loaded: boolean;
 
   constructor(
     public translate: TranslateService,
@@ -31,30 +32,29 @@ export class FrequencyChartComponent implements OnInit, OnDestroy {
     private _notification: NotificationService,
   ) { }
 
-  // TODO: Enforce typing
   ngOnInit() {
-
-  // TODO: Check if all services are unsubscribed on destroy
     this.dataSub = this._distributeDataServie.currentData.subscribe(
       (data: Report[]) => {
-        if (data) {
+        this.loaded = true; // stop loading sign if any kind of response from the server
+        if (data.length > 0) {
           this.reports = data;
-          // this.reports = data.filter((d: Report) => {
-            // return {
-              // 'epidemic': d.epidemic,
-            // };
-          // }); // TODO: Map to only relevant data
           this.translationSub = this.translate.get([
-            'EVAL.SHOW_ALL_NONE'
-          ]).subscribe(
-            texts => {
-              this.trans = texts;
-              this.drawChart(data, 'epidemic', this.extractPestFrequencies);
-            }
-          );
+            'EVAL.SHOW_ALL_NONE',
+            'EVAL.OTHER',
+            'EVAL.EPIDEMIC_PER_ANIMLAL',
+            'EVAL.ANIMLAL_PER_EPIDEMIC'
+            ]).subscribe(
+              texts => {
+                this.trans = texts;
+                this.drawChart(data, 'epidemic', 'animal_species');
+              }
+            );
         }
       },
-      err => this._notification.errorMessage(err.statusText + '<br>' + err.message , err.name)
+      err => {
+        this.loaded = false; // show spin wheel on err
+        this._notification.errorMessage(err.statusText + '<br>' + err.message , err.name);
+      }
     );
   }
 
@@ -63,8 +63,13 @@ export class FrequencyChartComponent implements OnInit, OnDestroy {
     this.dataSub.unsubscribe();
   }
 
-  drawChart(data: Report[], filterTarget: string, filterFn: (d: Report[]) => Frequency[]): void {
-    // TODO: Check if data has changed at all. Only proceed if it did change
+  drawChart(data: Report[], barName: string, stackName: string): void {
+    if (barName === 'epidemic') {
+      this.yLabel = this.trans['EVAL.ANIMLAL_PER_EPIDEMIC'];
+    } else {
+      this.yLabel = this.trans['EVAL.EPIDEMIC_PER_ANIMLAL'];
+    }
+
     this.frequencyChart = new Chart({
       chart: {
         type: 'column'
@@ -73,19 +78,19 @@ export class FrequencyChartComponent implements OnInit, OnDestroy {
         text: undefined
       },
       xAxis: {
-        categories: this.limitCollection(filterTarget, data).concat(['Other']) // TODO: i18n
+        categories: this.limitCollection(data, barName).concat([this.trans['EVAL.OTHER']]).map(s => s[0].toUpperCase() + s.slice(1))
       },
       yAxis: {
         min: 0,
         allowDecimals: false,
         title: {
-          text: 'Seuchen Pro Tierart' // TODO: i18n
+          text: this.yLabel
         },
         stackLabels: {
           enabled: true,
           style: {
             fontWeight: 'bold',
-            color: 'gray'
+            color: '#999999'
           }
         }
       },
@@ -102,9 +107,6 @@ export class FrequencyChartComponent implements OnInit, OnDestroy {
       plotOptions: {
         column: {
           stacking: 'normal',
-          // dataLabels: {
-          //   enabled: true,
-          // },
           events: {
             /**
              * Toggle all legend items via service.
@@ -115,17 +117,29 @@ export class FrequencyChartComponent implements OnInit, OnDestroy {
           }
         }
       },
-      series: filterFn(data)
-        .concat({
+      series: this.extractFrequencies(data, barName, stackName).concat(
+        // add empty series as placeholder to toggle all/none
+        {
           name: this.trans['EVAL.SHOW_ALL_NONE'],
           data: [],
-          color: '#ffffff' // Hide dot symbol
-        })
+          color: '#ffffff' // Hide dot symbol on backgroud
+        }).map(o => ({ ...o, name: o.name[0].toUpperCase() + o.name.slice(1) })) // Captitalize first letter
     });
   }
 
+  // toggle all bars in chart
   onPointClick = (event: any): boolean => {
     return this._highChartService.toggleLegend(event);
+  }
+
+  // display epidemics per animal species
+  onShowEpidemics(): void {
+    this.drawChart(this.reports, 'epidemic', 'animal_species');
+  }
+
+  // display animal species per epidemic
+  onShowAnimals(): void {
+    this.drawChart(this.reports, 'animal_species', 'epidemic');
   }
 
   private countOccurance(target: string, reports: Report[]): Frequency[] {
@@ -142,126 +156,43 @@ export class FrequencyChartComponent implements OnInit, OnDestroy {
     return result;
   }
 
-  private extractPestFrequencies = (reports: any): Frequency[] => {
-    console.log('ONCE PLEASE!');
-    console.time('perf');
-    const animals = reports.map(r => {
-      if (this.limitCollection('epidemic', reports).includes(r.epidemic)) {
-        return {
-          animal_species: r.animal_species,
-          epidemic: r.epidemic,
-        };
+  /**
+   * Reads from the report collection the frequencies of either `epidemic` per `animal_species` or vice versa.
+   * Transforms it  into a fromat required by highcharts.
+   *
+   * @param {Report[]} reports: list of the current epidemic reports
+   * @param {string} barType report property that is going to be displayed as bar
+   * @param {string} stackType reorit property that is stacked on different bars
+   * @returns {Frequency[]} collection with each object containing the names of the stacks and an array
+   * which holds the occurance per bar
+   */
+  private extractFrequencies(reports: Report[], barType: string, stackType: string): Frequency[] {
+    // extract all unique stack types and sort alphabetically
+    const uniqueStackNames = uniqBy(reports.map(report => report[stackType])).sort();
+    // extract all 7 unique bar types (limit to 6 from above + 'Other')
+    const uniqueBarNames = this.limitCollection(reports, barType);
+    // create a placeholder for each stack, holding the count per bar in the 'data' array
+    const frequencies = uniqueStackNames.map((uniqueStackName: string) => {
+      return {
+        'name': uniqueStackName,
+        'data': new Array(uniqueBarNames.length + 1).fill(0) // Create arr in the length of needed bars plus 1 for  'Other' and init with 0
+      } as Frequency;
+    });
+    reports.forEach(report => {
+      const tmpObj = find(frequencies, (o: Frequency) => o.name === report[stackType]);
+      const idx = uniqueBarNames.indexOf(report[barType]);
+      if (idx < 0) {
+        tmpObj.data[6]++;
       } else {
-        return {
-          animal_species: r.animal_species,
-          epidemic: 'Other',
-        };
+        tmpObj.data[idx]++;
       }
     });
-    const animalTypes = uniqBy(animals.map(a => a.animal_species)).sort();
-    const pestTypes = this.extractUniqueType(reports, 'epidemic');
-    // TODO: From here merge all with method below
-    const pestPerAnimal = [];
-    animalTypes.forEach((at: string) => {
-      const seuchen = [];
-      animals.forEach(a => {
-        if (at === a.animal_species) {
-          seuchen.push(a.epidemic);
-        }
-      });
-      const tmp = countBy(seuchen);
-      tmp.name = at;
-      pestPerAnimal.push(tmp);
-    });
-    const result = [];
-    pestPerAnimal.forEach(ppa => {
-      const data = [];
-      pestTypes.forEach((pt: string) => {
-        if (ppa.hasOwnProperty(pt)) {
-          data.push(ppa[pt]);
-        } else {
-          data.push(0);
-        }
-      });
-      result.push({
-        name: ppa.name,
-        data: data
-      });
-    });
-    return result;
+    return frequencies;
   }
 
-
-  private extractAnimalFrequencies = (reports: any): Frequency[] => {
-    const animals = reports.map(r => {
-      if (this.limitCollection('animal_species', reports).includes(r.animal_species)) {
-        return {
-          animal_species: r.animal_species,
-          epidemic: r.epidemic,
-        };
-      } else {
-        return {
-          animal_species: 'Other',
-          epidemic: r.epidemic,
-        };
-      }
-    });
-    const animalTypes = this.extractUniqueType(reports, 'animal_species');
-    const pestTypes = uniqBy(animals.map(p => p.epidemic)).sort();
-    const pestPerAnimal = [];
-    animalTypes.forEach((at: string) => {
-      const seuchen = [];
-      animals.forEach(a => {
-        if (at === a.animal_species) {
-          seuchen.push(a.epidemic);
-        }
-      });
-      const tmp = countBy(seuchen);
-      tmp.name = at;
-      pestPerAnimal.push(tmp);
-    });
-    const result = [];
-    pestTypes.forEach((pestType: string) => {
-      const data = [];
-      pestPerAnimal.forEach((pestpA: string) => {
-        if (pestpA.hasOwnProperty(pestType)) {
-          data.push(pestpA[pestType]);
-        } else {
-          data.push(0);
-        }
-      });
-      result.push({
-        name: pestType,
-        data: data
-      });
-    });
-    console.timeEnd('perf');
-    return result;
-  }
-
-  private limitCollection(target: string, data: Report[]) {
+  private limitCollection(data: Report[], target: string): string[] {
     const count = this.countOccurance(target, data);
     return orderBy(count, ['y'], 'desc').slice(0, 6).map(e => e.name);
-  }
-
-  private range(count: number, step: number): number[] {
-    return Array(count).fill(step).map((x, i) => x + i * step);
-  }
-
-  private extractUniqueType(reports: Report[], uniqueType: string): string[] {
-    return this.limitCollection(uniqueType, reports).concat(['Other']);
-  }
-
-  onShowEpidemics(): void {
-    if (this.reports) {
-      this.drawChart(this.reports, 'epidemic', this.extractPestFrequencies);
-    }
-  }
-
-  onShowAnimals(): void {
-    if (this.reports) {
-      this.drawChart(this.reports, 'animal_species', this.extractAnimalFrequencies);
-    }
   }
 
 }

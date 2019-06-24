@@ -56,7 +56,11 @@
         "ORDER_BY": "trié par",
         "VISU_DATA": "Données visualisées",
         "NOT_SORTED": "Cliquez sur l'en-tête d'une colonne pour trier les données.",
-        "LEGEND": "Légende nombre d'incidents liés à l'épidémie"
+        "LEGEND": "Légende nombre d'incidents liés à l'épidémie",
+        "OTHER": "Autre",
+        "EPIDEMIC_PER_ANIMLAL": "Épidémies par espèce animale",
+        "ANIMLAL_PER_EPIDEMIC": "Espèces animales par épidémie",
+        "NO_DATA": "Aucune donnée disponible pour cette sélection."
     },
     "BULLETIN": {
         "OPTIONS": "Possibilités de visualisation",
