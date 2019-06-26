@@ -5,7 +5,6 @@ import { NgbDate } from '../../shared/models/ngb-date.model';
 import { InputField } from '../../shared/models/inputfield.model';
 import { LanguageService } from 'src/app/shared/language.service';
 import { Subscription } from 'rxjs';
-import { map as rxjsmap } from 'rxjs/operators';
 import { MatPaginator, MatTableDataSource, MatSort, MatSortable } from '@angular/material';
 import { ActivatedRoute, Router } from '@angular/router';
 import { SparqlDataService } from 'src/app/shared/sparql-data.service';
@@ -43,7 +42,6 @@ export class FilterComponent implements OnInit, OnDestroy {
   private _paramSub: Subscription;
   private _langSub: Subscription;
   private _dataSub: Subscription;
-
   private _cantonsSub: Subscription;
   private _municSub: Subscription;
   private _epidemicsGroupSub: Subscription;
@@ -58,8 +56,6 @@ export class FilterComponent implements OnInit, OnDestroy {
   };
 
   trans: Translations;
-
-  disable: boolean = false;
 
   formCant: FormGroup;
   formMunic: FormGroup;
@@ -86,13 +82,6 @@ export class FilterComponent implements OnInit, OnDestroy {
     animal_group: [],
     animal_species: []
   }
-
-  // cantons: string[];
-  // communities: string[];
-  // epidemicsGroups: string[];
-  // epidemics: string[];
-  // animalGroups: string[];
-  // animals: string[];
 
   // final selectable and disabled array of items that are visible in the input field
   inputCantons: InputField[];
@@ -126,6 +115,7 @@ export class FilterComponent implements OnInit, OnDestroy {
   elementsBelow = {};
   showAlert: boolean = false;
   selected = [];
+  disable: boolean = false;
 
   data: Report[];
   displayedColumns: string[] = ['diagnosis_date', 'canton', 'munic', 'epidemic', 'epidemic_group', 'animal_species'];
@@ -142,6 +132,7 @@ export class FilterComponent implements OnInit, OnDestroy {
     animal_species: { filter: [], hierarchy: 0 }
   };
 
+  // needed to build the string above the table
   sortItem: string;
   sortDirection: string;
   sortAsc: string;
@@ -166,12 +157,10 @@ export class FilterComponent implements OnInit, OnDestroy {
         this._filter.lang = params['lang'];
         this._filter.from = params['from'];
         this._filter.to = params['to'];
-        console.log(this._filter.lang)
 
         // Sets parmas if none detected or one is misssing
         if (!params['lang'] || !params['from'] || !params['to']) {
           const lang = this.translateService.currentLang;
-          console.log(lang)
           const from = moment().subtract(1, 'y').format('YYYY-MM-DD');
           const to = dayjs().format('YYYY-MM-DD');
           this.updateRouteParams({
@@ -201,7 +190,6 @@ export class FilterComponent implements OnInit, OnDestroy {
       }, err => {
         // TODO: Imporve error handling
         this._notification.errorMessage(err.statusText + '<br>' + err.message, err.name);
-        console.log(err);
       }
     );
 
@@ -220,16 +208,13 @@ export class FilterComponent implements OnInit, OnDestroy {
     this.sortDirection = 'asc';
     this.sorted = true;
 
-    this.formCant = this.fb.group({ canton: '', });
-    this.formMunic = this.fb.group({ munic: '', });
-    this.formEpidG = this.fb.group({ epidemic_group: '' });
-    this.formEpid = this.fb.group({ epidemic: '' });
-    this.formAniG = this.fb.group({ animal_group: '' });
-    this.formAni = this.fb.group({ animal_species: '' });
-  }
-
-  ngAfterViewInit(): void {
-
+    // initialize all the forms (input fields)
+    this.formCant = this.fb.group({ canton: ''});
+    this.formMunic = this.fb.group({ munic: ''});
+    this.formEpidG = this.fb.group({ epidemic_group: ''});
+    this.formEpid = this.fb.group({ epidemic: ''});
+    this.formAniG = this.fb.group({ animal_group: ''});
+    this.formAni = this.fb.group({ animal_species: ''});
   }
 
   onChangeTab(route: string): void {
@@ -240,40 +225,25 @@ export class FilterComponent implements OnInit, OnDestroy {
     this._langSub.unsubscribe();
     this._dataSub.unsubscribe();
     this._paramSub.unsubscribe();
+    this._animalsGroupSub.unsubscribe();
+    this._animalsSub.unsubscribe();
+    this._cantonsSub.unsubscribe();
+    this._epidemicsGroupSub.unsubscribe();
+    this._epidemicsSub.unsubscribe();
+    this._municSub.unsubscribe();
+    this._translationSub.unsubscribe();
   }
 
-  // removeLowerHierarchies(reset: boolean) {
-  //   this.showAlert = false;
-  //   if (reset) {
-  //     let hierarchiesToRemove = Object.keys(this.elementsBelow);
-  //     for (const el of hierarchiesToRemove) {
-  //       this.filterConfig[el].filter = [];
-  //     }
-
-  //     console.log(hierarchiesToRemove)
-
-  //     switch (hierarchiesToRemove.toString()) {
-  //       case 'animal_species': this.selectedAnimal = []; break;
-  //       case 'epidemic': this.selectedEpidemic = []; break;
-  //       case 'munic': this.selectedMunic = []; break;
-  //     }
-  //   }
-
-  // }
-
-  // toggleDisableAddSecondHierarchy(toDisable: string, formGroup: FormGroup, test: string) {
-  //   $(toDisable).prop('disabled', true);
-  //   this.toggleDisableInput(formGroup, test);
-  // }
-
-  // updates every time when the user adds an entry in the filter,
-  // always when the user adds an entry, we have to adapt the possible
-  // selections in the inputfileds in an or logic based on on the
-  // selections the user made in the hierarchies above
+   
+ /**
+  * Updates every time when the user adds an entry in the filter. Adapts the possible
+  * selections in the inputfileds in an "OR" logic based on the selections the user made
+  * in the hierarchies above
+  * @param $event 
+  * @param filterType 
+  */
   onAdd($event, filterType: string): void {
-
     this.checkHierarchy(filterType);
-
     let selectedItem = [];
     selectedItem = $event.label;
     if (this.filterConfig.hasOwnProperty(`${filterType}`)) {
@@ -281,7 +251,6 @@ export class FilterComponent implements OnInit, OnDestroy {
     }
 
     const actualHierarchy = this.getHierarchy(filterType);
-    console.log(actualHierarchy)
     if ([2, 4, 6].includes(actualHierarchy)) {
       let elAbove: string = "";
       switch (filterType) {
@@ -292,20 +261,22 @@ export class FilterComponent implements OnInit, OnDestroy {
       let forms = this.getCorrespondingForms(elAbove);
       this.toggleDisableInput(forms[0], elAbove);
     }
-    const entriesToAdatpInputs = this.filterHierarchiesAbove(actualHierarchy, filterType);
+    const entriesToAdatpInputs = this.filterHierarchiesAbove(actualHierarchy);
     this.adaptPossibleSelections(entriesToAdatpInputs, this.beautifiedData, filterType);
-    console.log(this.filterConfig)
-    // adapt the input fields below in the hierarchy based on the added item
-    // get the hierarchies below and execute the adaptPossibleSelections function
-
-    // adapt inputfields based on last hierarchy
     this.getList(this._filter.lang, this._filter.from, this._filter.to);
   }
 
+  /**
+   * Filters the data based on the selected items in the hierarchies above, identifies which 
+   * inputfields need to be updated and extracts all the unique items for the input fields 
+   * that need to be adapted
+   * @param entriesToAdapt entries based on which the possible selections of the input field should be adapted 
+   * @param data the based on the currently selected period of time
+   * @param filterType the type of the filter that has been changed
+   */
   adaptPossibleSelections(entriesToAdapt, data: Report[], filterType: string) {
     // this part filters the data based on the selected items in the hierarchies above
     let filtered: Report[] = [];
-    
     if (entriesToAdapt.length !== 0) {
       const numberOfFiltersAbove: number = entriesToAdapt.length;
       for (let i = 0; i < data.length; i++) {
@@ -322,45 +293,37 @@ export class FilterComponent implements OnInit, OnDestroy {
           filtered.push(data[i]);
         }
       }
+    } else {
+      filtered = data;
+    }
 
-      // this part identifies which inputfields need to be updated
-      const elAbove = filter(uniq(Object.keys(this.elementsAbove)), (item: string) => {
-        return item !== 'hierarchy';
-      });
-      const fieldsToAdapt = remove(['canton', 'munic', 'epidemic_group', 'epidemic', 'animal_group', 'animal_species'], (item: string) => {
-        return item !== filterType && !elAbove.includes(item);
-      });
+    // this part identifies the inputfields that need to be updated
+    const elAbove = filter(uniq(Object.keys(this.elementsAbove)), (item: string) => {
+      return item !== 'hierarchy';
+    });
+    const fieldsToAdapt = remove(['canton', 'munic', 'epidemic_group', 'epidemic', 'animal_group', 'animal_species'], (item: string) => {
+      return item !== filterType && !elAbove.includes(item);
+    });
 
-
-      // this part extracts all the unique items for the input fields that need to be adapted
-      for (const el of fieldsToAdapt) {
-        this.setPossibleSelections(el, this.extractUniqueItems(filtered, el));
-      }
-
-      // if (entriesToAdapt.length !== 0) {
-      //   if (entriesToAdapt.length === 1) {
-      //     const compare = entriesToAdapt[0].filter;
-      //     const compareType = entriesToAdapt[0].type;
-      //     for (let i = 0; i < data.length; i++) {
-      //       if (compare.includes(data[i][compareType])) {
-      //         filteredFields.push(data[i]);
-      //       }
-      //     }
-      //   }
-
-      // } else {
-      //   // handle the case when more than one hierarchy is selected above
-
-
-      // }
+    // this part extracts all the unique items for the input fields that need to be adapted
+    for (const el of fieldsToAdapt) {
+      this.setPossibleSelections(el, this.extractUniqueItems(filtered, el));
     }
   }
 
-
-  setPossibleSelections(key: string, value: string[]) {
+  /**
+   * Sets the key and the value of the possible selections the user can choose from. 
+   * Needs to be adapted after every change the user makes to an input field
+   */
+  setPossibleSelections(key: string, value: string[]): void {
     this.possibleSelections[key] = value;
   }
 
+  /**
+   * Extracts all the unique items of the filtered data for a specific key.
+   * @param data the filtered data after the user changed an input field
+   * @param key the key of the fltered data object you want the unique items from
+   */
   extractUniqueItems(data: Report[], key: string): string[] {
     let uniqueItems: string[] = [];
     for (let i = 0; i < data.length; i++) {
@@ -369,36 +332,35 @@ export class FilterComponent implements OnInit, OnDestroy {
     return uniq(uniqueItems);
   }
 
-
-  // returns the hierarchies above that were already filtered, that is the filter array
-  // in the FilterConfig object is not empty
-  // based on this information, one has to update all the other input fields in the hierarchies below
-  filterHierarchiesAbove(hierarchy: number, filtertype: string) {
-    let hierarchiesAbove = []
+  /**
+   * Returns the hierarchies above that were already filtered, given that the filter array
+   * in the FilterConfig is not empty.
+   * Based on this information, one has to update all the other input fields in the hierarchies below.
+   * @param hierarchy the hierarchy of the input field that the user has changed
+   */
+  filterHierarchiesAbove(hierarchy: number) {
+    let hierarchiesAbove = [];
     for (const el in this.filterConfig) {
-      console.log(el)
       if (this.filterConfig[el].hierarchy <= hierarchy && this.filterConfig[el].filter.length !== 0) {
         const elToPush = this.filterConfig[el];
-        // elToPush.hierarchy = this.filterConfig[el].hierarchy;
-        // if (['canton', 'animal_group', 'epidemic_group'].includes(el)) {
-        //   elToPush.position = this.filterConfig[el].position;
-        // }
         elToPush.type = el;
         hierarchiesAbove.push(elToPush);
       }
     }
-    console.log(hierarchiesAbove)
     return hierarchiesAbove;
-
   }
 
-  // updates every time when the user removes an entry in the filter
+  /**
+   * Adapts the input fields based on the item in a specific input field that the user 
+   * has removed. If the filter in the actual hierarchy is empty, we adapt the input 
+   * fields based on the filter type above in the hierarchy. Else we adapt the input
+   * fields based on the actual hierarchy
+   * @param $event the object of the item, that has been removed by the user
+   * @param filterType the type of the filter, where the user removed an item
+   */
   onRemove($event, filterType: string): void {
-    //this.checkHierarchy(filterType);
-    console.log(this.getFilterConfig())
-    console.log($event)
-    if (this.filterConfig.hasOwnProperty(`${filterType}`)) {
-      this.filterConfig[`${filterType}`].filter = filter(this.filterConfig[filterType], (item: string) => {
+    if (this.filterConfig.hasOwnProperty(filterType)) {
+      this.filterConfig[filterType].filter = filter(this.filterConfig[filterType].filter, (item: string) => {
         return item !== $event.label;
       });
     }
@@ -410,34 +372,28 @@ export class FilterComponent implements OnInit, OnDestroy {
       case 'munic': filterTypeAbove = 'canton'; break;
     }
 
-    // adapt the input fields base on the filters the user set
-    // if the filter in the actual hierarchy is empty, we adapt the input fields
-    // based on the filter type above in the hierarchy, else we adapt the input
-    // fields based on the actual hierarchy
-    if (this.filterConfig[filterType].filter.length !== 0) {
-      debugger
+    const remainingItems = this.filterConfig[filterType].filter.length;
+    if (remainingItems !== 0 || filterTypeAbove === "") {
       const actualHierarchy = this.getHierarchy(filterType);
-      console.log(actualHierarchy)
-      const entriesToAdatpInputs = this.filterHierarchiesAbove(actualHierarchy, filterType);
-      console.log(entriesToAdatpInputs)
+      const entriesToAdatpInputs = this.filterHierarchiesAbove(actualHierarchy);
       this.adaptPossibleSelections(entriesToAdatpInputs, this.beautifiedData, filterType);
     } else {
-      debugger
       const actualHierarchy = this.getHierarchy(filterTypeAbove);
-      console.log(actualHierarchy)
-      const entriesToAdatpInputs = this.filterHierarchiesAbove(actualHierarchy, filterTypeAbove);
+      const entriesToAdatpInputs = this.filterHierarchiesAbove(actualHierarchy);
       this.adaptPossibleSelections(entriesToAdatpInputs, this.beautifiedData, filterTypeAbove);
     }
-
-
     this.getList(this._filter.lang, this._filter.from, this._filter.to);
   }
 
-  checkHierarchy(filterType: string, remove?: string) {
+  /**
+   * Checks the hierarchy of a filter type and splits the the filter types into two groups:
+   * the group above and the group below the current filter type
+   * @param filterType the type of the filter that is changed
+   */
+  checkHierarchy(filterType: string) {
     this.elementsAbove = [];
     this.elementsBelow = [];
     const hierarchy = this.getHierarchy(filterType);
-
     for (const el of ['canton', 'munic', 'epidemic_group', 'epidemic', 'animal_group', 'animal_species']) {
       if (this.filterConfig[el].hierarchy !== 0 && this.filterConfig[el].hierarchy > hierarchy) {
         this.elementsBelow[el] = this.filterConfig[el].filter
@@ -451,27 +407,10 @@ export class FilterComponent implements OnInit, OnDestroy {
         this.filterEntryPoint = el;
       }
     }
-
-    if ((Object.entries(this.elementsBelow).length === 0 && this.elementsBelow.constructor === Object) || remove === 'remove') {
-      return;
-    }
-    console.log(this.elementsBelow)
-
-    let elementBelowFiltered: boolean = false;
-    for (const el in this.elementsBelow) {
-      if (this.elementsBelow[el].length !== 0) {
-        elementBelowFiltered = true;
-      }
-    }
-    if (elementBelowFiltered) {
-      this.showAlert = true;
-    }
-
-
   }
 
-  onClear($event: {}, filterType: string): void {
-    if (this.filterConfig.hasOwnProperty(`${filterType}`)) {
+  onClear(filterType: string): void {
+    if (this.filterConfig.hasOwnProperty(filterType)) {
       this.filterConfig[filterType].filter = [];
     }
     this.getList(this._filter.lang, this._filter.from, this._filter.to);
@@ -482,14 +421,20 @@ export class FilterComponent implements OnInit, OnDestroy {
     form.get(formControlName).patchValue(selected);
   }
 
-  onClearAll(formControlName: string, form: FormGroup): void {
-    form.get(formControlName).patchValue([]);
-  }
+  // onClearAll(formControlName: string, form: FormGroup): void {
+  //   form.get(formControlName).patchValue([]);
+  // }
 
+  /**
+   * Determines dynamically the properties hierarchy and position of the FIlterConfig and disables 
+   * the buttons that are already selected.
+   * @param elementId the id of the html input field which is selected
+   * @param elToDisable the id of the html button to disable
+   * @param filterConfigKey the key of the FilterConfig to handle next
+   */
   orderItems(elementId: string, elToDisable: string, filterConfigKey: string): void {
     // set the order of the element
     this.stateOrder++;
-
     document.getElementById(elementId).style.order = `${this.stateOrder}`;
     this.hierarchy = this.hierarchy + 1;
     switch (filterConfigKey) {
@@ -525,6 +470,10 @@ export class FilterComponent implements OnInit, OnDestroy {
     document.getElementById(elementId).style.display = "flex";
   }
 
+  /**
+   * Deterimnes which input fields get automatically disabled, based on the clicks of the user
+   * @param selected an array of subsequent hierarcies that belong together, eg ['canton', 'munic']
+   */
   inputFieldsToDisabled(selected: string[]): void {
     if (selected.length === 1) {
       return;
@@ -539,39 +488,48 @@ export class FilterComponent implements OnInit, OnDestroy {
       this.toggleDisableInput(forms[0], secondToDisable[0]);
       this.toggleDisableInput(forms[1], secondToDisable[1]);
     }
-
   }
 
+  /**
+   * Returns the corresponding forms based on the filter types of the first hierarchy.
+   * @param selected the selected filter type of the first hierarchy
+   */
   getCorrespondingForms(selected: string): FormGroup[] {
     if (selected === 'canton') {
       return [this.formCant, this.formMunic];
     } else if (selected === 'epidemic_group') {
       return [this.formEpidG, this.formEpid];
-    } else {
+    } else if (selected === 'animal_group') {
       return [this.formAniG, this.formAni];
     }
   }
 
-  toggleDisableInput(formGroup: FormGroup, test: string) {
-    if (formGroup.controls[test].enabled) {
-      //formGroup.controls[test].enable();
-      formGroup.controls[test].disable();
-      // } else {
-      //   formGroup.controls[test].disable();
+  toggleDisableInput(formGroup: FormGroup, formName: string) {
+    if (formGroup.controls[formName].enabled) {
+      formGroup.controls[formName].disable();
     }
   }
 
+  getFilterConfig(): FilterConfig {
+    return this.filterConfig;
+  }
+
+  getHierarchy(filterType: string): number {
+    let filterConfig = this.getFilterConfig();
+    return filterConfig[filterType].hierarchy;
+  }
+
+  /**
+   * Resets everything that helps to build the logic of the filter, hides and enables 
+   * all the input fields and enables again the buttons to build the hierarchy of the filter
+   */
   onReset(elemId1: string, elemId2: string, elemId3: string): void {
-    // this.showMunic = false;
-    // this.toggleDisableInput(this.formCant, 'canton');
-    // $('.moreMunic').prop('disabled', false);
-    // reset and hide again the input fields
     this.filterEntryPoint = "";
     this.resetModels();
     this.elementsAbove = [];
     this.elementsBelow = [];
     for (const el of ['canton', 'munic', 'epidemic_group', 'epidemic', 'animal_group', 'animal_species']) {
-      this.filterConfig[el].filter = []; 
+      this.filterConfig[el].filter = [];
       this.filterConfig[el].hierarchy = 0;
       if (el === 'canton') this.filterConfig[el].position = 0;
       if (el === 'epidemic_group') this.filterConfig[el].position = 0;
@@ -591,6 +549,9 @@ export class FilterComponent implements OnInit, OnDestroy {
     this.getList(this._filter.lang, this._filter.from, this._filter.to);
   }
 
+  /**
+   * Checks which input fields are disabled and enables them if they are disabled.
+   */
   checkDisabledInputFields(): void {
     if (this.formAni.controls['animal_species'].disabled) { this.formAni.controls['animal_species'].enable() };
     if (this.formEpid.controls['epidemic'].disabled) { this.formEpid.controls['epidemic'].enable() };
@@ -609,10 +570,14 @@ export class FilterComponent implements OnInit, OnDestroy {
     this.selectedAnimal = []
   }
 
-  // extracts all the unique strings for every filter
-  private extractFilterParts(data: Report[], filteredData) {
+  
+  /**
+   * Extracts all the unique strings for every input field in the initial state (based on the 
+   * time period the user selected).
+   * @param filteredData initial data filtered based on the selected period
+   */
+  private extractFilterParts(filteredData): void {
     if (this.filterEntryPoint.length === 0) {
-
       this.possibleSelections.canton = uniq(map(filteredData, 'canton')).sort();
       this.possibleSelections.munic = uniq(map(filteredData, 'munic')).sort();
 
@@ -622,63 +587,14 @@ export class FilterComponent implements OnInit, OnDestroy {
       this.possibleSelections.animal_group = uniq(map(filteredData, 'animal_group')).sort();
       this.possibleSelections.animal_species = uniq(map(filteredData, 'animal_species')).sort();
     }
-    // } else {
-    //   switch (this.filterEntryPoint) {
-    //     case ('canton'): this.possibleSelections.canton = uniq(map(data, 'kanton.value')).sort();
-    //       this.possibleSelections.epidemic_group = uniq(map(filteredData, 'epidemic_group')).sort();
-    //       this.possibleSelections.animal_group = uniq(map(filteredData, 'animal_group')).sort(); break;
-    //     case ('epidemic_group'): this.possibleSelections.epidemic_group = uniq(map(data, 'seuchen_gruppe.value')).sort();
-    //       this.possibleSelections.canton = uniq(map(filteredData, 'canton')).sort();
-    //       this.possibleSelections.animal_group = uniq(map(filteredData, 'animal_group')).sort(); break;
-    //     case ('animal_group'): this.possibleSelections.animal_group = uniq(map(data, 'tier_gruppe.value')).sort();
-    //       this.possibleSelections.canton = uniq(map(filteredData, 'canton')).sort();
-    //       this.possibleSelections.epidemic_group = uniq(map(filteredData, 'epidemic_group')).sort(); break;
-    //   }
-    // }
-    // //this.cantons = uniq(map(filteredData, 'canton')).sort();
-    // //this.communities = uniq(map(filteredData, 'munic')).sort();
-    // // this.communities = [];
-    // this.possibleSelections.munic = uniq(this.extractSecondHierarchy(this.filterConfig.canton.filter, 'canton', 'munic')).sort();
-    // //this.epidemicsGroups = uniq(map(filteredData, 'epidemic_group')).sort();
-    // //this.epidemics = uniq(map(filteredData, 'epidemic')).sort();
-    // // this.epidemics = [];
-    // this.possibleSelections.epidemic = uniq(this.extractSecondHierarchy(this.filterConfig.epidemic_group.filter, 'epidemic_group', 'epidemic')).sort();
-    // //this.animalGroups = uniq(map(filteredData, 'animal_group')).sort();
-    // //this.animals = uniq(map(filteredData, 'animal_species')).sort();
-    // // this.animals = [];
-    // //this.possibleSelections.animal_species = uniq(this.extractSecondHierarchy(this.filterConfig.animal_group.filter, 'animal_group', 'animal_species')).sort();
-
   }
-
-  private extractSecondHierarchy(keys: string[], firstOrder: string, secondOrder: string) {
-    if (keys.length !== 0) {
-      let items = [];
-      items = this.beautifiedData
-        .filter((el) => keys.includes(el[firstOrder]))
-        .map(obj => obj[secondOrder]);
-      return (items);
-    } else {
-      let items = [];
-      items = this.beautifiedData.map(el => {
-        return el[secondOrder];
-      });
-      return (items);
-    }
-  }
-
-  getFilterConfig(): FilterConfig {
-    return this.filterConfig;
-  }
-
-  getHierarchy(filterType: string): number {
-    let filterConfig = this.getFilterConfig();
-    return filterConfig[filterType].hierarchy;
-  }
-
-  // filters the data object based on the selected entries from
-  // the user in the currentFilter array
-  // TODO: check function when multiple filters selected, at the dayjs
-  // every entry of the currentFilter is filtered separately
+ 
+  /**
+   * Filters the data object based on the selected entries that are stored in the FIlterConfig.
+   * The logic of the filter is "AND".
+   * @param data the whole data for the currently selected time interval
+   * @param filterObject the configuration of the filter (selected values in the input fields)
+   */
   private filterDataObjectBasedOnEventData(data: Report[], filterObject: FilterConfig) {
     const filteredData = [];
     for (let i = 0; i < data.length; i++) {
@@ -718,15 +634,24 @@ export class FilterComponent implements OnInit, OnDestroy {
     return filteredData;
   }
 
+  /**
+   * Check that is made for every entry of the initial data of the selected
+   * time interval to filter the data.
+   * @param type the key of the FilterCOnfig that is checked
+   * @param compare the value of the whole data to compare with
+   * @param filterObject the current FilterConfig
+   */
   private checkFilter(type: string, compare: string, filterObject: FilterConfig): boolean {
     return (filterObject[type].filter.length !== 0 && filterObject[type].filter.includes(compare)) || filterObject[type].filter.length === 0;
   }
 
-  // Constructs the list of items for the input field.
-  // @param possibleItems: items that can be selected. either they are in the selected time interval
-  //        or they contain are part of a match when the user already filtered
-  // @param uniqueItems: unnique items that could have an entry in the database in the future but don't have yet
-  // Returns an object of type InputField and indicates which of them are selectable
+  /**
+   * Constructs the list of items for the input field.
+   * @param possibleItems  items that can be selected. either they are in the selected time interval
+   *       or they contain are part of a match when the user already filtered
+   * @param uniqueItems unnique items that could have an entry in the database in the future but don't have yet
+   * Returns an object of type InputField and indicates which of them are selectable
+   */
   private constructItemList(possibleItems: string[], uniqueItems: string[]): InputField[] {
     let disabledList = [];
     let selectableList = [];
@@ -778,6 +703,11 @@ export class FilterComponent implements OnInit, OnDestroy {
       });
   }
 
+  /**
+   * Constructs the table below the charts with the filtered data. Sorts the 
+   * filtered data by default by diagnosis date in descending order.
+   * @param filteredData 
+   */
   private constructTable(filteredData: any[]): void {
     this.dataSource = new MatTableDataSource<any>(filteredData);
     this.dataSource.paginator = this.paginator;
@@ -787,7 +717,6 @@ export class FilterComponent implements OnInit, OnDestroy {
     });
     this.dataSource.sort = this.sort;
   }
-
 
   // changes the date based on radio buttons
   onChangeDate(option: string): void {
@@ -841,15 +770,13 @@ export class FilterComponent implements OnInit, OnDestroy {
     return date.toString().split('.').reverse().join("-");
   }
 
-
-  // changes the date based on the datepickers
+  // Changes the date based on the datepickers
   onGetFromToDates(from: NgbDate, to: NgbDate): void {
     const fromdate = dayjs(from.year + '-' + from.month + '-' + from.day).format('YYYY-MM-DD');
     const todate = dayjs(to.year + '-' + to.month + '-' + to.day).format('YYYY-MM-DD');
     const dateOfFirstEntry = dayjs('1991-01-15').format('YYYY-MM-DD');
     const today = dayjs().format('YYYY-MM-DD');
     this.removeErrors();
-    //this.getTranslations();
     if (dayjs(fromdate).isValid() && dayjs(todate).isValid() && fromdate.length === 10 && todate.length === 10) {
       if (fromdate > todate) {
         $('.notValid').after(
@@ -892,6 +819,10 @@ export class FilterComponent implements OnInit, OnDestroy {
     }
   }
 
+  onScrollUp(): void {
+    window.scrollTo(0, 0);
+  }
+
   removeErrors(): void {
     $('#dateformaterror').remove();
     $('#datecompareerror').remove();
@@ -900,69 +831,7 @@ export class FilterComponent implements OnInit, OnDestroy {
     $('#datetoerror').remove();
   }
 
-  private getAllPossibleValues(lang: string): void {
-    this.getUniqueCantons();
-    this.getUniqueMunicipalities();
-    this.getUniqueEpidemicGroups(lang);
-    this.getUniqueAnimalGroups(lang);
-    this.getUniqueAnimals(lang);
-    this.getUniqueEpidemics(lang);
-  }
-
-  private getUniqueCantons(): void {
-    this._cantonsSub = this._sparqlDataService.getUniqueCantons().subscribe(
-      uniqueCantons => {
-        this.allCantons = this.beautifyItems(uniqueCantons, 'kanton');
-        this.inputCantons = this.constructItemList(this.possibleSelections.canton, this.allCantons);
-      }, err => {
-        this._notification.errorMessage(err.statusText + '<br>' + err.message, err.name);
-      }
-    );
-  }
-  onScrollUp(): void {
-    window.scrollTo(0, 0);
-  }
-
-  private getList(lang: string, from: string | Date, to: string | Date): void {
-    this._dataSub = this._sparqlDataService.getReports(lang, from, to).subscribe(
-      (data: any[]) => {
-        this.beautifiedData = data.map(report => {
-          return {
-            diagnosis_date: report.diagnose_datum.value,
-            canton: report.kanton.value,
-            canton_id: Number(/\d+/.exec(report.canton_id.value)[0]),
-            munic: report.gemeinde.value,
-            munic_id: Number(/\d+/.exec(report.munic_id.value)[0]),
-            epidemic_group: report.seuchen_gruppe.value,
-            epidemic: report.seuche.value,
-            animal_group: report.tier_gruppe.value,
-            animal_species: report.tierart.value
-          } as Report;
-        });
-        this.getAllPossibleValues(lang);
-        // this.transformData(data, false);
-      
-        this.filteredData = this.filterDataObjectBasedOnEventData(this.beautifiedData, this.filterConfig);
-        console.log(this.filterConfig)
-        this._distributeDataService.updateData(this.filteredData, from, to);
-        this.extractFilterParts(data, this.filteredData);
-        this.constructTable(this.filteredData);
-        // Set `from` and `to` for datepicker to match the current date selection
-        this.from = this.transformDate(from);
-        this.to = this.transformDate(to);
-        // console.log('RAW', data);
-        // console.log('BEAUTFIED', this.beautifiedData);
-        console.log('FILTERED', this.filteredData);
-
-      }, err => {
-        console.log(err);
-        this._notification.errorMessage(err.statusText + '<br>' + err.message, err.name);
-        // TODO: Imporve error handling
-      });
-  }
-
   getSortItemAndOrder($event: Object): void {
-    //this.getTranslations();
     const column = $event['active'];
     const direction = $event['direction'];
     if (direction === 'asc') {
@@ -986,6 +855,63 @@ export class FilterComponent implements OnInit, OnDestroy {
   }
 
 
+  private getList(lang: string, from: string | Date, to: string | Date): void {
+    this._dataSub = this._sparqlDataService.getReports(lang, from, to).subscribe(
+      (data: any[]) => {
+        this.beautifiedData = data.map(report => {
+          return {
+            diagnosis_date: report.diagnose_datum.value,
+            canton: report.kanton.value,
+            canton_id: Number(/\d+/.exec(report.canton_id.value)[0]),
+            munic: report.gemeinde.value,
+            munic_id: Number(/\d+/.exec(report.munic_id.value)[0]),
+            epidemic_group: report.seuchen_gruppe.value,
+            epidemic: report.seuche.value,
+            animal_group: report.tier_gruppe.value,
+            animal_species: report.tierart.value
+          } as Report;
+        });
+        this.getAllPossibleValues(lang);
+        // this.transformData(data, false);
+
+        this.filteredData = this.filterDataObjectBasedOnEventData(this.beautifiedData, this.filterConfig);
+
+        this._distributeDataService.updateData(this.filteredData, from, to);
+        this.extractFilterParts(this.filteredData);
+        this.constructTable(this.filteredData);
+
+        // Set `from` and `to` for datepicker to match the current date selection
+        this.from = this.transformDate(from);
+        this.to = this.transformDate(to);
+        // console.log('BEAUTFIED', this.beautifiedData);
+        console.log('FILTERED', this.filteredData);
+
+      }, err => {
+        this._notification.errorMessage(err.statusText + '<br>' + err.message, err.name);
+        // TODO: Imporve error handling
+      });
+  }
+
+  private getAllPossibleValues(lang: string): void {
+    this.getUniqueCantons();
+    this.getUniqueMunicipalities();
+    this.getUniqueEpidemicGroups(lang);
+    this.getUniqueAnimalGroups(lang);
+    this.getUniqueAnimals(lang);
+    this.getUniqueEpidemics(lang);
+  }
+
+  private getUniqueCantons(): void {
+    this._cantonsSub = this._sparqlDataService.getUniqueCantons().subscribe(
+      uniqueCantons => {
+        this.allCantons = this.beautifyItems(uniqueCantons, 'kanton');
+        this.inputCantons = this.constructItemList(this.possibleSelections.canton, this.allCantons);
+      }, err => {
+        this._notification.errorMessage(err.statusText + '<br>' + err.message, err.name);
+      }
+    );
+  }
+
   private getUniqueMunicipalities(): void {
     this._municSub = this._sparqlDataService.getUniqueMunicipalities().subscribe(
       uniqueMunic => {
@@ -1007,15 +933,6 @@ export class FilterComponent implements OnInit, OnDestroy {
       }
     );
   }
-  // private extractSecondHierarchy(keys: string[], firstOrder: string, secondOrder: string) {
-  //   // TODO: Document && return type
-  //   if (keys.length !== 0) {
-  //     return this.beautifiedData
-  //       .filter((el) => keys.includes(el[firstOrder]))
-  //       .map(obj => obj[secondOrder]);
-  //     }
-  //     return this.beautifiedData.map(el => el[secondOrder]);
-  //   }
 
   private getUniqueEpidemics(lang: string): void {
     this._epidemicsSub = this._sparqlDataService.getUniqueEpidemics(lang).subscribe(
@@ -1058,27 +975,3 @@ export class FilterComponent implements OnInit, OnDestroy {
     return niceItems;
   }
 }
-
-
-// toggleCheckbox($event: boolean, filterType: string) {
-  //   const idSelector = function () { return this.id; };
-  //   if (!$event) {
-  //     switch (filterType) {
-  //       case 'canton':
-  //         const selectedCantons = $(':checkbox:checked[name=canton]').attr('checked', true).map(idSelector).get();
-  //         this.createFilterConfigDropdown(filterType, selectedCantons);
-  //         break;
-  //       case 'epidemic_group':
-  //         const selectedEpidemics = $(':checkbox:checked[name=epidemic]').attr('checked', true).map(idSelector).get();
-  //         this.createFilterConfigDropdown(filterType, selectedEpidemics);
-  //         break;
-  //       case 'animal_group':
-  //         const selectedAnimals = $(':checkbox:checked[name=animal]').attr('checked', true).map(idSelector).get();
-  //         this.createFilterConfigDropdown(filterType, selectedAnimals);
-  //         break;
-  //     }
-  //     this.getList(this._filter.lang, this._filter.from, this._filter.to);
-  //   }
-  // }
-
-  
