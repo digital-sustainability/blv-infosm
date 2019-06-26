@@ -105,7 +105,7 @@ PREFIX schema: <http://schema.org/>
     ?seuchengruppeUri skos:inScheme <http://ld.zazuko.com/animalpest/scheme/Seuchengruppe> ;
         rdfs:label ?seuchen_gruppe .
   
-    FILTER(langMatches(lang(?seuchen_gruppe), "de"))
+    FILTER(langMatches(lang(?seuchen_gruppe), "${lang}"))
     }
     `;
     const params = new HttpParams().set('url', url).set('query', query);

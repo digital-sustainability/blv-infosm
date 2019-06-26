@@ -173,7 +173,7 @@
                   notFoundText="{{'FILTER.NO_ENTRIES' | translate}}" [multiple]="true" name="inputEpidemicsGroup"
                   placeholder="{{'FILTER.PLACEHOLDER_EPIDEMIC_GROUP' | translate}}"
                   (add)="onAdd($event, 'epidemic_group')" (remove)="onRemove($event, 'epidemic_group')"
-                  (clear)="onClear($event, 'epidemic_group')" formControlName="epidemicG">
+                  (clear)="onClear($event, 'epidemic_group')" formControlName="epidemic_group">
                   <ng-template ng-header-tmp>
                     <div>
                       <button class="btn btn-link"
@@ -216,7 +216,7 @@
                   notFoundText="{{'FILTER.NO_ENTRIES' | translate}}" [multiple]="true" name="inputAnimalGroups"
                   placeholder="{{'FILTER.PLACEHOLDER_ANIMAL_GROUP' | translate}}" (add)="onAdd($event, 'animal_group')"
                   (remove)="onRemove($event, 'animal_group')" (clear)="onClear($event, 'animal_group')"
-                  formControlName="animalG">
+                  formControlName="animal_group">
                   <ng-template ng-header-tmp>
                     <div>
                       <button class="btn btn-link"
@@ -235,13 +235,13 @@
                   notFoundText="{{'FILTER.NO_ENTRIES' | translate}}" [multiple]="true" name="inputAnimals"
                   placeholder="{{'FILTER.PLACEHOLDER_ANIMAL_SPECIES' | translate}}"
                   (add)="onAdd($event, 'animal_species')" (remove)="onRemove($event, 'animal_species')"
-                  (clear)="onClear($event, 'animal_species')" formControlName="animal">
+                  (clear)="onClear($event, 'animal_species')" formControlName="animal_species">
                   <ng-template ng-header-tmp>
                     <div>
                       <button class="btn btn-link"
                         (click)="onSelectAll(this.inputAnimals, 'animal', this.formAni)">{{ 'FILTER.SHOW_ALL' | translate }}</button>
-                      <button class="btn btn-link"
-                        (click)="onClearAll('animal', this.formAni)">{{ 'FILTER.SHOW_NONE' | translate }}</button>
+                      <!-- <button class="btn btn-link"
+                        (click)="onClearAll('animal', this.formAni)">{{ 'FILTER.SHOW_NONE' | translate }}</button> -->
                     </div>
                   </ng-template>
                 </ng-select>

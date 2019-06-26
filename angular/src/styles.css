@@ -65,6 +65,6 @@ input[type=radio]:focus,
   cursor: pointer;
 }
 
-.scroll-link:hover {
+/* .scroll-link:hover {
   text-decoration: underline;
-}
+} */

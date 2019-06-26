@@ -1,5 +1,5 @@
 
-import { Component, OnInit, OnDestroy, ViewChild, AfterViewChecked } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, AfterViewChecked, ɵConsole } from '@angular/core';
 import { Report } from '../../shared/models/report.model';
 import { NgbDate } from '../../shared/models/ngb-date.model';
 import { InputField } from '../../shared/models/inputfield.model';
@@ -12,7 +12,7 @@ import { SparqlDataService } from 'src/app/shared/sparql-data.service';
 import { DistributeDataService } from 'src/app/shared/distribute-data.service';
 import { TranslateService } from '@ngx-translate/core';
 import { NotificationService } from '../../shared/notification.service';
-import { remove, uniq, map, reduce } from 'lodash';
+import { remove, uniq, map, filter } from 'lodash';
 import { NgbDatepickerConfig, NgbDateParserFormatter, NgbDatepicker } from '@ng-bootstrap/ng-bootstrap';
 import { NgbDateCHFormatter } from '../../shared/formatters/ngb-ch-date-formatter';
 import { Translations } from '../../shared/models/translations.model';
@@ -79,12 +79,12 @@ export class FilterComponent implements OnInit, OnDestroy {
 
   // arrays for possible selection, that is, there is an object in the dataset that matches an entry
   possibleSelections = {
-    cantons: [],
-    communities: [],
-    epidemicsGroups: [],
-    epidemics: [],
-    animalGroups: [],
-    animals: []
+    canton: [],
+    munic: [],
+    epidemic_group: [],
+    epidemic: [],
+    animal_group: [],
+    animal_species: []
   }
 
   // cantons: string[];
@@ -118,13 +118,14 @@ export class FilterComponent implements OnInit, OnDestroy {
   showAnimalG: boolean = false;
   showAnimal: boolean = false;
 
-  filterEntryPoint: string;
+  filterEntryPoint: string = "";
   noFilter: boolean = true;
   stateOrder: number = 0;
   hierarchy: number = 0;
   elementsAbove = {};
   elementsBelow = {};
   showAlert: boolean = false;
+  selected = [];
 
   data: Report[];
   displayedColumns: string[] = ['diagnosis_date', 'canton', 'munic', 'epidemic', 'epidemic_group', 'animal_species'];
@@ -160,7 +161,6 @@ export class FilterComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit() {
-    $('#toast').toast('show')
     this._paramSub = this._route.queryParams.subscribe(
       params => {
         this._filter.lang = params['lang'];
@@ -222,10 +222,10 @@ export class FilterComponent implements OnInit, OnDestroy {
 
     this.formCant = this.fb.group({ canton: '', });
     this.formMunic = this.fb.group({ munic: '', });
-    this.formEpidG = this.fb.group({ epidemicG: '' });
+    this.formEpidG = this.fb.group({ epidemic_group: '' });
     this.formEpid = this.fb.group({ epidemic: '' });
-    this.formAniG = this.fb.group({ animalG: '' });
-    this.formAni = this.fb.group({ animal: '' });
+    this.formAniG = this.fb.group({ animal_group: '' });
+    this.formAni = this.fb.group({ animal_species: '' });
   }
 
   ngAfterViewInit(): void {
@@ -242,56 +242,24 @@ export class FilterComponent implements OnInit, OnDestroy {
     this._paramSub.unsubscribe();
   }
 
-  // private getList(lang: string, from: string | Date, to: string | Date): void {
-  //   this._dataSub = this._sparqlDataService.getReports(lang, from, to).subscribe(
-  //     data => {
-        
-  //       this.beautifiedData = [];
-  //       //this.transformData(data);
-  //       console.log(this.beautifiedData)
-  //       this.getAllPossibleValues(lang);
+  // removeLowerHierarchies(reset: boolean) {
+  //   this.showAlert = false;
+  //   if (reset) {
+  //     let hierarchiesToRemove = Object.keys(this.elementsBelow);
+  //     for (const el of hierarchiesToRemove) {
+  //       this.filterConfig[el].filter = [];
+  //     }
 
-  //       this.filteredData = this.filterDataObjectBasedOnEventData(this.beautifiedData, this.filterConfig);
-  //       this._distributeDataService.updateData(this.filteredData, from, to);
+  //     console.log(hierarchiesToRemove)
 
-  //       this.extractFilterParts(data, this.filteredData);
-  //       this.noFilter = false;
+  //     switch (hierarchiesToRemove.toString()) {
+  //       case 'animal_species': this.selectedAnimal = []; break;
+  //       case 'epidemic': this.selectedEpidemic = []; break;
+  //       case 'munic': this.selectedMunic = []; break;
+  //     }
+  //   }
 
-
-  //       this.constructTable(this.filteredData);
-  //       // Set `from` and `to` for datepicker to match the current date selection
-  //       this.from = this.transformDate(from);
-  //       this.to = this.transformDate(to);
-  //       // console.log('RAW', data);
-  //       // console.log('BEAUTFIED', this.beautifiedData);
-  //       console.log('FILTERED', this.filteredData);
-  //       this.getTranslations();
-  //     }, err => {
-  //       console.log(err);
-  //       this._notification.errorMessage(err.statusText + '<br>' + err.message, err.name);
-  //       // TODO: Imporve error handling
-  //     });
   // }
-
-  removeLowerHierarchies(reset: boolean) {
-    this.showAlert = false;
-    if (reset) {
-      let hierarchiesToRemove = Object.keys(this.elementsBelow);
-      for (const el of hierarchiesToRemove) {
-        this.filterConfig[el].filter = [];
-      }
-
-    }
-
-  }
-
-  toggleDisableInput(formGroup: FormGroup, test: string) {
-    if (formGroup.controls[`${test}`].disabled) {
-      formGroup.controls[`${test}`].enable();
-    } else {
-      formGroup.controls[`${test}`].disable();
-    }
-  }
 
   // toggleDisableAddSecondHierarchy(toDisable: string, formGroup: FormGroup, test: string) {
   //   $(toDisable).prop('disabled', true);
@@ -309,48 +277,96 @@ export class FilterComponent implements OnInit, OnDestroy {
     let selectedItem = [];
     selectedItem = $event.label;
     if (this.filterConfig.hasOwnProperty(`${filterType}`)) {
-      this.filterConfig[`${filterType}`].filter.push(selectedItem.toString());
+      this.filterConfig[filterType].filter.push(selectedItem.toString());
     }
 
-    
     const actualHierarchy = this.getHierarchy(filterType);
+    console.log(actualHierarchy)
+    if ([2, 4, 6].includes(actualHierarchy)) {
+      let elAbove: string = "";
+      switch (filterType) {
+        case 'animal_species': elAbove = 'animal_group'; break;
+        case 'epidemic': elAbove = 'epidemic_group'; break;
+        case 'munic': elAbove = 'canton'; break;
+      }
+      let forms = this.getCorrespondingForms(elAbove);
+      this.toggleDisableInput(forms[0], elAbove);
+    }
     const entriesToAdatpInputs = this.filterHierarchiesAbove(actualHierarchy, filterType);
-    //this.possibleSelections[filterType] = 
     this.adaptPossibleSelections(entriesToAdatpInputs, this.beautifiedData, filterType);
+    console.log(this.filterConfig)
     // adapt the input fields below in the hierarchy based on the added item
     // get the hierarchies below and execute the adaptPossibleSelections function
-    
-    // adapt inputfields based on last hierarchy
 
+    // adapt inputfields based on last hierarchy
     this.getList(this._filter.lang, this._filter.from, this._filter.to);
   }
 
-  /**
-   * 
-   * @param entriesToAdapt 
-   * @param data 
-   * @param filterType 
-   */
   adaptPossibleSelections(entriesToAdapt, data: Report[], filterType: string) {
-    let adaptedInputfield = [];
-    if(entriesToAdapt) {
-      if (entriesToAdapt.length === 1) {
-        const compare = entriesToAdapt[0].filter;
-        const compareType = entriesToAdapt[0].type;
-        for (let i = 0; i < data.length; i++) {
-          console.log(compare, data[i][`${compareType}`])
-          if(compare.includes(data[i][`${compareType}`])) {
-            adaptedInputfield.push(data[i][`${filterType}`]);
-          } 
+    // this part filters the data based on the selected items in the hierarchies above
+    let filtered: Report[] = [];
+    
+    if (entriesToAdapt.length !== 0) {
+      const numberOfFiltersAbove: number = entriesToAdapt.length;
+      for (let i = 0; i < data.length; i++) {
+        let inside: boolean = false;
+        for (let j = 0; j < numberOfFiltersAbove; j++) {
+          if (entriesToAdapt[j].filter.includes(data[i][entriesToAdapt[j].type])) {
+            inside = true;
+          } else {
+            inside = false;
+            break;
+          }
+        }
+        if (inside) {
+          filtered.push(data[i]);
         }
       }
-    } else {
-      // handle the case when more than one hierarchy is selected above
+
+      // this part identifies which inputfields need to be updated
+      const elAbove = filter(uniq(Object.keys(this.elementsAbove)), (item: string) => {
+        return item !== 'hierarchy';
+      });
+      const fieldsToAdapt = remove(['canton', 'munic', 'epidemic_group', 'epidemic', 'animal_group', 'animal_species'], (item: string) => {
+        return item !== filterType && !elAbove.includes(item);
+      });
 
 
+      // this part extracts all the unique items for the input fields that need to be adapted
+      for (const el of fieldsToAdapt) {
+        this.setPossibleSelections(el, this.extractUniqueItems(filtered, el));
+      }
+
+      // if (entriesToAdapt.length !== 0) {
+      //   if (entriesToAdapt.length === 1) {
+      //     const compare = entriesToAdapt[0].filter;
+      //     const compareType = entriesToAdapt[0].type;
+      //     for (let i = 0; i < data.length; i++) {
+      //       if (compare.includes(data[i][compareType])) {
+      //         filteredFields.push(data[i]);
+      //       }
+      //     }
+      //   }
+
+      // } else {
+      //   // handle the case when more than one hierarchy is selected above
+
+
+      // }
     }
-    console.log(uniq(adaptedInputfield))
-    this.possibleSelections[`${filterType}`] = uniq(adaptedInputfield);
+  }
+
+
+  setPossibleSelections(key: string, value: string[]) {
+    this.possibleSelections[key] = value;
+  }
+
+  extractUniqueItems(data: Report[], key: string): string[] {
+    let uniqueItems: string[] = [];
+    for (let i = 0; i < data.length; i++) {
+      uniqueItems.push(data[i][key]);
+    }
+    return uniq(uniqueItems);
   }
 
 
@@ -358,45 +374,76 @@ export class FilterComponent implements OnInit, OnDestroy {
   // in the FilterConfig object is not empty
   // based on this information, one has to update all the other input fields in the hierarchies below
   filterHierarchiesAbove(hierarchy: number, filtertype: string) {
-    const hierarchyAbove = hierarchy - 1;
-    if (hierarchyAbove === 0) {
-      return;
-    } else {
-      let hierarchiesAbove = []
-      for (const el in this.filterConfig) {
-        if(this.filterConfig[el].hierarchy <= hierarchyAbove && this.filterConfig[el].filter.length !== 0) {
-          const elToPush = this.filterConfig[el];
-          elToPush.type = el;
-          hierarchiesAbove.push(elToPush);
-        }
+    let hierarchiesAbove = []
+    for (const el in this.filterConfig) {
+      console.log(el)
+      if (this.filterConfig[el].hierarchy <= hierarchy && this.filterConfig[el].filter.length !== 0) {
+        const elToPush = this.filterConfig[el];
+        // elToPush.hierarchy = this.filterConfig[el].hierarchy;
+        // if (['canton', 'animal_group', 'epidemic_group'].includes(el)) {
+        //   elToPush.position = this.filterConfig[el].position;
+        // }
+        elToPush.type = el;
+        hierarchiesAbove.push(elToPush);
       }
-      console.log(hierarchiesAbove)
-      return hierarchiesAbove;
-    } 
+    }
+    console.log(hierarchiesAbove)
+    return hierarchiesAbove;
+
   }
 
   // updates every time when the user removes an entry in the filter
   onRemove($event, filterType: string): void {
+    //this.checkHierarchy(filterType);
+    console.log(this.getFilterConfig())
+    console.log($event)
     if (this.filterConfig.hasOwnProperty(`${filterType}`)) {
-      this.filterConfig[`${filterType}`].filter = remove(this.filterConfig[`${filterType}`], (item: string) => {
+      this.filterConfig[`${filterType}`].filter = filter(this.filterConfig[filterType], (item: string) => {
         return item !== $event.label;
       });
     }
+
+    let filterTypeAbove: string = "";
+    switch (filterType) {
+      case 'animal_species': filterTypeAbove = 'animal_group'; break;
+      case 'epidemic': filterTypeAbove = 'epidemic_group'; break;
+      case 'munic': filterTypeAbove = 'canton'; break;
+    }
+
+    // adapt the input fields base on the filters the user set
+    // if the filter in the actual hierarchy is empty, we adapt the input fields
+    // based on the filter type above in the hierarchy, else we adapt the input
+    // fields based on the actual hierarchy
+    if (this.filterConfig[filterType].filter.length !== 0) {
+      debugger
+      const actualHierarchy = this.getHierarchy(filterType);
+      console.log(actualHierarchy)
+      const entriesToAdatpInputs = this.filterHierarchiesAbove(actualHierarchy, filterType);
+      console.log(entriesToAdatpInputs)
+      this.adaptPossibleSelections(entriesToAdatpInputs, this.beautifiedData, filterType);
+    } else {
+      debugger
+      const actualHierarchy = this.getHierarchy(filterTypeAbove);
+      console.log(actualHierarchy)
+      const entriesToAdatpInputs = this.filterHierarchiesAbove(actualHierarchy, filterTypeAbove);
+      this.adaptPossibleSelections(entriesToAdatpInputs, this.beautifiedData, filterTypeAbove);
+    }
+
+
     this.getList(this._filter.lang, this._filter.from, this._filter.to);
   }
 
-  checkHierarchy(filterType: string) {
+  checkHierarchy(filterType: string, remove?: string) {
     this.elementsAbove = [];
     this.elementsBelow = [];
     const hierarchy = this.getHierarchy(filterType);
-    //const hierarchy = this.filterConfig[`${filterType}`].hierarchy;
 
     for (const el of ['canton', 'munic', 'epidemic_group', 'epidemic', 'animal_group', 'animal_species']) {
       if (this.filterConfig[el].hierarchy !== 0 && this.filterConfig[el].hierarchy > hierarchy) {
-        this.elementsBelow[`${el}`] = this.filterConfig[el].filter
+        this.elementsBelow[el] = this.filterConfig[el].filter
       }
-      if (this.filterConfig[el].hierarchy !== 0 && this.filterConfig[el].hierarchy < hierarchy) {
-        this.elementsAbove[`${el}`] = this.filterConfig[el].filter
+      if (this.filterConfig[el].hierarchy !== 0 && this.filterConfig[el].hierarchy <= hierarchy) {
+        this.elementsAbove[el] = this.filterConfig[el].filter
         this.elementsAbove['hierarchy'] = this.filterConfig[el].hierarchy
       }
       // get the entry point of the filter
@@ -405,24 +452,18 @@ export class FilterComponent implements OnInit, OnDestroy {
       }
     }
 
-    console.log(this.selectedCantons,
-      this.selectedMunic,
-      this.selectedEpidemicG,
-      this.selectedEpidemic,
-      this.selectedAnimalG,
-      this.selectedAnimal)
-
-    if (Object.entries(this.elementsBelow).length === 0 && this.elementsBelow.constructor === Object ) {
+    if ((Object.entries(this.elementsBelow).length === 0 && this.elementsBelow.constructor === Object) || remove === 'remove') {
       return;
     }
+    console.log(this.elementsBelow)
 
     let elementBelowFiltered: boolean = false;
     for (const el in this.elementsBelow) {
-      if(this.elementsBelow[el].length !== 0) {
+      if (this.elementsBelow[el].length !== 0) {
         elementBelowFiltered = true;
       }
     }
-    if(elementBelowFiltered) {
+    if (elementBelowFiltered) {
       this.showAlert = true;
     }
 
@@ -448,6 +489,7 @@ export class FilterComponent implements OnInit, OnDestroy {
   orderItems(elementId: string, elToDisable: string, filterConfigKey: string): void {
     // set the order of the element
     this.stateOrder++;
+
     document.getElementById(elementId).style.order = `${this.stateOrder}`;
     this.hierarchy = this.hierarchy + 1;
     switch (filterConfigKey) {
@@ -455,19 +497,26 @@ export class FilterComponent implements OnInit, OnDestroy {
         this.filterConfig['canton'].hierarchy = this.hierarchy;
         this.filterConfig['canton'].position = this.stateOrder;
         this.filterConfig['munic'].hierarchy = this.hierarchy + 1;
+        this.selected.push(['canton', 'munic']);
+        this.inputFieldsToDisabled(this.selected);
         this.hierarchy = this.hierarchy + 1;
         break;
       case ('epidemic_group'):
         this.filterConfig['epidemic_group'].hierarchy = this.hierarchy;
         this.filterConfig['epidemic_group'].position = this.stateOrder;
         this.filterConfig['epidemic'].hierarchy = this.hierarchy + 1;
+        this.selected.push(['epidemic_group', 'epidemic']);
+        this.inputFieldsToDisabled(this.selected);
         this.hierarchy = this.hierarchy + 1;
         break;
       case ('animal_group'):
         this.filterConfig['animal_group'].hierarchy = this.hierarchy;
         this.filterConfig['animal_group'].position = this.stateOrder;
         this.filterConfig['animal_species'].hierarchy = this.hierarchy + 1;
-        this.hierarchy = this.hierarchy + 1; break;
+        this.selected.push(['animal_group', 'animal_species']);
+        this.inputFieldsToDisabled(this.selected);
+        this.hierarchy = this.hierarchy + 1;
+        break;
     }
     // disable the selected button
     $(elToDisable).prop('disabled', true);
@@ -476,16 +525,54 @@ export class FilterComponent implements OnInit, OnDestroy {
     document.getElementById(elementId).style.display = "flex";
   }
 
+  inputFieldsToDisabled(selected: string[]): void {
+    if (selected.length === 1) {
+      return;
+    } else if (selected.length === 2) {
+      let firstToDisable = selected[0];
+      let forms = this.getCorrespondingForms(firstToDisable[0]);
+      this.toggleDisableInput(forms[0], firstToDisable[0]);
+      this.toggleDisableInput(forms[1], firstToDisable[1]);
+    } else {
+      let secondToDisable = selected[1];
+      let forms = this.getCorrespondingForms(secondToDisable[0]);
+      this.toggleDisableInput(forms[0], secondToDisable[0]);
+      this.toggleDisableInput(forms[1], secondToDisable[1]);
+    }
+
+  }
+
+  getCorrespondingForms(selected: string): FormGroup[] {
+    if (selected === 'canton') {
+      return [this.formCant, this.formMunic];
+    } else if (selected === 'epidemic_group') {
+      return [this.formEpidG, this.formEpid];
+    } else {
+      return [this.formAniG, this.formAni];
+    }
+  }
+
+  toggleDisableInput(formGroup: FormGroup, test: string) {
+    if (formGroup.controls[test].enabled) {
+      //formGroup.controls[test].enable();
+      formGroup.controls[test].disable();
+      // } else {
+      //   formGroup.controls[test].disable();
+    }
+  }
+
   onReset(elemId1: string, elemId2: string, elemId3: string): void {
     // this.showMunic = false;
     // this.toggleDisableInput(this.formCant, 'canton');
     // $('.moreMunic').prop('disabled', false);
     // reset and hide again the input fields
+    this.filterEntryPoint = "";
     this.resetModels();
     this.elementsAbove = [];
     this.elementsBelow = [];
     for (const el of ['canton', 'munic', 'epidemic_group', 'epidemic', 'animal_group', 'animal_species']) {
-      this.filterConfig[el].filter = []; this.filterConfig[el].hierarchy = 0;
+      this.filterConfig[el].filter = []; 
+      this.filterConfig[el].hierarchy = 0;
       if (el === 'canton') this.filterConfig[el].position = 0;
       if (el === 'epidemic_group') this.filterConfig[el].position = 0;
       if (el === 'animal_group') this.filterConfig[el].position = 0;
@@ -499,7 +586,18 @@ export class FilterComponent implements OnInit, OnDestroy {
     $('#cantonEntrypoint').prop('disabled', false);
     $('#epidemicEntryPoint').prop('disabled', false);
     $('#animalEntryPoint').prop('disabled', false);
+    this.selected = [];
+    this.checkDisabledInputFields();
     this.getList(this._filter.lang, this._filter.from, this._filter.to);
+  }
+
+  checkDisabledInputFields(): void {
+    if (this.formAni.controls['animal_species'].disabled) { this.formAni.controls['animal_species'].enable() };
+    if (this.formEpid.controls['epidemic'].disabled) { this.formEpid.controls['epidemic'].enable() };
+    if (this.formMunic.controls['munic'].disabled) { this.formMunic.controls['munic'].enable() };
+    if (this.formCant.controls['canton'].disabled) { this.formCant.controls['canton'].enable() };
+    if (this.formEpidG.controls['epidemic_group'].disabled) { this.formEpidG.controls['epidemic_group'].enable() };
+    if (this.formAniG.controls['animal_group'].disabled) { this.formAniG.controls['animal_group'].enable() };
   }
 
   resetModels(): void {
@@ -511,75 +609,45 @@ export class FilterComponent implements OnInit, OnDestroy {
     this.selectedAnimal = []
   }
 
-
-
-  // transforms the data object properly to use it for the table,
-  // and beatifies the data that we will filter
-  // TODO: Replace REGEX with real value from query
-  // private transformData(data: any[], originalData = false) {
-  //   for (const el in data) {
-  //     if (data.hasOwnProperty(el)) {
-  //       this.beautifiedData.push({
-  //         diagnosis_date: data[el].diagnose_datum.value,
-  //         canton: data[el].kanton.value,
-  //         canton_id: Number(/\d+/.exec(data[el].canton_id.value)[0]),
-  //         munic: data[el].gemeinde.value,
-  //         munic_id: Number(/\d+/.exec(data[el].munic_id.value)[0]),
-  //         epidemic_group: data[el].seuchen_gruppe.value,
-  //         epidemic: data[el].seuche.value,
-  //         animal_group: data[el].tier_gruppe.value,
-  //         animal_species: data[el].tierart.value
-  //       });
-  //     }
-  //   }
-  // }
-
   // extracts all the unique strings for every filter
   private extractFilterParts(data: Report[], filteredData) {
-    if (!this.filterEntryPoint) {
+    if (this.filterEntryPoint.length === 0) {
 
-      this.possibleSelections.cantons = uniq(map(filteredData, 'canton')).sort();
-      this.possibleSelections.epidemicsGroups = uniq(map(filteredData, 'epidemic_group')).sort();
-      this.possibleSelections.animalGroups = uniq(map(filteredData, 'animal_group')).sort();
-    } else {
-      console.log(data)
-      switch (this.filterEntryPoint) {
-        case ('canton'): this.possibleSelections.cantons = uniq(map(data, 'kanton.value')).sort();
-          this.possibleSelections.epidemicsGroups = uniq(map(filteredData, 'epidemic_group')).sort();
-          this.possibleSelections.animalGroups = uniq(map(filteredData, 'animal_group')).sort(); break;
-        case ('epidemic_group'): this.possibleSelections.epidemicsGroups = uniq(map(data, 'seuchen_gruppe.value')).sort();
-          this.possibleSelections.cantons = uniq(map(filteredData, 'canton')).sort();
-          this.possibleSelections.animalGroups = uniq(map(filteredData, 'animal_group')).sort(); break;
-        case ('animal_group'): this.possibleSelections.animalGroups = uniq(map(data, 'tier_gruppe.value')).sort();
-          this.possibleSelections.cantons = uniq(map(filteredData, 'canton')).sort();
-          this.possibleSelections.epidemicsGroups = uniq(map(filteredData, 'epidemic_group')).sort(); break;
-      }
+      this.possibleSelections.canton = uniq(map(filteredData, 'canton')).sort();
+      this.possibleSelections.munic = uniq(map(filteredData, 'munic')).sort();
+
+      this.possibleSelections.epidemic_group = uniq(map(filteredData, 'epidemic_group')).sort();
+      this.possibleSelections.epidemic = uniq(map(filteredData, 'epidemic')).sort();
+
+      this.possibleSelections.animal_group = uniq(map(filteredData, 'animal_group')).sort();
+      this.possibleSelections.animal_species = uniq(map(filteredData, 'animal_species')).sort();
     }
-    //this.cantons = uniq(map(filteredData, 'canton')).sort();
-    //this.communities = uniq(map(filteredData, 'munic')).sort();
-    // this.communities = [];
-    this.possibleSelections.communities = uniq(this.extractSecondHierarchy(this.filterConfig.canton.filter, 'canton', 'munic')).sort();
-    //this.epidemicsGroups = uniq(map(filteredData, 'epidemic_group')).sort();
-    //this.epidemics = uniq(map(filteredData, 'epidemic')).sort();
-    // this.epidemics = [];
-    this.possibleSelections.epidemics = uniq(this.extractSecondHierarchy(this.filterConfig.epidemic_group.filter, 'epidemic_group', 'epidemic')).sort();
-    //this.animalGroups = uniq(map(filteredData, 'animal_group')).sort();
-    //this.animals = uniq(map(filteredData, 'animal_species')).sort();
-    // this.animals = [];
-    this.possibleSelections.animals = uniq(this.extractSecondHierarchy(this.filterConfig.animal_group.filter, 'animal_group', 'animal_species')).sort();
-    // if(this.selectedAnimal.length===0 &&
-    //       this.selectedAnimalG.length===0 &&
-    //         this.selectedCantons.length===0 &&
-    //           this.selectedMunic.length===0 &&
-    //             this.selectedEpidemic.length===0 &&
-    //               this.selectedEpidemicG.length===0) {
-    //     this.selectedCantons = this.cantons
-    //     this.selectedMunic = this.communities
-    //     this.selectedEpidemicG = this.epidemicsGroups
-    //     this.selectedEpidemic = this.epidemics
-    //     this.selectedAnimalG = this.animalGroups
-    //     this.selectedAnimal = this.animals
-    //}
+    // } else {
+    //   switch (this.filterEntryPoint) {
+    //     case ('canton'): this.possibleSelections.canton = uniq(map(data, 'kanton.value')).sort();
+    //       this.possibleSelections.epidemic_group = uniq(map(filteredData, 'epidemic_group')).sort();
+    //       this.possibleSelections.animal_group = uniq(map(filteredData, 'animal_group')).sort(); break;
+    //     case ('epidemic_group'): this.possibleSelections.epidemic_group = uniq(map(data, 'seuchen_gruppe.value')).sort();
+    //       this.possibleSelections.canton = uniq(map(filteredData, 'canton')).sort();
+    //       this.possibleSelections.animal_group = uniq(map(filteredData, 'animal_group')).sort(); break;
+    //     case ('animal_group'): this.possibleSelections.animal_group = uniq(map(data, 'tier_gruppe.value')).sort();
+    //       this.possibleSelections.canton = uniq(map(filteredData, 'canton')).sort();
+    //       this.possibleSelections.epidemic_group = uniq(map(filteredData, 'epidemic_group')).sort(); break;
+    //   }
+    // }
+    // //this.cantons = uniq(map(filteredData, 'canton')).sort();
+    // //this.communities = uniq(map(filteredData, 'munic')).sort();
+    // // this.communities = [];
+    // this.possibleSelections.munic = uniq(this.extractSecondHierarchy(this.filterConfig.canton.filter, 'canton', 'munic')).sort();
+    // //this.epidemicsGroups = uniq(map(filteredData, 'epidemic_group')).sort();
+    // //this.epidemics = uniq(map(filteredData, 'epidemic')).sort();
+    // // this.epidemics = [];
+    // this.possibleSelections.epidemic = uniq(this.extractSecondHierarchy(this.filterConfig.epidemic_group.filter, 'epidemic_group', 'epidemic')).sort();
+    // //this.animalGroups = uniq(map(filteredData, 'animal_group')).sort();
+    // //this.animals = uniq(map(filteredData, 'animal_species')).sort();
+    // // this.animals = [];
+    // //this.possibleSelections.animal_species = uniq(this.extractSecondHierarchy(this.filterConfig.animal_group.filter, 'animal_group', 'animal_species')).sort();
+
   }
 
   private extractSecondHierarchy(keys: string[], firstOrder: string, secondOrder: string) {
@@ -781,7 +849,7 @@ export class FilterComponent implements OnInit, OnDestroy {
     const dateOfFirstEntry = dayjs('1991-01-15').format('YYYY-MM-DD');
     const today = dayjs().format('YYYY-MM-DD');
     this.removeErrors();
-    this.getTranslations();
+    //this.getTranslations();
     if (dayjs(fromdate).isValid() && dayjs(todate).isValid() && fromdate.length === 10 && todate.length === 10) {
       if (fromdate > todate) {
         $('.notValid').after(
@@ -845,7 +913,7 @@ export class FilterComponent implements OnInit, OnDestroy {
     this._cantonsSub = this._sparqlDataService.getUniqueCantons().subscribe(
       uniqueCantons => {
         this.allCantons = this.beautifyItems(uniqueCantons, 'kanton');
-        this.inputCantons = this.constructItemList(this.possibleSelections.cantons, this.allCantons);
+        this.inputCantons = this.constructItemList(this.possibleSelections.canton, this.allCantons);
       }, err => {
         this._notification.errorMessage(err.statusText + '<br>' + err.message, err.name);
       }
@@ -873,7 +941,9 @@ export class FilterComponent implements OnInit, OnDestroy {
         });
         this.getAllPossibleValues(lang);
         // this.transformData(data, false);
+      
         this.filteredData = this.filterDataObjectBasedOnEventData(this.beautifiedData, this.filterConfig);
+        console.log(this.filterConfig)
         this._distributeDataService.updateData(this.filteredData, from, to);
         this.extractFilterParts(data, this.filteredData);
         this.constructTable(this.filteredData);
@@ -883,35 +953,35 @@ export class FilterComponent implements OnInit, OnDestroy {
         // console.log('RAW', data);
         // console.log('BEAUTFIED', this.beautifiedData);
         console.log('FILTERED', this.filteredData);
-        this.getTranslations();
+
       }, err => {
         console.log(err);
-        this._notification.errorMessage(err.statusText + '<br>' + err.message , err.name);
+        this._notification.errorMessage(err.statusText + '<br>' + err.message, err.name);
         // TODO: Imporve error handling
       });
   }
 
   getSortItemAndOrder($event: Object): void {
-    this.getTranslations();
+    //this.getTranslations();
     const column = $event['active'];
     const direction = $event['direction'];
     if (direction === 'asc') {
-      this.sortDirection = this.trans['EVAL.ORDER_ASCENDING']; 
+      this.sortDirection = this.trans['EVAL.ORDER_ASCENDING'];
       this.sorted = true;
     } else if (direction === 'desc') {
-      this.sortDirection = this.trans['EVAL.ORDER_DESCENDING']; 
+      this.sortDirection = this.trans['EVAL.ORDER_DESCENDING'];
       this.sorted = true;
     } else {
-      this.sorted= false;
+      this.sorted = false;
       return;
     }
     switch (column) {
       case 'canton': this.sortItem = this.trans['EVAL.CANTON']; break;
       case 'munic': this.sortItem = this.trans['EVAL.MUNICIPALITY']; break;
-      case 'epidemic': this.sortItem =this.trans['EVAL.PEST']; break;
+      case 'epidemic': this.sortItem = this.trans['EVAL.PEST']; break;
       case 'epidemic_group': this.sortItem = this.trans['EVAL.PEST_GROUP']; break;
       case 'animal_species': this.sortItem = this.trans['EVAL.ANIMAL_SPECIES']; break;
-      default : this.sortItem = this.trans['EVAL.DIAGNOSIS_DATE'];
+      default: this.sortItem = this.trans['EVAL.DIAGNOSIS_DATE'];
     }
   }
 
@@ -920,7 +990,7 @@ export class FilterComponent implements OnInit, OnDestroy {
     this._municSub = this._sparqlDataService.getUniqueMunicipalities().subscribe(
       uniqueMunic => {
         this.allCommunities = this.beautifyItems(uniqueMunic, 'gemeinde');
-        this.inputCommunities = this.constructItemList(this.possibleSelections.communities, this.allCommunities);
+        this.inputCommunities = this.constructItemList(this.possibleSelections.munic, this.allCommunities);
       }, err => {
         this._notification.errorMessage(err.statusText + '<br>' + err.message, err.name)
       }
@@ -931,7 +1001,7 @@ export class FilterComponent implements OnInit, OnDestroy {
     this._epidemicsGroupSub = this._sparqlDataService.getUniqueEpidemicGroups(lang).subscribe(
       uniqueEpidGroup => {
         this.allEpidemicsGroups = this.beautifyItems(uniqueEpidGroup, 'seuchen_gruppe');
-        this.inputEpidemicsGroup = this.constructItemList(this.possibleSelections.epidemicsGroups, this.allEpidemicsGroups);
+        this.inputEpidemicsGroup = this.constructItemList(this.possibleSelections.epidemic_group, this.allEpidemicsGroups);
       }, err => {
         this._notification.errorMessage(err.statusText + '<br>' + err.message, err.name)
       }
@@ -951,7 +1021,7 @@ export class FilterComponent implements OnInit, OnDestroy {
     this._epidemicsSub = this._sparqlDataService.getUniqueEpidemics(lang).subscribe(
       uniqueEpid => {
         this.allEpidemics = this.beautifyItems(uniqueEpid, 'tier_seuche');
-        this.inputEpidemics = this.constructItemList(this.possibleSelections.epidemics, this.allEpidemics);
+        this.inputEpidemics = this.constructItemList(this.possibleSelections.epidemic, this.allEpidemics);
       }, err => {
         this._notification.errorMessage(err.statusText + '<br>' + err.message, err.name)
       }
@@ -962,7 +1032,7 @@ export class FilterComponent implements OnInit, OnDestroy {
     this._animalsGroupSub = this._sparqlDataService.getUniqueAnimalGroups(lang).subscribe(
       uniqueAnimalGroups => {
         this.allAnimalGroups = this.beautifyItems(uniqueAnimalGroups, 'tier_gruppe');
-        this.inputAnimalGroups = this.constructItemList(this.possibleSelections.animalGroups, this.allAnimalGroups)
+        this.inputAnimalGroups = this.constructItemList(this.possibleSelections.animal_group, this.allAnimalGroups)
       }, err => {
         this._notification.errorMessage(err.statusText + '<br>' + err.message, err.name)
       }
@@ -973,7 +1043,7 @@ export class FilterComponent implements OnInit, OnDestroy {
     this._animalsSub = this._sparqlDataService.getUniqueAnimals(lang).subscribe(
       uniqueAnimals => {
         this.allAnimals = this.beautifyItems(uniqueAnimals, 'tier_art');
-        this.inputAnimals = this.constructItemList(this.possibleSelections.animals, this.allAnimals);
+        this.inputAnimals = this.constructItemList(this.possibleSelections.animal_species, this.allAnimals);
       }, err => {
         this._notification.errorMessage(err.statusText + '<br>' + err.message, err.name)
       }
@@ -1011,11 +1081,4 @@ export class FilterComponent implements OnInit, OnDestroy {
   //   }
   // }
 
-  // createFilterConfigDropdown(filterType: string, arrSelected: []) {
-  //   if (this.filterConfig.hasOwnProperty(`${filterType}`)) {
-  //     this.filterConfig[`${filterType}`] = [];
-  //     arrSelected.forEach(entry => {
-  //       this.filterConfig[`${filterType}`].push(entry);
-  //     });
-  //   }
-  // }
+  

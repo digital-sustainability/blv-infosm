@@ -175,7 +175,7 @@ export class MapChartComponent implements AfterViewInit, OnDestroy {
                       return id === r.munic_id;
                     }
                   }).length;
-                  console.log(this.countPerShape);
+                  //console.log(this.countPerShape);
                 }
               });
             },
