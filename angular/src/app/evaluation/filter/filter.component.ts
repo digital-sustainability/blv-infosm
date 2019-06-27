@@ -1,11 +1,11 @@
 
-import { Component, OnInit, OnDestroy, ViewChild, AfterViewChecked, ɵConsole } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, AfterViewChecked, ɵConsole, ElementRef } from '@angular/core';
 import { Report } from '../../shared/models/report.model';
 import { NgbDate } from '../../shared/models/ngb-date.model';
 import { InputField } from '../../shared/models/inputfield.model';
 import { LanguageService } from 'src/app/shared/language.service';
 import { Subscription } from 'rxjs';
-import { MatPaginator, MatTableDataSource, MatSort, MatSortable } from '@angular/material';
+import { MatPaginator, MatTableDataSource, MatSort, MatSortable, matSelectAnimations, SELECT_PANEL_MAX_HEIGHT } from '@angular/material';
 import { ActivatedRoute, Router } from '@angular/router';
 import { SparqlDataService } from 'src/app/shared/sparql-data.service';
 import { DistributeDataService } from 'src/app/shared/distribute-data.service';
@@ -34,6 +34,12 @@ export class FilterComponent implements OnInit, OnDestroy {
   @ViewChild('toPicker') datepickerTo: NgbDatepicker;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
+  @ViewChild('selectCant') selectCant;
+  @ViewChild('selectMunic') selectMunic;
+  @ViewChild('selectAniG') selectAnig;
+  @ViewChild('selectAni') selectAni;
+  @ViewChild('selectEpiG') selectEpiG;
+  @ViewChild('selectEpi') selectEpi;
 
   from: NgbDate;
   to: NgbDate;
@@ -116,6 +122,7 @@ export class FilterComponent implements OnInit, OnDestroy {
   showAlert: boolean = false;
   selected = [];
   disable: boolean = false;
+  selectedAll: boolean = false;
 
   data: Report[];
   displayedColumns: string[] = ['diagnosis_date', 'canton', 'munic', 'epidemic', 'epidemic_group', 'animal_species'];
@@ -246,7 +253,7 @@ export class FilterComponent implements OnInit, OnDestroy {
     this.checkHierarchy(filterType);
     let selectedItem = [];
     selectedItem = $event.label;
-    if (this.filterConfig.hasOwnProperty(`${filterType}`)) {
+    if (this.filterConfig.hasOwnProperty(filterType)) {
       this.filterConfig[filterType].filter.push(selectedItem.toString());
     }
 
@@ -274,7 +281,7 @@ export class FilterComponent implements OnInit, OnDestroy {
    * @param data the based on the currently selected period of time
    * @param filterType the type of the filter that has been changed
    */
-  adaptPossibleSelections(entriesToAdapt, data: Report[], filterType: string) {
+  adaptPossibleSelections(entriesToAdapt, data: Report[], filterType: string, removedItem?: string) {
     // this part filters the data based on the selected items in the hierarchies above
     let filtered: Report[] = [];
     if (entriesToAdapt.length !== 0) {
@@ -306,9 +313,22 @@ export class FilterComponent implements OnInit, OnDestroy {
     });
 
     // this part extracts all the unique items for the input fields that need to be adapted
+    // if (this.selectedAll){
+    //   debugger
+    //  this.possibleSelections[filterType].push(removedItem);
+    //  this.filterConfig[filterType].filter.push(removedItem)
+    //  this.selectedAll = false;
+    // }
+    //   debugger;
+    // } else {
+    //   for (const el of fieldsToAdapt) {
+    //     this.setPossibleSelections(el, this.extractUniqueItems(filtered, el));
+    //   }
+    // }
     for (const el of fieldsToAdapt) {
       this.setPossibleSelections(el, this.extractUniqueItems(filtered, el));
     }
+   
   }
 
   /**
@@ -377,10 +397,12 @@ export class FilterComponent implements OnInit, OnDestroy {
       const actualHierarchy = this.getHierarchy(filterType);
       const entriesToAdatpInputs = this.filterHierarchiesAbove(actualHierarchy);
       this.adaptPossibleSelections(entriesToAdatpInputs, this.beautifiedData, filterType);
+     
     } else {
       const actualHierarchy = this.getHierarchy(filterTypeAbove);
       const entriesToAdatpInputs = this.filterHierarchiesAbove(actualHierarchy);
       this.adaptPossibleSelections(entriesToAdatpInputs, this.beautifiedData, filterTypeAbove);
+      
     }
     this.getList(this._filter.lang, this._filter.from, this._filter.to);
   }
@@ -403,7 +425,7 @@ export class FilterComponent implements OnInit, OnDestroy {
         this.elementsAbove['hierarchy'] = this.filterConfig[el].hierarchy
       }
       // get the entry point of the filter
-      if (this.filterConfig[el].hierarchy === 1) {
+      if (hierarchy === 1) {
         this.filterEntryPoint = el;
       }
     }
@@ -417,8 +439,47 @@ export class FilterComponent implements OnInit, OnDestroy {
   }
 
   onSelectAll(input: InputField[], formControlName: string, form: FormGroup): void {
-    const selected = input.filter(item => !(item['disabled']));
-    form.get(formControlName).patchValue(selected);
+    this.selectedAll = true;
+    const selectedRaw = input.filter(item => !(item['disabled']));
+    // put the selected values into the form
+    form.get(formControlName).patchValue(selectedRaw);
+    
+    // adapt the values for the filter logic
+    this.filterConfig[formControlName].filter = selectedRaw.map(el => el.label);
+
+    // disable selected field
+    this.toggleDisableInput(form, formControlName);
+    this.closeDropdown(this.getDropdownToClose(formControlName));
+
+    if (['munic', 'epidemic', 'animal_species'].includes(formControlName)) {
+      let next = this.getNextHigherHierarchy(formControlName);
+      let nextForm =  this.getCorrespondingForms(formControlName)[0];
+      this.toggleDisableInput(nextForm, next);
+    }
+  }
+
+  getNextHigherHierarchy(filterType: string): string {
+    switch(filterType) {
+      case 'munic': return 'canton';
+      case 'epidemic': return 'epidemic_group';
+      case 'animal_species': return 'animal_group';
+    }
+  }
+
+  closeDropdown(elRef): void {
+    elRef.close();
+  }
+
+  getDropdownToClose(filterType: string) {
+    switch(filterType) {
+      case 'canton': return this.selectCant;
+      case 'munic': return this.selectMunic;
+      case 'epidemic_group': return this.selectEpiG;
+      case 'epidemic': return this.selectEpi;
+      case 'animal_group': return this.selectAnig;
+      case 'animal_species': return this.selectAni;
+    }
+
   }
 
   // onClearAll(formControlName: string, form: FormGroup): void {
@@ -495,11 +556,11 @@ export class FilterComponent implements OnInit, OnDestroy {
    * @param selected the selected filter type of the first hierarchy
    */
   getCorrespondingForms(selected: string): FormGroup[] {
-    if (selected === 'canton') {
+    if (selected === 'canton' || selected === 'munic') {
       return [this.formCant, this.formMunic];
-    } else if (selected === 'epidemic_group') {
+    } else if (selected === 'epidemic_group' || selected === 'epidemic') {
       return [this.formEpidG, this.formEpid];
-    } else if (selected === 'animal_group') {
+    } else if (selected === 'animal_group' || selected === 'animal_species') {
       return [this.formAniG, this.formAni];
     }
   }
@@ -577,7 +638,7 @@ export class FilterComponent implements OnInit, OnDestroy {
    * @param filteredData initial data filtered based on the selected period
    */
   private extractFilterParts(filteredData): void {
-    if (this.filterEntryPoint.length === 0) {
+    if (this.filterEntryPoint.length === 0 ) {
       this.possibleSelections.canton = uniq(map(filteredData, 'canton')).sort();
       this.possibleSelections.munic = uniq(map(filteredData, 'munic')).sort();
 
@@ -873,6 +934,7 @@ export class FilterComponent implements OnInit, OnDestroy {
         });
         this.getAllPossibleValues(lang);
         // this.transformData(data, false);
+        console.log(this.filterConfig)
 
         this.filteredData = this.filterDataObjectBasedOnEventData(this.beautifiedData, this.filterConfig);
 
@@ -905,6 +967,7 @@ export class FilterComponent implements OnInit, OnDestroy {
     this._cantonsSub = this._sparqlDataService.getUniqueCantons().subscribe(
       uniqueCantons => {
         this.allCantons = this.beautifyItems(uniqueCantons, 'kanton');
+        console.log(this.possibleSelections.canton)
         this.inputCantons = this.constructItemList(this.possibleSelections.canton, this.allCantons);
       }, err => {
         this._notification.errorMessage(err.statusText + '<br>' + err.message, err.name);
