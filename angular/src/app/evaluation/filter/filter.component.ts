@@ -312,19 +312,6 @@ export class FilterComponent implements OnInit, OnDestroy {
       return item !== filterType && !elAbove.includes(item);
     });
 
-    // this part extracts all the unique items for the input fields that need to be adapted
-    // if (this.selectedAll){
-    //   debugger
-    //  this.possibleSelections[filterType].push(removedItem);
-    //  this.filterConfig[filterType].filter.push(removedItem)
-    //  this.selectedAll = false;
-    // }
-    //   debugger;
-    // } else {
-    //   for (const el of fieldsToAdapt) {
-    //     this.setPossibleSelections(el, this.extractUniqueItems(filtered, el));
-    //   }
-    // }
     for (const el of fieldsToAdapt) {
       this.setPossibleSelections(el, this.extractUniqueItems(filtered, el));
     }
@@ -425,11 +412,12 @@ export class FilterComponent implements OnInit, OnDestroy {
         this.elementsAbove['hierarchy'] = this.filterConfig[el].hierarchy
       }
       // get the entry point of the filter
-      if (hierarchy === 1) {
+      if (hierarchy === 1 || !this.filterEntryPoint) {
         this.filterEntryPoint = el;
       }
     }
   }
+
 
   onClear(filterType: string): void {
     if (this.filterConfig.hasOwnProperty(filterType)) {
@@ -446,6 +434,7 @@ export class FilterComponent implements OnInit, OnDestroy {
     
     // adapt the values for the filter logic
     this.filterConfig[formControlName].filter = selectedRaw.map(el => el.label);
+    this.possibleSelections[formControlName] = selectedRaw.map(el => el.label);
 
     // disable selected field
     this.toggleDisableInput(form, formControlName);
@@ -716,7 +705,9 @@ export class FilterComponent implements OnInit, OnDestroy {
   private constructItemList(possibleItems: string[], uniqueItems: string[]): InputField[] {
     let disabledList = [];
     let selectableList = [];
+    console.log(possibleItems)
     uniqueItems.forEach((entry: string, index: number) => {
+      console.log(entry)
       if (possibleItems.includes(entry)) {
         selectableList.push({
           label: entry,
@@ -736,8 +727,8 @@ export class FilterComponent implements OnInit, OnDestroy {
   // Sorts an object of type InputField based on a key that has a value of type string
   private sortItems(inputField: InputField[], key: string): InputField[] {
     return inputField.sort((a: InputField, b: InputField) => {
-      let x = a[key].trim().toLowerCase();
-      let y = b[key].trim().toLowerCase();
+      let x = a[key].replace(/\s/g, "").toLowerCase();
+      let y = b[key].replace(/\s/g, "").toLowerCase();
       return x < y ? -1 : x > y ? 1 : 0;
     });
   }
@@ -935,8 +926,6 @@ export class FilterComponent implements OnInit, OnDestroy {
         });
         this.getAllPossibleValues(lang);
         // this.transformData(data, false);
-        console.log(this.filterConfig)
-
         this.filteredData = this.filterDataObjectBasedOnEventData(this.beautifiedData, this.filterConfig);
 
         this._distributeDataService.updateData(this.filteredData, from, to);
@@ -946,9 +935,7 @@ export class FilterComponent implements OnInit, OnDestroy {
         // Set `from` and `to` for datepicker to match the current date selection
         this.from = this.transformDate(from);
         this.to = this.transformDate(to);
-        // console.log('BEAUTFIED', this.beautifiedData);
         console.log('FILTERED', this.filteredData);
-
       }, err => {
         this._notification.errorMessage(err.statusText + '<br>' + err.message, err.name);
         // TODO: Imporve error handling
@@ -968,7 +955,6 @@ export class FilterComponent implements OnInit, OnDestroy {
     this._cantonsSub = this._sparqlDataService.getUniqueCantons().subscribe(
       uniqueCantons => {
         this.allCantons = this.beautifyItems(uniqueCantons, 'kanton');
-        console.log(this.possibleSelections.canton)
         this.inputCantons = this.constructItemList(this.possibleSelections.canton, this.allCantons);
       }, err => {
         this._notification.errorMessage(err.statusText + '<br>' + err.message, err.name);
@@ -1024,6 +1010,7 @@ export class FilterComponent implements OnInit, OnDestroy {
     this._animalsSub = this._sparqlDataService.getUniqueAnimals(lang).subscribe(
       uniqueAnimals => {
         this.allAnimals = this.beautifyItems(uniqueAnimals, 'tier_art');
+        console.log(this.possibleSelections.animal_species)
         this.inputAnimals = this.constructItemList(this.possibleSelections.animal_species, this.allAnimals);
       }, err => {
         this._notification.errorMessage(err.statusText + '<br>' + err.message, err.name)
