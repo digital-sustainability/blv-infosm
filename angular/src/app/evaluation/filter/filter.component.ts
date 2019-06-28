@@ -705,9 +705,7 @@ export class FilterComponent implements OnInit, OnDestroy {
   private constructItemList(possibleItems: string[], uniqueItems: string[]): InputField[] {
     let disabledList = [];
     let selectableList = [];
-    console.log(possibleItems)
     uniqueItems.forEach((entry: string, index: number) => {
-      console.log(entry)
       if (possibleItems.includes(entry)) {
         selectableList.push({
           label: entry,
@@ -1010,7 +1008,6 @@ export class FilterComponent implements OnInit, OnDestroy {
     this._animalsSub = this._sparqlDataService.getUniqueAnimals(lang).subscribe(
       uniqueAnimals => {
         this.allAnimals = this.beautifyItems(uniqueAnimals, 'tier_art');
-        console.log(this.possibleSelections.animal_species)
         this.inputAnimals = this.constructItemList(this.possibleSelections.animal_species, this.allAnimals);
       }, err => {
         this._notification.errorMessage(err.statusText + '<br>' + err.message, err.name)
