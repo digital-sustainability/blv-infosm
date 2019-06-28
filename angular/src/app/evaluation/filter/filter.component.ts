@@ -919,17 +919,18 @@ export class FilterComponent implements OnInit, OnDestroy {
   private getList(lang: string, from: string | Date, to: string | Date): void {
     this._dataSub = this._sparqlDataService.getReports(lang, from, to).subscribe(
       (data: any[]) => {
-        this.beautifiedData = data.map(report => {
+        this.beautifiedData = data.map(d => {
           return {
-            diagnosis_date: report.diagnose_datum.value,
-            canton: report.kanton.value,
-            canton_id: Number(/\d+/.exec(report.canton_id.value)[0]),
-            munic: report.gemeinde.value,
-            munic_id: Number(/\d+/.exec(report.munic_id.value)[0]),
-            epidemic_group: report.seuchen_gruppe.value,
-            epidemic: report.seuche.value,
-            animal_group: report.tier_gruppe.value,
-            animal_species: report.tierart.value
+            diagnosis_date: d.diagnose_datum.value,
+            canton: d.kanton.value,
+            canton_id: Number(/\d+/.exec(d.canton_id.value)[0]),
+            munic: d.gemeinde.value,
+            munic_id: Number(/\d+/.exec(d.munic_id.value)[0]),
+            epidemic_group: d.seuchen_gruppe.value,
+            epidemic: d.seuche.value,
+            // Capitalize first letter
+            animal_group: d.tier_gruppe.value[0].toUpperCase() + d.tier_gruppe.value.slice(1),
+            animal_species: d.tierart.value[0].toUpperCase() + d.tierart.value.slice(1)
           } as Report;
         });
         this.getAllPossibleValues(lang);

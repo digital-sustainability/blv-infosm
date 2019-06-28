@@ -70,7 +70,7 @@ export class MapChartComponent implements AfterViewInit, OnDestroy {
       color: '#333',
       width: 2,
     }),
-  });3
+  });
 
   // select interaction working on "pointermove"
   select = new Select({
