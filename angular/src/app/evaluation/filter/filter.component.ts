@@ -55,7 +55,7 @@ export class FilterComponent implements OnInit, OnDestroy {
   private _animalsSub: Subscription;
   private _epidemicsSub: Subscription;
 
-  private _filter = {
+  _filter = {
     lang: '',
     from: '',
     to: ''
