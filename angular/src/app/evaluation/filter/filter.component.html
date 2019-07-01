@@ -5,7 +5,9 @@
       <i class="fa fa-fw fa-chevron-right"></i>{{ 'FILTER.FILTER_TIME' | translate }}
     </div>
     <div class="panel-body">
-      <div id="filterDates" class="collapse " style="margin-bottom: 10px;">
+      <div id="filterDates" class="collapse" style="margin-bottom: 10px;">
+        <div style="margin:1%">{{ 'FILTER.TIME_INFO' | translate }}</div>
+        <div class = "border">
         <fieldset>
           <!-- last week and last month disabled since we dont have this data at the moment -->
           <div class="radio radio--left">
@@ -43,34 +45,38 @@
               {{ 'FILTER.WHOLETIME' | translate }}
             </label>
           </div>
+          <div *ngIf="radioActive"><strong>{{ 'FILTER.GIVEN_PERIOD' | translate }} {{ _filter.from | chDate }} - {{_filter.to | chDate}}</strong></div>
         </fieldset>
-        <div id="selectDateSection" class="notValid">
-          <div class="input-group">
-            <form class="form-inline">
+      </div>
+        <div id="selectDateSection" class=" border">
+          <div class="input-group flex notValid">
+            <form class="form-inline ngbDp">
               <div class="form-group">
                 <div class="input-group-prepend">
                   <span class="input-group-text" id="inputGroup-sizing-default">{{ 'FILTER.FROM' | translate }}</span>
                 </div>
                 <div class="input-group" style="width: 40%">
                   <input class="form-control" placeholder="{{ 'EVAL.DATEPICKER_PLACEHOLDER' | translate }}" name="from"
-                    [(ngModel)]="from" ngbDatepicker #fromPicker="ngbDatepicker">
+                  [(ngModel)]="from" ngbDatepicker #fromPicker="ngbDatepicker">
                 </div>
+                <!-- [(ngModel)]="from"  -->
                 <div class="input-group-append" style="height:33.5px;">
                   <button class="btn btn-outline-secondary calendar" (click)="fromPicker.toggle()"
                     type="button"></button>
                 </div>
               </div>
             </form>
-            <form class="form-inline">
+            <form class="form-inline ngbDp">
               <div class="form-group">
                 <div class="input-group-prepend">
                   <span class="input-group-text" id="inputGroup-sizing-default">{{'FILTER.TO' | translate}}&nbsp;</span>
                 </div>
                 <div class="input-group" style="width: 40%">
                   <input class="form-control" placeholder="{{ 'EVAL.DATEPICKER_PLACEHOLDER' | translate }}" name="to"
-                    [(ngModel)]="to" ngbDatepicker #toPicker="ngbDatepicker">
+                     [(ngModel)]="to" ngbDatepicker #toPicker="ngbDatepicker">
                 </div>
-                <div class="input-group-append" style="height:33.5px;">
+                <!-- [(ngModel)]="to" -->
+                <div class="input-group-append filterButton" style="height:33.5px;">
                   <button class="btn btn-outline-secondary calendar" (click)="toPicker.toggle()" type="button"></button>
                 </div>
               </div>
@@ -79,6 +85,7 @@
               (click)="onGetFromToDates(from, to)">{{'FILTER.FILTER_ACTION' | translate}}
             </button>
           </div>
+          <div *ngIf="!radioActive"><strong>{{ 'FILTER.SPECIFIC_PERIOD' | translate }} {{ _filter.from | chDate }} - {{_filter.to | chDate}}</strong></div>
         </div>
       </div>
     </div>

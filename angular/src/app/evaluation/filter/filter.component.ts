@@ -62,6 +62,7 @@ export class FilterComponent implements OnInit, OnDestroy {
   };
 
   trans: Translations;
+  radioActive: boolean = true;
 
   formCant: FormGroup;
   formMunic: FormGroup;
@@ -794,6 +795,7 @@ export class FilterComponent implements OnInit, OnDestroy {
 
   // changes the date based on radio buttons
   onChangeDate(option: string): void {
+    this.radioActive = true;
     // TODO: One year too much because we don't have all the data
     this._filter.to = dayjs().subtract(1, 'y').format('YYYY-MM-DD');
     switch (option) {
@@ -813,6 +815,9 @@ export class FilterComponent implements OnInit, OnDestroy {
       from: this._filter.from,
       to: this._filter.to
     });
+
+    // remove the errors from the datepicker if the user switches 
+    this.removeErrors();
   }
 
   getTranslations(): void {
@@ -846,12 +851,16 @@ export class FilterComponent implements OnInit, OnDestroy {
 
   // Changes the date based on the datepickers
   onGetFromToDates(from: NgbDate, to: NgbDate): void {
-    const fromdate = dayjs(from.year + '-' + from.month + '-' + from.day).format('YYYY-MM-DD');
-    const todate = dayjs(to.year + '-' + to.month + '-' + to.day).format('YYYY-MM-DD');
+    const fromdate = this.retransformDate(this.datepickerFrom['_inputValue']);
+    console.log(fromdate)
+    const todate = this.retransformDate(this.datepickerTo['_inputValue']);
+    // const fromdate = dayjs(from.year + '-' + from.month + '-' + from.day).format('YYYY-MM-DD');
+    // const todate = dayjs(to.year + '-' + to.month + '-' + to.day).format('YYYY-MM-DD');
     const dateOfFirstEntry = dayjs('1991-01-15').format('YYYY-MM-DD');
     const today = dayjs().format('YYYY-MM-DD');
     this.removeErrors();
     if (dayjs(fromdate).isValid() && dayjs(todate).isValid() && fromdate.length === 10 && todate.length === 10) {
+      //TODO: TRANSLATIONS --> not correct
       if (fromdate > todate) {
         $('.notValid').after(
           `<p class='err' style='color:red' id='datecompareerror'>${this.trans['EVAL.DATE_WRONG_ORDER']}</p>`
@@ -884,6 +893,7 @@ export class FilterComponent implements OnInit, OnDestroy {
       });
       // uncheck all radio buttons since either you search for period of for specific dates
       $('.radio').prop('checked', false);
+      this.radioActive = false;
     } else {
       if (!(dayjs(fromdate).isValid()) || !(dayjs(todate).isValid())) {
         $('.notValid').after(

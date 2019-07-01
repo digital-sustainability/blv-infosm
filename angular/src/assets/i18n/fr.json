@@ -121,7 +121,10 @@
         "SHOW_NONE": "Effacer tout",
         "SHOW_ALL": "Sélectionner tout",
         "RESET": "Réinitialiser le filtre",
-        "ADD" : "Ajouter"
+        "ADD" : "Ajouter",
+        "GIVEN_PERIOD": "Période de temps spécifiée sélectionnée:",
+        "SPECIFIC_PERIOD": "Période spécifique sélectionnée:",
+        "TIME_INFO": "Sélectionner un préréglage ou une période de temps spécifique."
     },
     "GEO_DOWNLOAD": {
         "TITLE": "Télécharger les données",
