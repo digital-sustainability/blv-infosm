@@ -124,7 +124,7 @@
                   notFoundText="{{'FILTER.NO_ENTRIES' | translate}}" [multiple]="true" name="inputCantons"
                   bindLabel="label" placeholder="{{'FILTER.PLACEHOLDER_CANTON' | translate}}"
                   (add)="onAdd($event, 'canton')" (remove)="onRemove($event, 'canton')"
-                  (clear)="onClear('canton')" formControlName="canton">
+                  (clear)="onClearAll('canton')" formControlName="canton">
                   <ng-template ng-header-tmp>
                     <div>
                       <button class="btn btn-link"
@@ -142,7 +142,7 @@
                 <ng-select #selectMunic [items]="inputCommunities" [(ngModel)]="selectedMunic" bindLabel="label"
                   notFoundText="{{'FILTER.NO_ENTRIES' | translate}}" [multiple]="true" name="inputCommunities"
                   placeholder="{{'FILTER.PLACEHOLDER_MUNICIPALITY' | translate}}" (add)="onAdd($event, 'munic')"
-                  (remove)="onRemove($event, 'munic')" (clear)="onClear('munic')" formControlName="munic">
+                  (remove)="onRemove($event, 'munic')" (clear)="onClearAll('munic')" formControlName="munic">
                   <ng-template ng-header-tmp>
                     <div>
                       <button class="btn btn-link"
@@ -164,7 +164,7 @@
                   notFoundText="{{'FILTER.NO_ENTRIES' | translate}}" [multiple]="true" name="inputEpidemicsGroup"
                   placeholder="{{'FILTER.PLACEHOLDER_EPIDEMIC_GROUP' | translate}}"
                   (add)="onAdd($event, 'epidemic_group')" (remove)="onRemove($event, 'epidemic_group')"
-                  (clear)="onClear('epidemic_group')" formControlName="epidemic_group">
+                  (clear)="onClearAll('epidemic_group')" formControlName="epidemic_group">
                   <ng-template ng-header-tmp>
                     <div>
                       <button class="btn btn-link"
@@ -182,7 +182,7 @@
                 <ng-select #selectEpi [items]="inputEpidemics" [(ngModel)]="selectedEpidemic" bindLabel="label"
                   notFoundText="{{'FILTER.NO_ENTRIES' | translate}}" [multiple]="true" name="inputEpidemics"
                   placeholder="{{'FILTER.PLACEHOLDER_EPIDEMIC' | translate}}" (add)="onAdd($event, 'epidemic')"
-                  (remove)="onRemove($event, 'epidemic')" (clear)="onClear('epidemic')"
+                  (remove)="onRemove($event, 'epidemic')" (clear)="onClearAll('epidemic')"
                   formControlName="epidemic">
                   <ng-template ng-header-tmp>
                     <div>
@@ -204,7 +204,7 @@
                 <ng-select #selectAniG [items]="inputAnimalGroups" [(ngModel)]="selectedAnimalG" bindLabel="label"
                   notFoundText="{{'FILTER.NO_ENTRIES' | translate}}" [multiple]="true" name="inputAnimalGroups"
                   placeholder="{{'FILTER.PLACEHOLDER_ANIMAL_GROUP' | translate}}" (add)="onAdd($event, 'animal_group')"
-                  (remove)="onRemove($event, 'animal_group')" (clear)="onClear('animal_group')"
+                  (remove)="onRemove($event, 'animal_group')" (clear)="onClearAll('animal_group')"
                   formControlName="animal_group">
                   <ng-template ng-header-tmp>
                     <div>
@@ -224,7 +224,7 @@
                   notFoundText="{{'FILTER.NO_ENTRIES' | translate}}" [multiple]="true" name="inputAnimals"
                   placeholder="{{'FILTER.PLACEHOLDER_ANIMAL_SPECIES' | translate}}"
                   (add)="onAdd($event, 'animal_species')" (remove)="onRemove($event, 'animal_species')"
-                  (clear)="onClear('animal_species')" formControlName="animal_species">
+                  (clear)="onClearAll('animal_species')" formControlName="animal_species">
                   <ng-template ng-header-tmp>
                     <div>
                       <button class="btn btn-link"

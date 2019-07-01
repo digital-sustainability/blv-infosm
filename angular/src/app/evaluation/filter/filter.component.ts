@@ -372,6 +372,40 @@ export class FilterComponent implements OnInit, OnDestroy {
       });
     }
 
+    // let filterTypeAbove: string = "";
+    // switch (filterType) {
+    //   case 'animal_species': filterTypeAbove = 'animal_group'; break;
+    //   case 'epidemic': filterTypeAbove = 'epidemic_group'; break;
+    //   case 'munic': filterTypeAbove = 'canton'; break;
+    // }
+
+    // const remainingItems = this.filterConfig[filterType].filter.length;
+    // if (remainingItems !== 0 || filterTypeAbove === "") {
+    //   const actualHierarchy = this.getHierarchy(filterType);
+    //   const entriesToAdatpInputs = this.filterHierarchiesAbove(actualHierarchy);
+    //   this.adaptPossibleSelections(entriesToAdatpInputs, this.beautifiedData, filterType);
+     
+    // } else {
+    //   const actualHierarchy = this.getHierarchy(filterTypeAbove);
+    //   const entriesToAdatpInputs = this.filterHierarchiesAbove(actualHierarchy);
+    //   this.adaptPossibleSelections(entriesToAdatpInputs, this.beautifiedData, filterTypeAbove);
+      
+    // }
+    this.adaptLogicOfRemove(filterType);
+    this.getList(this._filter.lang, this._filter.from, this._filter.to);
+  }
+
+  
+  onClearAll(filterType: string): void {
+    if (this.filterConfig.hasOwnProperty(filterType)) {
+      this.filterConfig[filterType].filter = [];
+    }
+    this.adaptLogicOfRemove(filterType);
+    this.getList(this._filter.lang, this._filter.from, this._filter.to);
+  }
+
+  adaptLogicOfRemove(filterType: string): void {
+    const remainingItems = this.filterConfig[filterType].filter.length;
     let filterTypeAbove: string = "";
     switch (filterType) {
       case 'animal_species': filterTypeAbove = 'animal_group'; break;
@@ -379,19 +413,15 @@ export class FilterComponent implements OnInit, OnDestroy {
       case 'munic': filterTypeAbove = 'canton'; break;
     }
 
-    const remainingItems = this.filterConfig[filterType].filter.length;
     if (remainingItems !== 0 || filterTypeAbove === "") {
       const actualHierarchy = this.getHierarchy(filterType);
       const entriesToAdatpInputs = this.filterHierarchiesAbove(actualHierarchy);
       this.adaptPossibleSelections(entriesToAdatpInputs, this.beautifiedData, filterType);
-     
     } else {
       const actualHierarchy = this.getHierarchy(filterTypeAbove);
       const entriesToAdatpInputs = this.filterHierarchiesAbove(actualHierarchy);
-      this.adaptPossibleSelections(entriesToAdatpInputs, this.beautifiedData, filterTypeAbove);
-      
+      this.adaptPossibleSelections(entriesToAdatpInputs, this.beautifiedData, filterTypeAbove); 
     }
-    this.getList(this._filter.lang, this._filter.from, this._filter.to);
   }
 
   /**
@@ -419,12 +449,6 @@ export class FilterComponent implements OnInit, OnDestroy {
   }
 
 
-  onClear(filterType: string): void {
-    if (this.filterConfig.hasOwnProperty(filterType)) {
-      this.filterConfig[filterType].filter = [];
-    }
-    this.getList(this._filter.lang, this._filter.from, this._filter.to);
-  }
 
   onSelectAll(input: InputField[], formControlName: string, form: FormGroup): void {
     this.selectedAll = true;
