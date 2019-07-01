@@ -93,16 +93,23 @@
         <div class="flex-container">
           <div class="btn-group" style="width:100%">
             <button type="button" class="btn btn-dark" id="cantonEntrypoint"
-              (click)="orderItems('where', '#cantonEntrypoint','canton')">{{ 'EVAL.CANTON' | translate }}
-              <span *ngIf="filterConfig.canton.position > 0">({{ filterConfig.canton.position }})</span></button>
+              (click)="orderItems('where', '#cantonEntrypoint','canton')">
+              <span *ngIf="filterConfig.canton.position === 0 && _filter.lang !=='de'">{{ 'FILTER.ADD' | translate }}</span>
+              {{ 'EVAL.CANTON' | translate }}
+              <span *ngIf="filterConfig.canton.position === 0 && _filter.lang ==='de'">{{ 'FILTER.ADD' | translate }}</span>
+            </button>
             <button type="button" class="btn btn-dark" id="epidemicEntryPoint"
-              (click)="orderItems('what', '#epidemicEntryPoint', 'epidemic_group')">{{ 'EVAL.PEST_GROUP' | translate }}
-              <span
-                *ngIf="filterConfig.epidemic_group.position > 0">({{ filterConfig.epidemic_group.position }})</span></button>
+              (click)="orderItems('what', '#epidemicEntryPoint', 'epidemic_group')">
+              <span *ngIf="filterConfig.epidemic_group.position === 0 && _filter.lang !=='de'">{{ 'FILTER.ADD' | translate }}</span>
+              {{ 'EVAL.PEST_GROUP' | translate }}
+              <span *ngIf="filterConfig.epidemic_group.position === 0 && _filter.lang ==='de'">{{ 'FILTER.ADD' | translate }}</span>
+            </button>
             <button type="button" class="btn btn-dark" id="animalEntryPoint"
-              (click)="orderItems('who', '#animalEntryPoint', 'animal_group')">{{ 'DOWNLOAD.ANIMAL_GROUP' | translate }}
-              <span
-                *ngIf="filterConfig.animal_group.position > 0">({{ filterConfig.animal_group.position }})</span></button>
+              (click)="orderItems('who', '#animalEntryPoint', 'animal_group')">
+              <span *ngIf="filterConfig.animal_group.position === 0 && _filter.lang !=='de'">{{ 'FILTER.ADD' | translate }}</span>
+              {{ 'DOWNLOAD.ANIMAL_GROUP' | translate }}
+              <span *ngIf="filterConfig.animal_group.position === 0 && _filter.lang ==='de'">{{ 'FILTER.ADD' | translate }}</span>
+            </button>
             <button class="btn btn-danger"
               (click)="onReset('who','what', 'where')">{{ 'FILTER.RESET' | translate }}</button>
           </div>
@@ -110,7 +117,9 @@
           <div class="test" id="where">
             <div class="select-wrapper">
               <div [formGroup]="formCant" novalidate>
-                <label class="selction-label" for="inputCantons">{{ 'FILTER.FILTER_CANTONS' | translate }}</label>
+                <label class="selction-label" for="inputCantons">{{ 'FILTER.FILTER_CANTONS' | translate }} 
+                  <span *ngIf="!formCant.controls['canton'].disabled">({{possibleSelections.canton.length}})</span>
+                </label>
                 <ng-select #selectCant [items]="inputCantons" [(ngModel)]="selectedCantons"
                   notFoundText="{{'FILTER.NO_ENTRIES' | translate}}" [multiple]="true" name="inputCantons"
                   bindLabel="label" placeholder="{{'FILTER.PLACEHOLDER_CANTON' | translate}}"
@@ -127,7 +136,9 @@
             </div>
             <div class="select-wrapper">
               <div [formGroup]="formMunic" novalidate>
-                <label class="selction-label" for="inputCommunities">{{ 'FILTER.FILTER_MUNICS' | translate }}</label>
+                <label class="selction-label" for="inputCommunities">{{ 'FILTER.FILTER_MUNICS' | translate }}
+                  <span *ngIf="!formMunic.controls['munic'].disabled">({{possibleSelections.munic.length}})</span>
+                </label>
                 <ng-select #selectMunic [items]="inputCommunities" [(ngModel)]="selectedMunic" bindLabel="label"
                   notFoundText="{{'FILTER.NO_ENTRIES' | translate}}" [multiple]="true" name="inputCommunities"
                   placeholder="{{'FILTER.PLACEHOLDER_MUNICIPALITY' | translate}}" (add)="onAdd($event, 'munic')"
@@ -146,8 +157,9 @@
           <div class="test" id="what">
             <div class="select-wrapper">
               <div [formGroup]="formEpidG" novalidate>
-                <label class="selction-label"
-                  for="inputEpidemicsGroup">{{ 'FILTER.FILTER_PEST_GROUPS' | translate }}</label>
+                <label class="selction-label" for="inputEpidemicsGroup"> {{ 'FILTER.FILTER_PEST_GROUPS' | translate }}
+                  <span *ngIf="!formEpidG.controls['epidemic_group'].disabled"> ({{possibleSelections.epidemic_group.length}}) </span>
+                </label>
                 <ng-select #selectEpiG [items]="inputEpidemicsGroup" [(ngModel)]="selectedEpidemicG" bindLabel="label"
                   notFoundText="{{'FILTER.NO_ENTRIES' | translate}}" [multiple]="true" name="inputEpidemicsGroup"
                   placeholder="{{'FILTER.PLACEHOLDER_EPIDEMIC_GROUP' | translate}}"
@@ -164,7 +176,9 @@
             </div>
             <div class="select-wrapper">
               <div [formGroup]="formEpid" novalidate>
-                <label class="selction-label" for="inputEpidemics">{{ 'FILTER.FILTER_PESTS' | translate }}</label>
+                <label class="selction-label" for="inputEpidemics">{{ 'FILTER.FILTER_PESTS' | translate }} 
+                  <span *ngIf="!formEpid.controls['epidemic'].disabled">({{possibleSelections.epidemic.length}})</span>
+                </label>
                 <ng-select #selectEpi [items]="inputEpidemics" [(ngModel)]="selectedEpidemic" bindLabel="label"
                   notFoundText="{{'FILTER.NO_ENTRIES' | translate}}" [multiple]="true" name="inputEpidemics"
                   placeholder="{{'FILTER.PLACEHOLDER_EPIDEMIC' | translate}}" (add)="onAdd($event, 'epidemic')"
@@ -184,8 +198,9 @@
           <div class="test" id="who">
             <div class="select-wrapper">
               <div [formGroup]="formAniG" novalidate>
-                <label class="selction-label"
-                  for="inputAnimalGroups">{{ 'FILTER.FILTER_ANIMAL_GROUPS' | translate }}</label>
+                <label class="selction-label" for="inputAnimalGroups">{{ 'FILTER.FILTER_ANIMAL_GROUPS' | translate }} 
+                  <span *ngIf="!formAniG.controls['animal_group'].disabled">({{possibleSelections.animal_group.length}})</span>
+                </label>
                 <ng-select #selectAniG [items]="inputAnimalGroups" [(ngModel)]="selectedAnimalG" bindLabel="label"
                   notFoundText="{{'FILTER.NO_ENTRIES' | translate}}" [multiple]="true" name="inputAnimalGroups"
                   placeholder="{{'FILTER.PLACEHOLDER_ANIMAL_GROUP' | translate}}" (add)="onAdd($event, 'animal_group')"
@@ -202,7 +217,9 @@
             </div>
             <div class="select-wrapper">
               <div [formGroup]="formAni" novalidate>
-                <label class="selction-label" for="inputAnimals">{{ 'FILTER.FILTER_ANIMALS' | translate }}</label>
+                <label class="selction-label" for="inputAnimals">{{ 'FILTER.FILTER_ANIMALS' | translate }} 
+                  <span *ngIf="!formAni.controls['animal_species'].disabled">({{possibleSelections.animal_species.length}})</span>
+                </label>
                 <ng-select #selectAni [items]="inputAnimals" [(ngModel)]="selectedAnimal" bindLabel="label"
                   notFoundText="{{'FILTER.NO_ENTRIES' | translate}}" [multiple]="true" name="inputAnimals"
                   placeholder="{{'FILTER.PLACEHOLDER_ANIMAL_SPECIES' | translate}}"

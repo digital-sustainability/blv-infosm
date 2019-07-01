@@ -126,7 +126,8 @@
     "FILTER_ANIMAL_GROUPS": "Tiergruppen filtern",
     "SHOW_NONE": "Alle löschen",
     "SHOW_ALL": "Alle auswählen",
-    "RESET": "Filter zurücksetzen"
+    "RESET": "Filter zurücksetzen",
+    "ADD":"hinzufügen"
   },
   "GEO_DOWNLOAD": {
     "TITLE": "Daten herunterladen",
