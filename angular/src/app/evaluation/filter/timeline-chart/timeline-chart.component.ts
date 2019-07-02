@@ -221,6 +221,7 @@ export class TimelineChartComponent implements OnInit, OnDestroy {
 
   // TODO: enforce typing. There seem to be two kinds of Report (EN vs. DE)
   private aggregate(reports: Report[], timeUnit: number[], target: string): Line[] {
+    console.log(timeUnit)
     // Extract unique the names of all possible targets
     const uniqeKeys = uniqBy(reports.map(report => report[target])).sort();
 
@@ -381,7 +382,7 @@ export class TimelineChartComponent implements OnInit, OnDestroy {
   }
 
   private getIntervalUnit(from: Date, to: Date): void {
-    if ((Math.abs(moment(to).diff(from, 'years'))) > 1) {
+    if ((Math.abs(moment(to).diff(from, 'months'))) > 12) {
       this.isYear = true;
       this.isMonth = false;
       this.isWeek = false;
