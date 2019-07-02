@@ -852,7 +852,6 @@ export class FilterComponent implements OnInit, OnDestroy {
   // Changes the date based on the datepickers
   onGetFromToDates(from: NgbDate, to: NgbDate): void {
     const fromdate = this.retransformDate(this.datepickerFrom['_inputValue']);
-    console.log(fromdate)
     const todate = this.retransformDate(this.datepickerTo['_inputValue']);
     // const fromdate = dayjs(from.year + '-' + from.month + '-' + from.day).format('YYYY-MM-DD');
     // const todate = dayjs(to.year + '-' + to.month + '-' + to.day).format('YYYY-MM-DD');
@@ -895,7 +894,8 @@ export class FilterComponent implements OnInit, OnDestroy {
       $('.radio').prop('checked', false);
       this.radioActive = false;
     } else {
-      if (!(dayjs(fromdate).isValid()) || !(dayjs(todate).isValid())) {
+      debugger
+      if (!(dayjs(fromdate).isValid()) || !(dayjs(todate).isValid()) || fromdate.length === 10 || todate.length === 10) {
         $('.notValid').after(
           `<p class='err' style='color:red' id='dateformaterror'>${this.trans['EVAL.DATE_WRONG_FORMAT']}</p>`
         );
