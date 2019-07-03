@@ -154,7 +154,7 @@ export class FilterComponent implements OnInit, OnDestroy {
     private _route: ActivatedRoute,
     private _router: Router,
     private _notification: NotificationService,
-    public translateService: TranslateService,
+    public translate: TranslateService,
     public ngbDatepickerConfig: NgbDatepickerConfig,
     private fb: FormBuilder
   ) { }
@@ -168,7 +168,7 @@ export class FilterComponent implements OnInit, OnDestroy {
 
         // Sets parmas if none detected or one is misssing
         if (!params['lang'] || !params['from'] || !params['to']) {
-          const lang = this.translateService.currentLang;
+          const lang = this.translate.currentLang;
           const from = moment().subtract(1, 'y').format('YYYY-MM-DD');
           const to = dayjs().format('YYYY-MM-DD');
           this.updateRouteParams({
@@ -180,7 +180,7 @@ export class FilterComponent implements OnInit, OnDestroy {
         } else {
           // Load data according to URL-input by user
           this.getList(this._filter.lang, this._filter.from, this._filter.to);
-          if (this._filter.lang !== this.translateService.currentLang) {
+          if (this._filter.lang !== this.translate.currentLang) {
             this._langauageService.changeLang(this._filter.lang);
           }
         }
@@ -201,6 +201,17 @@ export class FilterComponent implements OnInit, OnDestroy {
       }
     );
 
+    this._translationSub = this.translate.get([
+      'FILTER.DATE_COMPARE_ERROR',
+      'FILTER.DATE_PERIOD_ERROR',
+      'FILTER.DATE_FROM_ERROR',
+      'FILTER.DATE_TO_ERROR',
+      'FILTER.DATE_FORMAT_ERROR']).subscribe(
+        texts => {
+          this.trans = texts;
+      }
+    );
+    
     const today = new Date();
     this.ngbDatepickerConfig.minDate = { year: 1991, month: 1, day: 15 };
     this.ngbDatepickerConfig.maxDate = {
@@ -821,7 +832,7 @@ export class FilterComponent implements OnInit, OnDestroy {
   }
 
   getTranslations(): void {
-    this._translationSub = this.translateService.get([
+    this._translationSub = this.translate.get([
       'EVAL.DATE_WRONG_ORDER',
       'EVAL.DATE_WRONG_FORMAT',
       'EVAL.DATE_TOO_SMALL',
@@ -890,7 +901,7 @@ export class FilterComponent implements OnInit, OnDestroy {
         from: this._filter.from,
         to: this._filter.to
       });
-      // uncheck all radio buttons since either you search for period of for specific dates
+      // uncheck all radio buttons since either you search for period or for specific dates
       $('.radio').prop('checked', false);
       this.radioActive = false;
     } else {
