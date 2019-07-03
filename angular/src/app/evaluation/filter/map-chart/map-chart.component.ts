@@ -132,7 +132,7 @@ export class MapChartComponent implements AfterViewInit, OnDestroy {
           this.initialized = true;
           // load data for canton shapes and simultaniously load for municipalites
           // ADM1 --> Cantons
-          this.wktCantonSub = this._sparqlDataService.getWkt('ADM1').subscribe(
+          this.wktCantonSub = this._sparqlDataService.getCantonWkts().subscribe(
             // TODO: use RXJS pipe/map
             cantonWkts => {
               /**
@@ -164,6 +164,7 @@ export class MapChartComponent implements AfterViewInit, OnDestroy {
               this.map.addLayer(this.cantonVectorLayer);
               this.map.addInteraction(this.select);
               this.select.on('select', event => {
+                console.log(event.selected)
                 if (event.selected.length > 0) {
                   const feature = event.selected[0];
                   const id = feature.getId();
@@ -184,11 +185,12 @@ export class MapChartComponent implements AfterViewInit, OnDestroy {
           );
           }
 
-          // only get munic shapes if none exist
+          // only get munic shapes if none exist  TODO: --> doesn't work yet
           if (!this.municVectorLayer) { // TODO: Close subscription on first()
             // ADM3 --> Municipalities
-            this.wktMunicSub = this._sparqlDataService.getWkt('ADM3').subscribe(
+            this.wktMunicSub = this._sparqlDataService.getMunicWkts().subscribe(
               municWkts => {
+                console.log(municWkts[0])
                 this.municVectorLayer = new OlVectorLayer({
                   source: new Vector({
                     features: this.createShapes(municWkts, false)
@@ -262,12 +264,13 @@ export class MapChartComponent implements AfterViewInit, OnDestroy {
       feature.getGeometry().transform('EPSG:4326', 'EPSG:3857');
       feature.setId(Number(f.shape_id.value));
       feature.setProperties({
-        'name': f.shape_id.value, // TODO: Replace by actual name
+        'name': f.shape_label.value,
         'isCanton': isCanton,
       });
-      // TODO: If munic, add a belongs to value
-      // feature.set('belongsTo', cantonId); e
-      // feature.get('name'); // Get the set values
+      if (!isCanton) {
+        // Add parent canton as property
+        feature.set('belongsToCanton', f.parent_canton_label.value);
+      }
       return feature;
     });
   }
