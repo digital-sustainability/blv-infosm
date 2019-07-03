@@ -1,6 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { FormsModule} from '@angular/forms';
+import { FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { AppRoutingModule } from './app-routing.module';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
@@ -8,12 +8,12 @@ import { ChartModule } from 'angular-highcharts';
 import { AngularFontAwesomeModule } from 'angular-font-awesome';
 import { MatTableModule } from '@angular/material';
 import { MatPaginatorModule } from '@angular/material/paginator';
-import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { ToastrModule } from 'ngx-toastr';
 import { MatSortModule} from '@angular/material/sort';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { AngularOpenlayersModule } from 'ngx-openlayers';
 
 import { AppComponent } from './app.component';
 import { HeaderComponent } from './header/header.component';
@@ -26,7 +26,6 @@ import { MapChartComponent } from './evaluation/filter/map-chart/map-chart.compo
 import { ErrorComponent } from './error.component';
 import { FooterComponent } from './footer/footer.component';
 import { BulletinComponent } from './bulletin/bulletin.component';
-import { BulletinDetailComponent } from './bulletin-detail/bulletin-detail.component';
 import { DownloadComponent } from './evaluation/download/download.component';
 import { GeoDownloadComponent } from './info/geo-download/geo-download.component';
 import { GeoDownloadDetailComponent } from './geo-download-detail/geo-download-detail.component';
@@ -40,6 +39,10 @@ import { MatPaginatorI18nService} from './shared/mat-paginator-i18n.service'
 import { DistributeDataService } from './shared/distribute-data.service';
 import { DatePickerI18nService } from './shared/date-picker-i18n.service';
 import { HighchartService } from './shared/highchart.service';
+import { ParamService } from './shared/param.service';
+import { ChDate } from './shared/pipes/ch-date.pipe';
+import { NotificationService } from './shared/notification.service';
+
 
 @NgModule({
   declarations: [
@@ -54,10 +57,10 @@ import { HighchartService } from './shared/highchart.service';
     ErrorComponent,
     FooterComponent,
     BulletinComponent,
-    BulletinDetailComponent,
     DownloadComponent,
     GeoDownloadComponent,
-    GeoDownloadDetailComponent
+    GeoDownloadDetailComponent,
+    ChDate
   ],
   imports: [
     BrowserModule,
@@ -65,15 +68,14 @@ import { HighchartService } from './shared/highchart.service';
     HttpClientModule,
     ChartModule,
     FormsModule,
+    ReactiveFormsModule,
     NgSelectModule,
     AngularFontAwesomeModule,
     MatTableModule,
     MatPaginatorModule,
-    NoopAnimationsModule,
     MatSortModule,
     MatTooltipModule,
     NgbModule,
-    AngularOpenlayersModule,
     TranslateModule.forRoot({
       loader: {
         provide: TranslateLoader,
@@ -81,12 +83,20 @@ import { HighchartService } from './shared/highchart.service';
         deps: [HttpClient]
       }
     }),
+    BrowserAnimationsModule,
+    ToastrModule.forRoot({
+      disableTimeOut: true,
+      positionClass: 'toast-center-center',
+      enableHtml: true
+    })
   ],
   providers: [
     SparqlDataService,
     LanguageService,
     DistributeDataService,
     HighchartService,
+    ParamService,
+    NotificationService,
     {
       provide: MatPaginatorIntl,
       useClass: MatPaginatorI18nService,
@@ -94,12 +104,9 @@ import { HighchartService } from './shared/highchart.service';
     {
       provide: NgbDatepickerI18n,
       useClass: DatePickerI18nService
-    }
+    },
   ],
-  schemas: [
-    CUSTOM_ELEMENTS_SCHEMA
-],
-
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

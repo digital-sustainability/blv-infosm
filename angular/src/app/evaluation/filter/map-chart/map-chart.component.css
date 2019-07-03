@@ -1,3 +1,45 @@
-.container {
-    border: 1px solid lightgray;
+.ol-map {
+    width: 100%;
+    height: 500px;
 }
+
+.chart-control-left {
+    margin-right: 5px
+}
+
+.chart-control-right {
+    margin-left: 5px
+}
+
+.map-legend {
+    padding: 0 3px 0 3px
+}
+
+#legende-1-5 {
+    background-color: rgba(210, 245, 60, 0.6);
+}
+
+#legende-5-25 {
+    background-color:rgba(255, 255, 102, 0.6);
+}
+
+#legende-25-50 {
+    background-color: rgba(255, 165, 0, 0.6);
+}
+
+#legende-50-100 {
+    background-color: rgba(255, 87, 51, 0.6);
+}
+
+#legende-100-500 {
+    background-color: rgba(255, 0, 0, 1);
+}
+
+#legende-500-1000 {
+    background-color: rgba(199, 0, 57, 0.6);
+}
+
+#legende-1000 {
+    background-color: rgba(88, 24, 69, 0.6);
+}
+

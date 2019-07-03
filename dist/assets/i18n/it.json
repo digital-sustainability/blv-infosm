@@ -3,7 +3,8 @@
         "BLV": "USAV",
         "BLV_FULL": "Ufficio federale della sicurezza alimentare e di veterinaria",
         "CONTACT": "Contatto",
-        "LEGAL_FRAMEWORK": "Basi legali"
+        "LEGAL_FRAMEWORK": "Basi legali",
+        "GO_UP": "Inizio pagina"
     },
     "HEADER": {
         "HOME": "Pagina iniziale",
@@ -20,6 +21,12 @@
         "TEST": "Sperimentazione di un grafico SVG per il flusso di segnalazione di una notifica di una malattia animale."
     },
     "EVAL": {
+        "SHOW_CANTONS": "Mostra cantoni",
+        "SHOW_MUNICS": "Mostra comuni",
+        "SHOW_ANIMALS": "Mostra specie animali",
+        "SHOW_EPIDEMICS": "Mostra epidemie",
+        "SHOW_ANIMAL_GROUPS": "Mostra gruppo di animali",
+        "SHOW_EPIDEMIC_GROUPS": "Mostra gruppi di malattie",
         "WEEK_LABEL": "Settimana",
         "MONTH_LABEL": "Mese",
         "YEAR_LABEL": "Anno",
@@ -40,7 +47,32 @@
         "DATE_WRONG_ORDER": "Invalid: la data da deve essere maggiore di quella di data a",
         "DATE_WRONG_FORMAT": "Invalid: Non è un formato di data valido. Prova: YYYY-MM-DD",
         "DATE_TOO_SMALL": "Invalid: il periodo deve essere di almeno una settimana.",
-        "MONTHS": ["Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Giugno", "Luglio", "Agosto", "Settembre", "Ottobre", "Novembre", "Dicembre"]
+        "DATE_FROM_WRONG_RANGE": "Invalid: Primo messaggio nel nostro database datato 15-01-1991.",
+        "DATE_TO_WRONG_RANGE": "Invalid: selezionare una data inferiore o uguale ad oggi.",
+        "DATEPICKER_PLACEHOLDER": "GG.MM.AAAA",
+        "MONTHS": ["Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Giugno", "Luglio", "Agosto", "Settembre", "Ottobre", "Novembre", "Dicembre"],
+        "ORDER_DESCENDING": "decrescente",
+        "ORDER_ASCENDING": "ascensionale",
+        "ORDER_BY": "ordinati per",
+        "VISU_DATA": "Dati visualizzati",
+        "NOT_SORTED": "Fare clic sull'intestazione di una colonna per ordinare i dati.",
+        "LEGENDE": "Legenda numero di episodi di epizoozia",
+        "OTHER": "Altro",
+        "EPIDEMIC_PER_ANIMLAL": "Epidemie per specie animale",
+        "ANIMLAL_PER_EPIDEMIC": "Specie animali per epidemia",
+        "NO_DATA": "Nessun dato disponibile per questa selezione."
+    },
+    "BULLETIN": {
+        "OPTIONS": "Opzioni di visualizzazione",
+        "NOTICES": "Malattie animali: nuovi focolai nel periodo da",
+        "NUMBER": "Numero del bollettino:",
+        "NUMBER_OF_NOTICES": "Numero di messaggi",
+        "ACTUAL_BULLETIN": "Ultimo bollettino",
+        "FILTER_MESSAGE": "Seleziona la data di un bollettino di tuo interesse:",
+        "NO_BULLETINS": "Nessun messaggio in questo periodo!"
+    },
+    "BULLETIN-DETAIL": {
+        "BACK": "Indietro"
     },
     "DOWNLOAD": {
         "TITLE": "Notifiche",
@@ -58,9 +90,9 @@
         "YOUR_OPTIONS": "Su questo sito internet la ricerca di contenuti può essere effettuata attraverso i seguenti canali:"
     },
     "FILTERCHARTS": {
-        "FREQUENCY": "Analisi frequenziale",
-        "TIMELINE": "Analisi temporale",
-        "MAP": "Analisi geografica"
+        "FREQUENCY": "Frequenza",
+        "TIMELINE": "Epoca",
+        "MAP": "Geografica"
     },
     "FILTER": {
         "FILTER_TIME": "Filtrare per periodo",
@@ -85,7 +117,11 @@
         "FILTER_CANTONS": "Filtrare le canton",
         "FILTER_MUNICS": "Filtrare le comuni",
         "FILTER_ANIMALS": "Filtrare le specie animali",
-        "FILTER_ANIMAL_GROUPS": "Filtrare il gruppo di animali"
+        "FILTER_ANIMAL_GROUPS": "Filtrare il gruppo di animali",
+        "SHOW_NONE": "Cancella tutto",
+        "SHOW_ALL": "Seleziona tutti",
+        "RESET": "Azzera filtro",
+        "ADD": "Sommare"
     },
     "GEO_DOWNLOAD": {
         "TITLE": "Scaricare i dati",
@@ -112,5 +148,9 @@
         "NOTICE_CANCEL": "Interrompi",
         "NOTICE_DOWNLOAD": "Download",
         "NOTICE_WARNING": "Accetta termini di utilizzo"
+    },
+    "ERROR_HANDLING": {
+        "TITLE": "",
+        "MESSAGE": ""
     }
 }

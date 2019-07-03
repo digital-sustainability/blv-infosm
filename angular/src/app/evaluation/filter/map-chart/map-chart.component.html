@@ -1,15 +1,34 @@
-<!-- <div style="border:1px solid lightgray;" class="container" *ngIf="featureData; else loadingPieChart"> -->
-  <aol-map [width]="'100%'" [height]="height">
-    <aol-view [zoom]="7.5">
-      <aol-coordinate [x]="8.2318" [y]="46.7985" [srid]="'EPSG:4326'"></aol-coordinate>
-    </aol-view>
-    <aol-layer-tile>
-      <aol-source-osm></aol-source-osm>
-    </aol-layer-tile>
-  </aol-map>
-<!-- </div> -->
-<!-- <ng-template #loadingPieChart>
-  <div class="loadingSign">
-    <fa name="refresh" size="4x" animation="spin"></fa>
+<div class="main-chart-container">
+  <div id="ol-map"></div>
+  <!-- TODO: While loading data to display already show map but still loader in Legende place -->
+  <div class="map-info" *ngIf="cantonVectorLayer; else loadingMapData">
+    <!-- rgba(210, 245, 60, 0.6)rgba(255, 255, 102, 0.6)rgba(255, 195, 0)rgba(255, 87, 51, 0.6)rgba(255, 0, 0, 1)rgba(199, 0, 57, 0.6)rgba(88, 24, 69, 0.6) -->
+    <p class="m-2">{{ 'EVAL.LEGEND' | translate }}:
+      <span class="map-legend" id="legende-1-5">1-5</span> |
+      <span class="map-legend" id="legende-5-25">5-25</span> |
+      <span class="map-legend" id="legende-25-50">25-50</span> |
+      <span class="map-legend" id="legende-50-100">50-100</span> |
+      <span class="map-legend" id="legende-100-500">100-500</span> |
+      <span class="map-legend" id="legende-500-1000">500-1000</span> |
+      <span class="map-legend" id="legende-1000">1000+</span>
+    </p>
+    <p>ID of selected area: <strong>{{ area }}</strong></p>
+    <p>Disease count per area: <strong>{{ countPerShape }}</strong></p>
+    <div class="chart-button-container">
+      <button class="btn btn-dark mr-2" type="submit" (click)="onSwitchLayer(cantonVectorLayer)" [disabled]="!cantonVectorLayer">
+        {{ 'EVAL.SHOW_CANTONS' | translate }}
+      </button>
+      <button class="btn btn-dark ml-2" type="submit" (click)="onSwitchLayer(municVectorLayer)" [disabled]="!municVectorLayer">
+        <span *ngIf="municVectorLayer; else gettingMunics">{{ 'EVAL.SHOW_MUNICS' | translate }}</span>
+        <ng-template #gettingMunics>
+          <span>Loading ...</span>
+        </ng-template>
+      </button>
+    </div>
   </div>
-</ng-template> -->
+  <ng-template #loadingMapData>
+    <div class="loadingSign">
+      <fa name="refresh" size="4x" animation="spin"></fa>
+    </div>
+  </ng-template>
+</div>

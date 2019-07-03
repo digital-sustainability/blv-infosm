@@ -1,186 +1,277 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { MatPaginator, MatTableDataSource, MatSort, MatSortable } from '@angular/material';
+import { Report } from '../shared/models/report.model';
+import { ParamState } from '../shared/models/param-state.model';
 import { SparqlDataService } from 'src/app/shared/sparql-data.service';
 import { TranslateService } from '@ngx-translate/core';
 import { LanguageService } from 'src/app/shared/language.service';
-import { Router } from '@angular/router';
-import * as moment from 'moment';
+import { NotificationService } from '../shared/notification.service';
+import { Router, ActivatedRoute } from '@angular/router';
+import { NgbDate } from '../shared/models/ngb-date.model';
+import { Subscription } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { ParamService } from '../shared/param.service';
+import { NgbDateParserFormatter, NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
+import { NgbDateCHFormatter } from '../shared/formatters/ngb-ch-date-formatter';
+import { inRange } from 'lodash';
+import dayjs from 'dayjs';
+import weekOfYear from 'dayjs/plugin/weekOfYear';
+dayjs.extend(weekOfYear);
 
 
 @Component({
   selector: 'app-bulletin',
   templateUrl: './bulletin.component.html',
-  styleUrls: ['./bulletin.component.css']
+  styleUrls: ['./bulletin.component.css'],
+  providers: [{provide: NgbDateParserFormatter, useClass: NgbDateCHFormatter}]
 })
 
-export class BulletinComponent implements OnInit {
-
-  @ViewChild('d') datepicker;
-  @ViewChild('c') datepicker2;
-
-  from;
-  to;
+export class BulletinComponent implements OnInit, OnDestroy {
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
 
-  dataSource: any;
-  data: Object[];
-  element_data: any[];
-  displayedColumns: string[] = ['nummer', 'dateFrom', 'dateTo', 'action'];
-  startIntervals = [];
-  endIntervals = [];
-  startOfBulletin = moment('2008-11-17').format('YYYY-MM-DD');
-  today = moment().format('YYYY-MM-DD');
-  actionString = 'Details anzeigen';
-  distributedData = {};
-  details: boolean;
-  detailData;
-  metaData = [];
+  from: NgbDate;
+  to: NgbDate;
+
+  fromDate: string | Date;
+  toDate: string | Date;
+
+  private _paramSub: Subscription;
+  private _langSub: Subscription;
+  private _dataSub: Subscription;
+  private _paramState: ParamState;
+
+  data: Report[]; // TODO: TYPE!
+  model: NgbDateStruct;
+  maxDate: NgbDateStruct;
+  startDate: NgbDateStruct;
+  displayedCols = ['diagnosis_date', 'canton', 'munic', 'epidemic_group', 'epidemic', 'animal_species', 'count'];
+  bulletinNumber: string;
+  bulletinEntries: Report[] = [];
+  dataS: MatTableDataSource<[]>;
+  actualBulletin = true;
+
 
   constructor(
     private _sparqlDataService: SparqlDataService,
-    public translateService: TranslateService,
     private _langauageService: LanguageService,
-    private router: Router
+    private _router: Router,
+    private _paramsService: ParamService,
+    private _route: ActivatedRoute,
+    private _notification: NotificationService,
+    public translateService: TranslateService
   ) { }
 
-  ngOnInit() {
-    console.log(this._langauageService.currentLang);
-    this.getList('de', this.startOfBulletin, this.today);
+  ngOnInit(): void {
+    // max possible date is today
+    this.maxDate = this.transformDate(dayjs().day(0).format('YYYY-MM-DD'));
+    // the start date is the actual bulletin from last week
+    this.startDate = this.transformDate(dayjs().subtract(7, 'd').format('YYYY-MM-DD'));
+    // start by setting the model of the date picker to the start date
+    this.model = this.startDate;
+
+    this._paramState = { lang: '', from: '', to: '' };
+    this._paramSub = this._route.queryParams.subscribe(
+      params => {
+        // set parmas if none detected or one is misssing
+        if (!params['lang'] || !params['from'] || !params['to']) {
+          this.updateInput({
+            lang: this.translateService.currentLang,
+            from: dayjs().subtract(7, 'd').format('YYYY-MM-DD'),
+            to: dayjs().format('YYYY-MM-DD')
+          }, this._paramState);
+        // set params and get data accordning to URL input
+        } else {
+          // load data according to URL-input by user
+          this.updateInput({
+            lang: params['lang'],
+            from: params['from'],
+            to: params['to']
+          }, this._paramState);
+
+          // in case the language in URL defers from the one currently set, change the language
+           // TODO: Check if this logic makes sense or needed at all. Also in Bulletin-detail
+          if (this._paramState.lang !== this.translateService.currentLang) {
+            this._langauageService.changeLang(this._paramState.lang);
+          }
+        }
+        // If the language changes through click, update param
+        this._langSub = this._langauageService.currentLang.subscribe(
+          lang => {
+            if (this._paramState.lang !== lang) {
+              // TODO: reset filter if language changes
+              console.log('ParamState: ' + this._paramState.lang + ' ≠ languageService: ' + lang);
+              this.updateInput({ lang: lang }, this._paramState);
+            }
+          }, err => {
+            // TODO: Imporve error handling
+            this._notification.errorMessage(err.statusText + '<br>' + err.message , err.name);
+            console.log(err);
+          }
+        );
+      }
+    );
+  }
+
+  ngOnDestroy(): void {
+    this._paramSub.unsubscribe();
+    this._dataSub.unsubscribe();
+    this._langSub.unsubscribe();
+  }
+
+  updateDatesAndData(model: NgbDate): void {
+    const selectedDate = model.year + '-' + model.month + '-' + model.day;
+    this.actualBulletin = this.checkActualBulletin(selectedDate);
+    this.fromDate = dayjs(selectedDate, 'YYYY-MM-DD').day(1).format('YYYY-MM-DD');
+    this.toDate = dayjs(selectedDate, 'YYYY-MM-DD').day(7).format('YYYY-MM-DD');
+    this.bulletinNumber = this.constructNumber(selectedDate);
+    this.updateInput({
+      lang: this.translateService.currentLang,
+      from: this.fromDate,
+      to: this.toDate
+    }, this._paramState);
+    this.bulletinEntries = this.searchEntries(this.fromDate, this.toDate, this.data);
+    this.constructTable(this.bulletinEntries);
+  }
+
+  onScrollUp(): void {
+    window.scrollTo(0, 0);
+  }
+
+  private checkActualBulletin(selectedDate: string | Date): boolean {
+    const today = dayjs(new Date()).subtract(7, 'd').format('YYYY-MM-DD');
+    const from =  dayjs(today).day(1).format('YYYY-MM-DD');
+    const to = dayjs(today).day(7).format('YYYY-MM-DD');
+    return ( (dayjs(selectedDate).isBefore(to) || dayjs(selectedDate).isSame(to) )
+                && ( dayjs(selectedDate).isAfter(from) ||  dayjs(selectedDate).isSame(from) ) );
+  }
+
+  private searchEntries(from: string | Date, to: string | Date, data: Report[]): Report[] {
+    const parsedFromDate = this.dateToInt(from);
+    const parsedToDate = this.dateToInt(to);
+    const foundEntriesOfBulletin: Report[] = [];
+    for (const entry of data) {
+      let parsedDateOfEntry = this.dateToInt(entry['diagnosis_date']);
+      if(inRange(parsedDateOfEntry, parsedFromDate, parsedToDate)) {
+        entry.count = 1;
+        foundEntriesOfBulletin.push(entry);
+      }
+    }
+    return this.countOccuranceInBulletin(foundEntriesOfBulletin);
+  }
+
+  private countOccuranceInBulletin(bulletinEntries: Report[]): Report[] {
+    if (!bulletinEntries || bulletinEntries.length === 0) {
+      return [];
+    }
+    let tmp = bulletinEntries;
+    const entriesToRemove = [];
+    const countedBulletinEntries: Report[] = [];
+    bulletinEntries.forEach(entry => {
+      let count = 0;
+      tmp.forEach((el) => {
+        if (this.isEquivalentEntry(entry, el)) {
+          if (entry !== el) {
+            entriesToRemove.push(el);
+          }
+          count++;
+        }
+      });
+      entry['count'] = count;
+      tmp = tmp.filter((el) => {
+        return !entriesToRemove.includes(el);
+      });
+      if (!entriesToRemove.includes(entry)) {
+        countedBulletinEntries.push(entry);
+      }
+    });
+    return countedBulletinEntries;
+  }
+
+  private isEquivalentEntry(a, b): boolean {
+    return ( JSON.stringify(a) === JSON.stringify(b) );
+}
+
+  private dateToInt(date: string | Date): number {
+    return parseInt(date.toString().split('-').join(''));
+  }
+
+  private constructTable(bulletinEntries: Report[]): void {
+    this.dataS = new MatTableDataSource<any>(bulletinEntries);
+    this.dataS.paginator = this.paginator;
+    this.sort.sort(<MatSortable>{
+      id: 'diagnosis_date',
+      start: 'desc'
+    });
+    this.dataS.sort = this.sort;
   }
 
   private getList(lang: string, from: string | Date, to: string | Date): void {
-    this._sparqlDataService.getReports(lang, from, to).subscribe(
+    this._dataSub = this._sparqlDataService.getReports(lang, from, to).subscribe(
       data => {
-        this.data = this.beautifyDataObject(data);
-        this.splitDataToIntervals(from, to);
-        console.log(this.data);
-
-        // Prepare data for table
-        this.element_data = [];
-        this.transformDataToMaterializeTable();
-        this.dataSource = new MatTableDataSource<any>(this.element_data);
-        this.dataSource.paginator = this.paginator;
-        // change the default ordering of the table
-        this.sort.sort(<MatSortable>{
-          id: 'nummer',
-          start: 'desc'
-        });
-        this.dataSource.sort = this.sort;
-        this.distributeDataToIntervals();
+        this.data = this.beautifyDataObject(
+          data.map(report => {
+            return {
+              diagnosis_date: report.diagnose_datum.value,
+              canton: report.kanton.value,
+              canton_id: Number(/\d+/.exec(report.canton_id.value)[0]),
+              munic: report.gemeinde.value,
+              munic_id: Number(/\d+/.exec(report.munic_id.value)[0]),
+              epidemic_group: report.seuchen_gruppe.value,
+              epidemic: report.seuche.value,
+              animal_group: report.tier_gruppe.value,
+              animal_species: report.tierart.value
+            } as Report;
+          })
+        );
+        this.updateDatesAndData(this.model);
       }, err => {
-        console.log(err);
         // TODO: Imporve error handling
+        this._notification.errorMessage(err.statusText + '<br>' + err.message , err.name);
+        console.log(err);
       });
   }
 
-  private splitDataToIntervals(startDate: Date | string, endDate: Date | string) {
-    let tmpDate = startDate;
-    while (tmpDate <= endDate) {
-      this.startIntervals.push(tmpDate);
-      this.endIntervals.push(moment(tmpDate).add(6, 'days').format('YYYY-MM-DD'));
-      tmpDate = moment(tmpDate).add(1, 'week').format('YYYY-MM-DD');
-    }
-  }
-
-  private constructNumber(date: Date | string) {
-    const year = moment(date).year();
-    const week = moment(date).week();
+  private constructNumber(date: Date | string): string {
+    const year = dayjs(date).year();
+    const week = dayjs(date).week();
     const result = (week < 10) ? `${year}0${week}` : `${year}${week}`;
     return result;
   }
 
-  private transformDataToMaterializeTable() {
-    for (let i = 0; i <= this.endIntervals.length - 1; i++) {
-      this.element_data.push({
-        nummer: this.constructNumber(this.startIntervals[i]),
-        dateFrom: this.startIntervals[i],
-        dateTo: this.endIntervals[i],
-        action: `${this.actionString}`
-      });
-    }
-  }
-
-  private beautifyDataObject(data: Object) {
-    let reducedDataObject: any[] = [];
-    for (let el in data) {
-      reducedDataObject.push({
-        diagnose_datum: data[el].diagnose_datum.value,
-        kanton: data[el].kanton.value,
-        gemeinde: data[el].gemeinde.value,
-        seuche: data[el].seuche.value,
-        seuchen_gruppe: data[el].seuchen_gruppe.value,
-        tierart: data[el].tierart.value
-      })
-    }
-    return reducedDataObject.sort((a, b) => {
-      const adate = new Date(a['diagnose_datum']);
-      const bdate = new Date(b['diagnose_datum']);
+  private beautifyDataObject(data: Report[]): Report[] {
+    // const reducedDataObject = [];
+    // for (const el in data) {
+    //   if (data[el]) {
+    //     reducedDataObject.push({
+    //       diagnose_datum: data[el].diagnose_datum['value'],
+    //       kanton: data[el].kanton['value'],
+    //       gemeinde: data[el].gemeinde['value'],
+    //       seuche: data[el].seuche['value'],
+    //       seuchen_gruppe: data[el].seuchen_gruppe['value'],
+    //       tierart: data[el].tierart['value']
+    //     });
+    //   }
+    // }
+    return data.sort((a, b) => {
+      const adate = new Date(a['diagnosis_date']);
+      const bdate = new Date(b['diagnosis_date']);
       return (adate < bdate) ? -1 : (adate > bdate) ? 1 : 0;
     });
   }
 
-  // distribute the data into the weekly intervals from the table
-  // returns an object key: number(vgl table) and value: array of objects which fall into the weelky interval 
-  private distributeDataToIntervals() {
-    const res = {};
-    let counter = 0;
-    for (let o of this.data) {
-      if (o['diagnose_datum'] <= this.element_data[counter]['dateTo']) {
-        if (!res[this.element_data[counter]['nummer']]) {
-          res[this.element_data[counter]['nummer']] = [];
-        }
-        res[this.element_data[counter]['nummer']].push(o);
-      } else {
-        while (o['diagnose_datum'] >= this.element_data[counter]['dateTo']) {
-          counter++;
-          if (o['diagnose_datum'] <= this.element_data[counter]['dateTo']) {
-            if (!res[this.element_data[counter]['nummer']]) {
-              res[this.element_data[counter]['nummer']] = [];
-            }
-            res[this.element_data[counter]['nummer']].push(o);
-          } else {
-            res[this.element_data[counter]['nummer']] = [];
-          }
-        }
-      }
-    }
-    this.distributedData = res;
-  }
-
-  findNumberIdInDataObject(object, id) {
-    let tmpObj = {};
-    if (object.hasOwnProperty(id)) {
-      tmpObj = object[id];
-      return tmpObj;
-    } else {
-      console.log(id + ' not found in the object');
+  private updateInput(changes: { [s: string]: string; }, oldState: ParamState): void {
+    // check if old an new state are the same
+    if (JSON.stringify(changes) !== JSON.stringify(oldState)) {
+       this._paramState = this._paramsService.updateRouteParams(changes, oldState);
+       this.getList(this._paramState.lang, this._paramState.from, this._paramState.to);
     }
   }
 
-  goToDetail(id: number, datefrom, dateTo) {
-    console.log('Hello Detail ID:' + id);
-    this.metaData.push([id, datefrom, dateTo]);
-    this.detailData = this.findNumberIdInDataObject(this.distributedData, id);
-    localStorage.setItem('metaData', JSON.stringify(this.metaData));
-    localStorage.setItem('detailData', JSON.stringify(this.detailData));
-    this.router.navigate(['bulletin/details', { number: id }]);
+  private transformDate(date: string | Date): NgbDate {
+    const d = new Date(date);
+    return { year: d.getFullYear(), month: d.getMonth() + 1, day: d.getDate() };
   }
 
-  getFromToDates() {
-    this.data = [];
-    this.startIntervals = [];
-    this.endIntervals = [];
-    const from = this.datepicker._inputValue;
-    const to = this.datepicker2._inputValue;
-    this.getList('de', from, to);
-  }
-
-  resetDates() {
-    this.data = [];
-    this.startIntervals = [];
-    this.endIntervals = [];
-    this.getList('de', this.startOfBulletin, this.today);
-  }
 }

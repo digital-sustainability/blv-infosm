@@ -1,6 +1,25 @@
 /* You can add global styles to this file, and also import other style files */
 
+
 @import "~@ng-select/ng-select/themes/default.theme.css";
+@import '~ngx-toastr/toastr.css'; 
+
+
+.ng-select .ng-select-container .ng-value-container {
+  max-height: 50px;
+  overflow-y: scroll;
+}
+
+ .toast-container .ngx-toastr {
+  background-color: #F7001D !important; 
+}
+
+
+
+html, body {
+  margin: 0;
+}
+
 body {
   padding: 20px;
 }
@@ -27,3 +46,25 @@ input[type=radio]:focus,
   display: flex;
   justify-content: center;
 }
+
+.main-chart-container {
+  border: 1px solid lightgray;
+  width: 100%;
+}
+
+.chart-button-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2%;
+}
+
+.scroll-link {
+  margin: 10px 10px 10px 10px;
+  color: #005580;
+  cursor: pointer;
+}
+
+/* .scroll-link:hover {
+  text-decoration: underline;
+} */

@@ -3,7 +3,8 @@
         "BLV": "FSVO",
         "BLV_FULL": "Federal Food Safety and Veterinary Office",
         "CONTACT": "Contact",
-        "LEGAL_FRAMEWORK": "Legal framework"
+        "LEGAL_FRAMEWORK": "Legal framework",
+        "GO_UP": "Back to top"
     },
     "HEADER": {
         "HOME": "Landing Page",
@@ -20,6 +21,12 @@
         "TEST": "Testing an SVG graph for the reporting flow of an animal disease notification."
     },
     "EVAL": {
+        "SHOW_CANTONS": "Show Cantons",
+        "SHOW_MUNICS": "Show Municipalities",
+        "SHOW_ANIMALS": "Show Animal Species",
+        "SHOW_EPIDEMICS": "Show Epidemics",
+        "SHOW_ANIMAL_GROUPS": "Show Animal Groups",
+        "SHOW_EPIDEMIC_GROUPS": "Show Epidemic Groups",
         "WEEK_LABEL": "Week",
         "MONTH_LABEL": "Month",
         "YEAR_LABEL": "Year",
@@ -40,7 +47,32 @@
         "DATE_WRONG_ORDER": "Invalid: date 'from' needs to be greater then date 'to'",
         "DATE_WRONG_FORMAT": "Invalid: Not a valid date format. Try: YYYY-MM-DD",
         "DATE_TOO_SMALL": "Invalid: timespan has to be at least one week.",
-        "MONTHS": ["January", "February", "March", "April", "May", "une", "July", "August", "September", "October", "November", "December"]
+        "DATE_FROM_WRONG_RANGE": "Invalid: First message in our database dated 15-01-1991.",
+        "DATE_TO_WRONG_RANGE": "Invalid: Please select a date less than or equal to today.",
+        "DATEPICKER_PLACEHOLDER": "DD.MM.YYYY",
+        "MONTHS": ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
+        "ORDER_DESCENDING": "descending",
+        "ORDER_ASCENDING": "ascending",
+        "ORDER_BY": "sorted by",
+        "VISU_DATA": "Visualized data",
+        "NOT_SORTED": "Click the header of a column to sort the data.",
+        "LEGEND": "Legend for number of disease incidents",
+        "OTHER": "Other",
+        "EPIDEMIC_PER_ANIMLAL": "Epidemics per Animal Species",
+        "ANIMLAL_PER_EPIDEMIC": "Animal Species per Epidemic",
+        "NO_DATA": "No data available for this selection."
+    },
+    "BULLETIN": {
+        "OPTIONS": "Display options",
+        "NOTICES": "Animal diseases: new outbreaks in the period from",
+        "NUMBER": "Bulletin number:",
+        "NUMBER_OF_NOTICES": "Number of messages",
+        "ACTUAL_BULLETIN": "Latest Bulletin",
+        "FILTER_MESSAGE": "Select the date of a bulletin you are interested in:",
+        "NO_BULLETINS": "No messages in this period!"
+    },
+    "BULLETIN-DETAIL": {
+        "BACK": "Back"
     },
     "DOWNLOAD": {
         "TITLE": "Notifications",
@@ -58,9 +90,9 @@
         "YOUR_OPTIONS": "To search in this website the following possibilities are available:"
     },
     "FILTERCHARTS": {
-        "FREQUENCY": "Evaluation of frequency",
-        "TIMELINE": "Temporal evaluation",
-        "MAP": "Spatial evaluation"
+        "FREQUENCY": "Frequency",
+        "TIMELINE": "Time Period",
+        "MAP": "Geography"
     },
     "FILTER": {
         "FILTER_TIME": "Filter by period",
@@ -86,11 +118,10 @@
         "FILTER_MUNICS": "Filter municipalities",
         "FILTER_ANIMALS": "Filter species",
         "FILTER_ANIMAL_GROUPS": "Filter animal groups",
-        "DATE_COMPARE_ERROR": "Das Datum von ist grösser als das Datum bis.",
-        "DATE_PERIOD_ERROR": "Die kleinste Vergleichseinheit is eine Woche.",
-        "DATE_FROM_ERROR": "Das ältest mögliche Datum ist der 15.01.1995.",
-        "DATE_TO_ERROR": "Bitte wählen Sie ein Datum kleine oder gleich heute.",
-        "DATE_FORMAT_ERROR": "Das Datumsformat sollte TT.MM.JJJJ sein."
+        "SHOW_NONE": "Clear all",
+        "SHOW_ALL": "Select all",
+        "RESET": "Reset filter",
+        "ADD": "Add"
     },
     "GEO_DOWNLOAD": {
         "TITLE": "Data downlaod",
@@ -116,6 +147,10 @@
         "NOTICE_ACCEPT": "Accept the terms",
         "NOTICE_CANCEL": "Cancel",
         "NOTICE_DOWNLOAD": "Download",
-        "NOTICE_WARNING": "Accept the terms"
+        "NOTICE_WARNING": "Please accept the terms"
+    },
+    "ERROR_HANDLING": {
+        "TITLE": "",
+        "MESSAGE": ""
     }
 }

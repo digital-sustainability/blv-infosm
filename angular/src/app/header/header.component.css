@@ -40,3 +40,9 @@ ul.nav > li {
     color: red;
     background-color: white;
 }
+
+.lang-link:hover {
+    color: #005580;
+    text-decoration: underline;
+    cursor: pointer;
+}

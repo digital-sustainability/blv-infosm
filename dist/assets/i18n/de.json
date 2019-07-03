@@ -3,7 +3,8 @@
     "BLV": "BLV",
     "BLV_FULL": "Bundesamt für Lebensmittelsicherheit und Veterinärwesen",
     "CONTACT": "Kontakt",
-    "LEGAL_FRAMEWORK": "Rechtliche Grundlagen"
+    "LEGAL_FRAMEWORK": "Rechtliche Grundlagen",
+    "GO_UP": "Zum Seitenanfang"
   },
   "HEADER": {
     "HOME": "Startseite",
@@ -26,6 +27,12 @@
     "TEST": "Testen einer SVG Grafik für den Meldefluss einer Tierseuchenmeldung."
   },
   "EVAL": {
+    "SHOW_CANTONS": "Kantone darstellen",
+    "SHOW_MUNICS": "Gemeinden darstellen",
+    "SHOW_ANIMALS": "Tierarten darstellen",
+    "SHOW_EPIDEMICS": "Seuchen darstellen",
+    "SHOW_ANIMAL_GROUPS": "Tiergruppen darstellen",
+    "SHOW_EPIDEMIC_GROUPS": "Seuchengruppen darstellen",
     "WEEK_LABEL": "Woche",
     "MONTH_LABEL": "Monat",
     "YEAR_LABEL": "Jahr",
@@ -44,9 +51,34 @@
     "AGGR_EPIDEMIC_GROUPS": "Aggregierte Seuchengruppen",
     "AGGR_ANIMAL_GROUPS": "Aggregierte Tiergruppen",
     "DATE_WRONG_ORDER": "Ungültig: Datum 'von' muss größer sein als Datum 'bis'",
-    "DATE_WRONG_FORMAT": "Ungültig: Kein gültiges Datumsformat. Versuchen Sie: YYYY-MM-DD",
+    "DATE_WRONG_FORMAT": "Ungültig: Kein gültiges Datumsformat. Versuchen Sie: TT.MM.JJJJ",
     "DATE_TOO_SMALL": "Ungültig: Die Zeitspanne muss mindestens eine Woche betragen.",
-    "MONTHS": ["Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"]
+    "DATE_FROM_WRONG_RANGE": "Ungültig: Die erste Meldung in unserer Datenbank datiert vom 15-01-1991.",
+    "DATE_TO_WRONG_RANGE": "Ungültig: Bitte wählen Sie ein Datum kleiner oder gleich heute.",
+    "DATEPICKER_PLACEHOLDER": "TT.MM.JJJJ",
+    "MONTHS": ["Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"],
+    "ORDER_DESCENDING": "absteigend",
+    "ORDER_ASCENDING": "aufsteigend",
+    "ORDER_BY": "sortiert nach",
+    "VISU_DATA": "Visualisierte Daten",
+    "NOT_SORTED": "Klicken Sie auf die Kopfzeile einer Spalte, um die Daten zu sortieren.",
+    "LEGEND" : "Legende für Anzahl Seuchenvorkommnisse",
+    "OTHER": "Sonstige",
+    "EPIDEMIC_PER_ANIMLAL": "Seuchen pro Tierart",
+    "ANIMLAL_PER_EPIDEMIC": "Tierarten pro Seuche",
+    "NO_DATA": "Keine Daten für diese Auswahl vorhanden."
+  },
+  "BULLETIN": {
+    "OPTIONS": "Anzeigeoptionen",
+    "NOTICES": "Tierseuchen: neue Ausbrüche im Zeitraum von",
+    "NUMBER": "Bulletinnummer:",
+    "NUMBER_OF_NOTICES": "Anzahl Meldungen",
+    "ACTUAL_BULLETIN": "Aktuelles Bulletin",
+    "FILTER_MESSAGE": "Wählen Sie das Datum eines Bulletins, für welches Sie sich interessieren:",
+    "NO_BULLETINS": "Keine Meldungen in diesem Zeitraum!"
+  },
+  "BULLETIN-DETAIL": {
+    "BACK": "Zurück"
   },
   "DOWNLOAD": {
     "TITLE": "Meldungen",
@@ -64,9 +96,9 @@
     "YOUR_OPTIONS": "Für die Suche in diesem Internet-Angebot stehen folgende Möglichkeiten offen:"
   },
   "FILTERCHARTS": {
-    "FREQUENCY": "Auswertung nach Häufigkeit",
-    "TIMELINE": "Zeitliche Auswertung",
-    "MAP": "Auswertung nach Geografie"
+    "FREQUENCY": "Häufigkeit",
+    "TIMELINE": "Zeitraum",
+    "MAP": "Geografie"
   },
   "FILTER": {
     "FILTER_TIME": "Nach Zeitraum filtern",
@@ -91,7 +123,11 @@
     "FILTER_CANTONS": "Kantone filtern",
     "FILTER_MUNICS": "Gemeinden filtern",
     "FILTER_ANIMALS": "Tierarten filtern",
-    "FILTER_ANIMAL_GROUPS": "Tiergruppen filtern"
+    "FILTER_ANIMAL_GROUPS": "Tiergruppen filtern",
+    "SHOW_NONE": "Alle löschen",
+    "SHOW_ALL": "Alle auswählen",
+    "RESET": "Filter zurücksetzen",
+    "ADD":"hinzufügen"
   },
   "GEO_DOWNLOAD": {
     "TITLE": "Daten herunterladen",
@@ -118,5 +154,9 @@
     "NOTICE_CANCEL": "Abbrechen",
     "NOTICE_DOWNLOAD": "Download",
     "NOTICE_WARNING": "Akzeptieren Sie bitte die Nutzungsbedingungen um den Download zu starten"
+  },
+  "ERROR_HANDLING": {
+    "TITLE": "Fehler: ",
+    "MESSAGE": ""
   }
 }

@@ -42,3 +42,24 @@ button.calendar, button.calendar:active {
     flex: 0 0 25% !important;
     min-width: 104px !important;
 }
+
+:host /deep/ ngb-datepicker .ngb-dp-weekday{
+    color: #DC0018;
+  }
+    
+  :host /deep/ ngb-datepicker .btn-link {
+      color: #DC0018 !important;
+  }
+  
+  :host /deep/ ngb-datepicker .bg-primary {
+    background-color: #DC0018 !important;
+  }
+
+  .noMessages {
+    color:#DC0018; 
+    text-align: center; 
+    margin: 3%; 
+    border-style: solid; 
+    padding-top: 5px; 
+    padding-bottom: 5px
+  }

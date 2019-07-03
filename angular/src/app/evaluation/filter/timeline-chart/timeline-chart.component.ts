@@ -3,6 +3,7 @@ import { Chart } from 'angular-highcharts';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 import { DistributeDataService } from 'src/app/shared/distribute-data.service';
+import { NotificationService } from '../../../shared/notification.service';
 import { ActivatedRoute } from '@angular/router';
 import { Report } from '../../../shared/models/report.model';
 import { Translations } from '../../../shared/models/translations.model';
@@ -18,12 +19,11 @@ import * as moment from 'moment';
 })
 export class TimelineChartComponent implements OnInit, OnDestroy {
   _paramSub: Subscription;
-  data: Report[];
+  reports: Report[];
   timelineChart: Chart;
   years: string;
   dataSub: Subscription;
   translationSub: Subscription;
-  loaded = false;
   isYear: boolean;
   isMonth: boolean;
   isWeek: boolean;
@@ -44,6 +44,7 @@ export class TimelineChartComponent implements OnInit, OnDestroy {
     private _distributeDataService: DistributeDataService,
     private _route: ActivatedRoute,
     private _highChartService: HighchartService,
+    private _notification: NotificationService
   ) { }
 
   ngOnInit() {
@@ -63,7 +64,10 @@ export class TimelineChartComponent implements OnInit, OnDestroy {
     this.dataSub = this._distributeDataService.currentData.subscribe(
       data => {
         if (data) {
-          this.data = data;
+          /**
+           * TODO: Only need for Epidemic group && Animal group
+           */
+          this.reports = data;
           this.years = this.extractYears(data);
           // Translate if new data is loaded
           this.translationSub = this.translate.get([
@@ -81,13 +85,13 @@ export class TimelineChartComponent implements OnInit, OnDestroy {
                 // Obj that holds all tarnslations for this component
                 this.trans = texts;
                 this.timeLineChartData = this.extract(data, 'epidemic_group');
-                this.loaded = true;
                 this.drawChart();
               }
             );
         }
       },
-      err => console.log(err) // TODO: Improve Error handling
+      // TODO: Improve Error handling
+      err => this._notification.errorMessage(err.statusText + '<br>' + err.message , err.name)
     );
   }
 
@@ -150,12 +154,12 @@ export class TimelineChartComponent implements OnInit, OnDestroy {
        * Array holding each line as `{ name: string, data: number[] }`
        * Concat another empty line to add an additional label for `toggleLegend()`
        */
-      series: this.timeLineChartData
-        .concat({
-          name: this.trans['EVAL.SHOW_ALL_NONE'],
-          data: [],
-          marker: { enabled: false }
-        })
+      series: this.timeLineChartData.concat({
+        name: this.trans['EVAL.SHOW_ALL_NONE'],
+        data: [],
+        marker: { enabled: false },
+        color: '#ffffff' // Hide line symbol
+      })
     });
   }
 
@@ -345,8 +349,7 @@ export class TimelineChartComponent implements OnInit, OnDestroy {
     const dates: string[] = [];
     for (const e of data) {
       if (e['diagnosis_date']) {
-        // dates.push(e.diagnose_datum['value']); // TODO: Change interface
-        dates.push(e['diagnosis_date']);
+        dates.push(<string>e['diagnosis_date']);
       }
     }
     return dates;
@@ -400,18 +403,18 @@ export class TimelineChartComponent implements OnInit, OnDestroy {
     return '...';
   }
 
-  showEpidemics(): void {
+  onShowEpidemics(): void {
     this.timeLineChartData = [];
-    this.timeLineChartData = this.extract(this.data, 'epidemic_group');
-    if (this.timeLineChartData && this.loaded) {
+    this.timeLineChartData = this.extract(this.reports, 'epidemic_group');
+    if (this.timeLineChartData) {
       this.drawChart();
     }
   }
 
-  showAnimals(): void {
+  onShowAnimals(): void {
     this.timeLineChartData = [];
-    this.timeLineChartData = this.extract(this.data, 'animal_group');
-    if (this.timeLineChartData && this.loaded) {
+    this.timeLineChartData = this.extract(this.reports, 'animal_group');
+    if (this.timeLineChartData) {
       this.drawChart();
     }
   }
