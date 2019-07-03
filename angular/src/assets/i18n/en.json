@@ -121,7 +121,10 @@
         "SHOW_NONE": "Clear all",
         "SHOW_ALL": "Select all",
         "RESET": "Reset filter",
-        "ADD": "Add"
+        "ADD": "Add",
+        "GIVEN_PERIOD": "Selected specified time period:",
+        "SPECIFIC_PERIOD":"Selected specific time period:",
+        "TIME_INFO": "Select either a preset or a specific time period."
     },
     "GEO_DOWNLOAD": {
         "TITLE": "Data downlaod",

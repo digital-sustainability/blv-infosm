@@ -121,7 +121,10 @@
         "SHOW_NONE": "Cancella tutto",
         "SHOW_ALL": "Seleziona tutti",
         "RESET": "Azzera filtro",
-        "ADD": "Sommare"
+        "ADD": "Sommare",
+        "GIVEN_PERIOD": "Periodo di tempo specificato selezionato:",
+        "SPECIFIC_PERIOD": "Periodo di tempo specifico selezionato:",
+        "TIME_INFO": "Selezionare un preset o un periodo di tempo specifico."
     },
     "GEO_DOWNLOAD": {
         "TITLE": "Scaricare i dati",
