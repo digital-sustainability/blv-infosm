@@ -957,9 +957,9 @@ export class FilterComponent implements OnInit, OnDestroy {
           return {
             diagnosis_date: d.diagnose_datum.value,
             canton: d.kanton.value,
-            canton_id: Number(/\d+/.exec(d.canton_id.value)[0]),
+            canton_id: Number(d.canton_id.value),
             munic: d.gemeinde.value,
-            munic_id: Number(/\d+/.exec(d.munic_id.value)[0]),
+            munic_id: Number(d.munic_id.value),
             epidemic_group: d.seuchen_gruppe.value,
             epidemic: d.seuche.value,
             // Capitalize first letter

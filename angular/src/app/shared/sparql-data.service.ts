@@ -22,6 +22,7 @@ PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 PREFIX blv-attribute: <http://ld.zazuko.com/animalpest/attribute/>
 PREFIX blv-dimension: <http://ld.zazuko.com/animalpest/dimension/>
 PREFIX dct: <http://purl.org/dc/terms/>
+PREFIX dcterms: <http://purl.org/dc/terms/>
 PREFIX schema: <http://schema.org/>
 `;
   
@@ -36,9 +37,9 @@ PREFIX schema: <http://schema.org/>
     FROM <https://linked.opendata.swiss/graph/blv/animalpest> WHERE {
     ?sub a qb:Observation ;
         blv-attribute:diagnose_datum ?diagnose_datum ;
-        blv-attribute:kanton_id ?canton_id ;
+        blv-attribute:kanton_id/dcterms:identifier ?canton_id ;
         blv-attribute:kanton_id/rdfs:label ?kanton ;
-        blv-attribute:gemeinde_id ?munic_id ;
+        blv-attribute:gemeinde_id/dcterms:identifier ?munic_id ;
         blv-attribute:gemeinde_id/rdfs:label ?gemeinde ;
         blv-dimension:tier-art ?tierartUri ;
 

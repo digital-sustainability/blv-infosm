@@ -164,7 +164,6 @@ export class MapChartComponent implements AfterViewInit, OnDestroy {
               this.map.addLayer(this.cantonVectorLayer);
               this.map.addInteraction(this.select);
               this.select.on('select', event => {
-                console.log(event.selected)
                 if (event.selected.length > 0) {
                   const feature = event.selected[0];
                   const id = feature.getId();
