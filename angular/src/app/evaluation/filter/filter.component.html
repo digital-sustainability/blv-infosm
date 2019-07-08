@@ -98,6 +98,7 @@
     <div class="panel-body">
       <div id="filterCategories" class="collapse" style="margin-top: 10px">
         <div class="flex-container">
+          <p style = "margin-left: 0px; margin-bottom:1%">{{'FILTER.ORDER_FILTER' | translate}}</p>
           <div class="btn-group" style="width:100%">
             <button type="button" class="btn btn-dark" id="cantonEntrypoint"
               (click)="orderItems('where', '#cantonEntrypoint','canton')">
@@ -275,9 +276,10 @@
 </ng-template>
 
 <div class="table">
-  <p *ngIf="sorted">{{ 'EVAL.VISU_DATA' | translate }} <i>{{ sortDirection }}</i> {{ 'EVAL.ORDER_BY' | translate }}:
+  <p *ngIf="sorted && filteredData.length !== 0">{{ 'EVAL.VISU_DATA' | translate }} <i>{{ sortDirection }}</i> {{ 'EVAL.ORDER_BY' | translate }}:
     <i>{{ sortItem }}</i></p>
-  <p *ngIf="!sorted">{{  'EVAL.NOT_SORTED' | translate }}</p>
+  <p *ngIf="!sorted && filteredData.length !== 0">{{  'EVAL.NOT_SORTED' | translate }}</p>
+  <p *ngIf="filteredData.length === 0"><strong>{{ 'FILTER.DATA_LOAD' | translate }}</strong></p>
   <div class="mat-elevation-z8" style="margin:5% 5%; margin-top:1%">
     <mat-table class="mat-elevation-z8" [dataSource]="dataSource" matSort (matSortChange)="getSortItemAndOrder($event)">
       <ng-container matColumnDef="diagnosis_date">

@@ -124,7 +124,9 @@
         "ADD": "Sommare",
         "GIVEN_PERIOD": "Periodo di tempo specificato selezionato:",
         "SPECIFIC_PERIOD": "Periodo di tempo specifico selezionato:",
-        "TIME_INFO": "Selezionare un preset o un periodo di tempo specifico."
+        "TIME_INFO": "Selezionare un preset o un periodo di tempo specifico.",
+        "DATA_LOAD": "I dati vengono caricati ...",
+        "ORDER_FILTER": "Assemblare l'ordine del filtro."
     },
     "GEO_DOWNLOAD": {
         "TITLE": "Scaricare i dati",

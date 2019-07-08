@@ -78,7 +78,7 @@ PREFIX schema: <http://schema.org/>
 
   getUniqueMunicipalities(): Observable<any> {
     const query = `${this._prefix}
-    SELECT DISTINCT ?gemeindeUri ?gemeinde
+    SELECT DISTINCT ?gemeinde
     FROM <https://linked.opendata.swiss/graph/blv/animalpest>
     WHERE {
       ?gemeindeUri a gont:Municipality ;

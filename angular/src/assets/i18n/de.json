@@ -130,7 +130,9 @@
     "ADD":"hinzufügen",
     "GIVEN_PERIOD":"Ausgewählter vorgegebener Zeitraum:",
     "SPECIFIC_PERIOD": "Ausgewählter spezifischer Zeitraum:",
-    "TIME_INFO": "Wählen Sie entweder einen vorgegebenen oder einen spezifischen Zeitraum."
+    "TIME_INFO": "Wählen Sie entweder einen vorgegebenen oder einen spezifischen Zeitraum.",
+    "DATA_LOAD": "Die Daten werden geladen ...",
+    "ORDER_FILTER": "Stellen Sie sich die Reihenfolge des Filters zusammen."
   },
   "GEO_DOWNLOAD": {
     "TITLE": "Daten herunterladen",
