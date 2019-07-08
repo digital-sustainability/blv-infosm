@@ -19,17 +19,19 @@
       </div>
       <div class="row" style="font-size: 1.2em">
         <div class="col">
-          <p class="m-2">{{ 'EVAL.SELECTED' | translate }}: <strong>{{ area }}</strong></p>
+          <p class="m-2 hoverSelect">{{ 'EVAL.SELECTED' | translate }}: <strong>{{ area }}</strong></p>
         </div>
         <div class="col">
-          <p class="m-2">{{ 'EVAL.NUMBER_OF_REPORTS' | translate }}: <strong>{{ countPerShape }}</strong></p>
+          <p class="m-2 hoverSelect">{{ 'EVAL.NUMBER_OF_REPORTS' | translate }}: <strong>{{ countPerShape }}</strong></p>
         </div>
       </div>
-      <div id="map-detail">
+      <div *ngIf="reportDetails; else selectMe;" class="map-detail">
         <div class="row">
-          <p>Clicked Canton: {{ detailArea }}</p>
+          <div class="col">
+            <p class="m-2">{{ 'EVAL.CLICKED_AREA' | translate }} <strong>{{ detailArea }}</strong></p>
+          </div>
         </div>
-        <div *ngIf="reportDetails; else selectme;" class="row my-3">
+        <div class="row my-3">
           <div class="col">
             <ul>
               <div *ngFor="let item of reportDetails; let even = even">
@@ -49,10 +51,15 @@
             </ul>
           </div>
         </div>
-        <ng-template #selectme>
-            <p>Click a canton for more details</p>
-          </ng-template>
       </div>
+      <ng-template #selectMe>
+        <div class="row" class="map-detail">
+          <div class="col">
+            <!-- TODO: Translate -->
+            <p id="detail-text">Click a canton for more details</p>
+          </div>
+        </div>
+      </ng-template>
     </div>
     <div class="chart-button-container">
       <button class="btn btn-dark mr-2" type="submit" (click)="onSwitchLayer(cantonVectorLayer)"

@@ -23,6 +23,7 @@
     "EVAL": {
         "SELECTED": "Selezionato",
         "NUMBER_OF_REPORTS": "Numero di rapporti",
+        "CLICKED_AREA": "Informazioni dettagliate su",
         "SHOW_CANTONS": "Mostra cantoni",
         "SHOW_MUNICS": "Mostra comuni",
         "SHOW_ANIMALS": "Mostra specie animali",

@@ -29,6 +29,7 @@
   "EVAL": {
     "SELECTED": "Ausgewählt",
     "NUMBER_OF_REPORTS": "Anzahl Meldungen",
+    "CLICKED_AREA": "Detailinformationen über",
     "SHOW_CANTONS": "Kantone darstellen",
     "SHOW_MUNICS": "Gemeinden darstellen",
     "SHOW_ANIMALS": "Tierarten darstellen",

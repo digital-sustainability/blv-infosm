@@ -25,7 +25,7 @@ import OSM from 'ol/source/OSM.js';
 import Vector from 'ol/source/Vector';
 import Feature from 'ol/Feature';
 
-import { isEqual, uniqBy, get, countBy, mapKeys } from 'lodash';
+import { isEqual, get, countBy, mapKeys } from 'lodash';
 
 
 @Component({
@@ -93,12 +93,11 @@ export class MapChartComponent implements AfterViewInit, OnDestroy {
   currentLayer: OlVectorLayer;
 
   // values displayed on click and hover events
-  area = '...';
+  area = '. . .';
   countPerShape: number;
-  detailArea: string;
-  reportDetails: any;
-  // used to get the object keys of canton and munic
-  objectKeys = Object.keys;
+  detailArea = '. . .';
+  reportDetails: Frequency[];
+  selectedFeatureId: number;
 
   // function that is passed to each shape in the layer
   styleFn = (feature: Feature) => {
@@ -119,10 +118,8 @@ export class MapChartComponent implements AfterViewInit, OnDestroy {
       (data: Report[]) => {
         // only proceed if data is emitted or data has changed (deep comparison)
         if (data.length && !isEqual(this.reports, data)) {
-          // this.reports = data.map(d => {
-          //   return
-          // })
           this.reports = data;
+          this.resetDetails();
           // only call when shapes are loaded or reports have changed
           if (this.cantonVectorLayer) {
             this.updateLayer(this.currentLayer);
@@ -183,12 +180,16 @@ export class MapChartComponent implements AfterViewInit, OnDestroy {
               this.clickSelect.on('select', event => {
                 if (event.selected.length > 0) {
                   const feature = event.selected[0];
-                  const id = feature.getId();
-                  this.detailArea = feature.get('name');
-                  this.reportDetails = this.getReportDetails(id, feature.get('isCanton'));
+                  // unselect if same freature is selected again
+                  if (this.selectedFeatureId !== feature.getId()) {
+                    this.selectedFeatureId = feature.getId();
+                    this.detailArea = feature.get('name');
+                    this.reportDetails = this.getReportDetails(this.selectedFeatureId, feature.get('isCanton'));
+                  } else {
+                    this.resetDetails(); // TODO: Reset does not work yet
+                  }
                 } else {
-                  this.detailArea = undefined;
-                  this.reportDetails = undefined;
+                  this.resetDetails();
                 }
               });
             },
@@ -225,6 +226,7 @@ export class MapChartComponent implements AfterViewInit, OnDestroy {
   }
 
   onSwitchLayer(layer: OlVectorLayer): void {
+    this.resetDetails();
     this.map.removeLayer(this.currentLayer);
     this.currentLayer = layer;
     this.map.addLayer(this.currentLayer);
@@ -241,7 +243,7 @@ export class MapChartComponent implements AfterViewInit, OnDestroy {
         return id === report.munic_id;
       }
     });
-    console.log('reports', this.reports);
+    console.log('reports', this.reports); // TODO: check if right amount displayed
     console.log('selection', selection);
     const count = countBy(selection.map(pest => get(pest, 'epidemic', 'not defined')));
     mapKeys(count, (value: string, key: number): void => {
@@ -300,6 +302,14 @@ export class MapChartComponent implements AfterViewInit, OnDestroy {
       }
       return feature;
     });
+  }
+
+  private resetDetails(): void {
+    this.detailArea = undefined;
+    this.reportDetails = undefined;
+    this.selectedFeatureId = undefined;
+    // remove the selet-style of the shape
+    this.clickSelect.getFeatures().clear();
   }
 
   // calculate the color that the shape is supposed to have based on animal diseases per area
