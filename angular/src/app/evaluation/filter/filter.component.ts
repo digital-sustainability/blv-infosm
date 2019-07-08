@@ -1,11 +1,11 @@
 
-import { Component, OnInit, OnDestroy, ViewChild, AfterViewChecked, ɵConsole, ElementRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { Report } from '../../shared/models/report.model';
 import { NgbDate } from '../../shared/models/ngb-date.model';
 import { InputField } from '../../shared/models/inputfield.model';
 import { LanguageService } from 'src/app/shared/language.service';
 import { Subscription } from 'rxjs';
-import { MatPaginator, MatTableDataSource, MatSort, MatSortable, matSelectAnimations, SELECT_PANEL_MAX_HEIGHT } from '@angular/material';
+import { MatPaginator, MatTableDataSource, MatSort, MatSortable } from '@angular/material';
 import { ActivatedRoute, Router } from '@angular/router';
 import { SparqlDataService } from 'src/app/shared/sparql-data.service';
 import { DistributeDataService } from 'src/app/shared/distribute-data.service';
@@ -16,8 +16,7 @@ import { NgbDatepickerConfig, NgbDateParserFormatter, NgbDatepicker } from '@ng-
 import { NgbDateCHFormatter } from '../../shared/formatters/ngb-ch-date-formatter';
 import { Translations } from '../../shared/models/translations.model';
 import { FilterConfig } from '../../shared/models/filterConfig.model';
-import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, FormsModule } from '@angular/forms';
-import * as moment from 'moment';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import dayjs from 'dayjs';
 declare let $: any;
 
@@ -98,21 +97,12 @@ export class FilterComponent implements OnInit, OnDestroy {
   inputAnimalGroups: InputField[];
   inputAnimals: InputField[];
 
-  // the currently selected items for every input field
-  selectedCantons = [];
-  selectedMunic = [];
-  selectedEpidemicG = [];
-  selectedEpidemic = [];
-  selectedAnimalG = [];
-  selectedAnimal = []
-
-  // booleans to control the logic which part of the filter is displayed first
-  showCanton: boolean = false;
-  showMunic: boolean = false;
-  showEdidemicG: boolean = false;
-  showEdidemic: boolean = false;
-  showAnimalG: boolean = false;
-  showAnimal: boolean = false;
+  loadCanton: boolean = true;
+  loadMunic: boolean = true;
+  loadEpidemicG: boolean = true;
+  loadEpidemic: boolean = true;
+  loadAnimalG: boolean = true;
+  loadAnimal: boolean = true;
 
   filterEntryPoint: string = "";
   noFilter: boolean = true;
@@ -169,7 +159,7 @@ export class FilterComponent implements OnInit, OnDestroy {
         // Sets parmas if none detected or one is misssing
         if (!params['lang'] || !params['from'] || !params['to']) {
           const lang = this.translate.currentLang;
-          const from = moment().subtract(1, 'y').format('YYYY-MM-DD');
+          const from = dayjs().subtract(1, 'y').format('YYYY-MM-DD');
           const to = dayjs().format('YYYY-MM-DD');
           this.updateRouteParams({
             lang: lang,
@@ -194,6 +184,7 @@ export class FilterComponent implements OnInit, OnDestroy {
           // TODO: reset filter if language changes
           console.log('ParamState: ' + this._filter.lang + ' ≠ languageService: ' + lang);
           this.updateRouteParams({ lang: lang });
+          this.resetFilterOnLangChange();
         }
       }, err => {
         // TODO: Imporve error handling
@@ -252,7 +243,6 @@ export class FilterComponent implements OnInit, OnDestroy {
     this._municSub.unsubscribe();
     this._translationSub.unsubscribe();
   }
-
    
  /**
   * Updates every time when the user adds an entry in the filter. Adapts the possible
@@ -262,6 +252,7 @@ export class FilterComponent implements OnInit, OnDestroy {
   * @param filterType 
   */
   onAdd($event, filterType: string): void {
+    this.mapLoadingInputField(filterType);
     this.checkHierarchy(filterType);
     let selectedItem = [];
     selectedItem = $event.label;
@@ -293,7 +284,7 @@ export class FilterComponent implements OnInit, OnDestroy {
    * @param data the based on the currently selected period of time
    * @param filterType the type of the filter that has been changed
    */
-  adaptPossibleSelections(entriesToAdapt, data: Report[], filterType: string, removedItem?: string) {
+  adaptPossibleSelections(entriesToAdapt, data: Report[], filterType: string) {
     // this part filters the data based on the selected items in the hierarchies above
     let filtered: Report[] = [];
     if (entriesToAdapt.length !== 0) {
@@ -378,37 +369,18 @@ export class FilterComponent implements OnInit, OnDestroy {
    * @param filterType the type of the filter, where the user removed an item
    */
   onRemove($event, filterType: string): void {
+    this.mapLoadingInputField(filterType);
     if (this.filterConfig.hasOwnProperty(filterType)) {
       this.filterConfig[filterType].filter = filter(this.filterConfig[filterType].filter, (item: string) => {
         return item !== $event.label;
       });
     }
-
-    // let filterTypeAbove: string = "";
-    // switch (filterType) {
-    //   case 'animal_species': filterTypeAbove = 'animal_group'; break;
-    //   case 'epidemic': filterTypeAbove = 'epidemic_group'; break;
-    //   case 'munic': filterTypeAbove = 'canton'; break;
-    // }
-
-    // const remainingItems = this.filterConfig[filterType].filter.length;
-    // if (remainingItems !== 0 || filterTypeAbove === "") {
-    //   const actualHierarchy = this.getHierarchy(filterType);
-    //   const entriesToAdatpInputs = this.filterHierarchiesAbove(actualHierarchy);
-    //   this.adaptPossibleSelections(entriesToAdatpInputs, this.beautifiedData, filterType);
-     
-    // } else {
-    //   const actualHierarchy = this.getHierarchy(filterTypeAbove);
-    //   const entriesToAdatpInputs = this.filterHierarchiesAbove(actualHierarchy);
-    //   this.adaptPossibleSelections(entriesToAdatpInputs, this.beautifiedData, filterTypeAbove);
-      
-    // }
     this.adaptLogicOfRemove(filterType);
     this.getList(this._filter.lang, this._filter.from, this._filter.to);
   }
 
-  
   onClearAll(filterType: string): void {
+    this.mapLoadingInputField(filterType);
     if (this.filterConfig.hasOwnProperty(filterType)) {
       this.filterConfig[filterType].filter = [];
     }
@@ -436,6 +408,17 @@ export class FilterComponent implements OnInit, OnDestroy {
     }
   }
 
+  mapLoadingInputField(filterType: string): void {
+    switch(filterType) {
+      case 'canton': this.loadCanton = true; this.loadMunic = true; break;
+      case 'munic': this.loadMunic = true; break; 
+      case 'epidemic_group': this.loadEpidemicG = true; this.loadEpidemic = true; break;
+      case 'epidemic': this.loadEpidemic = true; break;
+      case 'animal_group': this.loadAnimalG = true; this.loadAnimal = true; break;
+      case 'animal_species': this.loadAnimal = true; break;
+    }
+  }
+
   /**
    * Checks the hierarchy of a filter type and splits the the filter types into two groups:
    * the group above and the group below the current filter type
@@ -459,8 +442,6 @@ export class FilterComponent implements OnInit, OnDestroy {
       }
     }
   }
-
-
 
   onSelectAll(input: InputField[], formControlName: string, form: FormGroup): void {
     this.selectedAll = true;
@@ -605,11 +586,15 @@ export class FilterComponent implements OnInit, OnDestroy {
     return filterConfig[filterType].hierarchy;
   }
 
+  resetFilterOnLangChange(): void {
+    this.onReset();
+  }
+
   /**
    * Resets everything that helps to build the logic of the filter, hides and enables 
    * all the input fields and enables again the buttons to build the hierarchy of the filter
    */
-  onReset(elemId1: string, elemId2: string, elemId3: string): void {
+  onReset(): void {
     this.filterEntryPoint = "";
     this.resetModels();
     this.elementsAbove = [];
@@ -623,9 +608,9 @@ export class FilterComponent implements OnInit, OnDestroy {
     }
     this.stateOrder = 0;
     this.hierarchy = 0;
-    document.getElementById(elemId1).style.display = "none";
-    document.getElementById(elemId2).style.display = "none";
-    document.getElementById(elemId3).style.display = "none";
+    document.getElementById('who').style.display = "none";
+    document.getElementById('what').style.display = "none";
+    document.getElementById('where').style.display = "none";
     // enable the buttons to select an entry point of the filter
     $('#cantonEntrypoint').prop('disabled', false);
     $('#epidemicEntryPoint').prop('disabled', false);
@@ -648,12 +633,12 @@ export class FilterComponent implements OnInit, OnDestroy {
   }
 
   resetModels(): void {
-    this.selectedCantons = [];
-    this.selectedMunic = [];
-    this.selectedEpidemicG = [];
-    this.selectedEpidemic = [];
-    this.selectedAnimalG = [];
-    this.selectedAnimal = []
+    this.formAni.get('animal_species').setValue([]);
+    this.formAniG.get('animal_group').setValue([]);
+    this.formCant.get('canton').setValue([]);
+    this.formMunic.get('munic').setValue([]);
+    this.formEpid.get('epidemic').setValue([]);
+    this.formEpidG.get('epidemic_group').setValue([]);
   }
 
   
@@ -664,14 +649,9 @@ export class FilterComponent implements OnInit, OnDestroy {
    */
   private extractFilterParts(filteredData): void {
     if (this.filterEntryPoint.length === 0 ) {
-      this.possibleSelections.canton = uniq(map(filteredData, 'canton')).sort();
-      this.possibleSelections.munic = uniq(map(filteredData, 'munic')).sort();
-
-      this.possibleSelections.epidemic_group = uniq(map(filteredData, 'epidemic_group')).sort();
-      this.possibleSelections.epidemic = uniq(map(filteredData, 'epidemic')).sort();
-
-      this.possibleSelections.animal_group = uniq(map(filteredData, 'animal_group')).sort();
-      this.possibleSelections.animal_species = uniq(map(filteredData, 'animal_species')).sort();
+      for(const el of ['canton', 'munic', 'epidemic_group', 'epidemic', 'animal_group', 'animal_species']) {
+        this.possibleSelections[el] = uniq(map(filteredData, el)).sort();
+      }
     }
   }
  
@@ -722,7 +702,7 @@ export class FilterComponent implements OnInit, OnDestroy {
 
   /**
    * Check that is made for every entry of the initial data of the selected
-   * time interval to filter the data.
+   * time interval to filter the data to check the "AND" logic.
    * @param type the key of the FilterCOnfig that is checked
    * @param compare the value of the whole data to compare with
    * @param filterObject the current FilterConfig
@@ -856,11 +836,14 @@ export class FilterComponent implements OnInit, OnDestroy {
     );
   }
 
+  /**
+   * Retransforms a date from DD.MM.YYYY (CH-format) to YYYY-MM-DD.
+   */
   retransformDate(date: string | Date): string {
     return date.toString().split('.').reverse().join("-");
   }
 
-  // Changes the date based on the datepickers
+  // Changes the date based on the datepickers and validates the input in the date picker.
   onGetFromToDates(from: NgbDate, to: NgbDate): void {
     const fromdate = this.retransformDate(this.datepickerFrom['_inputValue']);
     const todate = this.retransformDate(this.datepickerTo['_inputValue']);
@@ -877,19 +860,19 @@ export class FilterComponent implements OnInit, OnDestroy {
         );
         return;
       }
-      if ((moment(todate).diff(fromdate, 'days')) < 7) {
+      if ((dayjs(todate).diff(fromdate, 'day')) < 7) {
         $('.notValid').after(
           `<p class='err' style='color:red' id='dateuniterror'>${this.trans['EVAL.DATE_TOO_SMALL']}</p>`
         );
         return;
       }
-      if ((moment(fromdate).diff(dateOfFirstEntry)) < 0) {
+      if ((dayjs(fromdate).diff(dateOfFirstEntry, 'day')) < 0) {
         $('.notValid').after(
           `<p class='err' style='color:red' id='datefromerror'>${this.trans['EVAL.DATE_FROM_WRONG_RANGE']}</p>`
         );
         return;
       }
-      if ((moment(todate).diff(today)) > 0) {
+      if ((dayjs(todate).diff(today, 'day')) > 0) {
         $('.notValid').after(
           `<p class='err' style='color:red' id='datetoerror'>${this.trans['EVAL.DATE_TO_WRONG_RANGE']}</p>`
         );
@@ -999,6 +982,7 @@ export class FilterComponent implements OnInit, OnDestroy {
       uniqueCantons => {
         this.allCantons = this.beautifyItems(uniqueCantons, 'kanton');
         this.inputCantons = this.constructItemList(this.possibleSelections.canton, this.allCantons);
+        this.loadCanton = false;
       }, err => {
         this._notification.errorMessage(err.statusText + '<br>' + err.message, err.name);
       }
@@ -1010,6 +994,7 @@ export class FilterComponent implements OnInit, OnDestroy {
       uniqueMunic => {
         this.allCommunities = this.beautifyItems(uniqueMunic, 'gemeinde');
         this.inputCommunities = this.constructItemList(this.possibleSelections.munic, this.allCommunities);
+        this.loadMunic = false;
       }, err => {
         this._notification.errorMessage(err.statusText + '<br>' + err.message, err.name)
       }
@@ -1021,6 +1006,7 @@ export class FilterComponent implements OnInit, OnDestroy {
       uniqueEpidGroup => {
         this.allEpidemicsGroups = this.beautifyItems(uniqueEpidGroup, 'seuchen_gruppe');
         this.inputEpidemicsGroup = this.constructItemList(this.possibleSelections.epidemic_group, this.allEpidemicsGroups);
+        this.loadEpidemicG = false;
       }, err => {
         this._notification.errorMessage(err.statusText + '<br>' + err.message, err.name)
       }
@@ -1032,6 +1018,7 @@ export class FilterComponent implements OnInit, OnDestroy {
       uniqueEpid => {
         this.allEpidemics = this.beautifyItems(uniqueEpid, 'tier_seuche');
         this.inputEpidemics = this.constructItemList(this.possibleSelections.epidemic, this.allEpidemics);
+        this.loadEpidemic = false;
       }, err => {
         this._notification.errorMessage(err.statusText + '<br>' + err.message, err.name)
       }
@@ -1042,7 +1029,8 @@ export class FilterComponent implements OnInit, OnDestroy {
     this._animalsGroupSub = this._sparqlDataService.getUniqueAnimalGroups(lang).subscribe(
       uniqueAnimalGroups => {
         this.allAnimalGroups = this.beautifyItems(uniqueAnimalGroups, 'tier_gruppe');
-        this.inputAnimalGroups = this.constructItemList(this.possibleSelections.animal_group, this.allAnimalGroups)
+        this.inputAnimalGroups = this.constructItemList(this.possibleSelections.animal_group, this.allAnimalGroups);
+        this.loadAnimalG = false;
       }, err => {
         this._notification.errorMessage(err.statusText + '<br>' + err.message, err.name)
       }
@@ -1054,6 +1042,7 @@ export class FilterComponent implements OnInit, OnDestroy {
       uniqueAnimals => {
         this.allAnimals = this.beautifyItems(uniqueAnimals, 'tier_art');
         this.inputAnimals = this.constructItemList(this.possibleSelections.animal_species, this.allAnimals);
+        this.loadAnimal= false;
       }, err => {
         this._notification.errorMessage(err.statusText + '<br>' + err.message, err.name)
       }
@@ -1063,8 +1052,36 @@ export class FilterComponent implements OnInit, OnDestroy {
   private beautifyItems(item: any[], type: string): string[] {
     let niceItems: string[] = [];
     item.forEach(entry => {
-      niceItems.push(entry[type]['value']);
+      if(type === 'tier_art' || type === 'tier_gruppe') {
+        niceItems.push(entry[type]['value'][0].toUpperCase() + entry[type]['value'].slice(1));
+      } else {
+        niceItems.push(entry[type]['value']);
+      }
     });
     return niceItems;
   }
 }
+
+ // this.selectedCantons = [];
+    // this.selectedMunic = [];
+    // this.selectedEpidemicG = [];
+    // this.selectedEpidemic = [];
+    // this.selectedAnimalG = [];
+    // this.selectedAnimal = []
+
+    // the currently selected items for every input field
+  // selectedCantons = [];
+  // selectedMunic = [];
+  // selectedEpidemicG = [];
+  // selectedEpidemic = [];
+  // selectedAnimalG = [];
+  // selectedAnimal = []
+
+   // this.possibleSelections.canton = uniq(map(filteredData, 'canton')).sort();
+      // this.possibleSelections.munic = uniq(map(filteredData, 'munic')).sort();
+
+      // this.possibleSelections.epidemic_group = uniq(map(filteredData, 'epidemic_group')).sort();
+      // this.possibleSelections.epidemic = uniq(map(filteredData, 'epidemic')).sort();
+
+      // this.possibleSelections.animal_group = uniq(map(filteredData, 'animal_group')).sort();
+      // this.possibleSelections.animal_species = uniq(map(filteredData, 'animal_species')).sort();
