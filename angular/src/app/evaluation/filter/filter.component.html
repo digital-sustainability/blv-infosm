@@ -129,7 +129,7 @@
                   <span *ngIf="!formCant.controls['canton'].disabled">({{possibleSelections.canton.length}})</span>
                 </label>
                 <ng-select #selectCant [items]="inputCantons" [(ngModel)]="selectedCantons"
-                  notFoundText="{{'FILTER.NO_ENTRIES' | translate}}" [multiple]="true" name="inputCantons"
+                  notFoundText="{{'FILTER.NO_ENTRIES' | translate}}" [loading]="loadCanton" [multiple]="true" name="inputCantons"
                   bindLabel="label" placeholder="{{'FILTER.PLACEHOLDER_CANTON' | translate}}"
                   (add)="onAdd($event, 'canton')" (remove)="onRemove($event, 'canton')"
                   (clear)="onClearAll('canton')" formControlName="canton">
@@ -148,7 +148,7 @@
                   <span *ngIf="!formMunic.controls['munic'].disabled">({{possibleSelections.munic.length}})</span>
                 </label>
                 <ng-select #selectMunic [items]="inputCommunities" [(ngModel)]="selectedMunic" bindLabel="label"
-                  notFoundText="{{'FILTER.NO_ENTRIES' | translate}}" [multiple]="true" name="inputCommunities"
+                  notFoundText="{{'FILTER.NO_ENTRIES' | translate}}" [loading]="loadMunic" [multiple]="true" name="inputCommunities"
                   placeholder="{{'FILTER.PLACEHOLDER_MUNICIPALITY' | translate}}" (add)="onAdd($event, 'munic')"
                   (remove)="onRemove($event, 'munic')" (clear)="onClearAll('munic')" formControlName="munic">
                   <ng-template ng-header-tmp>
@@ -169,7 +169,7 @@
                   <span *ngIf="!formEpidG.controls['epidemic_group'].disabled"> ({{possibleSelections.epidemic_group.length}}) </span>
                 </label>
                 <ng-select #selectEpiG [items]="inputEpidemicsGroup" [(ngModel)]="selectedEpidemicG" bindLabel="label"
-                  notFoundText="{{'FILTER.NO_ENTRIES' | translate}}" [multiple]="true" name="inputEpidemicsGroup"
+                  notFoundText="{{'FILTER.NO_ENTRIES' | translate}}" [loading]="loadEpidemicG" [multiple]="true" name="inputEpidemicsGroup"
                   placeholder="{{'FILTER.PLACEHOLDER_EPIDEMIC_GROUP' | translate}}"
                   (add)="onAdd($event, 'epidemic_group')" (remove)="onRemove($event, 'epidemic_group')"
                   (clear)="onClearAll('epidemic_group')" formControlName="epidemic_group">
@@ -188,7 +188,7 @@
                   <span *ngIf="!formEpid.controls['epidemic'].disabled">({{possibleSelections.epidemic.length}})</span>
                 </label>
                 <ng-select #selectEpi [items]="inputEpidemics" [(ngModel)]="selectedEpidemic" bindLabel="label"
-                  notFoundText="{{'FILTER.NO_ENTRIES' | translate}}" [multiple]="true" name="inputEpidemics"
+                  notFoundText="{{'FILTER.NO_ENTRIES' | translate}}" [loading]="loadEpidemic" [multiple]="true" name="inputEpidemics"
                   placeholder="{{'FILTER.PLACEHOLDER_EPIDEMIC' | translate}}" (add)="onAdd($event, 'epidemic')"
                   (remove)="onRemove($event, 'epidemic')" (clear)="onClearAll('epidemic')"
                   formControlName="epidemic">
@@ -210,7 +210,7 @@
                   <span *ngIf="!formAniG.controls['animal_group'].disabled">({{possibleSelections.animal_group.length}})</span>
                 </label>
                 <ng-select #selectAniG [items]="inputAnimalGroups" [(ngModel)]="selectedAnimalG" bindLabel="label"
-                  notFoundText="{{'FILTER.NO_ENTRIES' | translate}}" [multiple]="true" name="inputAnimalGroups"
+                  notFoundText="{{'FILTER.NO_ENTRIES' | translate}}" [loading]="loadAnimalG" [multiple]="true" name="inputAnimalGroups"
                   placeholder="{{'FILTER.PLACEHOLDER_ANIMAL_GROUP' | translate}}" (add)="onAdd($event, 'animal_group')"
                   (remove)="onRemove($event, 'animal_group')" (clear)="onClearAll('animal_group')"
                   formControlName="animal_group">
@@ -229,7 +229,7 @@
                   <span *ngIf="!formAni.controls['animal_species'].disabled">({{possibleSelections.animal_species.length}})</span>
                 </label>
                 <ng-select #selectAni [items]="inputAnimals" [(ngModel)]="selectedAnimal" bindLabel="label"
-                  notFoundText="{{'FILTER.NO_ENTRIES' | translate}}" [multiple]="true" name="inputAnimals"
+                  notFoundText="{{'FILTER.NO_ENTRIES' | translate}}" [loading]="loadAnimal" [multiple]="true" name="inputAnimals"
                   placeholder="{{'FILTER.PLACEHOLDER_ANIMAL_SPECIES' | translate}}"
                   (add)="onAdd($event, 'animal_species')" (remove)="onRemove($event, 'animal_species')"
                   (clear)="onClearAll('animal_species')" formControlName="animal_species">

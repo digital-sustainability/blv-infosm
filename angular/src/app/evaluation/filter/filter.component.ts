@@ -106,13 +106,12 @@ export class FilterComponent implements OnInit, OnDestroy {
   selectedAnimalG = [];
   selectedAnimal = []
 
-  // booleans to control the logic which part of the filter is displayed first
-  showCanton: boolean = false;
-  showMunic: boolean = false;
-  showEdidemicG: boolean = false;
-  showEdidemic: boolean = false;
-  showAnimalG: boolean = false;
-  showAnimal: boolean = false;
+  loadCanton: boolean = true;
+  loadMunic: boolean = true;
+  loadEpidemicG: boolean = true;
+  loadEpidemic: boolean = true;
+  loadAnimalG: boolean = true;
+  loadAnimal: boolean = true;
 
   filterEntryPoint: string = "";
   noFilter: boolean = true;
@@ -262,6 +261,7 @@ export class FilterComponent implements OnInit, OnDestroy {
   * @param filterType 
   */
   onAdd($event, filterType: string): void {
+    this.mapLoadingInputField(filterType);
     this.checkHierarchy(filterType);
     let selectedItem = [];
     selectedItem = $event.label;
@@ -378,37 +378,18 @@ export class FilterComponent implements OnInit, OnDestroy {
    * @param filterType the type of the filter, where the user removed an item
    */
   onRemove($event, filterType: string): void {
+    this.mapLoadingInputField(filterType);
     if (this.filterConfig.hasOwnProperty(filterType)) {
       this.filterConfig[filterType].filter = filter(this.filterConfig[filterType].filter, (item: string) => {
         return item !== $event.label;
       });
     }
-
-    // let filterTypeAbove: string = "";
-    // switch (filterType) {
-    //   case 'animal_species': filterTypeAbove = 'animal_group'; break;
-    //   case 'epidemic': filterTypeAbove = 'epidemic_group'; break;
-    //   case 'munic': filterTypeAbove = 'canton'; break;
-    // }
-
-    // const remainingItems = this.filterConfig[filterType].filter.length;
-    // if (remainingItems !== 0 || filterTypeAbove === "") {
-    //   const actualHierarchy = this.getHierarchy(filterType);
-    //   const entriesToAdatpInputs = this.filterHierarchiesAbove(actualHierarchy);
-    //   this.adaptPossibleSelections(entriesToAdatpInputs, this.beautifiedData, filterType);
-     
-    // } else {
-    //   const actualHierarchy = this.getHierarchy(filterTypeAbove);
-    //   const entriesToAdatpInputs = this.filterHierarchiesAbove(actualHierarchy);
-    //   this.adaptPossibleSelections(entriesToAdatpInputs, this.beautifiedData, filterTypeAbove);
-      
-    // }
     this.adaptLogicOfRemove(filterType);
     this.getList(this._filter.lang, this._filter.from, this._filter.to);
   }
 
-  
   onClearAll(filterType: string): void {
+    this.mapLoadingInputField(filterType);
     if (this.filterConfig.hasOwnProperty(filterType)) {
       this.filterConfig[filterType].filter = [];
     }
@@ -433,6 +414,17 @@ export class FilterComponent implements OnInit, OnDestroy {
       const actualHierarchy = this.getHierarchy(filterTypeAbove);
       const entriesToAdatpInputs = this.filterHierarchiesAbove(actualHierarchy);
       this.adaptPossibleSelections(entriesToAdatpInputs, this.beautifiedData, filterTypeAbove); 
+    }
+  }
+
+  mapLoadingInputField(filterType: string): void {
+    switch(filterType) {
+      case 'canton': this.loadCanton = true; this.loadMunic = true; break;
+      case 'munic': this.loadMunic = true; break; 
+      case 'epidemic_group': this.loadEpidemicG = true; this.loadEpidemic = true; break;
+      case 'epidemic': this.loadEpidemic = true; break;
+      case 'animal_group': this.loadAnimalG = true; this.loadAnimal = true; break;
+      case 'animal_species': this.loadAnimal = true; break;
     }
   }
 
@@ -999,6 +991,7 @@ export class FilterComponent implements OnInit, OnDestroy {
       uniqueCantons => {
         this.allCantons = this.beautifyItems(uniqueCantons, 'kanton');
         this.inputCantons = this.constructItemList(this.possibleSelections.canton, this.allCantons);
+        this.loadCanton = false;
       }, err => {
         this._notification.errorMessage(err.statusText + '<br>' + err.message, err.name);
       }
@@ -1010,6 +1003,7 @@ export class FilterComponent implements OnInit, OnDestroy {
       uniqueMunic => {
         this.allCommunities = this.beautifyItems(uniqueMunic, 'gemeinde');
         this.inputCommunities = this.constructItemList(this.possibleSelections.munic, this.allCommunities);
+        this.loadMunic = false;
       }, err => {
         this._notification.errorMessage(err.statusText + '<br>' + err.message, err.name)
       }
@@ -1021,6 +1015,7 @@ export class FilterComponent implements OnInit, OnDestroy {
       uniqueEpidGroup => {
         this.allEpidemicsGroups = this.beautifyItems(uniqueEpidGroup, 'seuchen_gruppe');
         this.inputEpidemicsGroup = this.constructItemList(this.possibleSelections.epidemic_group, this.allEpidemicsGroups);
+        this.loadEpidemicG = false;
       }, err => {
         this._notification.errorMessage(err.statusText + '<br>' + err.message, err.name)
       }
@@ -1032,6 +1027,7 @@ export class FilterComponent implements OnInit, OnDestroy {
       uniqueEpid => {
         this.allEpidemics = this.beautifyItems(uniqueEpid, 'tier_seuche');
         this.inputEpidemics = this.constructItemList(this.possibleSelections.epidemic, this.allEpidemics);
+        this.loadEpidemic = false;
       }, err => {
         this._notification.errorMessage(err.statusText + '<br>' + err.message, err.name)
       }
@@ -1042,7 +1038,8 @@ export class FilterComponent implements OnInit, OnDestroy {
     this._animalsGroupSub = this._sparqlDataService.getUniqueAnimalGroups(lang).subscribe(
       uniqueAnimalGroups => {
         this.allAnimalGroups = this.beautifyItems(uniqueAnimalGroups, 'tier_gruppe');
-        this.inputAnimalGroups = this.constructItemList(this.possibleSelections.animal_group, this.allAnimalGroups)
+        this.inputAnimalGroups = this.constructItemList(this.possibleSelections.animal_group, this.allAnimalGroups);
+        this.loadAnimalG = false;
       }, err => {
         this._notification.errorMessage(err.statusText + '<br>' + err.message, err.name)
       }
@@ -1054,6 +1051,7 @@ export class FilterComponent implements OnInit, OnDestroy {
       uniqueAnimals => {
         this.allAnimals = this.beautifyItems(uniqueAnimals, 'tier_art');
         this.inputAnimals = this.constructItemList(this.possibleSelections.animal_species, this.allAnimals);
+        this.loadAnimal= false;
       }, err => {
         this._notification.errorMessage(err.statusText + '<br>' + err.message, err.name)
       }
