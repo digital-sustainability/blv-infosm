@@ -97,7 +97,7 @@ export class FilterComponent implements OnInit, OnDestroy {
   inputAnimalGroups: InputField[];
   inputAnimals: InputField[];
 
-  loadCanton: boolean = true;
+  loadCanton = true;
   loadMunic: boolean = true;
   loadEpidemicG: boolean = true;
   loadEpidemic: boolean = true;
@@ -181,8 +181,6 @@ export class FilterComponent implements OnInit, OnDestroy {
     this._langSub = this._langauageService.currentLang.subscribe(
       lang => {
         if (this._filter.lang !== lang) {
-          // TODO: reset filter if language changes
-          console.log('ParamState: ' + this._filter.lang + ' ≠ languageService: ' + lang);
           this.updateRouteParams({ lang: lang });
           this.resetFilterOnLangChange();
         }
@@ -192,17 +190,6 @@ export class FilterComponent implements OnInit, OnDestroy {
       }
     );
 
-    this._translationSub = this.translate.get([
-      'FILTER.DATE_COMPARE_ERROR',
-      'FILTER.DATE_PERIOD_ERROR',
-      'FILTER.DATE_FROM_ERROR',
-      'FILTER.DATE_TO_ERROR',
-      'FILTER.DATE_FORMAT_ERROR']).subscribe(
-        texts => {
-          this.trans = texts;
-      }
-    );
-    
     const today = new Date();
     this.ngbDatepickerConfig.minDate = { year: 1991, month: 1, day: 15 };
     this.ngbDatepickerConfig.maxDate = {
@@ -211,8 +198,6 @@ export class FilterComponent implements OnInit, OnDestroy {
       day: today.getDate()
     };
     this.ngbDatepickerConfig.outsideDays = 'hidden';
-
-    this.getTranslations();
 
     // set the initial state of the sorted table
     this.sortDirection = 'asc';
@@ -243,13 +228,11 @@ export class FilterComponent implements OnInit, OnDestroy {
     this._municSub.unsubscribe();
     this._translationSub.unsubscribe();
   }
-   
+
  /**
   * Updates every time when the user adds an entry in the filter. Adapts the possible
   * selections in the inputfileds in an "OR" logic based on the selections the user made
   * in the hierarchies above
-  * @param $event 
-  * @param filterType 
   */
   onAdd($event, filterType: string): void {
     this.mapLoadingInputField(filterType);
@@ -335,7 +318,7 @@ export class FilterComponent implements OnInit, OnDestroy {
    * @param key the key of the fltered data object you want the unique items from
    */
   extractUniqueItems(data: Report[], key: string): string[] {
-    let uniqueItems: string[] = [];
+    const uniqueItems: string[] = [];
     for (let i = 0; i < data.length; i++) {
       uniqueItems.push(data[i][key]);
     }
@@ -349,7 +332,7 @@ export class FilterComponent implements OnInit, OnDestroy {
    * @param hierarchy the hierarchy of the input field that the user has changed
    */
   filterHierarchiesAbove(hierarchy: number) {
-    let hierarchiesAbove = [];
+    const hierarchiesAbove = [];
     for (const el in this.filterConfig) {
       if (this.filterConfig[el].hierarchy <= hierarchy && this.filterConfig[el].filter.length !== 0) {
         const elToPush = this.filterConfig[el];
@@ -390,14 +373,14 @@ export class FilterComponent implements OnInit, OnDestroy {
 
   adaptLogicOfRemove(filterType: string): void {
     const remainingItems = this.filterConfig[filterType].filter.length;
-    let filterTypeAbove: string = "";
+    let filterTypeAbove = '';
     switch (filterType) {
       case 'animal_species': filterTypeAbove = 'animal_group'; break;
       case 'epidemic': filterTypeAbove = 'epidemic_group'; break;
       case 'munic': filterTypeAbove = 'canton'; break;
     }
 
-    if (remainingItems !== 0 || filterTypeAbove === "") {
+    if (remainingItems !== 0 || filterTypeAbove === '') {
       const actualHierarchy = this.getHierarchy(filterType);
       const entriesToAdatpInputs = this.filterHierarchiesAbove(actualHierarchy);
       this.adaptPossibleSelections(entriesToAdatpInputs, this.beautifiedData, filterType);
@@ -409,9 +392,9 @@ export class FilterComponent implements OnInit, OnDestroy {
   }
 
   mapLoadingInputField(filterType: string): void {
-    switch(filterType) {
+    switch (filterType) {
       case 'canton': this.loadCanton = true; this.loadMunic = true; break;
-      case 'munic': this.loadMunic = true; break; 
+      case 'munic': this.loadMunic = true; break;
       case 'epidemic_group': this.loadEpidemicG = true; this.loadEpidemic = true; break;
       case 'epidemic': this.loadEpidemic = true; break;
       case 'animal_group': this.loadAnimalG = true; this.loadAnimal = true; break;
@@ -430,11 +413,11 @@ export class FilterComponent implements OnInit, OnDestroy {
     const hierarchy = this.getHierarchy(filterType);
     for (const el of ['canton', 'munic', 'epidemic_group', 'epidemic', 'animal_group', 'animal_species']) {
       if (this.filterConfig[el].hierarchy !== 0 && this.filterConfig[el].hierarchy > hierarchy) {
-        this.elementsBelow[el] = this.filterConfig[el].filter
+        this.elementsBelow[el] = this.filterConfig[el].filter;
       }
       if (this.filterConfig[el].hierarchy !== 0 && this.filterConfig[el].hierarchy <= hierarchy) {
-        this.elementsAbove[el] = this.filterConfig[el].filter
-        this.elementsAbove['hierarchy'] = this.filterConfig[el].hierarchy
+        this.elementsAbove[el] = this.filterConfig[el].filter;
+        this.elementsAbove['hierarchy'] = this.filterConfig[el].hierarchy;
       }
       // get the entry point of the filter
       if (hierarchy === 1 || !this.filterEntryPoint) {
@@ -448,7 +431,7 @@ export class FilterComponent implements OnInit, OnDestroy {
     const selectedRaw = input.filter(item => !(item['disabled']));
     // put the selected values into the form
     form.get(formControlName).patchValue(selectedRaw);
-    
+
     // adapt the values for the filter logic
     this.filterConfig[formControlName].filter = selectedRaw.map(el => el.label);
     this.possibleSelections[formControlName] = selectedRaw.map(el => el.label);
@@ -458,8 +441,8 @@ export class FilterComponent implements OnInit, OnDestroy {
     this.closeDropdown(this.getDropdownToClose(formControlName));
 
     if (['munic', 'epidemic', 'animal_species'].includes(formControlName)) {
-      let next = this.getNextHigherHierarchy(formControlName);
-      let nextForm =  this.getCorrespondingForms(formControlName)[0];
+      const next = this.getNextHigherHierarchy(formControlName);
+      const nextForm =  this.getCorrespondingForms(formControlName)[0];
       this.toggleDisableInput(nextForm, next);
     }
   }
@@ -641,7 +624,6 @@ export class FilterComponent implements OnInit, OnDestroy {
     this.formEpidG.get('epidemic_group').setValue([]);
   }
 
-  
   /**
    * Extracts all the unique strings for every input field in the initial state (based on the 
    * time period the user selected).
@@ -654,7 +636,7 @@ export class FilterComponent implements OnInit, OnDestroy {
       }
     }
   }
- 
+
   /**
    * Filters the data object based on the selected entries that are stored in the FIlterConfig.
    * The logic of the filter is "AND".
@@ -690,7 +672,6 @@ export class FilterComponent implements OnInit, OnDestroy {
           epidemic: data[i]['epidemic'],
           animal_group: data[i]['animal_group'],
           animal_species: data[i]['animal_species'],
-          // TODO: @Jonas does that make sense here?
           // Add IDs to data for map component
           canton_id: data[i]['canton_id'],
           munic_id: data[i]['munic_id'],
@@ -811,31 +792,6 @@ export class FilterComponent implements OnInit, OnDestroy {
     this.removeErrors();
   }
 
-  getTranslations(): void {
-    this._translationSub = this.translate.get([
-      'EVAL.DATE_WRONG_ORDER',
-      'EVAL.DATE_WRONG_FORMAT',
-      'EVAL.DATE_TOO_SMALL',
-      'EVAL.DATE_FROM_WRONG_RANGE',
-      'EVAL.DATE_TO_WRONG_RANGE',
-      'EVAL.ORDER_DESCENDING',
-      'EVAL.ORDER_ASCENDING',
-      'EVAL.ORDER_BY',
-      'EVAL.VISU_DATA',
-      'EVAL.CANTON',
-      'EVAL.MUNICIPALITY',
-      'EVAL.PEST',
-      'EVAL.PEST_GROUP',
-      'EVAL.ANIMAL_SPECIES',
-      'EVAL.DIAGNOSIS_DATE'
-    ]).subscribe(
-      texts => {
-        this.trans = texts;
-        this.sortItem = this.trans['EVAL.DIAGNOSIS_DATE'];
-      }
-    );
-  }
-
   /**
    * Retransforms a date from DD.MM.YYYY (CH-format) to YYYY-MM-DD.
    */
@@ -950,6 +906,7 @@ export class FilterComponent implements OnInit, OnDestroy {
             animal_species: d.tierart.value[0].toUpperCase() + d.tierart.value.slice(1)
           } as Report;
         });
+        this.getTranslations();
         this.getAllPossibleValues(lang);
         // this.transformData(data, false);
         this.filteredData = this.filterDataObjectBasedOnEventData(this.beautifiedData, this.filterConfig);
@@ -961,11 +918,39 @@ export class FilterComponent implements OnInit, OnDestroy {
         // Set `from` and `to` for datepicker to match the current date selection
         this.from = this.transformDate(from);
         this.to = this.transformDate(to);
-        console.log('FILTERED', this.filteredData);
       }, err => {
         this._notification.errorMessage(err.statusText + '<br>' + err.message, err.name);
         // TODO: Imporve error handling
       });
+  }
+
+  private getTranslations(): void {
+    this._translationSub = this.translate.get([
+      'FILTER.DATE_COMPARE_ERROR',
+      'FILTER.DATE_PERIOD_ERROR',
+      'FILTER.DATE_FROM_ERROR',
+      'FILTER.DATE_TO_ERROR',
+      'FILTER.DATE_FORMAT_ERROR',
+      'EVAL.DATE_WRONG_ORDER',
+      'EVAL.DATE_WRONG_FORMAT',
+      'EVAL.DATE_TOO_SMALL',
+      'EVAL.DATE_FROM_WRONG_RANGE',
+      'EVAL.DATE_TO_WRONG_RANGE',
+      'EVAL.ORDER_DESCENDING',
+      'EVAL.ORDER_ASCENDING',
+      'EVAL.ORDER_BY',
+      'EVAL.VISU_DATA',
+      'EVAL.CANTON',
+      'EVAL.MUNICIPALITY',
+      'EVAL.PEST',
+      'EVAL.PEST_GROUP',
+      'EVAL.ANIMAL_SPECIES',
+      'EVAL.DIAGNOSIS_DATE']).subscribe(
+        texts => {
+          this.trans = texts;
+          this.sortItem = this.trans['EVAL.DIAGNOSIS_DATE'];
+      }
+    );
   }
 
   private getAllPossibleValues(lang: string): void {

@@ -106,12 +106,6 @@ export class MapChartComponent implements AfterViewInit, OnDestroy {
     return this.style;
   }
 
-  // TODO: Evt. set style and change it back on un-selections
-  // selectStyleFn = (feature: Feature) => {
-  //   this.fill.setColor(this.getColor(feature));
-  //   return this.selectStyle;
-  // }
-
   constructor(
     private _sparqlDataService: SparqlDataService,
     private _distributeDataService: DistributeDataService,
@@ -176,6 +170,7 @@ export class MapChartComponent implements AfterViewInit, OnDestroy {
                   const feature = event.selected[0];
                   const id = feature.getId();
                   this.area = feature.get('name');
+                  // get report number of selected cantons/munics via array length
                   this.countPerShape = this.reports.filter(r => {
                     if (feature.get('isCanton')) {
                       return id === r.canton_id;
@@ -183,7 +178,6 @@ export class MapChartComponent implements AfterViewInit, OnDestroy {
                       return id === r.munic_id;
                     }
                   }).length;
-                  // console.log(this.countPerShape);
                 }
               });
               this.clickSelect.on('select', event => {
@@ -192,6 +186,9 @@ export class MapChartComponent implements AfterViewInit, OnDestroy {
                   const id = feature.getId();
                   this.detailArea = feature.get('name');
                   this.reportDetails = this.getReportDetails(id, feature.get('isCanton'));
+                } else {
+                  this.detailArea = undefined;
+                  this.reportDetails = undefined;
                 }
               });
             },
@@ -199,7 +196,6 @@ export class MapChartComponent implements AfterViewInit, OnDestroy {
             err => console.log(err)
           );
           }
-          
           // only get munic shapes if none exist  TODO: --> doesn't work yet
           if (!this.municVectorLayer) { // TODO: Close subscription on first()
             // ADM3 --> Municipalities
@@ -217,14 +213,9 @@ export class MapChartComponent implements AfterViewInit, OnDestroy {
               err => console.log(err)
             );
           }
-          
-
-
-
       }, // TODO: handle if no reports come in
       err => console.log(err)
     );
-
   }
 
   ngOnDestroy(): void {
@@ -240,7 +231,7 @@ export class MapChartComponent implements AfterViewInit, OnDestroy {
     this.updateLayer(this.currentLayer);
   }
 
-  private getReportDetails(id: number, isCanton: boolean) {
+  private getReportDetails(id: number, isCanton: boolean): Frequency[] {
     let reportDetails = [];
     // filter reports down to wanted canton/munic
     const selection = this.reports.filter(report => {
@@ -250,11 +241,8 @@ export class MapChartComponent implements AfterViewInit, OnDestroy {
         return id === report.munic_id;
       }
     });
-    const distinctEpidemics = uniqBy(selection.map(s => s.epidemic)).sort();
-
     console.log('reports', this.reports);
     console.log('selection', selection);
-    // console.log('epis', this.countOccurance(selection));
     const count = countBy(selection.map(pest => get(pest, 'epidemic', 'not defined')));
     mapKeys(count, (value: string, key: number): void => {
       reportDetails = reportDetails.concat({
@@ -263,21 +251,6 @@ export class MapChartComponent implements AfterViewInit, OnDestroy {
       });
     });
     return reportDetails;
-    return { seuchenName: 1 };
-  }
-
-  private countOccurance(reports: Report[]): Frequency[] {
-    let result = [];
-    // countBy: count orrurence in array
-    // get(obj, pathToValue, defaultValue): check if property exists
-    const count = countBy(reports.map(pest => get(pest, 'epidemic', 'not defined')));
-    mapKeys(count, (value: string, key: number): void => {
-      result = result.concat({
-        name: key,
-        count: value
-      });
-    });
-    return result;
   }
 
   private updateLayer(layer: OlVectorLayer): void {
@@ -286,7 +259,7 @@ export class MapChartComponent implements AfterViewInit, OnDestroy {
       }
   }
 
-  private initMap() {
+  private initMap(): void {
     const osmLayer = new TileLayer({
       source: new OSM()
     });
@@ -309,7 +282,6 @@ export class MapChartComponent implements AfterViewInit, OnDestroy {
     });
 
   }
-
 
   // transform format to WKT and in the right projection
   private createShapes(features: Feature[], isCanton: boolean): Vector[] {
