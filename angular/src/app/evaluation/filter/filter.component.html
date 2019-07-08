@@ -119,7 +119,7 @@
               <span *ngIf="filterConfig.animal_group.position === 0 && _filter.lang ==='de'">{{ 'FILTER.ADD' | translate }}</span>
             </button>
             <button class="btn btn-danger"
-              (click)="onReset('who','what', 'where')">{{ 'FILTER.RESET' | translate }}</button>
+              (click)="onReset()">{{ 'FILTER.RESET' | translate }}</button>
           </div>
           <!-- cantons and communities -->
           <div class="test" id="where">
