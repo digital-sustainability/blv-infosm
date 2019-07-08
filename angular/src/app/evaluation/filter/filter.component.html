@@ -128,11 +128,12 @@
                 <label class="selction-label" for="inputCantons">{{ 'FILTER.FILTER_CANTONS' | translate }} 
                   <span *ngIf="!formCant.controls['canton'].disabled">({{possibleSelections.canton.length}})</span>
                 </label>
-                <ng-select #selectCant [items]="inputCantons" [(ngModel)]="selectedCantons"
+                <ng-select #selectCant [items]="inputCantons" 
                   notFoundText="{{'FILTER.NO_ENTRIES' | translate}}" [loading]="loadCanton" [multiple]="true" name="inputCantons"
                   bindLabel="label" placeholder="{{'FILTER.PLACEHOLDER_CANTON' | translate}}"
                   (add)="onAdd($event, 'canton')" (remove)="onRemove($event, 'canton')"
                   (clear)="onClearAll('canton')" formControlName="canton">
+                  <!-- [(ngModel)]="selectedCantons" -->
                   <ng-template ng-header-tmp>
                     <div>
                       <button class="btn btn-link"
@@ -147,10 +148,11 @@
                 <label class="selction-label" for="inputCommunities">{{ 'FILTER.FILTER_MUNICS' | translate }}
                   <span *ngIf="!formMunic.controls['munic'].disabled">({{possibleSelections.munic.length}})</span>
                 </label>
-                <ng-select #selectMunic [items]="inputCommunities" [(ngModel)]="selectedMunic" bindLabel="label"
+                <ng-select #selectMunic [items]="inputCommunities"  bindLabel="label"
                   notFoundText="{{'FILTER.NO_ENTRIES' | translate}}" [loading]="loadMunic" [multiple]="true" name="inputCommunities"
                   placeholder="{{'FILTER.PLACEHOLDER_MUNICIPALITY' | translate}}" (add)="onAdd($event, 'munic')"
                   (remove)="onRemove($event, 'munic')" (clear)="onClearAll('munic')" formControlName="munic">
+                  <!-- [(ngModel)]="selectedMunic" -->
                   <ng-template ng-header-tmp>
                     <div>
                       <button class="btn btn-link"
@@ -168,11 +170,12 @@
                 <label class="selction-label" for="inputEpidemicsGroup"> {{ 'FILTER.FILTER_PEST_GROUPS' | translate }}
                   <span *ngIf="!formEpidG.controls['epidemic_group'].disabled"> ({{possibleSelections.epidemic_group.length}}) </span>
                 </label>
-                <ng-select #selectEpiG [items]="inputEpidemicsGroup" [(ngModel)]="selectedEpidemicG" bindLabel="label"
+                <ng-select #selectEpiG [items]="inputEpidemicsGroup"  bindLabel="label"
                   notFoundText="{{'FILTER.NO_ENTRIES' | translate}}" [loading]="loadEpidemicG" [multiple]="true" name="inputEpidemicsGroup"
                   placeholder="{{'FILTER.PLACEHOLDER_EPIDEMIC_GROUP' | translate}}"
                   (add)="onAdd($event, 'epidemic_group')" (remove)="onRemove($event, 'epidemic_group')"
                   (clear)="onClearAll('epidemic_group')" formControlName="epidemic_group">
+                  <!-- [(ngModel)]="selectedEpidemicG" -->
                   <ng-template ng-header-tmp>
                     <div>
                       <button class="btn btn-link"
@@ -187,11 +190,12 @@
                 <label class="selction-label" for="inputEpidemics">{{ 'FILTER.FILTER_PESTS' | translate }} 
                   <span *ngIf="!formEpid.controls['epidemic'].disabled">({{possibleSelections.epidemic.length}})</span>
                 </label>
-                <ng-select #selectEpi [items]="inputEpidemics" [(ngModel)]="selectedEpidemic" bindLabel="label"
+                <ng-select #selectEpi [items]="inputEpidemics"  bindLabel="label"
                   notFoundText="{{'FILTER.NO_ENTRIES' | translate}}" [loading]="loadEpidemic" [multiple]="true" name="inputEpidemics"
                   placeholder="{{'FILTER.PLACEHOLDER_EPIDEMIC' | translate}}" (add)="onAdd($event, 'epidemic')"
                   (remove)="onRemove($event, 'epidemic')" (clear)="onClearAll('epidemic')"
                   formControlName="epidemic">
+                  <!-- [(ngModel)]="selectedEpidemic" -->
                   <ng-template ng-header-tmp>
                     <div>
                       <button class="btn btn-link"
@@ -209,11 +213,12 @@
                 <label class="selction-label" for="inputAnimalGroups">{{ 'FILTER.FILTER_ANIMAL_GROUPS' | translate }} 
                   <span *ngIf="!formAniG.controls['animal_group'].disabled">({{possibleSelections.animal_group.length}})</span>
                 </label>
-                <ng-select #selectAniG [items]="inputAnimalGroups" [(ngModel)]="selectedAnimalG" bindLabel="label"
+                <ng-select #selectAniG [items]="inputAnimalGroups"  bindLabel="label"
                   notFoundText="{{'FILTER.NO_ENTRIES' | translate}}" [loading]="loadAnimalG" [multiple]="true" name="inputAnimalGroups"
                   placeholder="{{'FILTER.PLACEHOLDER_ANIMAL_GROUP' | translate}}" (add)="onAdd($event, 'animal_group')"
                   (remove)="onRemove($event, 'animal_group')" (clear)="onClearAll('animal_group')"
                   formControlName="animal_group">
+                  <!-- [(ngModel)]="selectedAnimalG" -->
                   <ng-template ng-header-tmp>
                     <div>
                       <button class="btn btn-link"
@@ -228,11 +233,12 @@
                 <label class="selction-label" for="inputAnimals">{{ 'FILTER.FILTER_ANIMALS' | translate }} 
                   <span *ngIf="!formAni.controls['animal_species'].disabled">({{possibleSelections.animal_species.length}})</span>
                 </label>
-                <ng-select #selectAni [items]="inputAnimals" [(ngModel)]="selectedAnimal" bindLabel="label"
+                <ng-select #selectAni [items]="inputAnimals"  bindLabel="label"
                   notFoundText="{{'FILTER.NO_ENTRIES' | translate}}" [loading]="loadAnimal" [multiple]="true" name="inputAnimals"
                   placeholder="{{'FILTER.PLACEHOLDER_ANIMAL_SPECIES' | translate}}"
                   (add)="onAdd($event, 'animal_species')" (remove)="onRemove($event, 'animal_species')"
                   (clear)="onClearAll('animal_species')" formControlName="animal_species">
+                  <!-- [(ngModel)]="selectedAnimal" -->
                   <ng-template ng-header-tmp>
                     <div>
                       <button class="btn btn-link"

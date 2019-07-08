@@ -97,14 +97,6 @@ export class FilterComponent implements OnInit, OnDestroy {
   inputAnimalGroups: InputField[];
   inputAnimals: InputField[];
 
-  // the currently selected items for every input field
-  selectedCantons = [];
-  selectedMunic = [];
-  selectedEpidemicG = [];
-  selectedEpidemic = [];
-  selectedAnimalG = [];
-  selectedAnimal = []
-
   loadCanton: boolean = true;
   loadMunic: boolean = true;
   loadEpidemicG: boolean = true;
@@ -641,12 +633,12 @@ export class FilterComponent implements OnInit, OnDestroy {
   }
 
   resetModels(): void {
-    this.selectedCantons = [];
-    this.selectedMunic = [];
-    this.selectedEpidemicG = [];
-    this.selectedEpidemic = [];
-    this.selectedAnimalG = [];
-    this.selectedAnimal = []
+    this.formAni.get('animal_species').setValue([]);
+    this.formAniG.get('animal_group').setValue([]);
+    this.formCant.get('canton').setValue([]);
+    this.formMunic.get('munic').setValue([]);
+    this.formEpid.get('epidemic').setValue([]);
+    this.formEpidG.get('epidemic_group').setValue([]);
   }
 
   
@@ -657,14 +649,9 @@ export class FilterComponent implements OnInit, OnDestroy {
    */
   private extractFilterParts(filteredData): void {
     if (this.filterEntryPoint.length === 0 ) {
-      this.possibleSelections.canton = uniq(map(filteredData, 'canton')).sort();
-      this.possibleSelections.munic = uniq(map(filteredData, 'munic')).sort();
-
-      this.possibleSelections.epidemic_group = uniq(map(filteredData, 'epidemic_group')).sort();
-      this.possibleSelections.epidemic = uniq(map(filteredData, 'epidemic')).sort();
-
-      this.possibleSelections.animal_group = uniq(map(filteredData, 'animal_group')).sort();
-      this.possibleSelections.animal_species = uniq(map(filteredData, 'animal_species')).sort();
+      for(const el of ['canton', 'munic', 'epidemic_group', 'epidemic', 'animal_group', 'animal_species']) {
+        this.possibleSelections[el] = uniq(map(filteredData, el)).sort();
+      }
     }
   }
  
@@ -1074,3 +1061,27 @@ export class FilterComponent implements OnInit, OnDestroy {
     return niceItems;
   }
 }
+
+ // this.selectedCantons = [];
+    // this.selectedMunic = [];
+    // this.selectedEpidemicG = [];
+    // this.selectedEpidemic = [];
+    // this.selectedAnimalG = [];
+    // this.selectedAnimal = []
+
+    // the currently selected items for every input field
+  // selectedCantons = [];
+  // selectedMunic = [];
+  // selectedEpidemicG = [];
+  // selectedEpidemic = [];
+  // selectedAnimalG = [];
+  // selectedAnimal = []
+
+   // this.possibleSelections.canton = uniq(map(filteredData, 'canton')).sort();
+      // this.possibleSelections.munic = uniq(map(filteredData, 'munic')).sort();
+
+      // this.possibleSelections.epidemic_group = uniq(map(filteredData, 'epidemic_group')).sort();
+      // this.possibleSelections.epidemic = uniq(map(filteredData, 'epidemic')).sort();
+
+      // this.possibleSelections.animal_group = uniq(map(filteredData, 'animal_group')).sort();
+      // this.possibleSelections.animal_species = uniq(map(filteredData, 'animal_species')).sort();
