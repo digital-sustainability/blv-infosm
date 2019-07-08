@@ -1,6 +1,7 @@
 import { Component, AfterViewInit, OnDestroy } from '@angular/core';
 import { SparqlDataService } from '../../../shared/sparql-data.service';
 import { Report } from '../../../shared/models/report.model';
+import { Frequency } from '../../../shared/models/frequency.model';
 import { Subscription } from 'rxjs';
 import { DistributeDataService } from 'src/app/shared/distribute-data.service';
 
@@ -24,7 +25,7 @@ import OSM from 'ol/source/OSM.js';
 import Vector from 'ol/source/Vector';
 import Feature from 'ol/Feature';
 
-import { isEqual } from 'lodash';
+import { isEqual, uniqBy, get, countBy, mapKeys } from 'lodash';
 
 
 @Component({
@@ -34,7 +35,6 @@ import { isEqual } from 'lodash';
 })
 export class MapChartComponent implements AfterViewInit, OnDestroy {
 
-  // map height
   height = 600;
   initialized = false;
 
@@ -73,9 +73,13 @@ export class MapChartComponent implements AfterViewInit, OnDestroy {
   });
 
   // select interaction working on "pointermove"
-  select = new Select({
+  hoverSelect = new Select({
     condition: pointerMove,
     style: this.selectStyle
+  });
+
+  clickSelect = new Select({
+    condition: click,
   });
 
   // attribution for OSM layer
@@ -88,9 +92,13 @@ export class MapChartComponent implements AfterViewInit, OnDestroy {
   // shapes that are currently displayed to the user
   currentLayer: OlVectorLayer;
 
-  // temp
-  area: string;
+  // values displayed on click and hover events
+  area = '...';
   countPerShape: number;
+  detailArea: string;
+  reportDetails: any;
+  // used to get the object keys of canton and munic
+  objectKeys = Object.keys;
 
   // function that is passed to each shape in the layer
   styleFn = (feature: Feature) => {
@@ -133,7 +141,6 @@ export class MapChartComponent implements AfterViewInit, OnDestroy {
           // load data for canton shapes and simultaniously load for municipalites
           // ADM1 --> Cantons
           this.wktCantonSub = this._sparqlDataService.getCantonWkts().subscribe(
-            // TODO: use RXJS pipe/map
             cantonWkts => {
               /**
                * TODO: Cache is too big to be kept in session-/loaclStorage. It can still be tried for the data loaded by the filter
@@ -162,8 +169,9 @@ export class MapChartComponent implements AfterViewInit, OnDestroy {
               console.log('This function should only be called once');
               // Add cantons as initial layer
               this.map.addLayer(this.cantonVectorLayer);
-              this.map.addInteraction(this.select);
-              this.select.on('select', event => {
+              this.map.addInteraction(this.hoverSelect);
+              this.map.addInteraction(this.clickSelect);
+              this.hoverSelect.on('select', event => {
                 if (event.selected.length > 0) {
                   const feature = event.selected[0];
                   const id = feature.getId();
@@ -175,7 +183,15 @@ export class MapChartComponent implements AfterViewInit, OnDestroy {
                       return id === r.munic_id;
                     }
                   }).length;
-                  //console.log(this.countPerShape);
+                  // console.log(this.countPerShape);
+                }
+              });
+              this.clickSelect.on('select', event => {
+                if (event.selected.length > 0) {
+                  const feature = event.selected[0];
+                  const id = feature.getId();
+                  this.detailArea = feature.get('name');
+                  this.reportDetails = this.getReportDetails(id, feature.get('isCanton'));
                 }
               });
             },
@@ -183,13 +199,13 @@ export class MapChartComponent implements AfterViewInit, OnDestroy {
             err => console.log(err)
           );
           }
-
+          
           // only get munic shapes if none exist  TODO: --> doesn't work yet
           if (!this.municVectorLayer) { // TODO: Close subscription on first()
             // ADM3 --> Municipalities
             this.wktMunicSub = this._sparqlDataService.getMunicWkts().subscribe(
               municWkts => {
-                console.log(municWkts[0])
+                console.log(municWkts[0]);
                 this.municVectorLayer = new OlVectorLayer({
                   source: new Vector({
                     features: this.createShapes(municWkts, false)
@@ -201,7 +217,7 @@ export class MapChartComponent implements AfterViewInit, OnDestroy {
               err => console.log(err)
             );
           }
-
+          
 
 
 
@@ -222,6 +238,46 @@ export class MapChartComponent implements AfterViewInit, OnDestroy {
     this.currentLayer = layer;
     this.map.addLayer(this.currentLayer);
     this.updateLayer(this.currentLayer);
+  }
+
+  private getReportDetails(id: number, isCanton: boolean) {
+    let reportDetails = [];
+    // filter reports down to wanted canton/munic
+    const selection = this.reports.filter(report => {
+      if (isCanton) {
+        return id === report.canton_id;
+      } else {
+        return id === report.munic_id;
+      }
+    });
+    const distinctEpidemics = uniqBy(selection.map(s => s.epidemic)).sort();
+
+    console.log('reports', this.reports);
+    console.log('selection', selection);
+    // console.log('epis', this.countOccurance(selection));
+    const count = countBy(selection.map(pest => get(pest, 'epidemic', 'not defined')));
+    mapKeys(count, (value: string, key: number): void => {
+      reportDetails = reportDetails.concat({
+        name: key,
+        count: value
+      });
+    });
+    return reportDetails;
+    return { seuchenName: 1 };
+  }
+
+  private countOccurance(reports: Report[]): Frequency[] {
+    let result = [];
+    // countBy: count orrurence in array
+    // get(obj, pathToValue, defaultValue): check if property exists
+    const count = countBy(reports.map(pest => get(pest, 'epidemic', 'not defined')));
+    mapKeys(count, (value: string, key: number): void => {
+      result = result.concat({
+        name: key,
+        count: value
+      });
+    });
+    return result;
   }
 
   private updateLayer(layer: OlVectorLayer): void {
@@ -274,10 +330,6 @@ export class MapChartComponent implements AfterViewInit, OnDestroy {
     });
   }
 
-  // private getRelativeColor(percent: number): any {
-  //   return `hsl(0, 59%, ${(percent).toFixed()}%)`;
-  // }
-
   // calculate the color that the shape is supposed to have based on animal diseases per area
   private getColor(feature: Feature): string {
     const id = feature.getId();
@@ -289,14 +341,28 @@ export class MapChartComponent implements AfterViewInit, OnDestroy {
       }
     });
     const x = cases.length;
-    if (x === 0) return 'white';
-    if (x <= 5) return 'rgb(210, 245, 60)';
-    if (x <= 25) return 'rgb(255, 255, 102)';
-    if (x <= 50) return 'rgb(255, 195, 0)';
-    if (x <= 100) return 'rgb(255, 87, 51, 0.6)';
-    if (x <= 500) return 'rgb(255, 0, 0, 1)';
-    if (x <= 1000) return 'rgb(199, 0, 57, 0.6)';
-    else return 'rgb(88, 24, 69)';
+    if (x === 0) {
+      return 'white';
+    }
+    if (x <= 5) {
+      return 'rgb(210, 245, 60)';
+    }
+    if (x <= 25) {
+      return 'rgb(255, 255, 102)';
+    }
+    if (x <= 50) {
+      return 'rgb(255, 195, 0)';
+    }
+    if (x <= 100) {
+      return 'rgb(255, 87, 51, 0.6)';
+    }
+    if (x <= 500) {
+      return 'rgb(255, 0, 0, 1)';
+    }
+    if (x <= 1000) {
+      return 'rgb(199, 0, 57, 0.6)';
+    }
+    return 'rgb(88, 24, 69)';
   }
 
 

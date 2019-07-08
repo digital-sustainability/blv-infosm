@@ -27,6 +27,8 @@
     "TEST": "Testen einer SVG Grafik für den Meldefluss einer Tierseuchenmeldung."
   },
   "EVAL": {
+    "SELECTED": "Ausgewählt",
+    "NUMBER_OF_REPORTS": "Anzahl Meldungen",
     "SHOW_CANTONS": "Kantone darstellen",
     "SHOW_MUNICS": "Gemeinden darstellen",
     "SHOW_ANIMALS": "Tierarten darstellen",

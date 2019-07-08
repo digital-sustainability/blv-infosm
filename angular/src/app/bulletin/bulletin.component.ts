@@ -9,7 +9,6 @@ import { NotificationService } from '../shared/notification.service';
 import { Router, ActivatedRoute } from '@angular/router';
 import { NgbDate } from '../shared/models/ngb-date.model';
 import { Subscription } from 'rxjs';
-import { map } from 'rxjs/operators';
 import { ParamService } from '../shared/param.service';
 import { NgbDateParserFormatter, NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
 import { NgbDateCHFormatter } from '../shared/formatters/ngb-ch-date-formatter';

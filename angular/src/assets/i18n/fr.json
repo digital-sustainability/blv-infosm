@@ -21,6 +21,8 @@
         "TEST": "Test d'un graphique SVG pour le flux de déclaration d'une notification de maladie animale."
     },
     "EVAL": {
+        "SELECTED": "Sélectionnés",
+        "NUMBER_OF_REPORTS": "Nombre de rapports",
         "SHOW_CANTONS": "Afficher Cantons",
         "SHOW_MUNICS": "Afficher Communes",
         "SHOW_ANIMALS": "Afficher espèces",

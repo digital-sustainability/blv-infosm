@@ -21,6 +21,8 @@
         "TEST": "Testing an SVG graph for the reporting flow of an animal disease notification."
     },
     "EVAL": {
+        "SELECTED": "Selected",
+        "NUMBER_OF_REPORTS": "Number of reports",
         "SHOW_CANTONS": "Show Cantons",
         "SHOW_MUNICS": "Show Municipalities",
         "SHOW_ANIMALS": "Show Animal Species",
@@ -58,8 +60,8 @@
         "NOT_SORTED": "Click the header of a column to sort the data.",
         "LEGEND": "Legend for number of disease incidents",
         "OTHER": "Other",
-        "EPIDEMIC_PER_ANIMLAL": "Epidemics per Animal Species",
-        "ANIMLAL_PER_EPIDEMIC": "Animal Species per Epidemic",
+        "EPIDEMIC_PER_ANIMLAL": "Disease per Animal Species",
+        "ANIMLAL_PER_EPIDEMIC": "Animal Species per Disease",
         "NO_DATA": "No data available for this selection."
     },
     "BULLETIN": {

@@ -2,23 +2,65 @@
   <div id="ol-map"></div>
   <!-- TODO: While loading data to display already show map but still loader in Legende place -->
   <div class="map-info" *ngIf="cantonVectorLayer; else loadingMapData">
-    <!-- rgba(210, 245, 60, 0.6)rgba(255, 255, 102, 0.6)rgba(255, 195, 0)rgba(255, 87, 51, 0.6)rgba(255, 0, 0, 1)rgba(199, 0, 57, 0.6)rgba(88, 24, 69, 0.6) -->
-    <p class="m-2">{{ 'EVAL.LEGEND' | translate }}:
-      <span class="map-legend" id="legende-1-5">1-5</span> |
-      <span class="map-legend" id="legende-5-25">6-25</span> |
-      <span class="map-legend" id="legende-25-50">26-50</span> |
-      <span class="map-legend" id="legende-50-100">51-100</span> |
-      <span class="map-legend" id="legende-100-500">101-500</span> |
-      <span class="map-legend" id="legende-500-1000">501-1000</span> |
-      <span class="map-legend" id="legende-1000">1000+</span>
-    </p>
-    <p>ID of selected area: <strong>{{ area }}</strong></p>
-    <p>Disease count per area: <strong>{{ countPerShape }}</strong></p>
+    <div class="container">
+      <div class="row">
+        <div class="col">
+          <p class="m-2">{{ 'EVAL.LEGEND' | translate }}:
+            <!-- rgba(210, 245, 60, 0.6)rgba(255, 255, 102, 0.6)rgba(255, 195, 0)rgba(255, 87, 51, 0.6)rgba(255, 0, 0, 1)rgba(199, 0, 57, 0.6)rgba(88, 24, 69, 0.6) -->
+            <span class="map-legend" id="legende-1-5">1-5</span> |
+            <span class="map-legend" id="legende-5-25">6-25</span> |
+            <span class="map-legend" id="legende-25-50">26-50</span> |
+            <span class="map-legend" id="legende-50-100">51-100</span> |
+            <span class="map-legend" id="legende-100-500">101-500</span> |
+            <span class="map-legend" id="legende-500-1000">501-1000</span> |
+            <span class="map-legend" id="legende-1000">1000+</span>
+          </p>
+        </div>
+      </div>
+      <div class="row" style="font-size: 1.2em">
+        <div class="col">
+          <p class="m-2">{{ 'EVAL.SELECTED' | translate }}: <strong>{{ area }}</strong></p>
+        </div>
+        <div class="col">
+          <p class="m-2">{{ 'EVAL.NUMBER_OF_REPORTS' | translate }}: <strong>{{ countPerShape }}</strong></p>
+        </div>
+      </div>
+      <div id="map-detail">
+        <div class="row">
+          <p>Clicked Canton: {{ detailArea }}</p>
+        </div>
+        <div *ngIf="reportDetails; else selectme;" class="row my-3">
+          <div class="col">
+            <ul>
+              <div *ngFor="let item of reportDetails; let even = even">
+                <li *ngIf="even">
+                  <ng-container>{{ item.name }}: {{ item.count }}</ng-container>
+                </li>
+              </div>
+            </ul>
+          </div>
+          <div class="col">
+            <ul>
+              <div *ngFor="let item of reportDetails; let even = even">
+                <li *ngIf="!even">
+                  <ng-container>{{ item.name }}: {{ item.count }}</ng-container>
+                </li>
+              </div>
+            </ul>
+          </div>
+        </div>
+        <ng-template #selectme>
+            <p>Click a canton for more details</p>
+          </ng-template>
+      </div>
+    </div>
     <div class="chart-button-container">
-      <button class="btn btn-dark mr-2" type="submit" (click)="onSwitchLayer(cantonVectorLayer)" [disabled]="!cantonVectorLayer">
+      <button class="btn btn-dark mr-2" type="submit" (click)="onSwitchLayer(cantonVectorLayer)"
+        [disabled]="!cantonVectorLayer">
         {{ 'EVAL.SHOW_CANTONS' | translate }}
       </button>
-      <button class="btn btn-dark ml-2" type="submit" (click)="onSwitchLayer(municVectorLayer)" [disabled]="!municVectorLayer">
+      <button class="btn btn-dark ml-2" type="submit" (click)="onSwitchLayer(municVectorLayer)"
+        [disabled]="!municVectorLayer">
         <span *ngIf="municVectorLayer; else gettingMunics">{{ 'EVAL.SHOW_MUNICS' | translate }}</span>
         <ng-template #gettingMunics>
           <span>Loading ...</span>

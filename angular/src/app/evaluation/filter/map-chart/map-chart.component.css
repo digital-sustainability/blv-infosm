@@ -43,3 +43,9 @@
     background-color: rgba(88, 24, 69, 0.6);
 }
 
+#map-detail {
+    border: 1px;
+    border-style: solid;
+    border-color: black;
+}
+
