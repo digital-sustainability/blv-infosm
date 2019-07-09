@@ -1,11 +1,11 @@
 <div class="main-chart-container" >
     <div class="chart-holder" *ngIf="reports; else loadingTimelineChart">
-        <div [chart]="timelineChart" style="height: 450px; width:99%"></div>
-        <div class="chart-button-container">
-            <button class="btn btn-dark mr-1" type="submit" (click)="onShowEpidemics()">
+        <div [chart]="timelineChart"></div>
+        <div class="chart-button-container row justify-content-center">
+            <button class="btn btn-primary mx-2 mb-3" type="submit" (click)="onShowEpidemics()">
                 {{ 'EVAL.SHOW_EPIDEMIC_GROUPS' | translate }}
             </button>
-            <button class="btn btn-dark ml-1" type="submit" (click)="onShowAnimals()">
+            <button class="btn btn-primary mx-2 mb-3" type="submit" (click)="onShowAnimals()">
                 {{ 'EVAL.SHOW_ANIMAL_GROUPS' | translate }}
             </button>
         </div>

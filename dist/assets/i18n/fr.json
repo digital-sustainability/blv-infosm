@@ -128,9 +128,10 @@
         "ADD" : "Ajouter",
         "GIVEN_PERIOD": "Période de temps spécifiée sélectionnée:",
         "SPECIFIC_PERIOD": "Période spécifique sélectionnée:",
-        "TIME_INFO": "Sélectionner un préréglage ou une période de temps spécifique.",
+        "TIME_INFO": "Sélectionnez une période par défaut ou une période spécifique (cliquez sur le bouton du filtre).",
         "DATA_LOAD": "Les données sont chargées ...",
-        "ORDER_FILTER": "Assemblez l'ordre du filtre."
+        "ORDER_FILTER": "Assemblez l'ordre du filtre.",
+        "POSSIBLE_SELECTIONS": "Options de sélection:"
     },
     "GEO_DOWNLOAD": {
         "TITLE": "Télécharger les données",

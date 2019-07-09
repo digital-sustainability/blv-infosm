@@ -23,7 +23,7 @@
     "EVAL": {
         "SELECTED": "Selected",
         "NUMBER_OF_REPORTS": "Number of reports",
-        "CLICKED_AREA": "DDetailed information about",
+        "CLICKED_AREA": "Detailed information about",
         "SHOW_CANTONS": "Show Cantons",
         "SHOW_MUNICS": "Show Municipalities",
         "SHOW_ANIMALS": "Show Animal Species",
@@ -128,12 +128,13 @@
         "ADD": "Add",
         "GIVEN_PERIOD": "Selected specified time period:",
         "SPECIFIC_PERIOD":"Selected specific time period:",
-        "TIME_INFO": "Select either a preset or a specific time period.",
+        "TIME_INFO": "Select either a default or a specific (click on the filter button) time period.",
         "DATA_LOAD": "The data is loaded ...",
-        "ORDER_FILTER": "Assemble the order of the filter."
+        "ORDER_FILTER": "Assemble the order of the filter.",
+        "POSSIBLE_SELECTIONS": "Selection options:"
     },
     "GEO_DOWNLOAD": {
-        "TITLE": "Data downlaod",
+        "TITLE": "Data download",
         "P1": "After accepting the terms of use the whole dataset from infoSM can be downloaded following the link \"GeoData download\". The download may take some minutes as it is an extensive dataset. The download will be in a ZIP-file and includes a description of the data model. In the ZIP-file there are several csv-files, which include the data according to the data model included.",
         "P2": "The dataset \"notifiable diseases\" is part of the GeoBasis data according to federal law GeoIV. It is enlisted in the annex of the GeoIV.",
         "LINK_TEXT": "Download Geodata"

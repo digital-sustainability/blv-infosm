@@ -2,12 +2,12 @@
     <div class="chart-holder" *ngIf="loaded; else loadingFrequencyChart">
         <div *ngIf="reports; else noData">
             <!-- TODO: Check if styles below are needed -->
-            <div [chart]="frequencyChart" style="height: 600px; width:99%"></div>
-            <div class="chart-button-container">
-                <button class="btn btn-dark mr-2" type="submit" (click)="onShowEpidemics()">
+            <div [chart]="frequencyChart"></div>
+            <div class="chart-button-container row justify-content-center">
+                <button class="btn btn-primary mx-2 mb-3" type="submit" (click)="onShowEpidemics()">
                     {{ 'EVAL.SHOW_EPIDEMICS' | translate }}
                 </button>
-                <button class="btn btn-dark ml-2" type="submit" (click)="onShowAnimals()">
+                <button class="btn btn-primary mx-2 mb-3" type="submit" (click)="onShowAnimals()">
                     {{ 'EVAL.SHOW_ANIMALS' | translate }}
                 </button>
             </div>
