@@ -14,6 +14,7 @@ import { MatSortModule} from '@angular/material/sort';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { Angulartics2Module } from 'angulartics2';
 
 import { AppComponent } from './app.component';
 import { HeaderComponent } from './header/header.component';
@@ -31,17 +32,17 @@ import { GeoDownloadComponent } from './info/geo-download/geo-download.component
 import { GeoDownloadDetailComponent } from './geo-download-detail/geo-download-detail.component';
 
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
-import { LanguageService } from './shared/language.service';
+import { LanguageService } from './shared/services/language.service';
 import { MatPaginatorIntl } from '@angular/material';
 import { NgbDatepickerI18n } from '@ng-bootstrap/ng-bootstrap';
-import { SparqlDataService } from './shared/sparql-data.service';
-import { MatPaginatorI18nService} from './shared/mat-paginator-i18n.service'
-import { DistributeDataService } from './shared/distribute-data.service';
-import { DatePickerI18nService } from './shared/date-picker-i18n.service';
-import { HighchartService } from './shared/highchart.service';
-import { ParamService } from './shared/param.service';
+import { SparqlDataService } from './shared/services/sparql-data.service';
+import { MatPaginatorI18nService} from './shared/services/mat-paginator-i18n.service';
+import { DistributeDataService } from './shared/services/distribute-data.service';
+import { DatePickerI18nService } from './shared/services/date-picker-i18n.service';
+import { HighchartService } from './shared/services/highchart.service';
+import { ParamService } from './shared/services/param.service';
 import { ChDate } from './shared/pipes/ch-date.pipe';
-import { NotificationService } from './shared/notification.service';
+import { NotificationService } from './shared/services/notification.service';
 
 
 @NgModule({
@@ -88,7 +89,8 @@ import { NotificationService } from './shared/notification.service';
       disableTimeOut: true,
       positionClass: 'toast-center-center',
       enableHtml: true
-    })
+    }),
+    Angulartics2Module.forRoot()
   ],
   providers: [
     SparqlDataService,

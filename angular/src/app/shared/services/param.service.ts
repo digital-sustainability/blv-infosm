@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ParamState } from './models/param-state.model';
+import { ParamState } from '../models/param-state.model';
 import { Router, ActivatedRoute } from '@angular/router';
 
 @Injectable({

@@ -9,7 +9,11 @@ const config = require('./config/config');
 
 const app = express();
 
-// wrapper function propagetes err to error handling
+/**
+ * Wrapper function propagetes err to error handling.
+ * First (...args) so function is not evoked emediatly.
+ * Only works for async functions.
+ */
 const wrap = fn => (...args) => fn(...args).catch(args[2]);
 
 // zip all requests
@@ -31,7 +35,7 @@ app.get('/', (req, res) => {
     res.sendFile(__dirname + '/dist/index.html');
 });
 
-app.get('/getData', wrap( async (req, res, next) => {
+app.get('/sparql', wrap( async (req, res, next) => {
     if (!req.query.query || !req.query.url) {
         throw new BadRequestError('No Sparql Endpoint or SPARQL Query defined'); // sorted by next catch
     }
@@ -58,6 +62,11 @@ app.get('/getData', wrap( async (req, res, next) => {
         }
     });
 }));
+
+// download zip file
+app.get('/geo-download', wrap( async (req, res, next) => {
+    return res.download(__dirname + '/geo-data/geodaten.zip');
+}))
 
 // send all other requests back to index for client side routing
 app.get('/*', (req, res) => {

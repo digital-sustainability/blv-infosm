@@ -9,13 +9,13 @@ export class MatPaginatorI18nService extends MatPaginatorIntl {
     public constructor() {
         super();
     }
-    
+
     // remove tooptip when user hovers over tooltip
-    firstPageLabel: string = ''
-    itemsPerPageLabel: string =''
-    lastPageLabel: string = ''
-    nextPageLabel: string = ''
-    previousPageLabel: string = ''
+    firstPageLabel = '';
+    itemsPerPageLabel = '';
+    lastPageLabel = '';
+    nextPageLabel = '';
+    previousPageLabel = '';
 
     public getRangeLabel = (page: number, pageSize: number, length: number): string => {
         if (length === 0 || pageSize === 0) {
@@ -30,7 +30,7 @@ export class MatPaginatorI18nService extends MatPaginatorIntl {
             : startIndex + pageSize;
 
         return `${startIndex + 1} - ${endIndex} / ${length}`;
-    };
+    }
 
 }
 

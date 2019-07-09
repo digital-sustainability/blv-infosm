@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { environment } from '../../environments/environment';
-import { Report } from './models/report.model';
+import { environment } from '../../../environments/environment';
+import { Report } from '../models/report.model';
 import dayjs from 'dayjs';
 
 @Injectable()
@@ -25,7 +25,7 @@ PREFIX dct: <http://purl.org/dc/terms/>
 PREFIX dcterms: <http://purl.org/dc/terms/>
 PREFIX schema: <http://schema.org/>
 `;
-  
+
   constructor(
     private http: HttpClient,
     ) { }
@@ -61,7 +61,7 @@ PREFIX schema: <http://schema.org/>
     const params = new HttpParams()
       .set('url', this._zazukoEndpoint)
       .set('query', query);
-    return this.http.get<Report[]>(this._api + 'getData', { params: params });
+    return this.http.get<Report[]>(this._api + 'sparql', { params: params });
   }
 
   getUniqueCantons(): Observable<any> {
@@ -73,7 +73,7 @@ PREFIX schema: <http://schema.org/>
         rdfs:label ?kanton .
     }`;
     const params = new HttpParams().set('url', this._zazukoEndpoint).set('query', query);
-    return this.http.get<any[]>(this._api + 'getData', { params: params })
+    return this.http.get<any[]>(this._api + 'sparql', { params: params });
   }
 
   getUniqueMunicipalities(): Observable<any> {
@@ -85,7 +85,7 @@ PREFIX schema: <http://schema.org/>
         rdfs:label ?gemeinde .
     }`;
     const params = new HttpParams().set('url', this._zazukoEndpoint).set('query', query);
-    return this.http.get<any[]>(this._api + 'getData', { params: params })
+    return this.http.get<any[]>(this._api + 'sparql', { params: params });
   }
 
   getUniqueEpidemicGroups(lang: string): Observable<any> {
@@ -100,7 +100,7 @@ PREFIX schema: <http://schema.org/>
     }
     `;
     const params = new HttpParams().set('url', this._zazukoEndpoint).set('query', query);
-    return this.http.get<any[]>(this._api + 'getData', { params: params })
+    return this.http.get<any[]>(this._api + 'sparql', { params: params });
   }
 
   getUniqueEpidemics(lang: string): Observable<any> {
@@ -113,7 +113,7 @@ PREFIX schema: <http://schema.org/>
     FILTER(langMatches(lang( ?tier_seuche), "${lang}"))
     }`;
     const params = new HttpParams().set('url', this._zazukoEndpoint).set('query', query);
-    return this.http.get<any[]>(this._api + 'getData', { params: params })
+    return this.http.get<any[]>(this._api + 'sparql', { params: params });
   }
 
   getUniqueAnimalGroups(lang: string): Observable<any> {
@@ -126,7 +126,7 @@ PREFIX schema: <http://schema.org/>
     FILTER(langMatches(lang( ?tier_gruppe), "${lang}"))
     }`;
     const params = new HttpParams().set('url', this._zazukoEndpoint).set('query', query);
-    return this.http.get<any[]>(this._api + 'getData', { params: params })
+    return this.http.get<any[]>(this._api + 'sparql', { params: params });
   }
 
   getUniqueAnimals(lang: string): Observable<any> {
@@ -140,7 +140,7 @@ PREFIX schema: <http://schema.org/>
     FILTER(langMatches(lang( ?tier_art), "${lang}"))
     }`;
     const params = new HttpParams().set('url', this._zazukoEndpoint).set('query', query);
-    return this.http.get<any[]>(this._api + 'getData', { params: params })
+    return this.http.get<any[]>(this._api + 'sparql', { params: params });
   }
 
 
@@ -162,7 +162,7 @@ SELECT * WHERE {
     const params = new HttpParams()
       .set('url', this._geoadminEndpoint)
       .set('query', query);
-    return this.http.get<any>(this._api + 'getData', { params: params });
+    return this.http.get<any>(this._api + 'sparql', { params: params });
   }
 
   getMunicWkts(): any {
@@ -184,7 +184,7 @@ SELECT * WHERE {
     const params = new HttpParams()
       .set('url', this._geoadminEndpoint)
       .set('query', query);
-    return this.http.get<any>(this._api + 'getData', { params: params });
+    return this.http.get<any>(this._api + 'sparql', { params: params });
   }
 
   // Format date to YYYY-MM-DD; Replace by todays date if no valid date

@@ -1,10 +1,10 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { DistributeDataService } from 'src/app/shared/distribute-data.service';
+import { DistributeDataService } from 'src/app/shared/services/distribute-data.service';
 import { Report } from '../../shared/models/report.model';
 import { Translations } from '../../shared/models/translations.model';
 import { Subscription } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
-import { NotificationService } from '../../shared/notification.service';
+import { NotificationService } from '../../shared/services/notification.service';
 import { ngxCsv } from 'ngx-csv/ngx-csv';
 import * as XLSX from 'xlsx';
 import { omit } from 'lodash';
@@ -58,10 +58,10 @@ export class DownloadComponent implements OnInit, OnDestroy {
   onDownloadCsv(): void {
     if (this._reports && this._trans) {
       this.downlaodCsv(
-        this._reports,
-        this._distributeDataService.getFrom(),
-        this._distributeDataService.getTo(),
-        this._trans);
+      this._reports,
+      this._distributeDataService.getFrom(),
+      this._distributeDataService.getTo(),
+      this._trans);
     }
   }
 
@@ -89,6 +89,7 @@ export class DownloadComponent implements OnInit, OnDestroy {
       showLabels: true,
       headers: this.createHeader(trans)
     };
+    // tslint:disable-next-line:no-unused-expression
     new ngxCsv(data, filename, options);
   }
 

@@ -69,7 +69,8 @@
     "OTHER": "Sonstige",
     "EPIDEMIC_PER_ANIMLAL": "Seuchen pro Tierart",
     "ANIMLAL_PER_EPIDEMIC": "Tierarten pro Seuche",
-    "NO_DATA": "Keine Daten für diese Auswahl vorhanden."
+    "NO_DATA": "Keine Daten für diese Auswahl vorhanden.",
+    "CLICK_A_SHAPE": "Klicken Sie auf einen eingefärbten Kanton/Gemeinde für Detailinformationen."
   },
   "BULLETIN": {
     "OPTIONS": "Anzeigeoptionen",

@@ -1,9 +1,8 @@
 import { Component, AfterViewInit, OnDestroy } from '@angular/core';
-import { SparqlDataService } from '../../../shared/sparql-data.service';
+import { SparqlDataService } from '../../../shared/services/sparql-data.service';
 import { Report } from '../../../shared/models/report.model';
 import { Frequency } from '../../../shared/models/frequency.model';
-import { Subscription } from 'rxjs';
-import { DistributeDataService } from 'src/app/shared/distribute-data.service';
+import { DistributeDataService } from 'src/app/shared/services/distribute-data.service';
 
 import { click, pointerMove } from 'ol/events/condition.js';
 import { defaults as defaultControls, Attribution } from 'ol/control.js';
@@ -25,6 +24,7 @@ import OSM from 'ol/source/OSM.js';
 import Vector from 'ol/source/Vector';
 import Feature from 'ol/Feature';
 
+import { Subscription } from 'rxjs';
 import { isEqual, get, countBy, mapKeys } from 'lodash';
 
 
@@ -36,19 +36,19 @@ import { isEqual, get, countBy, mapKeys } from 'lodash';
 export class MapChartComponent implements AfterViewInit, OnDestroy {
 
   height = 600;
-  initialized = false;
+  mapInitialized = false;
 
   dataSub: Subscription;
   wktCantonSub: Subscription;
   wktMunicSub: Subscription;
+
   reports: Report[];
 
   map: OlMap;
   source: OlXYZ;
   layer: OlTileLayer;
   view: OlView;
-  // of base shapes
-  opacity = 0.6;
+  opacity = 0.6; // of base shapes
 
   // base style for all shapes
   fill = new Fill();
@@ -60,7 +60,7 @@ export class MapChartComponent implements AfterViewInit, OnDestroy {
     })
   });
 
-  // style for the currently selected shape
+  // style for the currently hovered shape
   selectStyle = new Style({
     fill: new Fill({
       // can't display selected shape with opacity, thus using the alpha value of RGBA
@@ -92,12 +92,11 @@ export class MapChartComponent implements AfterViewInit, OnDestroy {
   // shapes that are currently displayed to the user
   currentLayer: OlVectorLayer;
 
-  // values displayed on click and hover events
+  // detailed values displayed on click and hover events
   area = '. . .';
   countPerShape: number;
   detailArea = '. . .';
   reportDetails: Frequency[];
-  selectedFeatureId: number;
 
   // function that is passed to each shape in the layer
   styleFn = (feature: Feature) => {
@@ -111,43 +110,26 @@ export class MapChartComponent implements AfterViewInit, OnDestroy {
   ) { }
 
   ngAfterViewInit(): void {
-    if (!this.initialized) {
-      this.initMap();
-    }
     this.dataSub = this._distributeDataService.currentData.subscribe(
       (data: Report[]) => {
+        if (!this.mapInitialized) {
+          this.initMap();
+        }
         // only proceed if data is emitted or data has changed (deep comparison)
         if (data.length && !isEqual(this.reports, data)) {
           this.reports = data;
+          // unselect a selected shape if filter changes
           this.resetDetails();
           // only call when shapes are loaded or reports have changed
           if (this.cantonVectorLayer) {
             this.updateLayer(this.currentLayer);
           }
-
         }
         // only get canton shapes if none exist
-        if (!this.cantonVectorLayer && !this.initialized) {
-          this.initialized = true;
+        if (!this.wktCantonSub && !this.cantonVectorLayer) {
           // load data for canton shapes and simultaniously load for municipalites
-          // ADM1 --> Cantons
           this.wktCantonSub = this._sparqlDataService.getCantonWkts().subscribe(
             cantonWkts => {
-              /**
-               * TODO: Cache is too big to be kept in session-/loaclStorage. It can still be tried for the data loaded by the filter
-               * but has to be implemented with an exeption handler in case the cache exeeds the browsers maxium. It might still be
-               * helpful though, depends if the distribute service is sufficient in chaing for the whole filter
-               *
-               * MORE PERFORMANCE IDEAS:
-               * - Cache the WKTs in one of the filters service, to minimize refetching
-               // check if shapes have been loaded into sessions or if already loaded into component
-              if (!sessionStorage.getItem('canton')) {
-                console.log('I saved to storage: ', shapes);
-                // Set a session cache. Stringify because the cache can only handle string key/value pairs
-                sessionStorage.setItem('canton', JSON.stringify(shapes));
-              }
-              */
-
               this.cantonVectorLayer = new OlVectorLayer({
                 source: new Vector({
                   features: this.createShapes(cantonWkts, true)
@@ -157,7 +139,6 @@ export class MapChartComponent implements AfterViewInit, OnDestroy {
               });
               // First time a layer is initialized it is set to `currentLayer`
               this.currentLayer = this.cantonVectorLayer;
-              console.log('This function should only be called once');
               // Add cantons as initial layer
               this.map.addLayer(this.cantonVectorLayer);
               this.map.addInteraction(this.hoverSelect);
@@ -180,14 +161,9 @@ export class MapChartComponent implements AfterViewInit, OnDestroy {
               this.clickSelect.on('select', event => {
                 if (event.selected.length > 0) {
                   const feature = event.selected[0];
-                  // unselect if same freature is selected again
-                  if (this.selectedFeatureId !== feature.getId()) {
-                    this.selectedFeatureId = feature.getId();
-                    this.detailArea = feature.get('name');
-                    this.reportDetails = this.getReportDetails(this.selectedFeatureId, feature.get('isCanton'));
-                  } else {
-                    this.resetDetails(); // TODO: Reset does not work yet
-                  }
+                  const id = feature.getId();
+                  this.detailArea = feature.get('name');
+                  this.reportDetails = this.getReportDetails(id, feature.get('isCanton'));
                 } else {
                   this.resetDetails();
                 }
@@ -197,12 +173,9 @@ export class MapChartComponent implements AfterViewInit, OnDestroy {
             err => console.log(err)
           );
           }
-          // only get munic shapes if none exist  TODO: --> doesn't work yet
-          if (!this.municVectorLayer) { // TODO: Close subscription on first()
-            // ADM3 --> Municipalities
+          if (!this.wktMunicSub && !this.municVectorLayer) {
             this.wktMunicSub = this._sparqlDataService.getMunicWkts().subscribe(
               municWkts => {
-                console.log(municWkts[0]);
                 this.municVectorLayer = new OlVectorLayer({
                   source: new Vector({
                     features: this.createShapes(municWkts, false)
@@ -243,8 +216,6 @@ export class MapChartComponent implements AfterViewInit, OnDestroy {
         return id === report.munic_id;
       }
     });
-    console.log('reports', this.reports); // TODO: check if right amount displayed
-    console.log('selection', selection);
     const count = countBy(selection.map(pest => get(pest, 'epidemic', 'not defined')));
     mapKeys(count, (value: string, key: number): void => {
       reportDetails = reportDetails.concat({
@@ -262,6 +233,7 @@ export class MapChartComponent implements AfterViewInit, OnDestroy {
   }
 
   private initMap(): void {
+    this.mapInitialized = true;
     const osmLayer = new TileLayer({
       source: new OSM()
     });
@@ -282,7 +254,6 @@ export class MapChartComponent implements AfterViewInit, OnDestroy {
       view: this.view,
       controls: defaultControls({ attribution: false }).extend([this.attribution])
     });
-
   }
 
   // transform format to WKT and in the right projection
@@ -307,7 +278,6 @@ export class MapChartComponent implements AfterViewInit, OnDestroy {
   private resetDetails(): void {
     this.detailArea = undefined;
     this.reportDetails = undefined;
-    this.selectedFeatureId = undefined;
     // remove the selet-style of the shape
     this.clickSelect.getFeatures().clear();
   }
@@ -325,26 +295,27 @@ export class MapChartComponent implements AfterViewInit, OnDestroy {
     const x = cases.length;
     if (x === 0) {
       return 'white';
-    }
+    } else
     if (x <= 5) {
       return 'rgb(210, 245, 60)';
-    }
+    } else
     if (x <= 25) {
       return 'rgb(255, 255, 102)';
-    }
+    } else
     if (x <= 50) {
       return 'rgb(255, 195, 0)';
-    }
+    } else
     if (x <= 100) {
       return 'rgb(255, 87, 51, 0.6)';
-    }
+    } else
     if (x <= 500) {
       return 'rgb(255, 0, 0, 1)';
-    }
+    } else
     if (x <= 1000) {
       return 'rgb(199, 0, 57, 0.6)';
+    } else {
+      return 'rgb(88, 24, 69)';
     }
-    return 'rgb(88, 24, 69)';
   }
 
 

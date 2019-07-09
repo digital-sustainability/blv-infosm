@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, OnDestroy } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { LanguageService } from '../shared/language.service';
+import { LanguageService } from '../shared/services/language.service';
 import { Subscription } from 'rxjs';
 
 @Component({

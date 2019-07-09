@@ -1,12 +1,12 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { DistributeDataService } from 'src/app/shared/distribute-data.service';
+import { DistributeDataService } from 'src/app/shared/services/distribute-data.service';
 import { Chart } from 'angular-highcharts';
 import { Report } from '../../../shared/models/report.model';
 import { Translations } from '../../../shared/models/translations.model';
 import { Frequency } from '../../../shared/models/frequency.model';
 import { get, countBy, mapKeys, uniqBy, orderBy, find } from 'lodash';
-import { HighchartService } from 'src/app/shared/highchart.service';
-import { NotificationService } from '../../../shared/notification.service';
+import { HighchartService } from 'src/app/shared/services/highchart.service';
+import { NotificationService } from '../../../shared/services/notification.service';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 
@@ -17,12 +17,12 @@ import { Subscription } from 'rxjs';
 })
 export class FrequencyChartComponent implements OnInit, OnDestroy {
 
-  dataSub: Subscription;
-  translationSub: Subscription;
-  frequencyChart: Chart;
+  private _dataSub: Subscription;
+  private _translationSub: Subscription;
+  private _trans: Translations;
+  private _yLabel: string;
   reports: Report[];
-  trans: Translations;
-  yLabel: string;
+  frequencyChart: Chart;
   loaded: boolean;
 
   constructor(
@@ -33,19 +33,19 @@ export class FrequencyChartComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit() {
-    this.dataSub = this._distributeDataServie.currentData.subscribe(
+    this._dataSub = this._distributeDataServie.currentData.subscribe(
       (data: Report[]) => {
         this.loaded = true; // stop loading sign if any kind of response from the server
         if (data.length > 0) {
           this.reports = data;
-          this.translationSub = this.translate.get([
+          this._translationSub = this.translate.get([
             'EVAL.SHOW_ALL_NONE',
             'EVAL.OTHER',
             'EVAL.EPIDEMIC_PER_ANIMLAL',
             'EVAL.ANIMLAL_PER_EPIDEMIC'
             ]).subscribe(
               texts => {
-                this.trans = texts;
+                this._trans = texts;
                 this.drawChart(data, 'epidemic', 'animal_species');
               }
             );
@@ -59,15 +59,15 @@ export class FrequencyChartComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.translationSub.unsubscribe();
-    this.dataSub.unsubscribe();
+    this._translationSub.unsubscribe();
+    this._dataSub.unsubscribe();
   }
 
   drawChart(data: Report[], barName: string, stackName: string): void {
     if (barName === 'epidemic') {
-      this.yLabel = this.trans['EVAL.ANIMLAL_PER_EPIDEMIC'];
+      this._yLabel = this._trans['EVAL.ANIMLAL_PER_EPIDEMIC'];
     } else {
-      this.yLabel = this.trans['EVAL.EPIDEMIC_PER_ANIMLAL'];
+      this._yLabel = this._trans['EVAL.EPIDEMIC_PER_ANIMLAL'];
     }
 
     this.frequencyChart = new Chart({
@@ -78,13 +78,13 @@ export class FrequencyChartComponent implements OnInit, OnDestroy {
         text: undefined
       },
       xAxis: {
-        categories: this.limitCollection(data, barName).concat([this.trans['EVAL.OTHER']])
+        categories: this.limitCollection(data, barName).concat([this._trans['EVAL.OTHER']])
       },
       yAxis: {
         min: 0,
         allowDecimals: false,
         title: {
-          text: this.yLabel
+          text: this._yLabel
         },
         stackLabels: {
           enabled: true,
@@ -120,7 +120,7 @@ export class FrequencyChartComponent implements OnInit, OnDestroy {
       series: this.extractFrequencies(data, barName, stackName).concat(
         // add empty series as placeholder to toggle all/none
         {
-          name: this.trans['EVAL.SHOW_ALL_NONE'],
+          name: this._trans['EVAL.SHOW_ALL_NONE'],
           data: [],
           color: '#ffffff' // Hide dot symbol on backgroud
         })
@@ -160,10 +160,10 @@ export class FrequencyChartComponent implements OnInit, OnDestroy {
    * Reads from the report collection the frequencies of either `epidemic` per `animal_species` or vice versa.
    * Transforms it  into a fromat required by highcharts.
    *
-   * @param {Report[]} reports: list of the current epidemic reports
-   * @param {string} barType report property that is going to be displayed as bar
-   * @param {string} stackType reorit property that is stacked on different bars
-   * @returns {Frequency[]} collection with each object containing the names of the stacks and an array
+   * @param reports: list of the current epidemic reports
+   * @param barType report property that is going to be displayed as bar
+   * @param stackType reorit property that is stacked on different bars
+   * @returns collection with each object containing the names of the stacks and an array
    * which holds the occurance per bar
    */
   private extractFrequencies(reports: Report[], barType: string, stackType: string): Frequency[] {

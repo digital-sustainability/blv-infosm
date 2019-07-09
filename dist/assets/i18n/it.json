@@ -23,6 +23,7 @@
     "EVAL": {
         "SELECTED": "Selezionato",
         "NUMBER_OF_REPORTS": "Numero di rapporti",
+        "CLICKED_AREA": "Informazioni dettagliate su",
         "SHOW_CANTONS": "Mostra cantoni",
         "SHOW_MUNICS": "Mostra comuni",
         "SHOW_ANIMALS": "Mostra specie animali",
@@ -62,7 +63,8 @@
         "OTHER": "Altro",
         "EPIDEMIC_PER_ANIMLAL": "Epidemie per specie animale",
         "ANIMLAL_PER_EPIDEMIC": "Specie animali per epidemia",
-        "NO_DATA": "Nessun dato disponibile per questa selezione."
+        "NO_DATA": "Nessun dato disponibile per questa selezione.",
+        "CLICK_A_SHAPE": "Clicca su un cantone/comune colorato per informazioni dettagliate."
     },
     "BULLETIN": {
         "OPTIONS": "Opzioni di visualizzazione",

@@ -10,7 +10,7 @@ export class NotificationService {
     public toastr: ToastrService
   ) { }
 
-  errorMessage(message: string, title: string){  
+  errorMessage(message: string, title: string) {
     this.toastr.error(message, title);
   }
 

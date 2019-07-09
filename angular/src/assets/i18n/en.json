@@ -63,7 +63,8 @@
         "OTHER": "Other",
         "EPIDEMIC_PER_ANIMLAL": "Disease per Animal Species",
         "ANIMLAL_PER_EPIDEMIC": "Animal Species per Disease",
-        "NO_DATA": "No data available for this selection."
+        "NO_DATA": "No data available for this selection.",
+        "CLICK_A_SHAPE": "Click on a colored canton/municipality for detailed information."
     },
     "BULLETIN": {
         "OPTIONS": "Display options",
