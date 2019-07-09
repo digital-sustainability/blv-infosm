@@ -2,11 +2,30 @@
 html,body { height: 100%; }
 
 #container {
-    margin-right: 15%;
-    margin-left: 15%;
     -webkit-box-shadow: 0px 0px 84px 0px rgba(0,0,0,0.89);
     -moz-box-shadow: 0px 0px 84px 0px rgba(0,0,0,0.89);
     box-shadow: 0px 0px 84px 0px rgba(0,0,0,0.89);
     height:100% !important;
     background-color: white;
 }
+
+@media only screen and (min-width: 600px) {
+    #container {
+        margin-right: 1%;
+        margin-left: 1%;
+    }
+  } 
+
+  @media only screen and (min-width: 600px) {
+    body {
+        padding: 0px
+    }
+  } 
+
+@media only screen and (min-width: 992px) {
+    #container {
+        margin-right: 10%;
+        margin-left: 10%;
+    }
+  } 
+  

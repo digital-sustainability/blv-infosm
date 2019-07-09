@@ -13,11 +13,9 @@
 
 .filterContainer {
     padding: 2% 1.5% 0 1.5%;
-    margin-left: 8.5%;
     margin-top: 2%;
-    margin-right: 8.5%;
     border:1px solid #D8E8EF;
-    background-color: #F2F7F9
+    background-color: #F2F7F9;
 }
 
 button.calendar, button.calendar:active {
@@ -102,7 +100,30 @@ p {
 }
 
 .table {
-  margin-top: 3%
+  margin-top: 3%;
+  width: 94%;
+  margin-left: 3%;
+  margin-right:3%;
+}
+
+@media screen and (max-width: 600px) {
+  .table {
+    overflow: auto;
+    width:100%;
+    margin:0;
+  }
+
+  mat-table {
+    width: 100%;
+    min-width: 500px;
+    overflow-x: scroll;
+    margin: 0;
+  }
+
+  .cant {
+    overflow: hidden;
+  }
+  
 }
 
 .test {
@@ -114,7 +135,6 @@ p {
 .btn-group {
   margin-bottom: 3%
 }
-
 
 .chart-tab {
   cursor: pointer;
@@ -137,5 +157,16 @@ p {
 }
 
 .filterButton {
-  width: 20%
+  width: 25%;
 }
+
+.tableInfo{
+  margin-top: 5%
+}
+
+.btn.btn-primary:disabled{
+  border: 1px solid #999999;
+  background-color: #cccccc;
+  color: #666666;
+}
+

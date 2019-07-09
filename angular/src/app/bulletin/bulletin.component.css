@@ -23,7 +23,7 @@ button.calendar, button.calendar:active {
     width: 100%;
 }
 
-.mat-column-nummer {
+/* .mat-column-nummer {
     flex: 0 0 25% !important;
     min-width: 104px !important;
 }
@@ -41,7 +41,29 @@ button.calendar, button.calendar:active {
 .mat-column-action {
     flex: 0 0 25% !important;
     min-width: 104px !important;
-}
+} */
+
+.table {
+    width: 94%;
+    margin-left: 3%;
+    margin-right:3%;
+  }
+  
+  @media screen and (max-width: 600px) {
+    .table {
+      overflow: auto;
+      width:100%;
+      margin:0;
+    }
+  
+    mat-table {
+      width: 100%;
+      min-width: 500px;
+      overflow-x: auto;
+      margin: 0;
+    } 
+  }
+  
 
 :host /deep/ ngb-datepicker .ngb-dp-weekday{
     color: #DC0018;

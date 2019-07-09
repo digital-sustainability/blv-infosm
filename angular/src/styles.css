@@ -56,7 +56,6 @@ input[type=radio]:focus,
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 2%;
 }
 
 .scroll-link {
@@ -65,6 +64,17 @@ input[type=radio]:focus,
   cursor: pointer;
 }
 
-/* .scroll-link:hover {
-  text-decoration: underline;
-} */
+ul.nav.nav-tabs {
+  width: 100%
+}
+
+.btn.btn-primary:hover {
+  background-color: #D8E8EF;
+  color: #454545
+}
+
+.btn.btn-primary:active {
+  background-color: #D8E8EF;
+   color: #454545
+}
+

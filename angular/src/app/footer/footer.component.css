@@ -1,0 +1,32 @@
+.footer {
+    padding: 3%;
+    background-color: #F5F5F5;
+    display: flex;
+}
+
+.dash {
+    margin-right: 1%;
+    margin-left: 1%;
+}
+
+.blv {
+    width: 70%;
+    float: left;
+}
+
+.contact {
+    width: 30%;
+    float: right;
+    padding-left: 2%;
+}
+
+@media screen and (max-width: 400px) {
+    .blv {
+        display: none;
+    }
+
+    .contact {
+        width: 100%;
+    }
+
+}

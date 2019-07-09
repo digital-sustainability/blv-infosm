@@ -1,9 +1,9 @@
 
-<div style="background-color: #F5F5F5">
-  <span style="line-height:50px; margin-left: 10px">{{ 'GENERAL.BLV_FULL' | translate }}</span>
-  <span style="float: right;line-height:50px; margin-right: 10px">
-    <a style="margin-right: 10px" [href]="onNavigateContact()">{{ 'GENERAL.CONTACT' | translate }}</a>
-    <span style="margin-right: 10px">|</span>
+<div class="footer">
+  <div class="blv">{{ 'GENERAL.BLV_FULL' | translate }}</div>
+  <div class="contact">
+    <a [href]="onNavigateContact()">{{ 'GENERAL.CONTACT' | translate }}</a>
+    <span class="dash">|</span>
     <a [href]="onNavigateLegal()">{{ 'GENERAL.LEGAL_FRAMEWORK' | translate }}</a>
-  </span>
+  </div>
 </div>

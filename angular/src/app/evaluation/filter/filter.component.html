@@ -48,9 +48,9 @@
           <div *ngIf="radioActive"><strong>{{ 'FILTER.GIVEN_PERIOD' | translate }} {{ _filter.from | chDate }} - {{_filter.to | chDate}}</strong></div>
         </fieldset>
       </div>
-        <div id="selectDateSection" class=" border">
+        <div id="selectDateSection" class="border row">
           <div class="input-group flex notValid">
-            <form class="form-inline ngbDp">
+            <form class="form-inline ngbDp col-md-5">
               <div class="form-group">
                 <div class="input-group-prepend">
                   <span class="input-group-text" id="inputGroup-sizing-default">{{ 'FILTER.FROM' | translate }}</span>
@@ -59,14 +59,13 @@
                   <input class="form-control" placeholder="{{ 'EVAL.DATEPICKER_PLACEHOLDER' | translate }}" name="from"
                   [(ngModel)]="from" ngbDatepicker #fromPicker="ngbDatepicker">
                 </div>
-                <!-- [(ngModel)]="from"  -->
                 <div class="input-group-append" style="height:33.5px;">
                   <button class="btn btn-outline-secondary calendar" (click)="fromPicker.toggle()"
                     type="button"></button>
                 </div>
               </div>
             </form>
-            <form class="form-inline ngbDp">
+            <form class="form-inline ngbDp col-md-5">
               <div class="form-group">
                 <div class="input-group-prepend">
                   <span class="input-group-text" id="inputGroup-sizing-default">{{'FILTER.TO' | translate}}&nbsp;</span>
@@ -75,14 +74,13 @@
                   <input class="form-control" placeholder="{{ 'EVAL.DATEPICKER_PLACEHOLDER' | translate }}" name="to"
                      [(ngModel)]="to" ngbDatepicker #toPicker="ngbDatepicker">
                 </div>
-                <!-- [(ngModel)]="to" -->
-                <div class="input-group-append filterButton" style="height:33.5px;">
-                  <button class="btn btn-outline-secondary calendar" (click)="toPicker.toggle()" type="button"></button>
+                <div class="input-group-append" style="height:33.5px;">
+                  <button #buttonEl class="btn btn-outline-secondary calendar" (click)="toPicker.toggle()" type="button"></button>
                 </div>
               </div>
             </form>
-            <button style="height:35px; margin-top: 15px" class="btn btn-dark" type="submit"
-              (click)="onGetFromToDates(from, to)">{{'FILTER.FILTER_ACTION' | translate}}
+            <button style="height:35px; margin-top: 15px"  class="btn btn-primary col-md-2" type="submit"
+            (click)="onGetFromToDates(from, to)">{{'FILTER.FILTER_ACTION' | translate}}
             </button>
           </div>
           <div *ngIf="!radioActive"><strong>{{ 'FILTER.SPECIFIC_PERIOD' | translate }} {{ _filter.from | chDate }} - {{_filter.to | chDate}}</strong></div>
@@ -99,34 +97,38 @@
       <div id="filterCategories" class="collapse" style="margin-top: 10px">
         <div class="flex-container">
           <p style = "margin-left: 0px; margin-bottom:1%">{{'FILTER.ORDER_FILTER' | translate}}</p>
-          <div class="btn-group" style="width:100%">
-            <button type="button" class="btn btn-dark" id="cantonEntrypoint"
+          <div class="btn-group" style="width: 100%" >
+            <button type="button" class="btn btn-primary filterButton" id="cantonEntrypoint"
               (click)="orderItems('where', '#cantonEntrypoint','canton')">
-              <span *ngIf="filterConfig.canton.position === 0 && _filter.lang !=='de'">{{ 'FILTER.ADD' | translate }}</span>
-              {{ 'EVAL.CANTON' | translate }}
-              <span *ngIf="filterConfig.canton.position === 0 && _filter.lang ==='de'">{{ 'FILTER.ADD' | translate }}</span>
+              <span *ngIf="filterConfig.canton.position === 0 && _filter.lang !=='de'" class="d-none d-lg-inline-flex">{{ 'FILTER.ADD' | translate }}</span>
+              <span>&nbsp;{{ 'EVAL.CANTON' | translate }}&nbsp;</span>
+              <span *ngIf="filterConfig.canton.position === 0 && _filter.lang ==='de'" class="d-none d-lg-inline-flex">{{ 'FILTER.ADD' | translate }}</span>
             </button>
-            <button type="button" class="btn btn-dark" id="epidemicEntryPoint"
+            <button type="button" class="btn btn-primary filterButton" id="epidemicEntryPoint"
               (click)="orderItems('what', '#epidemicEntryPoint', 'epidemic_group')">
-              <span *ngIf="filterConfig.epidemic_group.position === 0 && _filter.lang !=='de'">{{ 'FILTER.ADD' | translate }}</span>
-              {{ 'EVAL.PEST_GROUP' | translate }}
-              <span *ngIf="filterConfig.epidemic_group.position === 0 && _filter.lang ==='de'">{{ 'FILTER.ADD' | translate }}</span>
+              <span *ngIf="filterConfig.epidemic_group.position === 0 && _filter.lang !=='de'" class="d-none d-lg-inline-flex">{{ 'FILTER.ADD' | translate }}</span>
+              <span class="d-none d-sm-inline-flex">&nbsp;{{ 'EVAL.PEST_GROUP' | translate }}&nbsp;</span>
+              <span class="d-sm-none">{{ 'FILTER.EPIDEMICS_SMALL' | translate }}</span>
+              <span *ngIf="filterConfig.epidemic_group.position === 0 && _filter.lang ==='de'" class="d-none d-lg-inline-flex">{{ 'FILTER.ADD' | translate }}</span>
             </button>
-            <button type="button" class="btn btn-dark" id="animalEntryPoint"
+            <button type="button" class="btn btn-primary filterButton" id="animalEntryPoint"
               (click)="orderItems('who', '#animalEntryPoint', 'animal_group')">
-              <span *ngIf="filterConfig.animal_group.position === 0 && _filter.lang !=='de'">{{ 'FILTER.ADD' | translate }}</span>
-              {{ 'DOWNLOAD.ANIMAL_GROUP' | translate }}
-              <span *ngIf="filterConfig.animal_group.position === 0 && _filter.lang ==='de'">{{ 'FILTER.ADD' | translate }}</span>
+              <span *ngIf="filterConfig.animal_group.position === 0 && _filter.lang !=='de'" class="d-none d-lg-inline-flex">{{ 'FILTER.ADD' | translate }}</span>
+              <span class="d-none d-sm-inline-flex">&nbsp;{{ 'DOWNLOAD.ANIMAL_GROUP' | translate }}&nbsp;</span>
+              <span class="d-sm-none">{{ 'FILTER.ANIMAL_SMALL' | translate }}</span>
+              <span *ngIf="filterConfig.animal_group.position === 0 && _filter.lang ==='de'" class="d-none d-lg-inline-flex">{{ 'FILTER.ADD' | translate }}</span>
             </button>
-            <button class="btn btn-danger"
-              (click)="onReset()">{{ 'FILTER.RESET' | translate }}</button>
+            <button class="btn btn-danger filterButton"(click)="onReset()">
+              <span class="d-none d-sm-inline-flex">{{ 'FILTER.RESET' | translate }}</span>
+              <span class="d-sm-none">{{ 'FILTER.BACK' | translate }}</span>
+            </button>
           </div>
           <!-- cantons and communities -->
           <div class="test" id="where">
             <div class="select-wrapper">
               <div [formGroup]="formCant" novalidate>
                 <label class="selction-label" for="inputCantons">{{ 'FILTER.FILTER_CANTONS' | translate }} 
-                  <span *ngIf="!formCant.controls['canton'].disabled">({{possibleSelections.canton.length}})</span>
+                  <span *ngIf="!formCant.controls['canton'].disabled">({{ 'FILTER.POSSIBLE_SELECTIONS' | translate }} {{possibleSelections.canton.length}})</span>
                 </label>
                 <ng-select #selectCant [items]="inputCantons" 
                   notFoundText="{{'FILTER.NO_ENTRIES' | translate}}" [loading]="loadCanton" [multiple]="true" name="inputCantons"
@@ -146,7 +148,7 @@
             <div class="select-wrapper">
               <div [formGroup]="formMunic" novalidate>
                 <label class="selction-label" for="inputCommunities">{{ 'FILTER.FILTER_MUNICS' | translate }}
-                  <span *ngIf="!formMunic.controls['munic'].disabled">({{possibleSelections.munic.length}})</span>
+                  <span *ngIf="!formMunic.controls['munic'].disabled">({{ 'FILTER.POSSIBLE_SELECTIONS' | translate }} {{possibleSelections.munic.length}})</span>
                 </label>
                 <ng-select #selectMunic [items]="inputCommunities"  bindLabel="label"
                   notFoundText="{{'FILTER.NO_ENTRIES' | translate}}" [loading]="loadMunic" [multiple]="true" name="inputCommunities"
@@ -168,7 +170,7 @@
             <div class="select-wrapper">
               <div [formGroup]="formEpidG" novalidate>
                 <label class="selction-label" for="inputEpidemicsGroup"> {{ 'FILTER.FILTER_PEST_GROUPS' | translate }}
-                  <span *ngIf="!formEpidG.controls['epidemic_group'].disabled"> ({{possibleSelections.epidemic_group.length}}) </span>
+                  <span *ngIf="!formEpidG.controls['epidemic_group'].disabled"> ({{ 'FILTER.POSSIBLE_SELECTIONS' | translate }} {{possibleSelections.epidemic_group.length}}) </span>
                 </label>
                 <ng-select #selectEpiG [items]="inputEpidemicsGroup"  bindLabel="label"
                   notFoundText="{{'FILTER.NO_ENTRIES' | translate}}" [loading]="loadEpidemicG" [multiple]="true" name="inputEpidemicsGroup"
@@ -188,7 +190,7 @@
             <div class="select-wrapper">
               <div [formGroup]="formEpid" novalidate>
                 <label class="selction-label" for="inputEpidemics">{{ 'FILTER.FILTER_PESTS' | translate }} 
-                  <span *ngIf="!formEpid.controls['epidemic'].disabled">({{possibleSelections.epidemic.length}})</span>
+                  <span *ngIf="!formEpid.controls['epidemic'].disabled">({{ 'FILTER.POSSIBLE_SELECTIONS' | translate }} {{possibleSelections.epidemic.length}})</span>
                 </label>
                 <ng-select #selectEpi [items]="inputEpidemics"  bindLabel="label"
                   notFoundText="{{'FILTER.NO_ENTRIES' | translate}}" [loading]="loadEpidemic" [multiple]="true" name="inputEpidemics"
@@ -211,7 +213,7 @@
             <div class="select-wrapper">
               <div [formGroup]="formAniG" novalidate>
                 <label class="selction-label" for="inputAnimalGroups">{{ 'FILTER.FILTER_ANIMAL_GROUPS' | translate }} 
-                  <span *ngIf="!formAniG.controls['animal_group'].disabled">({{possibleSelections.animal_group.length}})</span>
+                  <span *ngIf="!formAniG.controls['animal_group'].disabled">({{ 'FILTER.POSSIBLE_SELECTIONS' | translate }} {{possibleSelections.animal_group.length}})</span>
                 </label>
                 <ng-select #selectAniG [items]="inputAnimalGroups"  bindLabel="label"
                   notFoundText="{{'FILTER.NO_ENTRIES' | translate}}" [loading]="loadAnimalG" [multiple]="true" name="inputAnimalGroups"
@@ -231,7 +233,7 @@
             <div class="select-wrapper">
               <div [formGroup]="formAni" novalidate>
                 <label class="selction-label" for="inputAnimals">{{ 'FILTER.FILTER_ANIMALS' | translate }} 
-                  <span *ngIf="!formAni.controls['animal_species'].disabled">({{possibleSelections.animal_species.length}})</span>
+                  <span *ngIf="!formAni.controls['animal_species'].disabled">({{ 'FILTER.POSSIBLE_SELECTIONS' | translate }} {{possibleSelections.animal_species.length}})</span>
                 </label>
                 <ng-select #selectAni [items]="inputAnimals"  bindLabel="label"
                   notFoundText="{{'FILTER.NO_ENTRIES' | translate}}" [loading]="loadAnimal" [multiple]="true" name="inputAnimals"
@@ -255,8 +257,8 @@
   </div>
 </div>
 
-<div style="margin-top: 15px; width:100%" class="row">
-  <div class="col-sm-10 col-sm-offset-1">
+<div style="margin-top: 15px; width:100%" class="">
+  <div class="">
     <ul class="nav nav-tabs">
       <li class="chart-tab" id="frequency">
         <a data-toggle="tab" (click)="onChangeTab('/frequency')">{{ 'FILTERCHARTS.FREQUENCY' | translate }}
@@ -281,12 +283,13 @@
   </div>
 </ng-template>
 
-<div class="table">
-  <p *ngIf="sorted && filteredData.length !== 0">{{ 'EVAL.VISU_DATA' | translate }} <i>{{ sortDirection }}</i> {{ 'EVAL.ORDER_BY' | translate }}:
+<div>
+  <p class="tableInfo" *ngIf="sorted && filteredData.length !== 0">{{ 'EVAL.VISU_DATA' | translate }} <i>{{ sortDirection }}</i> {{ 'EVAL.ORDER_BY' | translate }}:
     <i>{{ sortItem }}</i></p>
-  <p *ngIf="!sorted && filteredData.length !== 0">{{  'EVAL.NOT_SORTED' | translate }}</p>
-  <p *ngIf="filteredData.length === 0"><strong>{{ 'FILTER.DATA_LOAD' | translate }}</strong></p>
-  <div class="mat-elevation-z8" style="margin:5% 5%; margin-top:1%">
+  <p class="tableInfo" *ngIf="!sorted && filteredData.length !== 0">{{  'EVAL.NOT_SORTED' | translate }}</p>
+  <p class="tableInfo" *ngIf="filteredData.length === 0"><strong>{{ 'FILTER.DATA_LOAD' | translate }}</strong></p>
+  <div id="scroll">
+    <div class="mat-elevation-z8 table">
     <mat-table class="mat-elevation-z8" [dataSource]="dataSource" matSort (matSortChange)="getSortItemAndOrder($event)">
       <ng-container matColumnDef="diagnosis_date">
         <mat-header-cell *matHeaderCellDef mat-sort-header><strong>{{ 'EVAL.DIAGNOSIS_DATE' | translate }}
@@ -332,5 +335,6 @@
     </mat-table>
 
     <mat-paginator [pageSize]="5" [hidePageSize]="true" showFirstLastButtons></mat-paginator>
+  </div>
   </div>
 </div>

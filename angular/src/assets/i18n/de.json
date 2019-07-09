@@ -133,9 +133,14 @@
     "ADD":"hinzufügen",
     "GIVEN_PERIOD":"Ausgewählter vorgegebener Zeitraum:",
     "SPECIFIC_PERIOD": "Ausgewählter spezifischer Zeitraum:",
-    "TIME_INFO": "Wählen Sie entweder einen vorgegebenen oder einen spezifischen Zeitraum.",
+    "TIME_INFO": "Wählen Sie entweder einen vorgegebenen oder einen spezifischen (Klick auf den Filter-Button) Zeitraum.",
     "DATA_LOAD": "Die Daten werden geladen ...",
-    "ORDER_FILTER": "Stellen Sie sich die Reihenfolge des Filters zusammen."
+    "ORDER_FILTER": "Stellen Sie sich die Reihenfolge des Filters zusammen.",
+    "POSSIBLE_SELECTIONS": "Auswahlmöglichkeiten:",
+    "CANTON_SMALL" :"Kanton",
+    "ANIMAL_SMALL":"Tiere",
+    "EPIDEMICS_SMALL":"Seuchen",
+    "BACK":"Zurück"
   },
   "GEO_DOWNLOAD": {
     "TITLE": "Daten herunterladen",
