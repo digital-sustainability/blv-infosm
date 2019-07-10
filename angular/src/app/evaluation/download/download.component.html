@@ -1,4 +1,10 @@
 <div class="container">
-  <Button class="btn btn-primary mx-2 mb-3" (click)="onDownloadCsv()" [disabled]="!dataLoaded()">Download CSV</Button>
-  <Button class="btn btn-primary mx-2 mb-3" (click)="onDownloadXlsx()" [disabled]="!dataLoaded()">Download XLSX</Button>
+  <Button class="btn btn-primary mx-2 mb-3" (click)="onDownloadCsv()" [disabled]="!dataLoaded()">
+    <mat-icon class="download-mat-icon">save_alt</mat-icon>
+    Download CSV
+  </Button>
+  <Button class="btn btn-primary mx-2 mb-3" (click)="onDownloadXlsx()" [disabled]="!dataLoaded()">
+    <mat-icon class="download-mat-icon">save_alt</mat-icon>
+    Download XLSX
+  </Button>
 </div>  

@@ -13,6 +13,7 @@ const app = express();
  * Wrapper function propagetes err to error handling.
  * First (...args) so function is not evoked emediatly.
  * Only works for async functions.
+ * https://expressjs.com/en/advanced/best-practice-performance.html
  */
 const wrap = fn => (...args) => fn(...args).catch(args[2]);
 

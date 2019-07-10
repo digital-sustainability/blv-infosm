@@ -15,6 +15,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { Angulartics2Module } from 'angulartics2';
+import { MatIconModule } from '@angular/material/icon';
 
 import { AppComponent } from './app.component';
 import { HeaderComponent } from './header/header.component';
@@ -76,6 +77,7 @@ import { NotificationService } from './shared/services/notification.service';
     MatPaginatorModule,
     MatSortModule,
     MatTooltipModule,
+    MatIconModule,
     NgbModule,
     TranslateModule.forRoot({
       loader: {

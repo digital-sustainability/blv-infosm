@@ -60,6 +60,8 @@ export class FilterComponent implements OnInit, OnDestroy {
     to: ''
   };
 
+  selectedTab: string;
+
   trans: Translations;
   radioActive: boolean = true;
 
@@ -150,6 +152,14 @@ export class FilterComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit() {
+    // get child route entered by user
+    const regex = /\/evaluation\/([a-zA-Z]*)\?/;
+    const match = regex.exec(this._router.url);
+    if (match && match.length > 1) {
+      this.selectedTab = match[1];
+    } else {
+      this.selectedTab = 'map';
+    }
     this._paramSub = this._route.queryParams.subscribe(
       params => {
         this._filter.lang = params['lang'];
@@ -213,6 +223,7 @@ export class FilterComponent implements OnInit, OnDestroy {
   }
 
   onChangeTab(route: string): void {
+    this.selectedTab = route.substring(1); // remove slash
     this._router.navigate(['evaluation' + route], { queryParamsHandling: 'merge' });
   }
 

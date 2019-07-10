@@ -10,7 +10,10 @@ import { Translations } from '../../../shared/models/translations.model';
 import { Line } from '../../../shared/models/line.model';
 import { HighchartService } from 'src/app/shared/services/highchart.service';
 import { uniq, uniqBy, range, countBy, mapKeys, get } from 'lodash';
-import * as moment from 'moment';
+// import * as moment from 'moment'; // TODO: Check if everything behaves the same
+import dayjs from 'dayjs';
+import weekOfYear from 'dayjs/plugin/weekOfYear';
+dayjs.extend(weekOfYear);
 
 @Component({
   selector: 'app-timeline-chart',
@@ -305,7 +308,8 @@ export class TimelineChartComponent implements OnInit, OnDestroy {
   // Extract day, month or year number depending on current interval
   private getCurrentTimeUnit(time: string | Date): Number {
     if (this._isWeek) {
-      return Number(moment(time).format('WW'));
+      // return Number(moment(time).format('WW'));
+      return dayjs(time).week();
     }
     if (this._isMonth) {
       return new Date(time).getMonth() + 1;
@@ -314,7 +318,8 @@ export class TimelineChartComponent implements OnInit, OnDestroy {
   }
 
   private extractYear(date: string | Date): number {
-    return moment(this.checkDate(date)).year();
+    // return moment(this.checkDate(date)).year();
+    return dayjs(this.checkDate(date)).year();
   }
 
   private extractYears(data: Report[]): string {
@@ -322,11 +327,13 @@ export class TimelineChartComponent implements OnInit, OnDestroy {
   }
 
   private extractMonth(date: string | Date): number {
-    return moment(this.checkDate(date)).month();
+    // return moment(this.checkDate(date)).month();
+    return dayjs(this.checkDate(date)).month();
   }
 
   private extractWeek(date: string | Date): number {
-    return moment(this.checkDate(date)).week();
+    // return moment(this.checkDate(date)).week();
+    return dayjs(this.checkDate(date)).week();
   }
 
   private extractMonths(data: Report[]): number {
@@ -339,7 +346,8 @@ export class TimelineChartComponent implements OnInit, OnDestroy {
   }
 
   private checkDate(date: string | Date): string { // TODO: Don't return today, come up with somehting better
-    return (moment(date).isValid()) ? moment(date).format('YYYY-MM-DD') : moment().format('YYYY-MM-DD');
+    // return (moment(date).isValid()) ? moment(date).format('YYYY-MM-DD') : moment().format('YYYY-MM-DD');
+    return (dayjs(date).isValid()) ? dayjs(date).format('YYYY-MM-DD') : dayjs().format('YYYY-MM-DD');
   }
 
   private getDates(data: Report[]): string[] {
@@ -378,11 +386,13 @@ export class TimelineChartComponent implements OnInit, OnDestroy {
   }
 
   private getIntervalUnit(from: Date, to: Date): void {
-    if ((Math.abs(moment(to).diff(from, 'months'))) > 12) {
+    // if ((Math.abs(moment(to).diff(from, 'months'))) > 12) {
+    if ((Math.abs(dayjs(to).diff(from, 'month'))) > 12) {
       this._isYear = true;
       this._isMonth = false;
       this._isWeek = false;
-    } else if ((Math.abs(moment(from).diff(to, 'months'))) > 3) {
+    // } else if ((Math.abs(moment(from).diff(to, 'months'))) > 3) {
+    } else if ((Math.abs(dayjs(from).diff(to, 'month'))) > 3) {
       this._isMonth = true;
       this._isYear = false;
       this._isWeek = false;

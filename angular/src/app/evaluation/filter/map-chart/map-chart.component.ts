@@ -112,9 +112,6 @@ export class MapChartComponent implements AfterViewInit, OnDestroy {
   ngAfterViewInit(): void {
     this.dataSub = this._distributeDataService.currentData.subscribe(
       (data: Report[]) => {
-        if (!this.mapInitialized) {
-          this.initMap();
-        }
         // only proceed if data is emitted or data has changed (deep comparison)
         if (data.length && !isEqual(this.reports, data)) {
           this.reports = data;
@@ -125,8 +122,11 @@ export class MapChartComponent implements AfterViewInit, OnDestroy {
             this.updateLayer(this.currentLayer);
           }
         }
+        if (!this.mapInitialized) {
+          this.initMap();
+        }
         // only get canton shapes if none exist
-        if (!this.wktCantonSub && !this.cantonVectorLayer) {
+        if (!this.wktCantonSub && !this.cantonVectorLayer && this.reports) {
           // load data for canton shapes and simultaniously load for municipalites
           this.wktCantonSub = this._sparqlDataService.getCantonWkts().subscribe(
             cantonWkts => {
@@ -173,7 +173,7 @@ export class MapChartComponent implements AfterViewInit, OnDestroy {
             err => console.log(err)
           );
           }
-          if (!this.wktMunicSub && !this.municVectorLayer) {
+          if (!this.wktMunicSub && !this.municVectorLayer && this.reports) {
             this.wktMunicSub = this._sparqlDataService.getMunicWkts().subscribe(
               municWkts => {
                 this.municVectorLayer = new OlVectorLayer({

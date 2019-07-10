@@ -8,7 +8,5 @@ if (environment.production) {
   enableProdMode();
 }
 
-// window.addEventListener('WebComponentsReady', () => {
-  platformBrowserDynamic().bootstrapModule(AppModule)
-    .catch(err => console.log(err));
-// });
+platformBrowserDynamic().bootstrapModule(AppModule)
+  .catch(err => console.log(err));

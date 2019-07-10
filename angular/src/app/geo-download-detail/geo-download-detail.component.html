@@ -16,14 +16,23 @@
     <p>{{'GEO_DOWNLOAD_DETAIL.NOTICE_P3' | translate }}</p>
     <p>{{'GEO_DOWNLOAD_DETAIL.NOTICE_P4' | translate }}</p>
     <p>{{'GEO_DOWNLOAD_DETAIL.NOTICE_P5' | translate }}</p>
-    <input style="cursor: pointer;" type="checkbox" name="accept" (change)=onCheck($event)>
-    <span id="accept-notice">{{ 'GEO_DOWNLOAD_DETAIL.NOTICE_ACCEPT' | translate }}</span><br>
+    <fieldset >
+      <input style="cursor: pointer;" id="accept-checkbox" type="checkbox" name="accept" (change)=onCheck($event)>
+      <label id="accept-notice" for="accept-checkbox">{{ 'GEO_DOWNLOAD_DETAIL.NOTICE_ACCEPT' | translate }}</label>
+    </fieldset>
+    <br>
     <div class="user-warning" role="alert" [hidden]=hideWarning>
       <span>{{ 'GEO_DOWNLOAD_DETAIL.NOTICE_WARNING' | translate }}</span>
     </div>
   </div>
-  <Button class="btn btn-primary my-2 mr-2" ng-disabled="!accept" (click)="onDownload()">{{'GEO_DOWNLOAD_DETAIL.NOTICE_DOWNLOAD' | translate }}</Button>
-  <Button class="btn btn-primary my-2 mx-2" ng-disabled="!accept" (click)="onCancel()">{{'GEO_DOWNLOAD_DETAIL.NOTICE_CANCEL' | translate }}</Button>
+  <Button class="btn btn-primary my-2 mr-2" ng-disabled="!accept" (click)="onDownload()">
+    <mat-icon class="download-mat-icon">save_alt</mat-icon>
+    {{'GEO_DOWNLOAD_DETAIL.NOTICE_DOWNLOAD' | translate }}
+  </Button>
+  <Button class="btn btn-primary my-2 mx-2" ng-disabled="!accept" (click)="onCancel()">
+    <mat-icon class="download-mat-icon">cancel</mat-icon>
+    {{'GEO_DOWNLOAD_DETAIL.NOTICE_CANCEL' | translate }}
+  </Button>
   <div class="clearfix">
     <small class="pull-right scroll-link"><a class="icon icon--before icon--power"
         (click)="onScrollUp()">{{ 'GENERAL.GO_UP' | translate }}</a></small>
