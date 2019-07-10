@@ -68,13 +68,10 @@ ul.nav.nav-tabs {
   width: 100%
 }
 
-.btn.btn-primary:hover {
+.btn.btn-primary:hover,
+.btn.btn-primary:active,
+.btn.btn-primary:focus {
   background-color: #D8E8EF;
   color: #454545
-}
-
-.btn.btn-primary:active {
-  background-color: #D8E8EF;
-   color: #454545
 }
 

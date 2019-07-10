@@ -48,40 +48,46 @@
           <div *ngIf="radioActive"><strong>{{ 'FILTER.GIVEN_PERIOD' | translate }} {{ _filter.from | chDate }} - {{_filter.to | chDate}}</strong></div>
         </fieldset>
       </div>
-        <div id="selectDateSection" class="border row">
-          <div class="input-group flex notValid">
-            <form class="form-inline ngbDp col-md-5">
-              <div class="form-group">
-                <div class="input-group-prepend">
-                  <span class="input-group-text" id="inputGroup-sizing-default">{{ 'FILTER.FROM' | translate }}</span>
-                </div>
-                <div class="input-group" style="width: 40%">
-                  <input class="form-control" placeholder="{{ 'EVAL.DATEPICKER_PLACEHOLDER' | translate }}" name="from"
-                  [(ngModel)]="from" ngbDatepicker #fromPicker="ngbDatepicker">
-                </div>
-                <div class="input-group-append" style="height:33.5px;">
-                  <button class="btn btn-outline-secondary calendar" (click)="fromPicker.toggle()"
-                    type="button"></button>
-                </div>
-              </div>
-            </form>
-            <form class="form-inline ngbDp col-md-5">
-              <div class="form-group">
-                <div class="input-group-prepend">
-                  <span class="input-group-text" id="inputGroup-sizing-default">{{'FILTER.TO' | translate}}&nbsp;</span>
-                </div>
-                <div class="input-group" style="width: 40%">
-                  <input class="form-control" placeholder="{{ 'EVAL.DATEPICKER_PLACEHOLDER' | translate }}" name="to"
-                     [(ngModel)]="to" ngbDatepicker #toPicker="ngbDatepicker">
-                </div>
-                <div class="input-group-append" style="height:33.5px;">
-                  <button #buttonEl class="btn btn-outline-secondary calendar" (click)="toPicker.toggle()" type="button"></button>
-                </div>
-              </div>
-            </form>
-            <button style="height:35px; margin-top: 15px"  class="btn btn-primary col-md-2" type="submit"
-            (click)="onGetFromToDates(from, to)">{{'FILTER.FILTER_ACTION' | translate}}
-            </button>
+        <div id="selectDateSection" class="border ">
+          <div class="flex notValid row">
+            <div class=" input-group col-12 col-sm-5 col-md-5 col-lg-4 marginInputs">
+              <!-- <form class="form-inline ngbDp"> -->
+                <!-- <div class="form-group"> -->
+                  <div class="input-group-prepend">
+                    <div class="input-group-text">{{ 'FILTER.FROM' | translate }}&nbsp;&nbsp;&nbsp;&nbsp;</div>
+                  </div>
+                  <div >
+                    <input class="form-control" placeholder="{{ 'EVAL.DATEPICKER_PLACEHOLDER' | translate }}" name="from"
+                    [(ngModel)]="from" ngbDatepicker #fromPicker="ngbDatepicker">
+                  </div>
+                  <div class="input-group-append" >
+                    <button class="btn btn-outline-secondary calendar" (click)="fromPicker.toggle()"
+                      type="button"></button>
+                  </div>
+                <!-- </div> -->
+              <!-- </form> -->
+            </div>
+            <div class="input-group col-12 col-sm-5 col-md-5 col-lg-4 marginInputs">
+              <!-- <form class="form-inline ngbDp"> -->
+                <!-- <div class="form-group"> -->
+                  <div class="input-group-prepend">
+                    <div class="input-group-text">{{'FILTER.TO' | translate}}&nbsp;&nbsp;&nbsp;&nbsp;</div>
+                  </div>
+                  <div >
+                    <input class="form-control" placeholder="{{ 'EVAL.DATEPICKER_PLACEHOLDER' | translate }}" name="to"
+                      [(ngModel)]="to" ngbDatepicker #toPicker="ngbDatepicker">
+                  </div>
+                  <div class="input-group-append">
+                    <button #buttonEl class="btn btn-outline-secondary calendar" (click)="toPicker.toggle()" type="button"></button>
+                  </div>
+                <!-- </div>
+              </form> -->
+            </div>
+            <div class="input-group col-12 col-sm-2 col-md-2 col-lg-2 marginInputs filterSpecific">
+              <button class="btn btn-primary filterBut" type="submit"
+              (click)="onGetFromToDates(from, to)">{{'FILTER.FILTER_ACTION' | translate}}
+              </button>
+            </div>
           </div>
           <div *ngIf="!radioActive"><strong>{{ 'FILTER.SPECIFIC_PERIOD' | translate }} {{ _filter.from | chDate }} - {{_filter.to | chDate}}</strong></div>
         </div>

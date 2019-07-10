@@ -100,7 +100,6 @@ p {
 }
 
 .table {
-  margin-top: 3%;
   width: 94%;
   margin-left: 3%;
   margin-right:3%;
@@ -122,6 +121,15 @@ p {
 
   .cant {
     overflow: hidden;
+  }
+
+  .form-control {
+    padding-bottom: 5px;
+    width:150px;
+  }
+
+  .filterBut {
+    width: 45%;
   }
   
 }
@@ -151,10 +159,10 @@ p {
   flex-wrap: wrap;
 }
 
-.ngbDp {
+/* .ngbDp {
   width: 40%;
   min-width: 50px;
-}
+} */
 
 .filterButton {
   width: 25%;
@@ -170,3 +178,26 @@ p {
   color: #666666;
 }
 
+.form-control {
+  min-width: 50px;
+  width:100px;
+  max-width: 300px;
+}
+
+.form-control, .input-group-append, .input-group-prepend {
+  height: 33.5px;
+}
+
+.input-group-append, .input-group-prepend {
+  width: 40px;
+  margin:0px
+}
+
+.notValid {
+  vertical-align: center;
+  margin: 1.5%
+}
+
+.marginInputs {
+  margin-bottom: 5px
+}
