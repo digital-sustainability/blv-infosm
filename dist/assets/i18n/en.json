@@ -131,7 +131,11 @@
         "TIME_INFO": "Select either a default or a specific (click on the filter button) time period.",
         "DATA_LOAD": "The data is loaded ...",
         "ORDER_FILTER": "Assemble the order of the filter.",
-        "POSSIBLE_SELECTIONS": "Selection options:"
+        "POSSIBLE_SELECTIONS": "Selection options:",
+        "CANTON_SMALL" :"Canton",
+        "ANIMAL_SMALL":"Animals",
+        "EPIDEMICS_SMALL":"Diseases",
+        "BACK":"Back"
     },
     "GEO_DOWNLOAD": {
         "TITLE": "Data download",
