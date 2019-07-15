@@ -135,7 +135,8 @@
         "CANTON_SMALL" :"Canton",
         "ANIMAL_SMALL":"Animals",
         "EPIDEMICS_SMALL":"Diseases",
-        "BACK":"Back"
+        "BACK":"Back",
+        "INFO": "The filter has a hierarchical structure. If you add additional filters in a lower hierarchy level, the fields in the upper hierarchy levels can no longer be changed. Click the 'Reset filter' button to add elements to the upper hierarchy or to select a new filter order."
     },
     "GEO_DOWNLOAD": {
         "TITLE": "Data download",

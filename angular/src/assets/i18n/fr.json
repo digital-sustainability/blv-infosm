@@ -135,7 +135,8 @@
         "CANTON_SMALL" :"Canton",
         "ANIMAL_SMALL":"Animaux",
         "EPIDEMICS_SMALL":"Épidémies",
-        "BACK":"Retour"
+        "BACK":"Retour",
+        "INFO": "Le filtre a une structure hiérarchique. Si vous ajoutez des filtres supplémentaires dans un niveau hiérarchique inférieur, les zones des niveaux hiérarchiques supérieurs ne peuvent plus être modifiées. Cliquez sur le bouton 'Réinitialiser le filtre' pour ajouter des éléments à la hiérarchie supérieure ou pour sélectionner un nouvel ordre de filtre. "
     },
     "GEO_DOWNLOAD": {
         "TITLE": "Télécharger les données",

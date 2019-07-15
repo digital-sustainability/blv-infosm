@@ -141,7 +141,8 @@
     "CANTON_SMALL" :"Kanton",
     "ANIMAL_SMALL":"Tiere",
     "EPIDEMICS_SMALL":"Seuchen",
-    "BACK":"Zurück"
+    "BACK":"Zurück",
+    "INFO": "Der Filter ist hierarchisch aufgebaut. Falls Sie zusätzliche Filter in einer unteren Hierarchieebene hinzufügen, können die Felder in den oberen Hierarchieebenen nicht mehr verändert werden. Klicken Sie den Button 'Filter zurücksetzen', um Elemente in der oberen Hierarchie hinzuzufügen oder um eine neue Reihenfolge des Filters zu wählen. "
   },
   "GEO_DOWNLOAD": {
     "TITLE": "Daten herunterladen",

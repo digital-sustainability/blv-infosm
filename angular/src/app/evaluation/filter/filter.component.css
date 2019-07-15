@@ -207,3 +207,11 @@ p {
 .marginInputs {
   margin-bottom: 5px
 }
+
+.infoIcon {
+  float: right;
+}
+
+.my-tooltip {
+  white-space: pre-line;
+}

@@ -102,7 +102,11 @@
     <div class="panel-body">
       <div id="filterCategories" class="collapse" style="margin-top: 10px">
         <div class="flex-container">
-          <p style = "margin-left: 0px; margin-bottom:1%">{{'FILTER.ORDER_FILTER' | translate}}</p>
+          <p style = "margin-left: 0px; margin-bottom:1%">
+            <span>{{'FILTER.ORDER_FILTER' | translate}}</span>
+            <span class="infoIcon"><i class="material-icons" matTooltip="{{'FILTER.INFO' | translate }}"
+              matTooltipPosition="above"  [matTooltipClass]="'my-tooltip'">info</i></span>
+          </p>
           <div class="btn-group" style="width: 100%" >
             <button type="button" class="btn btn-primary filterButton" id="cantonEntrypoint"
               (click)="orderItems('where', '#cantonEntrypoint','canton')">
