@@ -3,9 +3,21 @@
   <hr>
   <div style="text-align: center">
     <p> {{ 'BULLETIN.FILTER_MESSAGE' | translate}} </p>
-    <ngb-datepicker #dp [minDate]="{year: 2008, month: 11, day:17}" [maxDate]="maxDate" [showWeekNumbers]="true"
-      [startDate]="startDate" [(ngModel)]="model" (ngModelChange)="updateDatesAndData(model)">
+    <ngb-datepicker #dp [minDate]="{year: 2008, month: 11, day:17}" [maxDate]="maxDate" [showWeekNumbers]="true" 
+      [startDate]="startDate" [(ngModel)]="model" (select)="onDateSelection($event)" [dayTemplate]="t" >
     </ngb-datepicker>
+    <ng-template #t let-date="date" let-focused="focused" let-disabled="disabled">
+      <span
+            class="custom-day"
+            [class.focused]="focused"
+            [class.range]="isRange(date)"
+            [class.faded]="isHovered(date) || isInside(date)"
+            [class.disabled]="disabled"
+            (mouseenter)="hoveredDate = date"
+            (mouseleave)="hoveredDate = null">        
+            {{ date.day }}
+      </span>
+    </ng-template>
   </div>
 
 

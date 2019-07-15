@@ -7,10 +7,10 @@ import { TranslateService } from '@ngx-translate/core';
 import { LanguageService } from 'src/app/shared/services/language.service';
 import { NotificationService } from '../shared/services/notification.service';
 import { Router, ActivatedRoute } from '@angular/router';
-import { NgbDate } from '../shared/models/ngb-date.model';
+//import { NgbDate } from '../shared/models/ngb-date.model';
 import { Subscription } from 'rxjs';
 import { ParamService } from '../shared/services/param.service';
-import { NgbDateParserFormatter, NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
+import { NgbDateParserFormatter,NgbDate, NgbDateStruct} from '@ng-bootstrap/ng-bootstrap';
 import { NgbDateCHFormatter } from '../shared/formatters/ngb-ch-date-formatter';
 import { inRange } from 'lodash';
 import dayjs from 'dayjs';
@@ -29,7 +29,8 @@ export class BulletinComponent implements OnInit, OnDestroy {
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
-
+ 
+  hoveredDate: NgbDate;
   from: NgbDate;
   to: NgbDate;
 
@@ -61,7 +62,7 @@ export class BulletinComponent implements OnInit, OnDestroy {
     private _notification: NotificationService,
     public translateService: TranslateService
   ) { }
-
+   
   ngOnInit(): void {
     // max possible date is today
     this.maxDate = this.transformDate(dayjs().day(0).format('YYYY-MM-DD'));
@@ -119,11 +120,17 @@ export class BulletinComponent implements OnInit, OnDestroy {
     this._langSub.unsubscribe();
   }
 
-  updateDatesAndData(model: NgbDate): void {
+  onDateSelection(date: NgbDate) {
+    this.updateDatesAndData(date);
+  }
+
+  updateDatesAndData(model: any): void {
     const selectedDate = model.year + '-' + model.month + '-' + model.day;
     this.actualBulletin = this.checkActualBulletin(selectedDate);
     this.fromDate = dayjs(selectedDate, 'YYYY-MM-DD').day(1).format('YYYY-MM-DD');
     this.toDate = dayjs(selectedDate, 'YYYY-MM-DD').day(7).format('YYYY-MM-DD');
+    this.from = this.transformDate(this.fromDate);
+    this.to = this.transformDate(this.toDate);
     this.bulletinNumber = this.constructNumber(selectedDate);
     this.updateInput({
       lang: this.translateService.currentLang,
@@ -186,6 +193,18 @@ export class BulletinComponent implements OnInit, OnDestroy {
       }
     });
     return countedBulletinEntries;
+  }
+
+  isHovered(date: NgbDate) {
+    return this.from && !this.to && this.hoveredDate && date.after(this.from) && date.before(this.hoveredDate);
+  }
+
+  isInside(date: NgbDate) {
+    return date.after(this.from) && date.before(this.to);
+  }
+
+  isRange(date: NgbDate) {
+    return date.equals(this.from) || date.equals(this.to) || this.isInside(date) || this.isHovered(date);
   }
 
   private isEquivalentEntry(a, b): boolean {
@@ -268,7 +287,7 @@ export class BulletinComponent implements OnInit, OnDestroy {
     }
   }
 
-  private transformDate(date: string | Date): NgbDate {
+  private transformDate(date: string | Date): any {
     const d = new Date(date);
     return { year: d.getFullYear(), month: d.getMonth() + 1, day: d.getDate() };
   }

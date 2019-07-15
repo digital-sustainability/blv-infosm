@@ -23,26 +23,6 @@ button.calendar, button.calendar:active {
     width: 100%;
 }
 
-/* .mat-column-nummer {
-    flex: 0 0 25% !important;
-    min-width: 104px !important;
-}
-
-.mat-column-dateFrom {
-    flex: 0 0 25% !important;
-    min-width: 104px !important;
-}
-
-.mat-column-dateTo {
-    flex: 0 0 25% !important;
-    min-width: 104px !important;
-}
-
-.mat-column-action {
-    flex: 0 0 25% !important;
-    min-width: 104px !important;
-} */
-
 .table {
     width: 94%;
     margin-left: 3%;
@@ -84,4 +64,29 @@ button.calendar, button.calendar:active {
     border-style: solid; 
     padding-top: 5px; 
     padding-bottom: 5px
+  }
+
+  .custom-day {
+    text-align: center;
+    padding: 0.185rem 0.25rem;
+    display: inline-block;
+    height: 2rem;
+    width: 2rem;
+  }
+  .custom-day.focused {
+    background-color: #e6e6e6;
+  }
+  .custom-day.range, .custom-day:hover {
+    background-color: #DC0018;
+    color: white;
+  }
+  .custom-day.faded {
+    background-color: #DC0018;
+  }
+
+  .disabled {
+    color: #bbbbbb;
+  }
+  .disabled:hover {
+    background-color: transparent;
   }
