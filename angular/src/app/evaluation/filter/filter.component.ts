@@ -192,7 +192,7 @@ export class FilterComponent implements OnInit, OnDestroy {
       lang => {
         if (this._filter.lang !== lang) {
           this.updateRouteParams({ lang: lang });
-          this.resetFilterOnLangChange();
+          this.resetFilterOnLangOrPeriodChange();
         }
       }, err => {
         // TODO: Imporve error handling
@@ -580,8 +580,19 @@ export class FilterComponent implements OnInit, OnDestroy {
     return filterConfig[filterType].hierarchy;
   }
 
-  resetFilterOnLangChange(): void {
-    this.onReset();
+  resetFilterOnLangOrPeriodChange(): void {
+    if(this.checkActiveFilter()) {
+      this.onReset();
+    };
+  }
+
+  private checkActiveFilter(): boolean {
+    for(const el in this.filterConfig) {
+      if(this.filterConfig[el].filter.length !== 0) {
+        return true;
+      }
+    }
+    return false;
   }
 
   /**
@@ -778,6 +789,7 @@ export class FilterComponent implements OnInit, OnDestroy {
 
   // changes the date based on radio buttons
   onChangeDate(option: string): void {
+    this.resetFilterOnLangOrPeriodChange();
     this.radioActive = true;
     // TODO: One year too much because we don't have all the data
     this._filter.to = dayjs().subtract(1, 'y').format('YYYY-MM-DD');
