@@ -135,7 +135,8 @@
         "CANTON_SMALL" :"Cantone",
         "ANIMAL_SMALL":"Animali",
         "EPIDEMICS_SMALL":"Epidemie",
-        "BACK":"Indietro"
+        "BACK":"Indietro",
+        "INFO": "Il filtro ha una struttura gerarchica. Se si aggiungono filtri aggiuntivi in un livello gerarchico inferiore, i campi dei livelli gerarchici superiori non possono più essere modificati. Fare clic sul pulsante 'Azzera filtro' per aggiungere elementi alla gerarchia superiore o per selezionare un nuovo ordine dei filtri."
     },
     "GEO_DOWNLOAD": {
         "TITLE": "Scaricare i dati",
