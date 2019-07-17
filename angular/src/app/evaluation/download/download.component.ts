@@ -43,10 +43,10 @@ export class DownloadComponent implements OnInit, OnDestroy {
           'DOWNLOAD.ANIMAL_SPECIES',
         ]).subscribe(
           texts => this._trans = texts,
-          err => this._notification.errorMessage(err.statusText + '<br>' + err.message , err.name)
+          err => this._notification.errorMessage(err.statusText + '<br>' + 'translations error', err.name)
         );
       },
-      err => this._notification.errorMessage(err.statusText + '<br>' + err.message , err.name)
+      err => this._notification.errorMessage(err.statusText + '<br>' + 'reports error', err.name)
     );
   }
 

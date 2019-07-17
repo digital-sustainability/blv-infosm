@@ -3,6 +3,7 @@ import { SparqlDataService } from '../../../shared/services/sparql-data.service'
 import { Report } from '../../../shared/models/report.model';
 import { Frequency } from '../../../shared/models/frequency.model';
 import { DistributeDataService } from 'src/app/shared/services/distribute-data.service';
+import { NotificationService } from '../../../shared/services/notification.service';
 
 import { click, pointerMove } from 'ol/events/condition.js';
 import { defaults as defaultControls, Attribution } from 'ol/control.js';
@@ -24,7 +25,7 @@ import OSM from 'ol/source/OSM.js';
 import Vector from 'ol/source/Vector';
 import Feature from 'ol/Feature';
 
-import { Subscription } from 'rxjs';
+import { Subscription, throwError } from 'rxjs';
 import { isEqual, get, countBy, mapKeys } from 'lodash';
 
 
@@ -107,6 +108,7 @@ export class MapChartComponent implements AfterViewInit, OnDestroy {
   constructor(
     private _sparqlDataService: SparqlDataService,
     private _distributeDataService: DistributeDataService,
+    private _notification: NotificationService,
   ) { }
 
   ngAfterViewInit(): void {
@@ -170,7 +172,7 @@ export class MapChartComponent implements AfterViewInit, OnDestroy {
               });
             },
             // TODO: Handle if no canton shapes received
-            err => console.log(err)
+            err =>  this._notification.errorMessage(err.statusText + '<br>' + 'no canton shapes', err.name)
           );
           }
           if (!this.wktMunicSub && !this.municVectorLayer && this.reports) {
@@ -184,11 +186,11 @@ export class MapChartComponent implements AfterViewInit, OnDestroy {
                 });
               },
               // TODO: handle if no munic shapes come in
-              err => console.log(err)
+              err =>  this._notification.errorMessage(err.statusText + '<br>' + 'no munic shapes', err.name)
             );
           }
       }, // TODO: handle if no reports come in
-      err => console.log(err)
+      err =>  this._notification.errorMessage(err.statusText + '<br>' + 'data service error', err.name)
     );
   }
 

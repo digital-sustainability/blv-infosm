@@ -106,8 +106,7 @@ export class BulletinComponent implements OnInit, OnDestroy {
             }
           }, err => {
             // TODO: Imporve error handling
-            this._notification.errorMessage(err.statusText + '<br>' + err.message , err.name);
-            console.log(err);
+            this._notification.errorMessage(err.statusText + '<br>' + 'language error', err.name);
           }
         );
       }
@@ -246,7 +245,7 @@ export class BulletinComponent implements OnInit, OnDestroy {
         this.updateDatesAndData(this.model);
       }, err => {
         // TODO: Imporve error handling
-        this._notification.errorMessage(err.statusText + '<br>' + err.message , err.name);
+        this._notification.errorMessage(err.statusText + '<br>' + 'reports error', err.name);
         console.log(err);
       });
   }

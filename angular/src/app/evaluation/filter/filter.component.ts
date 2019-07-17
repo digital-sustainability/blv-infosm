@@ -196,7 +196,7 @@ export class FilterComponent implements OnInit, OnDestroy {
         }
       }, err => {
         // TODO: Imporve error handling
-        this._notification.errorMessage(err.statusText + '<br>' + err.message, err.name);
+        this._notification.errorMessage(err.statusText + '<br>' + 'language error', err.name);
       }
     );
 
@@ -942,7 +942,7 @@ export class FilterComponent implements OnInit, OnDestroy {
         this.from = this.transformDate(from);
         this.to = this.transformDate(to);
       }, err => {
-        this._notification.errorMessage(err.statusText + '<br>' + err.message, err.name);
+        this._notification.errorMessage(err.statusText + '<br>' + 'reports error', err.name);
         // TODO: Imporve error handling
       });
   }
@@ -992,7 +992,7 @@ export class FilterComponent implements OnInit, OnDestroy {
         this.inputCantons = this.constructItemList(this.possibleSelections.canton, this.allCantons);
         this.loadCanton = false;
       }, err => {
-        this._notification.errorMessage(err.statusText + '<br>' + err.message, err.name);
+        this._notification.errorMessage(err.statusText + '<br>' + 'unique cantons error' , err.name);
       }
     );
   }
@@ -1004,7 +1004,7 @@ export class FilterComponent implements OnInit, OnDestroy {
         this.inputCommunities = this.constructItemList(this.possibleSelections.munic, this.allCommunities);
         this.loadMunic = false;
       }, err => {
-        this._notification.errorMessage(err.statusText + '<br>' + err.message, err.name)
+        this._notification.errorMessage(err.statusText + '<br>' + 'unique municipalities error', err.name)
       }
     );
   }
@@ -1016,7 +1016,7 @@ export class FilterComponent implements OnInit, OnDestroy {
         this.inputEpidemicsGroup = this.constructItemList(this.possibleSelections.epidemic_group, this.allEpidemicsGroups);
         this.loadEpidemicG = false;
       }, err => {
-        this._notification.errorMessage(err.statusText + '<br>' + err.message, err.name)
+        this._notification.errorMessage(err.statusText + '<br>' + 'unique epidemic groups error', err.name)
       }
     );
   }
@@ -1028,7 +1028,7 @@ export class FilterComponent implements OnInit, OnDestroy {
         this.inputEpidemics = this.constructItemList(this.possibleSelections.epidemic, this.allEpidemics);
         this.loadEpidemic = false;
       }, err => {
-        this._notification.errorMessage(err.statusText + '<br>' + err.message, err.name)
+        this._notification.errorMessage(err.statusText + '<br>' + 'unique epidemics error', err.name)
       }
     );
   }
@@ -1040,7 +1040,7 @@ export class FilterComponent implements OnInit, OnDestroy {
         this.inputAnimalGroups = this.constructItemList(this.possibleSelections.animal_group, this.allAnimalGroups);
         this.loadAnimalG = false;
       }, err => {
-        this._notification.errorMessage(err.statusText + '<br>' + err.message, err.name)
+        this._notification.errorMessage(err.statusText + '<br>' + 'unique animal group error', err.name)
       }
     );
   }
@@ -1052,7 +1052,7 @@ export class FilterComponent implements OnInit, OnDestroy {
         this.inputAnimals = this.constructItemList(this.possibleSelections.animal_species, this.allAnimals);
         this.loadAnimal= false;
       }, err => {
-        this._notification.errorMessage(err.statusText + '<br>' + err.message, err.name)
+        this._notification.errorMessage(err.statusText + '<br>' + 'unique animals error', err.name)
       }
     );
   }

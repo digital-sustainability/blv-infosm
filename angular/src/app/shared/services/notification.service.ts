@@ -10,12 +10,8 @@ export class NotificationService {
     public toastr: ToastrService
   ) { }
 
-  errorMessage(message: string, title: string) {
+  errorMessage(message: string, title: string): void {
     this.toastr.error(message, title);
-  }
-
-  infoMessage(message: string, title: string) {
-    this.toastr.info(message, title);
   }
 
 }

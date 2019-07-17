@@ -90,7 +90,8 @@ import { NotificationService } from './shared/services/notification.service';
     ToastrModule.forRoot({
       disableTimeOut: true,
       positionClass: 'toast-center-center',
-      enableHtml: true
+      enableHtml: true,
+      maxOpened: 1
     }),
     Angulartics2Module.forRoot()
   ],

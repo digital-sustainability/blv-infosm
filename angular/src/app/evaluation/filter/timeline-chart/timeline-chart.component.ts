@@ -92,7 +92,7 @@ export class TimelineChartComponent implements OnInit, OnDestroy {
         }
       },
       // TODO: Improve Error handling
-      err => this._notification.errorMessage(err.statusText + '<br>' + err.message , err.name)
+      err => this._notification.errorMessage(err.statusText + '<br>' + 'data service error', err.name)
     );
   }
 

@@ -29,7 +29,7 @@ export class FrequencyChartComponent implements OnInit, OnDestroy {
     public translate: TranslateService,
     private _distributeDataServie: DistributeDataService,
     private _highChartService: HighchartService,
-    private _notification: NotificationService,
+    private _notification: NotificationService
   ) { }
 
   ngOnInit() {
@@ -53,7 +53,7 @@ export class FrequencyChartComponent implements OnInit, OnDestroy {
       },
       err => {
         this.loaded = false; // show spin wheel on err
-        this._notification.errorMessage(err.statusText + '<br>' + err.message , err.name);
+        this._notification.errorMessage(err.statusText + '<br>' + 'data service error', err.name);
       }
     );
   }
