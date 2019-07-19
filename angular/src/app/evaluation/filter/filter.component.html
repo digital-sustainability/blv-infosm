@@ -305,8 +305,8 @@
   <p class="tableInfo" *ngIf="!sorted && filteredData.length !== 0">{{  'EVAL.NOT_SORTED' | translate }}</p>
   <p class="tableInfo" *ngIf="filteredData.length === 0"><strong>{{ 'FILTER.DATA_LOAD' | translate }}</strong></p>
   <div id="scroll">
-    <div class="mat-elevation-z8 table">
-    <mat-table class="mat-elevation-z8" [dataSource]="dataSource" matSort (matSortChange)="getSortItemAndOrder($event)">
+    <div class="mat-elevation-z1 table">
+    <mat-table class="mat-elevation-z1" [dataSource]="dataSource" matSort (matSortChange)="getSortItemAndOrder($event)">
       <ng-container matColumnDef="diagnosis_date">
         <mat-header-cell *matHeaderCellDef mat-sort-header><strong>{{ 'EVAL.DIAGNOSIS_DATE' | translate }}
           </strong></mat-header-cell>
@@ -350,7 +350,7 @@
       <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
     </mat-table>
 
-    <mat-paginator [pageSize]="5" [hidePageSize]="true" showFirstLastButtons></mat-paginator>
+    <mat-paginator [pageSize]="10" [hidePageSize]="true" showFirstLastButtons></mat-paginator>
   </div>
   </div>
 </div>

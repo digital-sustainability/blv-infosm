@@ -100,9 +100,8 @@ p {
 }
 
 .table {
-  width: 94%;
-  margin-left: 3%;
-  margin-right:3%;
+  margin-left: 0;
+  margin-right:0;
 }
 
 @media screen and (max-width: 600px) {
