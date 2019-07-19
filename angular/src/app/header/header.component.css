@@ -46,3 +46,7 @@ ul.nav > li {
     text-decoration: underline;
     cursor: pointer;
 }
+
+.nav > li > a:focus, .nav > li > a:hover {
+    background-color: white;
+}

@@ -7,7 +7,6 @@ import { TranslateService } from '@ngx-translate/core';
 })
 export class DatePickerI18nService extends NgbDatepickerI18n {
 
-  // TODO: Move to i18n.jsons
   i18n_values = {
     'en': {
       weekdays: ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'],
@@ -35,11 +34,9 @@ export class DatePickerI18nService extends NgbDatepickerI18n {
 
   getWeekdayShortName(weekday: number): string {
     return this.i18n_values[this.translateService.currentLang].weekdays[weekday - 1];
-    // return this.i18n_values['fr'].weekdays[weekday - 1];
   }
   getMonthShortName(month: number): string {
     return this.i18n_values[this.translateService.currentLang].months[month - 1];
-    // return this.i18n_values['fr'].months[month - 1];
   }
   getMonthFullName(month: number): string {
     return this.getMonthShortName(month);
