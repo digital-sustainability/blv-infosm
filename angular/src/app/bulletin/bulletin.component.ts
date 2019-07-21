@@ -7,7 +7,6 @@ import { TranslateService } from '@ngx-translate/core';
 import { LanguageService } from 'src/app/shared/services/language.service';
 import { NotificationService } from '../shared/services/notification.service';
 import { Router, ActivatedRoute } from '@angular/router';
-//import { NgbDate } from '../shared/models/ngb-date.model';
 import { Subscription } from 'rxjs';
 import { ParamService } from '../shared/services/param.service';
 import { NgbDateParserFormatter,NgbDate, NgbDateStruct} from '@ng-bootstrap/ng-bootstrap';
@@ -33,6 +32,7 @@ export class BulletinComponent implements OnInit, OnDestroy {
   hoveredDate: NgbDate;
   from: NgbDate;
   to: NgbDate;
+  noData: boolean;
 
   fromDate: string | Date;
   toDate: string | Date;
@@ -42,13 +42,13 @@ export class BulletinComponent implements OnInit, OnDestroy {
   private _dataSub: Subscription;
   private _paramState: ParamState;
 
-  data: Report[]; // TODO: TYPE!
+  data: Report[];
   model: NgbDateStruct;
   maxDate: NgbDateStruct;
   startDate: NgbDateStruct;
   displayedCols = ['diagnosis_date', 'canton', 'munic', 'epidemic_group', 'epidemic', 'animal_species', 'count'];
   bulletinNumber: string;
-  bulletinEntries: Report[] = [];
+  bulletinEntries: Report[];
   dataS: MatTableDataSource<[]>;
   actualBulletin = true;
 
@@ -56,7 +56,6 @@ export class BulletinComponent implements OnInit, OnDestroy {
   constructor(
     private _sparqlDataService: SparqlDataService,
     private _langauageService: LanguageService,
-    private _router: Router,
     private _paramsService: ParamService,
     private _route: ActivatedRoute,
     private _notification: NotificationService,
@@ -100,8 +99,6 @@ export class BulletinComponent implements OnInit, OnDestroy {
         this._langSub = this._langauageService.currentLang.subscribe(
           lang => {
             if (this._paramState.lang !== lang) {
-              // TODO: reset filter if language changes
-              console.log('ParamState: ' + this._paramState.lang + ' ≠ languageService: ' + lang);
               this.updateInput({ lang: lang }, this._paramState);
             }
           }, err => {
@@ -217,24 +214,25 @@ export class BulletinComponent implements OnInit, OnDestroy {
   private constructTable(bulletinEntries: Report[]): void {
     this.dataS = new MatTableDataSource<any>(bulletinEntries);
     this.dataS.paginator = this.paginator;
-    this.sort.sort(<MatSortable>{
-      id: 'diagnosis_date',
-      start: 'desc'
-    });
+    if (this.bulletinEntries.length > 0) {
+      this.sort.sort(<MatSortable>{
+        id: 'diagnosis_date',
+        start: 'desc'
+      });
+    }
     this.dataS.sort = this.sort;
   }
 
   private getList(lang: string, from: string | Date, to: string | Date): void {
     this._dataSub = this._sparqlDataService.getReports(lang, from, to).subscribe(
       data => {
+        this.noData = data.length === 0;
         this.data = this.beautifyDataObject(
           data.map(report => {
             return {
               diagnosis_date: report.diagnose_datum.value,
               canton: report.kanton.value,
-              canton_id: Number(/\d+/.exec(report.canton_id.value)[0]),
               munic: report.gemeinde.value,
-              munic_id: Number(/\d+/.exec(report.munic_id.value)[0]),
               epidemic_group: report.seuchen_gruppe.value,
               epidemic: report.seuche.value,
               animal_group: report.tier_gruppe.value,
@@ -258,19 +256,6 @@ export class BulletinComponent implements OnInit, OnDestroy {
   }
 
   private beautifyDataObject(data: Report[]): Report[] {
-    // const reducedDataObject = [];
-    // for (const el in data) {
-    //   if (data[el]) {
-    //     reducedDataObject.push({
-    //       diagnose_datum: data[el].diagnose_datum['value'],
-    //       kanton: data[el].kanton['value'],
-    //       gemeinde: data[el].gemeinde['value'],
-    //       seuche: data[el].seuche['value'],
-    //       seuchen_gruppe: data[el].seuchen_gruppe['value'],
-    //       tierart: data[el].tierart['value']
-    //     });
-    //   }
-    // }
     return data.sort((a, b) => {
       const adate = new Date(a['diagnosis_date']);
       const bdate = new Date(b['diagnosis_date']);
@@ -279,7 +264,7 @@ export class BulletinComponent implements OnInit, OnDestroy {
   }
 
   private updateInput(changes: { [s: string]: string; }, oldState: ParamState): void {
-    // check if old an new state are the same
+    // TODO: check if old an new state are the same
     if (JSON.stringify(changes) !== JSON.stringify(oldState)) {
        this._paramState = this._paramsService.updateRouteParams(changes, oldState);
        this.getList(this._paramState.lang, this._paramState.from, this._paramState.to);

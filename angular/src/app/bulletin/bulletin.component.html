@@ -29,64 +29,73 @@
         *ngIf="actualBulletin"><i>({{ 'BULLETIN.ACTUAL_BULLETIN' | translate }})</i></span> </h6>
   </div>
 
-  <div *ngIf="bulletinEntries.length === 0" class="noMessages">
-      {{ 'BULLETIN.NO_BULLETINS' | translate }}
+  <div *ngIf="bulletinEntries; else loadingBulletin">
+
+    <div *ngIf="noData" class="noMessages">
+        {{ 'BULLETIN.NO_BULLETINS' | translate }}
+    </div>
+  
+    <div class="table" [hidden]="noData">
+      <mat-table class="mat-elevation-z1" [dataSource]="dataS" matSort>
+        <ng-container matColumnDef="diagnosis_date">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> <strong>{{ 'EVAL.DIAGNOSIS_DATE' | translate }}</strong>
+          </mat-header-cell>
+          <mat-cell *matCellDef="let element"> {{element.diagnosis_date | chDate }} </mat-cell>
+        </ng-container>
+  
+        <ng-container matColumnDef="canton">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> <strong>{{ 'EVAL.CANTON' | translate }}</strong>
+          </mat-header-cell>
+          <mat-cell *matCellDef="let element"> {{element.canton}} </mat-cell>
+        </ng-container>
+  
+        <ng-container matColumnDef="munic">
+          <mat-header-cell *matHeaderCellDef mat-sort-header><strong>{{ 'EVAL.MUNICIPALITY' | translate }}</strong>
+          </mat-header-cell>
+          <mat-cell *matCellDef="let element"> {{element.munic}} </mat-cell>
+        </ng-container>
+  
+  
+        <ng-container matColumnDef="epidemic_group">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> <strong>{{ 'EVAL.PEST' | translate }}</strong>
+          </mat-header-cell>
+          <mat-cell *matCellDef="let element"> {{element.epidemic}} </mat-cell>
+        </ng-container>
+  
+        <ng-container matColumnDef="epidemic">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> <strong>{{ 'EVAL.PEST_GROUP' | translate }}</strong>
+          </mat-header-cell>
+          <mat-cell *matCellDef="let element">{{element.epidemic_group}}</mat-cell>
+        </ng-container>
+  
+        <ng-container matColumnDef="animal_species">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> <strong>{{ 'EVAL.ANIMAL_SPECIES' | translate }}</strong>
+          </mat-header-cell>
+          <mat-cell *matCellDef="let element">{{element.animal_species}} </mat-cell>
+        </ng-container>
+  
+        <ng-container matColumnDef="count">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>
+            <strong>{{ 'BULLETIN.NUMBER_OF_NOTICES' | translate}}</strong></mat-header-cell>
+          <mat-cell *matCellDef="let element">{{element.count}}</mat-cell>
+        </ng-container>
+  
+        <mat-header-row *matHeaderRowDef="displayedCols"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: displayedCols;"></mat-row>
+      </mat-table>
+  
+      <mat-paginator [pageSize]="10" [hidePageSize]="true" showFirstLastButtons></mat-paginator>
+    </div>
+  
+    <div class="clearfix">
+      <small class="pull-right scroll-link"><a class="icon icon--before icon--power" (click)="onScrollUp()">{{ 'GENERAL.GO_UP' | translate }}</a></small>
+    </div>
   </div>
 
-  <div class="table">
-    <mat-table class="mat-elevation-z8" [dataSource]="dataS" matSort>
-      <ng-container matColumnDef="diagnosis_date">
-        <mat-header-cell *matHeaderCellDef mat-sort-header> <strong>{{ 'EVAL.DIAGNOSIS_DATE' | translate }}</strong>
-        </mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{element.diagnosis_date | chDate }} </mat-cell>
-      </ng-container>
 
-      <ng-container matColumnDef="canton">
-        <mat-header-cell *matHeaderCellDef mat-sort-header> <strong>{{ 'EVAL.CANTON' | translate }}</strong>
-        </mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{element.canton}} </mat-cell>
-      </ng-container>
-
-      <ng-container matColumnDef="munic">
-        <mat-header-cell *matHeaderCellDef mat-sort-header><strong>{{ 'EVAL.MUNICIPALITY' | translate }}</strong>
-        </mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{element.munic}} </mat-cell>
-      </ng-container>
-
-
-      <ng-container matColumnDef="epidemic_group">
-        <mat-header-cell *matHeaderCellDef mat-sort-header> <strong>{{ 'EVAL.PEST' | translate }}</strong>
-        </mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{element.epidemic}} </mat-cell>
-      </ng-container>
-
-      <ng-container matColumnDef="epidemic">
-        <mat-header-cell *matHeaderCellDef mat-sort-header> <strong>{{ 'EVAL.PEST_GROUP' | translate }}</strong>
-        </mat-header-cell>
-        <mat-cell *matCellDef="let element">{{element.epidemic_group}}</mat-cell>
-      </ng-container>
-
-      <ng-container matColumnDef="animal_species">
-        <mat-header-cell *matHeaderCellDef mat-sort-header> <strong>{{ 'EVAL.ANIMAL_SPECIES' | translate }}</strong>
-        </mat-header-cell>
-        <mat-cell *matCellDef="let element">{{element.animal_species}} </mat-cell>
-      </ng-container>
-
-      <ng-container matColumnDef="count">
-        <mat-header-cell *matHeaderCellDef mat-sort-header>
-          <strong>{{ 'BULLETIN.NUMBER_OF_NOTICES' | translate}}</strong></mat-header-cell>
-        <mat-cell *matCellDef="let element">{{element.count}}</mat-cell>
-      </ng-container>
-
-      <mat-header-row *matHeaderRowDef="displayedCols"></mat-header-row>
-      <mat-row *matRowDef="let row; columns: displayedCols;"></mat-row>
-    </mat-table>
-
-    <mat-paginator [pageSize]="10" [hidePageSize]="true" showFirstLastButtons></mat-paginator>
-  </div>
-
-  <div class="clearfix">
-    <small class="pull-right scroll-link"><a class="icon icon--before icon--power" (click)="onScrollUp()">{{ 'GENERAL.GO_UP' | translate }}</a></small>
-  </div>
-
+  <ng-template #loadingBulletin>
+    <div class="loadingSign">
+      <fa name="refresh" size="4x" animation="spin"></fa>
+    </div>
+  </ng-template>
 </div>
