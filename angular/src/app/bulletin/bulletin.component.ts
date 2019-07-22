@@ -26,8 +26,8 @@ dayjs.extend(weekOfYear);
 
 export class BulletinComponent implements OnInit, OnDestroy {
 
-  @ViewChild(MatPaginator) paginator: MatPaginator;
-  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
+  @ViewChild(MatSort, { static: false }) sort: MatSort;
  
   hoveredDate: NgbDate;
   from: NgbDate;

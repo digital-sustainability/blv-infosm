@@ -45,15 +45,15 @@ button.calendar, button.calendar:active {
   }
   
 
-:host /deep/ ngb-datepicker .ngb-dp-weekday{
+:host ::ng-deep ngb-datepicker .ngb-dp-weekday{
     color: #DC0018;
   }
     
-  :host /deep/ ngb-datepicker .btn-link {
+  :host ::ng-deep ngb-datepicker .btn-link {
       color: #DC0018 !important;
   }
   
-  :host /deep/ ngb-datepicker .bg-primary {
+  :host ::ng-deep ngb-datepicker .bg-primary {
     background-color: #DC0018 !important;
   }
 
