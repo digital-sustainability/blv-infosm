@@ -18,7 +18,7 @@
         "P1": "La banca dati InfoSM (Sistema d’informazione di notifica delle epizoozie) dell’USAV è uno strumento per la consultazione di dati concernenti tutti i focolai delle epizoozie presenti in Svizzera e soggette all’obbligo di notifica dal 1991.",
         "P2": "Il Bollettino dell’USAV pubblica le attuali notifiche di epizoozie a scadenza settimanale.",
         "P3": "In base all'obbligo di notifica (art. 61 dell'ordinanza sulle epizoozie), chi detiene, custodisce o cura animali ha l'obbligo di notificare a un veterinario la comparsa di un'epizoozia (art. 1 della legge sulle epizoozie) e qualsiasi fatto sospetto. L'obbligo di notifica vige anche per api, pesci e animali selvatici in libertà. La notifica può essere effettuata presso l'ispettore degli apiari, l'organo cantonale competente per i pesci o l'Ufficio veterinario cantonale.",
-        "TEST": "Sperimentazione di un grafico SVG per il flusso di segnalazione di una notifica di una malattia animale."
+        "INFO_GRAPHIC": "Flusso di notifica notifica delle malattie degli animali"
     },
     "EVAL": {
         "SELECTED": "Selezionato",
