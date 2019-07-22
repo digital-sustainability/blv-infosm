@@ -18,7 +18,7 @@
         "P1": "On FSVO's database infoSM (= information system for cases of notifiable diseases) information on all outbreaks of notifiable diseases in Switzerland since 1991 is available.",
         "P2": "In FSVO's bulletin the most recent notifications are published weekly.",
         "P3": "The obligation to notify (Ordinance on Animal Epizootic Diseases Art. 61) obliges all persons holding animals to look after or treat outbreaks of epizootic diseases (Animal Epizootic Diseases Act Art. 1) or suspicious observations of a veterinarian. The registration requirement also applies to bees, fish and wild animals. Reporting offices are the bee inspector, the Cantonal body resp. the Cantonal veterinary office.",
-        "TEST": "Testing an SVG graph for the reporting flow of an animal disease notification."
+        "INFO_GRAPHIC": "Notification flow animal disease notification"
     },
     "EVAL": {
         "SELECTED": "Selected",

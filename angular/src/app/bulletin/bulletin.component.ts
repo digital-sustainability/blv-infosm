@@ -7,11 +7,13 @@ import { TranslateService } from '@ngx-translate/core';
 import { LanguageService } from 'src/app/shared/services/language.service';
 import { NotificationService } from '../shared/services/notification.service';
 import { Router, ActivatedRoute } from '@angular/router';
-import { Subscription } from 'rxjs';
-import { ParamService } from '../shared/services/param.service';
-import { NgbDateParserFormatter,NgbDate, NgbDateStruct} from '@ng-bootstrap/ng-bootstrap';
+import { NgbDateParserFormatter, NgbDate, NgbDateStruct} from '@ng-bootstrap/ng-bootstrap';
 import { NgbDateCHFormatter } from '../shared/formatters/ngb-ch-date-formatter';
 import { inRange } from 'lodash';
+import { NotificationService } from '../shared/services/notification.service';
+import { ActivatedRoute } from '@angular/router';
+import { ParamService } from '../shared/services/param.service';
+import { Subscription } from 'rxjs';
 import dayjs from 'dayjs';
 import weekOfYear from 'dayjs/plugin/weekOfYear';
 dayjs.extend(weekOfYear);
@@ -28,7 +30,7 @@ export class BulletinComponent implements OnInit, OnDestroy {
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
- 
+
   hoveredDate: NgbDate;
   from: NgbDate;
   to: NgbDate;
@@ -61,7 +63,7 @@ export class BulletinComponent implements OnInit, OnDestroy {
     private _notification: NotificationService,
     public translateService: TranslateService
   ) { }
-   
+
   ngOnInit(): void {
     // max possible date is today
     this.maxDate = this.transformDate(dayjs().day(0).format('YYYY-MM-DD'));
@@ -154,8 +156,8 @@ export class BulletinComponent implements OnInit, OnDestroy {
     const parsedToDate = this.dateToInt(to);
     const foundEntriesOfBulletin: Report[] = [];
     for (const entry of data) {
-      let parsedDateOfEntry = this.dateToInt(entry['diagnosis_date']);
-      if(inRange(parsedDateOfEntry, parsedFromDate, parsedToDate)) {
+      const parsedDateOfEntry = this.dateToInt(entry['diagnosis_date']);
+      if (inRange(parsedDateOfEntry, parsedFromDate, parsedToDate)) {
         entry.count = 1;
         foundEntriesOfBulletin.push(entry);
       }
@@ -208,7 +210,7 @@ export class BulletinComponent implements OnInit, OnDestroy {
 }
 
   private dateToInt(date: string | Date): number {
-    return parseInt(date.toString().split('-').join(''));
+    return parseInt(date.toString().split('-').join(''), 10);
   }
 
   private constructTable(bulletinEntries: Report[]): void {
@@ -277,3 +279,17 @@ export class BulletinComponent implements OnInit, OnDestroy {
   }
 
 }
+
+  // const reducedDataObject = [];
+    // for (const el in data) {
+    //   if (data[el]) {
+    //     reducedDataObject.push({
+    //       diagnose_datum: data[el].diagnose_datum['value'],
+    //       kanton: data[el].kanton['value'],
+    //       gemeinde: data[el].gemeinde['value'],
+    //       seuche: data[el].seuche['value'],
+    //       seuchen_gruppe: data[el].seuchen_gruppe['value'],
+    //       tierart: data[el].tierart['value']
+    //     });
+    //   }
+    // }
