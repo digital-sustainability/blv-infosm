@@ -914,7 +914,13 @@ export class FilterComponent implements OnInit, OnDestroy {
   }
 
   private getList(lang: string, from: string | Date, to: string | Date): void {
-    this._dataSub = this._sparqlDataService.getReports(lang, from, to).subscribe(
+    // set caching if data period is larger than 500 days
+    const dateFrom = dayjs(from);
+    const dateTo = dayjs(to);
+
+    console.log('I cached: ', dateTo.diff(dateFrom, 'day'));
+    
+    this._dataSub = this._sparqlDataService.getReports(lang, from, to, dateTo.diff(dateFrom, 'day') > 500).subscribe(
       (data: any[]) => {
         this.beautifiedData = data.map(d => {
           return {

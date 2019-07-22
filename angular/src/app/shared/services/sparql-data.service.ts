@@ -30,8 +30,7 @@ PREFIX schema: <http://schema.org/>
     private http: HttpClient,
     ) { }
 
-  // TODO: Create new sparql-report type
-  getReports(lang: string, from: string | Date, to: string | Date): Observable<any> {
+  getReports(lang: string, from: string | Date, to: string | Date, useCaching = false): Observable<any> {
     const query = `${this._prefix}
     SELECT *
     FROM <https://linked.opendata.swiss/graph/blv/animalpest> WHERE {
@@ -60,7 +59,8 @@ PREFIX schema: <http://schema.org/>
 
     const params = new HttpParams()
       .set('url', this._zazukoEndpoint)
-      .set('query', query);
+      .set('query', query)
+      .set('useCaching', useCaching.toString());
     return this.http.get<Report[]>(this._api + 'sparql', { params: params });
   }
 
@@ -72,7 +72,10 @@ PREFIX schema: <http://schema.org/>
       ?kantonUri a gont:Canton ;
         rdfs:label ?kanton .
     }`;
-    const params = new HttpParams().set('url', this._zazukoEndpoint).set('query', query);
+    const params = new HttpParams()
+      .set('url', this._zazukoEndpoint)
+      .set('query', query)
+      .set('useCaching', 'true');
     return this.http.get<any[]>(this._api + 'sparql', { params: params });
   }
 
@@ -84,7 +87,10 @@ PREFIX schema: <http://schema.org/>
       ?gemeindeUri a gont:Municipality ;
         rdfs:label ?gemeinde .
     }`;
-    const params = new HttpParams().set('url', this._zazukoEndpoint).set('query', query);
+    const params = new HttpParams()
+      .set('url', this._zazukoEndpoint)
+      .set('query', query)
+      .set('useCaching', 'true');
     return this.http.get<any[]>(this._api + 'sparql', { params: params });
   }
 
@@ -99,7 +105,10 @@ PREFIX schema: <http://schema.org/>
     FILTER(langMatches(lang(?seuchen_gruppe), "${lang}"))
     }
     `;
-    const params = new HttpParams().set('url', this._zazukoEndpoint).set('query', query);
+    const params = new HttpParams()
+      .set('url', this._zazukoEndpoint)
+      .set('query', query)
+      .set('useCaching', 'true');
     return this.http.get<any[]>(this._api + 'sparql', { params: params });
   }
 
@@ -112,7 +121,10 @@ PREFIX schema: <http://schema.org/>
         rdfs:label ?tier_seuche .
     FILTER(langMatches(lang( ?tier_seuche), "${lang}"))
     }`;
-    const params = new HttpParams().set('url', this._zazukoEndpoint).set('query', query);
+    const params = new HttpParams()
+      .set('url', this._zazukoEndpoint)
+      .set('query', query)
+      .set('useCaching', 'true');
     return this.http.get<any[]>(this._api + 'sparql', { params: params });
   }
 
@@ -125,7 +137,10 @@ PREFIX schema: <http://schema.org/>
         rdfs:label ?tier_gruppe .
     FILTER(langMatches(lang( ?tier_gruppe), "${lang}"))
     }`;
-    const params = new HttpParams().set('url', this._zazukoEndpoint).set('query', query);
+    const params = new HttpParams()
+      .set('url', this._zazukoEndpoint)
+      .set('query', query)
+      .set('useCaching', 'true');
     return this.http.get<any[]>(this._api + 'sparql', { params: params });
   }
 
@@ -139,7 +154,10 @@ PREFIX schema: <http://schema.org/>
   
     FILTER(langMatches(lang( ?tier_art), "${lang}"))
     }`;
-    const params = new HttpParams().set('url', this._zazukoEndpoint).set('query', query);
+    const params = new HttpParams()
+      .set('url', this._zazukoEndpoint)
+      .set('query', query)
+      .set('useCaching', 'true');
     return this.http.get<any[]>(this._api + 'sparql', { params: params });
   }
 
@@ -161,7 +179,8 @@ SELECT * WHERE {
     }`;
     const params = new HttpParams()
       .set('url', this._geoadminEndpoint)
-      .set('query', query);
+      .set('query', query)
+      .set('useCaching', 'true');
     return this.http.get<any>(this._api + 'sparql', { params: params });
   }
 
@@ -183,7 +202,8 @@ SELECT * WHERE {
     }`;
     const params = new HttpParams()
       .set('url', this._geoadminEndpoint)
-      .set('query', query);
+      .set('query', query)
+      .set('useCaching', 'true');
     return this.http.get<any>(this._api + 'sparql', { params: params });
   }
 

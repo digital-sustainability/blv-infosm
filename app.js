@@ -51,6 +51,11 @@ app.get('/sparql', wrap( async (req, res, next) => {
         body: querystring.stringify({ 'query': req.query.query }),
         gzip: true
     };
+    // Cache larger requests for 12 hours
+    if (req.query.useCaching === 'true') {
+        options.headers['Cache-Control'] = 'public, max-age=43200'
+        options.headers['Vary'] = 'Accept'
+    }
     await requests.post(options, (err, resp, body) => {
         if (err || !resp.statusCode === 200) {
             return res.status(500).json(err);
