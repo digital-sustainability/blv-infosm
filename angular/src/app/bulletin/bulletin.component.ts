@@ -1,5 +1,7 @@
 import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
-import { MatPaginator, MatTableDataSource, MatSort, MatSortable } from '@angular/material';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort, MatSortable } from '@angular/material/sort';
+import { MatTableDataSource } from '@angular/material/table';
 import { Report } from '../shared/models/report.model';
 import { ParamState } from '../shared/models/param-state.model';
 import { SparqlDataService } from 'src/app/shared/services/sparql-data.service';
@@ -10,8 +12,6 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { NgbDateParserFormatter, NgbDate, NgbDateStruct} from '@ng-bootstrap/ng-bootstrap';
 import { NgbDateCHFormatter } from '../shared/formatters/ngb-ch-date-formatter';
 import { inRange } from 'lodash';
-import { NotificationService } from '../shared/services/notification.service';
-import { ActivatedRoute } from '@angular/router';
 import { ParamService } from '../shared/services/param.service';
 import { Subscription } from 'rxjs';
 import dayjs from 'dayjs';
@@ -28,9 +28,9 @@ dayjs.extend(weekOfYear);
 
 export class BulletinComponent implements OnInit, OnDestroy {
 
-  @ViewChild(MatPaginator) paginator: MatPaginator;
-  @ViewChild(MatSort) sort: MatSort;
-
+  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
+  @ViewChild(MatSort, { static: false }) sort: MatSort;
+ 
   hoveredDate: NgbDate;
   from: NgbDate;
   to: NgbDate;
@@ -280,16 +280,3 @@ export class BulletinComponent implements OnInit, OnDestroy {
 
 }
 
-  // const reducedDataObject = [];
-    // for (const el in data) {
-    //   if (data[el]) {
-    //     reducedDataObject.push({
-    //       diagnose_datum: data[el].diagnose_datum['value'],
-    //       kanton: data[el].kanton['value'],
-    //       gemeinde: data[el].gemeinde['value'],
-    //       seuche: data[el].seuche['value'],
-    //       seuchen_gruppe: data[el].seuchen_gruppe['value'],
-    //       tierart: data[el].tierart['value']
-    //     });
-    //   }
-    // }

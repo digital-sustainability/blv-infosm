@@ -5,7 +5,9 @@ import { NgbDate } from '../../shared/models/ngb-date.model';
 import { InputField } from '../../shared/models/inputfield.model';
 import { LanguageService } from 'src/app/shared/services/language.service';
 import { Subscription } from 'rxjs';
-import { MatPaginator, MatTableDataSource, MatSort, MatSortable } from '@angular/material';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort, MatSortable } from '@angular/material/sort';
+import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
 import { SparqlDataService } from 'src/app/shared/services/sparql-data.service';
 import { DistributeDataService } from 'src/app/shared/services/distribute-data.service';
@@ -29,16 +31,16 @@ declare let $: any;
 
 export class FilterComponent implements OnInit, OnDestroy {
 
-  @ViewChild('fromPicker') datepickerFrom: NgbDatepicker;
-  @ViewChild('toPicker') datepickerTo: NgbDatepicker;
-  @ViewChild(MatPaginator) paginator: MatPaginator;
-  @ViewChild(MatSort) sort: MatSort;
-  @ViewChild('selectCant') selectCant;
-  @ViewChild('selectMunic') selectMunic;
-  @ViewChild('selectAniG') selectAnig;
-  @ViewChild('selectAni') selectAni;
-  @ViewChild('selectEpiG') selectEpiG;
-  @ViewChild('selectEpi') selectEpi;
+  @ViewChild('fromPicker', { static: false }) datepickerFrom: NgbDatepicker;
+  @ViewChild('toPicker', { static: false }) datepickerTo: NgbDatepicker;
+  @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
+  @ViewChild(MatSort, { static: true }) sort: MatSort;
+  @ViewChild('selectCant', { static: false }) selectCant;
+  @ViewChild('selectMunic', { static: false }) selectMunic;
+  @ViewChild('selectAniG', { static: false }) selectAnig;
+  @ViewChild('selectAni', { static: false }) selectAni;
+  @ViewChild('selectEpiG', { static: false }) selectEpiG;
+  @ViewChild('selectEpi', { static: false }) selectEpi;
 
   from: NgbDate;
   to: NgbDate;

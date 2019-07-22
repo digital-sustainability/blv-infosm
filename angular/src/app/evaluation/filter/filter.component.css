@@ -81,15 +81,15 @@ i.fa {
     border-color: darkgrey;
 }
 
-:host /deep/ ngb-datepicker .ngb-dp-weekday{
+:host ::ng-deep ngb-datepicker .ngb-dp-weekday{
   color: red;
 }
   
-:host /deep/ ngb-datepicker .btn-link {
+:host ::ng-deep ngb-datepicker .btn-link {
     color: red !important;
 }
 
-:host /deep/ ngb-datepicker .bg-primary {
+:host ::ng-deep ngb-datepicker .bg-primary {
   background-color: red !important;
 }
 
