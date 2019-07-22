@@ -1,8 +1,7 @@
 <div class="main-chart-container">
     <div class="chart-holder" *ngIf="loaded; else loadingFrequencyChart">
         <div *ngIf="reports; else noData">
-            <!-- TODO: Check if styles below are needed -->
-            <div [chart]="frequencyChart"></div>
+            <div class="chart" [chart]="frequencyChart"></div>
             <div class="chart-button-container row justify-content-center">
                 <button class="btn btn-primary mx-2 mb-3" type="submit" (click)="onShowEpidemics()">
                     {{ 'EVAL.SHOW_EPIDEMICS' | translate }}

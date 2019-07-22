@@ -63,7 +63,7 @@ export class FilterComponent implements OnInit, OnDestroy {
   selectedTab: string;
 
   trans: Translations;
-  radioActive: boolean = true;
+  radioActive = true;
 
   formCant: FormGroup;
   formMunic: FormGroup;
@@ -89,7 +89,7 @@ export class FilterComponent implements OnInit, OnDestroy {
     epidemic: [],
     animal_group: [],
     animal_species: []
-  }
+  };
 
   // final selectable and disabled array of items that are visible in the input field
   inputCantons: InputField[];
@@ -100,22 +100,22 @@ export class FilterComponent implements OnInit, OnDestroy {
   inputAnimals: InputField[];
 
   loadCanton = true;
-  loadMunic: boolean = true;
-  loadEpidemicG: boolean = true;
-  loadEpidemic: boolean = true;
-  loadAnimalG: boolean = true;
-  loadAnimal: boolean = true;
+  loadMunic = true;
+  loadEpidemicG = true;
+  loadEpidemic = true;
+  loadAnimalG = true;
+  loadAnimal = true;
 
-  filterEntryPoint: string = "";
-  noFilter: boolean = true;
-  stateOrder: number = 0;
-  hierarchy: number = 0;
+  filterEntryPoint = '';
+  noFilter = true;
+  stateOrder = 0;
+  hierarchy = 0;
   elementsAbove = {};
   elementsBelow = {};
-  showAlert: boolean = false;
+  showAlert = false;
   selected = [];
-  disable: boolean = false;
-  selectedAll: boolean = false;
+  disable = false;
+  selectedAll = false;
 
   data: Report[];
   displayedColumns: string[] = ['diagnosis_date', 'canton', 'munic', 'epidemic', 'epidemic_group', 'animal_species'];
@@ -248,33 +248,18 @@ export class FilterComponent implements OnInit, OnDestroy {
   onAdd($event, filterType: string): void {
     this.mapLoadingInputField(filterType);
     this.checkHierarchy(filterType);
-    let selectedItem = [];
-    selectedItem = $event.label;
+    const selectedItem = $event.label;
     if (this.filterConfig.hasOwnProperty(filterType)) {
       this.filterConfig[filterType].filter.push(selectedItem.toString());
     }
-
-    const actualHierarchy = this.getHierarchy(filterType);
-    if ([2, 4, 6].includes(actualHierarchy)) {
-      let elAbove: string = "";
-      switch (filterType) {
-        case 'animal_species': elAbove = 'animal_group'; break;
-        case 'epidemic': elAbove = 'epidemic_group'; break;
-        case 'munic': elAbove = 'canton'; break;
-      }
-      let forms = this.getCorrespondingForms(elAbove);
-      this.toggleDisableInput(forms[0], elAbove);
-    }
-    const entriesToAdatpInputs = this.filterHierarchiesAbove(actualHierarchy);
-    this.adaptPossibleSelections(entriesToAdatpInputs, this.beautifiedData, filterType);
-    this.getList(this._filter.lang, this._filter.from, this._filter.to);
+    this.adaptLogicOfSelect(filterType);
   }
 
   /**
-   * Filters the data based on the selected items in the hierarchies above, identifies which 
-   * inputfields need to be updated and extracts all the unique items for the input fields 
+   * Filters the data based on the selected items in the hierarchies above, identifies which
+   * inputfields need to be updated and extracts all the unique items for the input fields
    * that need to be adapted
-   * @param entriesToAdapt entries based on which the possible selections of the input field should be adapted 
+   * @param entriesToAdapt entries based on which the possible selections of the input field should be adapted
    * @param data the based on the currently selected period of time
    * @param filterType the type of the filter that has been changed
    */
@@ -284,7 +269,7 @@ export class FilterComponent implements OnInit, OnDestroy {
     if (entriesToAdapt.length !== 0) {
       const numberOfFiltersAbove: number = entriesToAdapt.length;
       for (let i = 0; i < data.length; i++) {
-        let inside: boolean = false;
+        let inside = false;
         for (let j = 0; j < numberOfFiltersAbove; j++) {
           if (entriesToAdapt[j].filter.includes(data[i][entriesToAdapt[j].type])) {
             inside = true;
@@ -312,11 +297,10 @@ export class FilterComponent implements OnInit, OnDestroy {
     for (const el of fieldsToAdapt) {
       this.setPossibleSelections(el, this.extractUniqueItems(filtered, el));
     }
-   
   }
 
   /**
-   * Sets the key and the value of the possible selections the user can choose from. 
+   * Sets the key and the value of the possible selections the user can choose from.
    * Needs to be adapted after every change the user makes to an input field
    */
   setPossibleSelections(key: string, value: string[]): void {
@@ -355,8 +339,8 @@ export class FilterComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Adapts the input fields based on the item in a specific input field that the user 
-   * has removed. If the filter in the actual hierarchy is empty, we adapt the input 
+   * Adapts the input fields based on the item in a specific input field that the user
+   * has removed. If the filter in the actual hierarchy is empty, we adapt the input
    * fields based on the filter type above in the hierarchy. Else we adapt the input
    * fields based on the actual hierarchy
    * @param $event the object of the item, that has been removed by the user
@@ -398,7 +382,7 @@ export class FilterComponent implements OnInit, OnDestroy {
     } else {
       const actualHierarchy = this.getHierarchy(filterTypeAbove);
       const entriesToAdatpInputs = this.filterHierarchiesAbove(actualHierarchy);
-      this.adaptPossibleSelections(entriesToAdatpInputs, this.beautifiedData, filterTypeAbove); 
+      this.adaptPossibleSelections(entriesToAdatpInputs, this.beautifiedData, filterTypeAbove);
     }
   }
 
@@ -440,12 +424,12 @@ export class FilterComponent implements OnInit, OnDestroy {
   onSelectAll(input: InputField[], formControlName: string, form: FormGroup): void {
     this.selectedAll = true;
     const selectedRaw = input.filter(item => !(item['disabled']));
+
     // put the selected values into the form
     form.get(formControlName).patchValue(selectedRaw);
 
-    // adapt the values for the filter logic
     this.filterConfig[formControlName].filter = selectedRaw.map(el => el.label);
-    this.possibleSelections[formControlName] = selectedRaw.map(el => el.label);
+    this.adaptLogicOfSelect(formControlName);
 
     // disable selected field
     this.toggleDisableInput(form, formControlName);
@@ -458,8 +442,25 @@ export class FilterComponent implements OnInit, OnDestroy {
     }
   }
 
+  adaptLogicOfSelect(filterType: string): void {
+    const actualHierarchy = this.getHierarchy(filterType);
+    if ([2, 4, 6].includes(actualHierarchy)) {
+      let elAbove = '';
+      switch (filterType) {
+        case 'animal_species': elAbove = 'animal_group'; break;
+        case 'epidemic': elAbove = 'epidemic_group'; break;
+        case 'munic': elAbove = 'canton'; break;
+      }
+      const forms = this.getCorrespondingForms(elAbove);
+      this.toggleDisableInput(forms[0], elAbove);
+    }
+    const entriesToAdatpInputs = this.filterHierarchiesAbove(actualHierarchy);
+    this.adaptPossibleSelections(entriesToAdatpInputs, this.beautifiedData, filterType);
+    this.getList(this._filter.lang, this._filter.from, this._filter.to);
+  }
+
   getNextHigherHierarchy(filterType: string): string {
-    switch(filterType) {
+    switch (filterType) {
       case 'munic': return 'canton';
       case 'epidemic': return 'epidemic_group';
       case 'animal_species': return 'animal_group';
@@ -471,7 +472,7 @@ export class FilterComponent implements OnInit, OnDestroy {
   }
 
   getDropdownToClose(filterType: string) {
-    switch(filterType) {
+    switch (filterType) {
       case 'canton': return this.selectCant;
       case 'munic': return this.selectMunic;
       case 'epidemic_group': return this.selectEpiG;
@@ -487,7 +488,7 @@ export class FilterComponent implements OnInit, OnDestroy {
   // }
 
   /**
-   * Determines dynamically the properties hierarchy and position of the FIlterConfig and disables 
+   * Determines dynamically the properties hierarchy and position of the FIlterConfig and disables
    * the buttons that are already selected.
    * @param elementId the id of the html input field which is selected
    * @param elToDisable the id of the html button to disable
@@ -528,7 +529,7 @@ export class FilterComponent implements OnInit, OnDestroy {
     $(elToDisable).prop('disabled', true);
     this.disable = true;
     // show the element
-    document.getElementById(elementId).style.display = "flex";
+    document.getElementById(elementId).style.display = 'flex';
   }
 
   /**
@@ -539,13 +540,13 @@ export class FilterComponent implements OnInit, OnDestroy {
     if (selected.length === 1) {
       return;
     } else if (selected.length === 2) {
-      let firstToDisable = selected[0];
-      let forms = this.getCorrespondingForms(firstToDisable[0]);
+      const firstToDisable = selected[0];
+      const forms = this.getCorrespondingForms(firstToDisable[0]);
       this.toggleDisableInput(forms[0], firstToDisable[0]);
       this.toggleDisableInput(forms[1], firstToDisable[1]);
     } else {
-      let secondToDisable = selected[1];
-      let forms = this.getCorrespondingForms(secondToDisable[0]);
+      const secondToDisable = selected[1];
+      const forms = this.getCorrespondingForms(secondToDisable[0]);
       this.toggleDisableInput(forms[0], secondToDisable[0]);
       this.toggleDisableInput(forms[1], secondToDisable[1]);
     }
@@ -576,19 +577,19 @@ export class FilterComponent implements OnInit, OnDestroy {
   }
 
   getHierarchy(filterType: string): number {
-    let filterConfig = this.getFilterConfig();
+    const filterConfig = this.getFilterConfig();
     return filterConfig[filterType].hierarchy;
   }
 
   resetFilterOnLangOrPeriodChange(): void {
-    if(this.checkActiveFilter()) {
+    if (this.checkActiveFilter()) {
       this.onReset();
-    };
+    }
   }
 
   private checkActiveFilter(): boolean {
-    for(const el in this.filterConfig) {
-      if(this.filterConfig[el].filter.length !== 0) {
+    for (const el in this.filterConfig) {
+      if (this.filterConfig[el].filter.length !== 0) {
         return true;
       }
     }
@@ -596,26 +597,26 @@ export class FilterComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Resets everything that helps to build the logic of the filter, hides and enables 
+   * Resets everything that helps to build the logic of the filter, hides and enables
    * all the input fields and enables again the buttons to build the hierarchy of the filter
    */
   onReset(): void {
-    this.filterEntryPoint = "";
+    this.filterEntryPoint = '';
     this.resetModels();
     this.elementsAbove = [];
     this.elementsBelow = [];
     for (const el of ['canton', 'munic', 'epidemic_group', 'epidemic', 'animal_group', 'animal_species']) {
       this.filterConfig[el].filter = [];
       this.filterConfig[el].hierarchy = 0;
-      if (el === 'canton') this.filterConfig[el].position = 0;
-      if (el === 'epidemic_group') this.filterConfig[el].position = 0;
-      if (el === 'animal_group') this.filterConfig[el].position = 0;
+      if (el === 'canton') { this.filterConfig[el].position = 0; }
+      if (el === 'epidemic_group') { this.filterConfig[el].position = 0; }
+      if (el === 'animal_group') { this.filterConfig[el].position = 0; }
     }
     this.stateOrder = 0;
     this.hierarchy = 0;
-    document.getElementById('who').style.display = "none";
-    document.getElementById('what').style.display = "none";
-    document.getElementById('where').style.display = "none";
+    document.getElementById('who').style.display = 'none';
+    document.getElementById('what').style.display = 'none';
+    document.getElementById('where').style.display = 'none';
     // enable the buttons to select an entry point of the filter
     $('#cantonEntrypoint').prop('disabled', false);
     $('#epidemicEntryPoint').prop('disabled', false);
@@ -629,12 +630,12 @@ export class FilterComponent implements OnInit, OnDestroy {
    * Checks which input fields are disabled and enables them if they are disabled.
    */
   checkDisabledInputFields(): void {
-    if (this.formAni.controls['animal_species'].disabled) { this.formAni.controls['animal_species'].enable() };
-    if (this.formEpid.controls['epidemic'].disabled) { this.formEpid.controls['epidemic'].enable() };
-    if (this.formMunic.controls['munic'].disabled) { this.formMunic.controls['munic'].enable() };
-    if (this.formCant.controls['canton'].disabled) { this.formCant.controls['canton'].enable() };
-    if (this.formEpidG.controls['epidemic_group'].disabled) { this.formEpidG.controls['epidemic_group'].enable() };
-    if (this.formAniG.controls['animal_group'].disabled) { this.formAniG.controls['animal_group'].enable() };
+    if (this.formAni.controls['animal_species'].disabled) { this.formAni.controls['animal_species'].enable(); }
+    if (this.formEpid.controls['epidemic'].disabled) { this.formEpid.controls['epidemic'].enable(); }
+    if (this.formMunic.controls['munic'].disabled) { this.formMunic.controls['munic'].enable(); }
+    if (this.formCant.controls['canton'].disabled) { this.formCant.controls['canton'].enable(); }
+    if (this.formEpidG.controls['epidemic_group'].disabled) { this.formEpidG.controls['epidemic_group'].enable(); }
+    if (this.formAniG.controls['animal_group'].disabled) { this.formAniG.controls['animal_group'].enable(); }
   }
 
   resetModels(): void {
@@ -647,13 +648,13 @@ export class FilterComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Extracts all the unique strings for every input field in the initial state (based on the 
+   * Extracts all the unique strings for every input field in the initial state (based on the
    * time period the user selected).
    * @param filteredData initial data filtered based on the selected period
    */
   private extractFilterParts(filteredData): void {
     if (this.filterEntryPoint.length === 0 ) {
-      for(const el of ['canton', 'munic', 'epidemic_group', 'epidemic', 'animal_group', 'animal_species']) {
+      for (const el of ['canton', 'munic', 'epidemic_group', 'epidemic', 'animal_group', 'animal_species']) {
         this.possibleSelections[el] = uniq(map(filteredData, el)).sort();
       }
     }
@@ -711,7 +712,8 @@ export class FilterComponent implements OnInit, OnDestroy {
    * @param filterObject the current FilterConfig
    */
   private checkFilter(type: string, compare: string, filterObject: FilterConfig): boolean {
-    return (filterObject[type].filter.length !== 0 && filterObject[type].filter.includes(compare)) || filterObject[type].filter.length === 0;
+    return (filterObject[type].filter.length !== 0 && filterObject[type].filter.includes(compare))
+                || filterObject[type].filter.length === 0;
   }
 
   /**
@@ -724,7 +726,7 @@ export class FilterComponent implements OnInit, OnDestroy {
   private constructItemList(possibleItems: string[], uniqueItems: string[]): InputField[] {
     let disabledList = [];
     let selectableList = [];
-    uniqueItems.forEach((entry: string, index: number) => {
+    uniqueItems.forEach((entry: string) => {
       if (possibleItems.includes(entry)) {
         selectableList.push({
           label: entry,
@@ -734,7 +736,7 @@ export class FilterComponent implements OnInit, OnDestroy {
           label: entry,
           disabled: 'true'
         });
-      };
+      }
     });
     disabledList = this.sortItems(disabledList, 'label');
     selectableList = this.sortItems(selectableList, 'label');
@@ -744,8 +746,8 @@ export class FilterComponent implements OnInit, OnDestroy {
   // Sorts an object of type InputField based on a key that has a value of type string
   private sortItems(inputField: InputField[], key: string): InputField[] {
     return inputField.sort((a: InputField, b: InputField) => {
-      let x = a[key].replace(/\s/g, "").toLowerCase();
-      let y = b[key].replace(/\s/g, "").toLowerCase();
+      const x = a[key].replace(/\s/g, '').toLowerCase();
+      const y = b[key].replace(/\s/g, '').toLowerCase();
       return x < y ? -1 : x > y ? 1 : 0;
     });
   }
@@ -773,9 +775,8 @@ export class FilterComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Constructs the table below the charts with the filtered data. Sorts the 
+   * Constructs the table below the charts with the filtered data. Sorts the
    * filtered data by default by diagnosis date in descending order.
-   * @param filteredData 
    */
   private constructTable(filteredData: any[]): void {
     this.dataSource = new MatTableDataSource<any>(filteredData);
@@ -811,7 +812,7 @@ export class FilterComponent implements OnInit, OnDestroy {
       to: this._filter.to
     });
 
-    // remove the errors from the datepicker if the user switches 
+    // remove the errors from the datepicker if the user switches
     this.removeErrors();
   }
 
@@ -819,7 +820,7 @@ export class FilterComponent implements OnInit, OnDestroy {
    * Retransforms a date from DD.MM.YYYY (CH-format) to YYYY-MM-DD.
    */
   retransformDate(date: string | Date): string {
-    return date.toString().split('.').reverse().join("-");
+    return date.toString().split('.').reverse().join('-');
   }
 
   // Changes the date based on the datepickers and validates the input in the date picker.
@@ -832,7 +833,7 @@ export class FilterComponent implements OnInit, OnDestroy {
     const today = dayjs().format('YYYY-MM-DD');
     this.removeErrors();
     if (dayjs(fromdate).isValid() && dayjs(todate).isValid() && fromdate.length === 10 && todate.length === 10) {
-      //TODO: TRANSLATIONS --> not correct
+      // TODO: TRANSLATIONS --> not correct
       if (fromdate > todate) {
         $('.notValid').after(
           `<p class='err' style='color:red' id='datecompareerror'>${this.trans['EVAL.DATE_WRONG_ORDER']}</p>`
@@ -867,7 +868,6 @@ export class FilterComponent implements OnInit, OnDestroy {
       $('.radio').prop('checked', false);
       this.radioActive = false;
     } else {
-      debugger
       if (!(dayjs(fromdate).isValid()) || !(dayjs(todate).isValid()) || fromdate.length === 10 || todate.length === 10) {
         $('.notValid').after(
           `<p class='err' style='color:red' id='dateformaterror'>${this.trans['EVAL.DATE_WRONG_FORMAT']}</p>`
@@ -911,7 +911,6 @@ export class FilterComponent implements OnInit, OnDestroy {
     }
   }
 
-
   private getList(lang: string, from: string | Date, to: string | Date): void {
     this._dataSub = this._sparqlDataService.getReports(lang, from, to).subscribe(
       (data: any[]) => {
@@ -931,7 +930,6 @@ export class FilterComponent implements OnInit, OnDestroy {
         });
         this.getTranslations();
         this.getAllPossibleValues(lang);
-        // this.transformData(data, false);
         this.filteredData = this.filterDataObjectBasedOnEventData(this.beautifiedData, this.filterConfig);
 
         this._distributeDataService.updateData(this.filteredData, from, to);
@@ -945,6 +943,13 @@ export class FilterComponent implements OnInit, OnDestroy {
         this._notification.errorMessage(err.statusText + '<br>' + 'reports error', err.name);
         // TODO: Imporve error handling
       });
+  }
+
+  checkSelectedAll(filterType: string): boolean {
+    if (this.filterConfig[filterType].filter.length === 0) {
+      return false;
+    }
+    return true;
   }
 
   private getTranslations(): void {
@@ -1004,7 +1009,7 @@ export class FilterComponent implements OnInit, OnDestroy {
         this.inputCommunities = this.constructItemList(this.possibleSelections.munic, this.allCommunities);
         this.loadMunic = false;
       }, err => {
-        this._notification.errorMessage(err.statusText + '<br>' + 'unique municipalities error', err.name)
+        this._notification.errorMessage(err.statusText + '<br>' + 'unique municipalities error', err.name);
       }
     );
   }
@@ -1016,7 +1021,7 @@ export class FilterComponent implements OnInit, OnDestroy {
         this.inputEpidemicsGroup = this.constructItemList(this.possibleSelections.epidemic_group, this.allEpidemicsGroups);
         this.loadEpidemicG = false;
       }, err => {
-        this._notification.errorMessage(err.statusText + '<br>' + 'unique epidemic groups error', err.name)
+        this._notification.errorMessage(err.statusText + '<br>' + 'unique epidemic groups error', err.name);
       }
     );
   }
@@ -1028,7 +1033,7 @@ export class FilterComponent implements OnInit, OnDestroy {
         this.inputEpidemics = this.constructItemList(this.possibleSelections.epidemic, this.allEpidemics);
         this.loadEpidemic = false;
       }, err => {
-        this._notification.errorMessage(err.statusText + '<br>' + 'unique epidemics error', err.name)
+        this._notification.errorMessage(err.statusText + '<br>' + 'unique epidemics error', err.name);
       }
     );
   }
@@ -1040,7 +1045,7 @@ export class FilterComponent implements OnInit, OnDestroy {
         this.inputAnimalGroups = this.constructItemList(this.possibleSelections.animal_group, this.allAnimalGroups);
         this.loadAnimalG = false;
       }, err => {
-        this._notification.errorMessage(err.statusText + '<br>' + 'unique animal group error', err.name)
+        this._notification.errorMessage(err.statusText + '<br>' + 'unique animal group error', err.name);
       }
     );
   }
@@ -1050,17 +1055,17 @@ export class FilterComponent implements OnInit, OnDestroy {
       uniqueAnimals => {
         this.allAnimals = this.beautifyItems(uniqueAnimals, 'tier_art');
         this.inputAnimals = this.constructItemList(this.possibleSelections.animal_species, this.allAnimals);
-        this.loadAnimal= false;
+        this.loadAnimal = false;
       }, err => {
-        this._notification.errorMessage(err.statusText + '<br>' + 'unique animals error', err.name)
+        this._notification.errorMessage(err.statusText + '<br>' + 'unique animals error', err.name);
       }
     );
   }
 
   private beautifyItems(item: any[], type: string): string[] {
-    let niceItems: string[] = [];
+    const niceItems: string[] = [];
     item.forEach(entry => {
-      if(type === 'tier_art' || type === 'tier_gruppe') {
+      if (type === 'tier_art' || type === 'tier_gruppe') {
         niceItems.push(entry[type]['value'][0].toUpperCase() + entry[type]['value'].slice(1));
       } else {
         niceItems.push(entry[type]['value']);
