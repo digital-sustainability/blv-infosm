@@ -1,5 +1,7 @@
 import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
-import { MatPaginator, MatTableDataSource, MatSort, MatSortable } from '@angular/material';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort, MatSortable } from '@angular/material/sort';
+import { MatTableDataSource } from '@angular/material/table';
 import { Report } from '../shared/models/report.model';
 import { ParamState } from '../shared/models/param-state.model';
 import { SparqlDataService } from 'src/app/shared/services/sparql-data.service';

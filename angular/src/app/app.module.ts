@@ -6,7 +6,7 @@ import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 import { ChartModule } from 'angular-highcharts';
 import { AngularFontAwesomeModule } from 'angular-font-awesome';
-import { MatTableModule } from '@angular/material';
+import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ToastrModule } from 'ngx-toastr';
@@ -34,7 +34,7 @@ import { GeoDownloadDetailComponent } from './geo-download-detail/geo-download-d
 
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { LanguageService } from './shared/services/language.service';
-import { MatPaginatorIntl } from '@angular/material';
+import { MatPaginatorIntl } from '@angular/material/paginator';
 import { NgbDatepickerI18n } from '@ng-bootstrap/ng-bootstrap';
 import { SparqlDataService } from './shared/services/sparql-data.service';
 import { MatPaginatorI18nService} from './shared/services/mat-paginator-i18n.service';
