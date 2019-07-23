@@ -308,13 +308,13 @@ export class MapChartComponent implements AfterViewInit, OnDestroy {
       return 'rgb(255, 195, 0)';
     } else
     if (x <= 100) {
-      return 'rgb(255, 87, 51, 0.6)';
+      return 'rgba(255, 87, 51, 0.6)';
     } else
     if (x <= 500) {
-      return 'rgb(255, 0, 0, 1)';
+      return 'rgba(255, 0, 0, 1)';
     } else
     if (x <= 1000) {
-      return 'rgb(199, 0, 57, 0.6)';
+      return 'rgba(199, 0, 57, 0.6)';
     } else {
       return 'rgb(88, 24, 69)';
     }
