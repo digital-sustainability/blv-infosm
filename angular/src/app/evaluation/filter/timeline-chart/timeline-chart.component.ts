@@ -42,6 +42,7 @@ export class TimelineChartComponent implements OnInit, OnDestroy {
   reports: Report[];
   timelineChart: Chart;
   paramSub: Subscription;
+  mediaQuery: MediaQueryList = window.matchMedia('(max-width: 700px)');
 
   constructor(
     public translate: TranslateService,
@@ -87,6 +88,11 @@ export class TimelineChartComponent implements OnInit, OnDestroy {
                 this._trans = texts;
                 this._timeLineChartData = this.extract(data, 'epidemic_group');
                 this.drawChart();
+                this.mediaQuery.addEventListener('change', () => {
+                  this.checkMediaHeight(this.mediaQuery);
+                  this.checkMediaLegend(this.mediaQuery);
+                  this.drawChart();
+                });
               }
             );
         }
@@ -104,7 +110,8 @@ export class TimelineChartComponent implements OnInit, OnDestroy {
   drawChart(): void {
     this.timelineChart = new Chart({
       chart: {
-        type: 'spline'
+        type: 'spline',
+        height: this.checkMediaHeight(this.mediaQuery)
       },
       title: {
         text: undefined
@@ -122,6 +129,7 @@ export class TimelineChartComponent implements OnInit, OnDestroy {
         }
       },
       legend: {
+        enabled: this.checkMediaLegend(this.mediaQuery),
         itemHoverStyle: {
           color: '#999999',
         }
@@ -162,6 +170,22 @@ export class TimelineChartComponent implements OnInit, OnDestroy {
         color: '#ffffff' // Hide line symbol
       })
     });
+  }
+
+  // returns the height of the chart based on a media query
+  checkMediaHeight(mediaQuery: MediaQueryList): number {
+    if (mediaQuery.matches) {
+      return 400;
+    }
+    return 600;
+  }
+
+  // hides the legend if the width of the screen is < 700px
+  checkMediaLegend(mediaQuery: MediaQueryList): boolean {
+    if (mediaQuery.matches) {
+      return false;
+    }
+    return true;
   }
 
   onPointClick = (event: any): boolean => {

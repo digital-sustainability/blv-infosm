@@ -24,6 +24,7 @@ export class FrequencyChartComponent implements OnInit, OnDestroy {
   reports: Report[];
   frequencyChart: Chart;
   loaded: boolean;
+  mediaQuery: MediaQueryList = window.matchMedia('(max-width: 700px)');
 
   constructor(
     public translate: TranslateService,
@@ -47,6 +48,11 @@ export class FrequencyChartComponent implements OnInit, OnDestroy {
               texts => {
                 this._trans = texts;
                 this.drawChart(data, 'epidemic', 'animal_species');
+                this.mediaQuery.addEventListener('change', () => {
+                  this.checkMediaHeight(this.mediaQuery);
+                  this.checkMediaLegend(this.mediaQuery);
+                  this.drawChart(data, 'epidemic', 'animal_species');
+                });
               }
             );
         }
@@ -72,7 +78,8 @@ export class FrequencyChartComponent implements OnInit, OnDestroy {
 
     this.frequencyChart = new Chart({
       chart: {
-        type: 'column'
+        type: 'column',
+        height: this.checkMediaHeight(this.mediaQuery)
       },
       title: {
         text: undefined
@@ -95,6 +102,7 @@ export class FrequencyChartComponent implements OnInit, OnDestroy {
         }
       },
       legend: {
+        enabled: this.checkMediaLegend(this.mediaQuery),
         itemWidth: 200,
         itemHoverStyle: {
           color: '#999999',
@@ -125,6 +133,22 @@ export class FrequencyChartComponent implements OnInit, OnDestroy {
           color: '#ffffff' // Hide dot symbol on backgroud
         })
     });
+  }
+
+  // returns the height of the chart based on a media query
+  checkMediaHeight(mediaQuery: MediaQueryList): number {
+    if (mediaQuery.matches) {
+      return 400;
+    }
+    return 700;
+  }
+
+  // hides the legend if the width of the screen is < 700px
+  checkMediaLegend(mediaQuery: MediaQueryList): boolean {
+    if (mediaQuery.matches) {
+      return false;
+    }
+    return true;
   }
 
   // toggle all bars in chart
