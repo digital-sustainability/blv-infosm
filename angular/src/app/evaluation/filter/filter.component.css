@@ -158,17 +158,13 @@ p {
   flex-wrap: wrap;
 }
 
-/* .ngbDp {
-  width: 40%;
-  min-width: 50px;
-} */
-
 .filterButton {
   width: 25%;
 }
 
 .tableInfo{
-  margin-top: 5%
+  margin-top: 5%;
+  margin-left: 0px !important;
 }
 
 .btn.btn-primary:disabled{

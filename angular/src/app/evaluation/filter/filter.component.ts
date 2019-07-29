@@ -171,8 +171,8 @@ export class FilterComponent implements OnInit, OnDestroy {
         // Sets parmas if none detected or one is misssing
         if (!params['lang'] || !params['from'] || !params['to']) {
           const lang = this.translate.currentLang;
-          const from = dayjs().subtract(1, 'y').format('YYYY-MM-DD');
-          const to = dayjs().format('YYYY-MM-DD');
+          const from = dayjs().subtract(2, 'y').format('YYYY-MM-DD');
+          const to = dayjs().subtract(1, 'y').format('YYYY-MM-DD');
           this.updateRouteParams({
             lang: lang,
             from: from,
