@@ -209,7 +209,7 @@ export class FilterComponent implements OnInit, OnDestroy {
       month: today.getMonth() + 1,
       day: today.getDate()
     };
-    this.ngbDatepickerConfig.outsideDays = 'hidden';
+    //this.ngbDatepickerConfig.outsideDays = 'hidden';
 
     // set the initial state of the sorted table
     this.sortDirection = 'asc';
