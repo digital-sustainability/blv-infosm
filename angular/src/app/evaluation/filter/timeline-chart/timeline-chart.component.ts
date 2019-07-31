@@ -30,6 +30,8 @@ export class TimelineChartComponent implements OnInit, OnDestroy {
   private _xAxis: string;
   private _trans: Translations;
   private _timeLineChartData: Line[];
+  private _loadingSub: Subscription;
+
   private _intervals = {
     minYear : 0,
     maxYear : 0,
@@ -43,6 +45,7 @@ export class TimelineChartComponent implements OnInit, OnDestroy {
   timelineChart: Chart;
   paramSub: Subscription;
   mediaQuery: MediaQueryList = window.matchMedia('(max-width: 700px)');
+  loading = true;
 
   constructor(
     public translate: TranslateService,
@@ -65,6 +68,11 @@ export class TimelineChartComponent implements OnInit, OnDestroy {
         this.getIntervalUnit(params['from'], params['to']);
       }
     );
+    this._loadingSub = this._distributeDataService.loadingData.subscribe(
+      loading => this.loading = loading,
+      err => console.log(err),
+
+    )
     // if(this.intervals.minYear === this.intervals.maxYear) {this.isYear = false; }
     this._dataSub = this._distributeDataService.currentData.subscribe(
       data => {
@@ -105,6 +113,7 @@ export class TimelineChartComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this._translationSub.unsubscribe();
     this._dataSub.unsubscribe();
+    this._loadingSub.unsubscribe();
   }
 
   drawChart(): void {
@@ -304,6 +313,7 @@ export class TimelineChartComponent implements OnInit, OnDestroy {
     // Add it as first line
     lines.unshift(tmpAggregatedTarget);
     // Output format: [{ data:[419, 654, 341, 0], name: "Aggregierte Seuchen" }, {...}]
+    this.loading = false;
     return lines;
   }
 

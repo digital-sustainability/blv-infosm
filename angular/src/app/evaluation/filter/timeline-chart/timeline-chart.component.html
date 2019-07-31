@@ -1,5 +1,5 @@
 <div class="main-chart-container" >
-    <div class="chart-holder" *ngIf="reports; else loadingTimelineChart">
+    <div class="chart-holder" *ngIf="!loading; else loadingTimelineChart">
         <div class="chart" [chart]="timelineChart"></div>
         <div class="chart-button-container row justify-content-center">
             <button class="btn btn-primary mx-2 mb-3" type="submit" (click)="onShowEpidemics()">
