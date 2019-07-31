@@ -72,7 +72,7 @@
         "NUMBER": "Numéro du bulletin:",
         "NUMBER_OF_NOTICES": "Nombre de messages",
         "ACTUAL_BULLETIN": "Dernier Bulletin",
-        "FILTER_MESSAGE": "Sélectionnez la date d'un bulletin qui vous intéresse:",
+        "FILTER_MESSAGE": "Cliquez sur une date pour sélectionner la semaine d'un bulletin:",
         "NO_BULLETINS": "Aucun message dans cette période!"
     },
     "BULLETIN-DETAIL": {

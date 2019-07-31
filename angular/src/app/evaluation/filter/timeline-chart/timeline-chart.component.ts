@@ -46,6 +46,7 @@ export class TimelineChartComponent implements OnInit, OnDestroy {
   paramSub: Subscription;
   mediaQuery: MediaQueryList = window.matchMedia('(max-width: 700px)');
   loading = true;
+  activeEmidemics = true;
 
   constructor(
     public translate: TranslateService,
@@ -70,9 +71,8 @@ export class TimelineChartComponent implements OnInit, OnDestroy {
     );
     this._loadingSub = this._distributeDataService.loadingData.subscribe(
       loading => this.loading = loading,
-      err => console.log(err),
-
-    )
+      err => this._notification.errorMessage(err.statusText + '<br>' + 'data service error', err.name),
+    );
     // if(this.intervals.minYear === this.intervals.maxYear) {this.isYear = false; }
     this._dataSub = this._distributeDataService.currentData.subscribe(
       data => {
@@ -445,6 +445,7 @@ export class TimelineChartComponent implements OnInit, OnDestroy {
   }
 
   onShowEpidemics(): void {
+    this.activeEmidemics = !this.activeEmidemics;
     this._timeLineChartData = [];
     this._timeLineChartData = this.extract(this.reports, 'epidemic_group');
     if (this._timeLineChartData) {
@@ -453,6 +454,7 @@ export class TimelineChartComponent implements OnInit, OnDestroy {
   }
 
   onShowAnimals(): void {
+    this.activeEmidemics = !this.activeEmidemics;
     this._timeLineChartData = [];
     this._timeLineChartData = this.extract(this.reports, 'animal_group');
     if (this._timeLineChartData) {

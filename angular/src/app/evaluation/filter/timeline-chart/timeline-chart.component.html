@@ -1,11 +1,13 @@
-<div class="main-chart-container" >
+<div class="main-chart-container">
     <div class="chart-holder" *ngIf="!loading; else loadingTimelineChart">
         <div class="chart" [chart]="timelineChart"></div>
         <div class="chart-button-container row justify-content-center">
-            <button class="btn btn-primary mx-2 mb-3" type="submit" (click)="onShowEpidemics()">
+            <button class="btn btn-primary mx-2 mb-3" [class.activ-btn]="activeEmidemics" type="submit"
+                (click)="onShowEpidemics()">
                 {{ 'EVAL.SHOW_EPIDEMIC_GROUPS' | translate }}
             </button>
-            <button class="btn btn-primary mx-2 mb-3" type="submit" (click)="onShowAnimals()">
+            <button class="btn btn-primary mx-2 mb-3" [class.activ-btn]="!activeEmidemics" type="submit"
+                (click)="onShowAnimals()">
                 {{ 'EVAL.SHOW_ANIMAL_GROUPS' | translate }}
             </button>
         </div>
