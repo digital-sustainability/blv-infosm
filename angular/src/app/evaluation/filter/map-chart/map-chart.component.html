@@ -28,7 +28,7 @@
       <div *ngIf="reportDetails; else selectMe;" class="map-detail">
         <div class="row">
           <div class="col">
-            <p class="m-2">{{ 'EVAL.CLICKED_AREA' | translate }} <strong>{{ detailArea }}</strong></p>
+            <h4 class="m-2">{{ 'EVAL.CLICKED_AREA' | translate }} <strong>{{ detailArea }}</strong></h4>
           </div>
         </div>
         <div *ngIf="detailArea && reportDetails.length === 0" class="row">

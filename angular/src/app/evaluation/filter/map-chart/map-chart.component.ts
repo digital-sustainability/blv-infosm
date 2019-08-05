@@ -159,6 +159,9 @@ export class MapChartComponent implements AfterViewInit, OnDestroy {
                       return id === r.munic_id;
                     }
                   }).length;
+                } else {
+                  this.area = '...';
+                  this.countPerShape = undefined;
                 }
               });
               this.clickSelect.on('select', event => {
