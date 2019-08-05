@@ -72,7 +72,7 @@
         "NUMBER": "Numero del bollettino:",
         "NUMBER_OF_NOTICES": "Numero di messaggi",
         "ACTUAL_BULLETIN": "Ultimo bollettino",
-        "FILTER_MESSAGE": "Seleziona la data di un bollettino di tuo interesse:",
+        "FILTER_MESSAGE": "Clicca su una data per selezionare la settimana di un bollettino:",
         "NO_BULLETINS": "Nessun messaggio in questo periodo!"
     },
     "BULLETIN-DETAIL": {
