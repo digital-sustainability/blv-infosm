@@ -98,6 +98,7 @@ export class MapChartComponent implements AfterViewInit, OnDestroy {
   countPerShape: number;
   detailArea = '. . .';
   reportDetails: Frequency[];
+  activeCanton = true;
 
   // function that is passed to each shape in the layer
   styleFn = (feature: Feature) => {
@@ -201,6 +202,7 @@ export class MapChartComponent implements AfterViewInit, OnDestroy {
   }
 
   onSwitchLayer(layer: OlVectorLayer): void {
+    this.activeCanton = !this.activeCanton;
     this.resetDetails();
     this.map.removeLayer(this.currentLayer);
     this.currentLayer = layer;
