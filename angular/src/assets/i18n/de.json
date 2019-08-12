@@ -78,7 +78,7 @@
     "NUMBER": "Bulletinnummer:",
     "NUMBER_OF_NOTICES": "Anzahl Meldungen",
     "ACTUAL_BULLETIN": "Aktuelles Bulletin",
-    "FILTER_MESSAGE": "Wählen Sie das Datum eines Bulletins, für welches Sie sich interessieren:",
+    "FILTER_MESSAGE": "Klicken Sie auf ein Datum, um die jeweilige Woche eines Bulletins auszuwählen:",
     "NO_BULLETINS": "Keine Meldungen in diesem Zeitraum!"
   },
   "BULLETIN-DETAIL": {

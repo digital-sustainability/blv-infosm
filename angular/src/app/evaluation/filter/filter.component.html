@@ -261,22 +261,22 @@
 <div style="margin-top: 15px; width:100%" class="">
   <div class="">
     <ul class="nav nav-tabs">
+      <li class="chart-tab" id="timeline" [ngClass]="selectedTab === 'timeline' ? 'active' : 'notActive'">
+          <a data-toggle="tab" (click)="onChangeTab('/timeline')">
+            <img src="../assets/img/BLV_infoSM_Icons_High_FINAL_0001_Uhr.png" style="width:25px; height:25px">
+            <span class="hidden-xs ml-2">{{ 'FILTERCHARTS.TIMELINE' | translate }}</span>
+          </a>
+        </li>
       <li class="chart-tab" id="map" [ngClass]="selectedTab === 'map' ? 'active' : 'notActive'">
         <a data-toggle="tab" (click)="onChangeTab('/map')">
-          <mat-icon class="tab-mat-icon">map</mat-icon>
-          <span class="hidden-xs">{{ 'FILTERCHARTS.MAP' | translate }}</span>
+          <img src="../assets/img/BLV_infoSM_Icons_High_FINAL_0000_Karte.png" style="width:40px; height:25px">
+          <span class="hidden-xs ml-2">{{ 'FILTERCHARTS.MAP' | translate }}</span>
         </a>
       </li>
       <li class="chart-tab" id="frequency" [ngClass]="selectedTab === 'frequency' ? 'active' : 'notActive'">
         <a data-toggle="tab" (click)="onChangeTab('/frequency')">
-          <mat-icon class="tab-mat-icon">bar_chart</mat-icon>
-          <span class="hidden-xs">{{ 'FILTERCHARTS.FREQUENCY' | translate }}</span>
-        </a>
-      </li>
-      <li class="chart-tab" id="timeline" [ngClass]="selectedTab === 'timeline' ? 'active' : 'notActive'">
-        <a data-toggle="tab" (click)="onChangeTab('/timeline')">
-          <mat-icon class="tab-mat-icon">timeline</mat-icon>
-          <span class="hidden-xs">{{ 'FILTERCHARTS.TIMELINE' | translate }}</span>
+          <img src="../assets/img/BLV_infoSM_Icons_High_FINAL_0002_chart.png" style="width:40px; height:25px">
+          <span class="hidden-xs ml-2">{{ 'FILTERCHARTS.FREQUENCY' | translate }}</span>
         </a>
       </li>
     </ul>

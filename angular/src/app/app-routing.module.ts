@@ -14,9 +14,9 @@ const routes: Routes = [
     path: 'evaluation',
     component: EvaluationComponent,
     children: [
-      { path: '', redirectTo: 'map', pathMatch: 'full' },
-      { path: 'frequency', component: FrequencyChartComponent },
+      { path: '', redirectTo: 'timeline', pathMatch: 'full' },
       { path: 'timeline', component: TimelineChartComponent },
+      { path: 'frequency', component: FrequencyChartComponent },
       { path: 'map', component: MapChartComponent }
     ]
   },

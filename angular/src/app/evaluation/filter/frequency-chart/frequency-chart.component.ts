@@ -19,12 +19,15 @@ export class FrequencyChartComponent implements OnInit, OnDestroy {
 
   private _dataSub: Subscription;
   private _translationSub: Subscription;
+  private _loadingSub: Subscription;
   private _trans: Translations;
   private _yLabel: string;
   reports: Report[];
   frequencyChart: Chart;
   loaded: boolean;
   mediaQuery: MediaQueryList = window.matchMedia('(max-width: 700px)');
+  loading = true;
+  activeEmidemics = true;
 
   constructor(
     public translate: TranslateService,
@@ -34,6 +37,10 @@ export class FrequencyChartComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit() {
+    this._loadingSub = this._distributeDataServie.loadingData.subscribe(
+      loading => this.loading = loading,
+      err => this._notification.errorMessage(err.statusText + '<br>' + 'data service error', err.name),
+    );
     this._dataSub = this._distributeDataServie.currentData.subscribe(
       (data: Report[]) => {
         this.loaded = true; // stop loading sign if any kind of response from the server
@@ -158,11 +165,13 @@ export class FrequencyChartComponent implements OnInit, OnDestroy {
 
   // display epidemics per animal species
   onShowEpidemics(): void {
+    this.activeEmidemics = !this.activeEmidemics;
     this.drawChart(this.reports, 'epidemic', 'animal_species');
   }
 
   // display animal species per epidemic
   onShowAnimals(): void {
+    this.activeEmidemics = !this.activeEmidemics;
     this.drawChart(this.reports, 'animal_species', 'epidemic');
   }
 
@@ -211,6 +220,7 @@ export class FrequencyChartComponent implements OnInit, OnDestroy {
         tmpObj.data[idx]++;
       }
     });
+    this.loading = false;
     return frequencies;
   }
 

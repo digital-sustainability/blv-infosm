@@ -122,7 +122,6 @@ export class FilterComponent implements OnInit, OnDestroy {
   data: Report[];
   displayedColumns: string[] = ['diagnosis_date', 'canton', 'munic', 'epidemic', 'epidemic_group', 'animal_species'];
   dataSource: MatTableDataSource<[]>;
-  // TODO: TYPES!!!
   beautifiedData: Report[];
   filteredData: any[] = [];
   filterConfig: FilterConfig = {
@@ -209,7 +208,6 @@ export class FilterComponent implements OnInit, OnDestroy {
       month: today.getMonth() + 1,
       day: today.getDate()
     };
-    //this.ngbDatepickerConfig.outsideDays = 'hidden';
 
     // set the initial state of the sorted table
     this.sortDirection = 'asc';

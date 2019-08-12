@@ -28,7 +28,7 @@
       <div *ngIf="reportDetails; else selectMe;" class="map-detail">
         <div class="row">
           <div class="col">
-            <p class="m-2">{{ 'EVAL.CLICKED_AREA' | translate }} <strong>{{ detailArea }}</strong></p>
+            <h4 class="m-2">{{ 'EVAL.CLICKED_AREA' | translate }} <strong>{{ detailArea }}</strong></h4>
           </div>
         </div>
         <div *ngIf="detailArea && reportDetails.length === 0" class="row">
@@ -66,11 +66,11 @@
       </ng-template>
     </div>
     <div class="chart-button-container row justify-content-center">
-      <button class="btn btn-primary mx-2 mb-3" type="submit" (click)="onSwitchLayer(cantonVectorLayer)"
+      <button class="btn btn-primary mx-2 mb-3" type="submit" [class.activ-btn]="activeCanton" (click)="onSwitchLayer(cantonVectorLayer)"
         [disabled]="!cantonVectorLayer">
         {{ 'EVAL.SHOW_CANTONS' | translate }}
       </button>
-      <button class="btn btn-primary mx-2 mb-3" type="submit" (click)="onSwitchLayer(municVectorLayer)"
+      <button class="btn btn-primary mx-2 mb-3" type="submit" [class.activ-btn]="!activeCanton" (click)="onSwitchLayer(municVectorLayer)"
         [disabled]="!municVectorLayer">
         <span *ngIf="municVectorLayer; else gettingMunics">{{ 'EVAL.SHOW_MUNICS' | translate }}</span>
         <ng-template #gettingMunics>
