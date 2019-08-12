@@ -160,7 +160,7 @@ export class FilterComponent implements OnInit, OnDestroy {
     if (match && match.length > 1) {
       this.selectedTab = match[1];
     } else {
-      this.selectedTab = 'map';
+      this.selectedTab = 'timeline';
     }
     this._paramSub = this._route.queryParams.subscribe(
       params => {
