@@ -916,7 +916,7 @@ export class FilterComponent implements OnInit, OnDestroy {
     const dateFrom = dayjs(from);
     const dateTo = dayjs(to);
 
-    console.log('I cached: ', dateTo.diff(dateFrom, 'day'));
+    // console.log('I cached: ', dateTo.diff(dateFrom, 'day'));
     this._distributeDataService.loadData();
     this._dataSub = this._sparqlDataService.getReports(lang, from, to, dateTo.diff(dateFrom, 'day') > 500).subscribe(
        (data: any[]) => {
