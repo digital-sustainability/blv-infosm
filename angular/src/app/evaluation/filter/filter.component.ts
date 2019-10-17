@@ -793,14 +793,14 @@ export class FilterComponent implements OnInit, OnDestroy {
     this.resetFilterOnLangOrPeriodChange();
     this.radioActive = true;
     // TODO: One year too much because we don't have all the data
-    this._filter.to = dayjs().subtract(1, 'y').format('YYYY-MM-DD');
+    this._filter.to = dayjs().format('YYYY-MM-DD');
     switch (option) {
       case ('week'):
-        this._filter.from = dayjs().subtract(7, 'd').format('YYYY-MM-DD'); break;
+        this._filter.from = dayjs().subtract(1, 'week').format('YYYY-MM-DD'); break;
       case ('month'):
-        this._filter.from = dayjs().subtract(1, 'm').format('YYYY-MM-DD'); break;
+        this._filter.from = dayjs().subtract(1, 'month').format('YYYY-MM-DD'); break;
       case ('year'): // TODO: One year too much because we don't have all the data
-        this._filter.from = dayjs().subtract(2, 'y').format('YYYY-MM-DD'); break;
+        this._filter.from = dayjs().subtract(1, 'y').format('YYYY-MM-DD'); break;
       case ('threeYears'):
         this._filter.from = dayjs().subtract(3, 'y').format('YYYY-MM-DD'); break;
       case ('whole'):
@@ -1080,27 +1080,3 @@ export class FilterComponent implements OnInit, OnDestroy {
     return niceItems;
   }
 }
-
- // this.selectedCantons = [];
-    // this.selectedMunic = [];
-    // this.selectedEpidemicG = [];
-    // this.selectedEpidemic = [];
-    // this.selectedAnimalG = [];
-    // this.selectedAnimal = []
-
-    // the currently selected items for every input field
-  // selectedCantons = [];
-  // selectedMunic = [];
-  // selectedEpidemicG = [];
-  // selectedEpidemic = [];
-  // selectedAnimalG = [];
-  // selectedAnimal = []
-
-   // this.possibleSelections.canton = uniq(map(filteredData, 'canton')).sort();
-      // this.possibleSelections.munic = uniq(map(filteredData, 'munic')).sort();
-
-      // this.possibleSelections.epidemic_group = uniq(map(filteredData, 'epidemic_group')).sort();
-      // this.possibleSelections.epidemic = uniq(map(filteredData, 'epidemic')).sort();
-
-      // this.possibleSelections.animal_group = uniq(map(filteredData, 'animal_group')).sort();
-      // this.possibleSelections.animal_species = uniq(map(filteredData, 'animal_species')).sort();

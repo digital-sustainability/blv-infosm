@@ -9,18 +9,15 @@
         <div style="margin:1%">{{ 'FILTER.TIME_INFO' | translate }}</div>
         <div class = "border">
         <fieldset>
-          <!-- last week and last month disabled since we dont have this data at the moment -->
           <div class="radio radio--left">
             <label for="radio">
-              <input type="radio" name="radios" class="radio" id="radio1" value="radio1" (click)="onChangeDate('week')"
-                disabled>
+              <input type="radio" name="radios" class="radio" id="radio1" value="radio1" (click)="onChangeDate('week')">
               {{ 'FILTER.LASTWEEK' | translate }}
             </label>
           </div>
           <div class="radio radio--left">
             <label for="radio2">
-              <input type="radio" name="radios" class="radio" id="radio2" value="radio2" (click)="onChangeDate('month')"
-                disabled>
+              <input type="radio" name="radios" class="radio" id="radio2" value="radio2" (click)="onChangeDate('month')">
               {{ 'FILTER.LASTMONTH' | translate }}
             </label>
           </div>
