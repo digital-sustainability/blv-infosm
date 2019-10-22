@@ -23,7 +23,7 @@
           </div>
           <div class="radio radio--left">
             <label for="radio3">
-              <input type="radio" name="radios" class="radio" id="radio3" value="radio3" (click)="onChangeDate('year')">
+              <input type="radio" name="radios" class="radio" id="radio3" value="radio3" (click)="onChangeDate('year')" checked>
               {{ 'FILTER.LASTYEAR' | translate }}
             </label>
           </div>
@@ -73,7 +73,7 @@
             </div>
             <div class="input-group col-12 col-sm-2 col-md-2 col-lg-2 marginInputs filterSpecific">
               <button class="btn btn-primary filterBut" type="submit"
-              (click)="onGetFromToDates(from, to)">{{'FILTER.FILTER_ACTION' | translate}}
+              (click)="onGetFromToDates()">{{'FILTER.FILTER_ACTION' | translate}}
               </button>
             </div>
           </div>

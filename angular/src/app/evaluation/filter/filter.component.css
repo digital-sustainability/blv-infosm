@@ -126,10 +126,6 @@ p {
     padding-bottom: 5px;
     width:150px;
   }
-
-  .filterBut {
-    width: 45%;
-  }
   
 }
 
@@ -162,7 +158,7 @@ p {
   width: 25%;
 }
 
-.tableInfo{
+.tableInfo {
   margin-top: 5%;
   margin-left: 0px !important;
 }

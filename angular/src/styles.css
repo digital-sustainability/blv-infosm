@@ -66,19 +66,31 @@ input[type=radio]:focus,
 }
 
 ul.nav.nav-tabs {
-  width: 100%
+  width: 100%;
 }
 
 .btn.btn-primary:hover,
 .btn.btn-primary:active,
 .btn.btn-primary:focus {
   background-color: #D8E8EF;
-  color: #454545
+  color: #454545;
 }
 
 .btn.btn-primary:active {
   background-color: #D8E8EF;
-   color: #454545
+   color: #454545;
+}
+
+.btn.btn-danger:hover,
+.btn.btn-danger:active,
+.btn.btn-danger:focus {
+  background-color: #FF3232;
+  color: white;
+}
+
+.btn.btn-danger:active {
+  background-color: #FF3232;
+   color: white;
 }
 
 .download-mat-icon {
