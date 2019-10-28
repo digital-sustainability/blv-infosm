@@ -5,7 +5,7 @@ const path = require('path');
 const querystring = require('querystring');
 const requests = require('request');
 const BadRequestError = require('http-errors').BadRequestError;
-const config = require('./config/config').config;
+const config = require('./config/config');
 
 const app = express();
 
