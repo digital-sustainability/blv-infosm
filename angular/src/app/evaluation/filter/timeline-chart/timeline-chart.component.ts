@@ -46,7 +46,7 @@ export class TimelineChartComponent implements OnInit, OnDestroy {
   paramSub: Subscription;
   mediaQuery: MediaQueryList = window.matchMedia('(max-width: 700px)');
   loading = true;
-  activeEmidemics = true;
+  activeEmidemics: boolean;
 
   constructor(
     public translate: TranslateService,
@@ -96,6 +96,7 @@ export class TimelineChartComponent implements OnInit, OnDestroy {
                 this._trans = texts;
                 this._timeLineChartData = this.extract(data, 'epidemic_group');
                 this.drawChart();
+                this.activeEmidemics = true;
                 this.mediaQuery.addEventListener('change', () => {
                   this.checkMediaHeight(this.mediaQuery);
                   this.checkMediaLegend(this.mediaQuery);

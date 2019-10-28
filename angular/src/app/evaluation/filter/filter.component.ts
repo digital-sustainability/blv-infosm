@@ -194,6 +194,7 @@ export class FilterComponent implements OnInit, OnDestroy {
         if (this._filter.lang !== lang) {
           this.updateRouteParams({ lang: lang });
           this.resetFilterOnLangOrPeriodChange();
+          this.removeErrors();
         }
       }, err => {
         // TODO: Imporve error handling
@@ -480,12 +481,7 @@ export class FilterComponent implements OnInit, OnDestroy {
       case 'animal_group': return this.selectAnig;
       case 'animal_species': return this.selectAni;
     }
-
   }
-
-  // onClearAll(formControlName: string, form: FormGroup): void {
-  //   form.get(formControlName).patchValue([]);
-  // }
 
   /**
    * Determines dynamically the properties hierarchy and position of the FIlterConfig and disables
@@ -824,11 +820,9 @@ export class FilterComponent implements OnInit, OnDestroy {
   }
 
   // Changes the date based on the datepickers and validates the input in the date picker.
-  onGetFromToDates(from: NgbDate, to: NgbDate): void {
+  onGetFromToDates(): void {
     const fromdate = this.retransformDate(this.datepickerFrom['_inputValue']);
     const todate = this.retransformDate(this.datepickerTo['_inputValue']);
-    // const fromdate = dayjs(from.year + '-' + from.month + '-' + from.day).format('YYYY-MM-DD');
-    // const todate = dayjs(to.year + '-' + to.month + '-' + to.day).format('YYYY-MM-DD');
     const dateOfFirstEntry = dayjs('1991-01-15').format('YYYY-MM-DD');
     const today = dayjs().format('YYYY-MM-DD');
     this.removeErrors();
@@ -915,8 +909,6 @@ export class FilterComponent implements OnInit, OnDestroy {
     // set caching if data period is larger than 500 days
     const dateFrom = dayjs(from);
     const dateTo = dayjs(to);
-
-    // console.log('I cached: ', dateTo.diff(dateFrom, 'day'));
     this._distributeDataService.loadData();
     this._dataSub = this._sparqlDataService.getReports(lang, from, to, dateTo.diff(dateFrom, 'day') > 500).subscribe(
        (data: any[]) => {

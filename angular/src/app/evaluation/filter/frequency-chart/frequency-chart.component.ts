@@ -27,7 +27,7 @@ export class FrequencyChartComponent implements OnInit, OnDestroy {
   loaded: boolean;
   mediaQuery: MediaQueryList = window.matchMedia('(max-width: 700px)');
   loading = true;
-  activeEmidemics = true;
+  activeEmidemics: boolean;
 
   constructor(
     public translate: TranslateService,
@@ -54,6 +54,7 @@ export class FrequencyChartComponent implements OnInit, OnDestroy {
             ]).subscribe(
               texts => {
                 this._trans = texts;
+                this.activeEmidemics = true;
                 this.drawChart(data, 'epidemic', 'animal_species');
                 this.mediaQuery.addEventListener('change', () => {
                   this.checkMediaHeight(this.mediaQuery);
