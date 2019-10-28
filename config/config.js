@@ -1,6 +1,9 @@
 const config = {
     use_cors: true,
-    origin: ['http://piwik.fdn.iwi.unibe.ch/'],
+    origin: [
+        'http://piwik.fdn.iwi.unibe.ch/',
+        'https://piwik.fdn.iwi.unibe.ch/'
+    ],
     port: 5000
 };
 
