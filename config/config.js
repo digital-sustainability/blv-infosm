@@ -1,6 +1,7 @@
-const prodConfig = {
-    cors: false,
+const config = {
+    use_cors: true,
+    origin: ['http://piwik.fdn.iwi.unibe.ch/'],
+    port: 5000
 };
 
-console.log(process.env);
-module.exports = process.env.NODE_ENV === 'production' ? prodConfig : require('./devConfig');
+module.exports = process.env.NODE_ENV === 'production' ? config : require('./devConfig');

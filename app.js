@@ -5,7 +5,7 @@ const path = require('path');
 const querystring = require('querystring');
 const requests = require('request');
 const BadRequestError = require('http-errors').BadRequestError;
-const config = require('./config/config');
+const config = require('./config/config').config;
 
 const app = express();
 
@@ -20,7 +20,9 @@ const wrap = fn => (...args) => fn(...args).catch(args[2]);
 // zip all requests
 app.use(compression());
 // open cors in development mode
-if (config.cors) app.use(cors());
+if (config.use_cors) {
+    app.use(cors({ origin: config.origin ? config.origin : '*' }));
+}
 app.use('/node_modules', express.static(__dirname + '/node_modules/'));
 app.use(express.static(path.join(__dirname, 'dist')));
 
@@ -80,6 +82,6 @@ app.get('/*', (req, res) => {
 });
 
 // set default port
-app.listen(5000, () => {
-    console.log('App listening on port 5000');
+app.listen(config.port, () => {
+    console.log(`App listening on port ${config.port}`);
 });
