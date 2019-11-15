@@ -20,9 +20,8 @@ const wrap = fn => (...args) => fn(...args).catch(args[2]);
 // zip all requests
 app.use(compression());
 // open cors in development mode
-if (config.use_cors) {
-    app.use(cors({ origin: config.origin ? config.origin : '*' }));
-}
+app.use(cors({ origin: config.use_cors ? config.origin : '*' }));
+console.log('|===> ', config.use_cors ? config.origin : '*' )
 app.use('/node_modules', express.static(__dirname + '/node_modules/'));
 app.use(express.static(path.join(__dirname, 'dist')));
 
