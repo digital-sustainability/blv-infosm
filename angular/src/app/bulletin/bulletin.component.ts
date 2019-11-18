@@ -48,7 +48,7 @@ export class BulletinComponent implements OnInit, OnDestroy {
   model: NgbDateStruct;
   maxDate: NgbDateStruct;
   startDate: NgbDateStruct;
-  displayedCols = ['diagnosis_date', 'canton', 'munic', 'epidemic_group', 'epidemic', 'animal_species', 'count'];
+  displayedCols = ['publication_date', 'canton', 'munic', 'epidemic_group', 'epidemic', 'animal_species', 'count'];
   bulletinNumber: string;
   bulletinEntries: Report[];
   dataS: MatTableDataSource<[]>;
@@ -156,7 +156,7 @@ export class BulletinComponent implements OnInit, OnDestroy {
     const parsedToDate = this.dateToInt(to);
     const foundEntriesOfBulletin: Report[] = [];
     for (const entry of data) {
-      const parsedDateOfEntry = this.dateToInt(entry['diagnosis_date']);
+      const parsedDateOfEntry = this.dateToInt(entry['publication_date']);
       if (inRange(parsedDateOfEntry, parsedFromDate, parsedToDate)) {
         entry.count = 1;
         foundEntriesOfBulletin.push(entry);
@@ -218,21 +218,29 @@ export class BulletinComponent implements OnInit, OnDestroy {
     this.dataS.paginator = this.paginator;
     if (this.bulletinEntries.length > 0) {
       this.sort.sort(<MatSortable>{
-        id: 'diagnosis_date',
+        id: 'publication_date',
         start: 'desc'
       });
     }
     this.dataS.sort = this.sort;
   }
 
+  /**
+   * Main data retrieval method. Query data as `Report` from remote endpoint.
+   * The received data is transfomed into a more descriptive collection.
+   *
+   * @param lang Language in which the data is queried
+   * @param from Date from which on the disease was published
+   * @param to Date to which the disease might have been published
+   */
   private getList(lang: string, from: string | Date, to: string | Date): void {
-    this._dataSub = this._sparqlDataService.getReports(lang, from, to).subscribe(
+    this._dataSub = this._sparqlDataService.getReports('publikations_datum', lang, from, to).subscribe(
       data => {
         this.noData = data.length === 0;
         this.data = this.beautifyDataObject(
           data.map(report => {
             return {
-              diagnosis_date: report.diagnose_datum.value,
+              publication_date: report.publikations_datum.value,
               canton: report.kanton.value,
               munic: report.gemeinde.value,
               epidemic_group: report.seuchen_gruppe.value,
@@ -259,14 +267,13 @@ export class BulletinComponent implements OnInit, OnDestroy {
 
   private beautifyDataObject(data: Report[]): Report[] {
     return data.sort((a, b) => {
-      const adate = new Date(a['diagnosis_date']);
-      const bdate = new Date(b['diagnosis_date']);
+      const adate = new Date(a['publication_date']);
+      const bdate = new Date(b['publication_date']);
       return (adate < bdate) ? -1 : (adate > bdate) ? 1 : 0;
     });
   }
 
   private updateInput(changes: { [s: string]: string; }, oldState: ParamState): void {
-    // TODO: check if old an new state are the same
     if (JSON.stringify(changes) !== JSON.stringify(oldState)) {
        this._paramState = this._paramsService.updateRouteParams(changes, oldState);
        this.getList(this._paramState.lang, this._paramState.from, this._paramState.to);

@@ -10,6 +10,10 @@ const config = require('./config/config');
 const app = express();
 
 /**
+ * MIDDLEWARE
+ */
+
+/**
  * Wrapper function propagetes err to error handling.
  * First (...args) so function is not evoked emediatly.
  * Only works for async functions.
@@ -21,7 +25,6 @@ const wrap = fn => (...args) => fn(...args).catch(args[2]);
 app.use(compression());
 // open cors in development mode
 app.use(cors({ origin: config.use_cors ? config.origin : '*' }));
-console.log('|===> ', config.use_cors ? config.origin : '*' )
 app.use('/node_modules', express.static(__dirname + '/node_modules/'));
 app.use(express.static(path.join(__dirname, 'dist')));
 
@@ -31,6 +34,10 @@ app.use((err, req, res, next) => {
         return res.status(500).json(err);
     }
 })
+
+/**
+ * ROUTES
+ */
 
 // serve angular index.html
 app.get('/', (req, res) => {

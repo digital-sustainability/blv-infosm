@@ -1,5 +1,6 @@
 export interface Report {
     diagnosis_date: string | Date;
+    publication_date: string | Date;
     canton: string;
     munic: string;
     killed: number;

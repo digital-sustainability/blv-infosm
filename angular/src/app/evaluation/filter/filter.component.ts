@@ -910,34 +910,35 @@ export class FilterComponent implements OnInit, OnDestroy {
     const dateFrom = dayjs(from);
     const dateTo = dayjs(to);
     this._distributeDataService.loadData();
-    this._dataSub = this._sparqlDataService.getReports(lang, from, to, dateTo.diff(dateFrom, 'day') > 500).subscribe(
-       (data: any[]) => {
-        this.beautifiedData = data.map(d => {
-          return {
-            diagnosis_date: d.diagnose_datum.value,
-            canton: d.kanton.value,
-            canton_id: Number(d.canton_id.value),
-            munic: d.gemeinde.value,
-            munic_id: Number(d.munic_id.value),
-            epidemic_group: d.seuchen_gruppe.value,
-            epidemic: d.seuche.value,
-            // Capitalize first letter
-            animal_group: d.tier_gruppe.value[0].toUpperCase() + d.tier_gruppe.value.slice(1),
-            animal_species: d.tierart.value[0].toUpperCase() + d.tierart.value.slice(1)
-          } as Report;
-        });
-        this.getTranslations();
-        this.getAllPossibleValues(lang);
-        this.filteredData = this.filterDataObjectBasedOnEventData(this.beautifiedData, this.filterConfig);
+    this._dataSub = this._sparqlDataService.getReports('diagnose_datum', lang, from, to, dateTo.diff(dateFrom, 'day') > 500)
+      .subscribe(
+         (data: any[]) => {
+          this.beautifiedData = data.map(d => {
+            return {
+              diagnosis_date: d.diagnose_datum.value,
+              canton: d.kanton.value,
+              canton_id: Number(d.canton_id.value),
+              munic: d.gemeinde.value,
+              munic_id: Number(d.munic_id.value),
+              epidemic_group: d.seuchen_gruppe.value,
+              epidemic: d.seuche.value,
+              // Capitalize first letter
+              animal_group: d.tier_gruppe.value[0].toUpperCase() + d.tier_gruppe.value.slice(1),
+              animal_species: d.tierart.value[0].toUpperCase() + d.tierart.value.slice(1)
+            } as Report;
+          });
+          this.getTranslations();
+          this.getAllPossibleValues(lang);
+          this.filteredData = this.filterDataObjectBasedOnEventData(this.beautifiedData, this.filterConfig);
 
-        this._distributeDataService.updateData(this.filteredData, from, to);
-        this.extractFilterParts(this.filteredData);
-        this.constructTable(this.filteredData);
+          this._distributeDataService.updateData(this.filteredData, from, to);
+          this.extractFilterParts(this.filteredData);
+          this.constructTable(this.filteredData);
 
-        // Set `from` and `to` for datepicker to match the current date selection
-        this.from = this.transformDate(from);
-        this.to = this.transformDate(to);
-      }, err => {
+          // Set `from` and `to` for datepicker to match the current date selection
+          this.from = this.transformDate(from);
+          this.to = this.transformDate(to);
+        }, err => {
         this._notification.errorMessage(err.statusText + '<br>' + 'reports error', err.name);
         // TODO: Imporve error handling
       });

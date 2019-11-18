@@ -37,10 +37,10 @@
   
     <div class="table" [hidden]="noData">
       <mat-table class="mat-elevation-z1" [dataSource]="dataS" matSort>
-        <ng-container matColumnDef="diagnosis_date">
-          <mat-header-cell *matHeaderCellDef mat-sort-header> <strong>{{ 'EVAL.DIAGNOSIS_DATE' | translate }}</strong>
+        <ng-container matColumnDef="publication_date">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> <strong>{{ 'EVAL.PUBLICATION_DATE' | translate }}</strong>
           </mat-header-cell>
-          <mat-cell *matCellDef="let element"> {{element.diagnosis_date | chDate }} </mat-cell>
+          <mat-cell *matCellDef="let element"> {{element.publication_date | chDate }} </mat-cell>
         </ng-container>
   
         <ng-container matColumnDef="canton">

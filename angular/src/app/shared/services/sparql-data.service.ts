@@ -30,12 +30,18 @@ PREFIX schema: <http://schema.org/>
     private http: HttpClient,
     ) { }
 
-  getReports(lang: string, from: string | Date, to: string | Date, useCaching = false): Observable<any> {
+  getReports(
+    by: 'diagnose_datum' | 'publikations_datum',
+    lang: string,
+    from: string | Date,
+    to: string | Date,
+    useCaching = false): Observable<any> {
     const query = `${this._prefix}
     SELECT *
     FROM <https://linked.opendata.swiss/graph/blv/animalpest> WHERE {
     ?sub a qb:Observation ;
     blv-attribute:diagnose-date ?diagnose_datum ;
+    blv-attribute:release-internet ?publikations_datum ;
     blv-attribute:canton/dcterms:identifier ?canton_id ;
     blv-attribute:canton/rdfs:label ?kanton ;
     blv-attribute:municipality/dcterms:identifier ?munic_id ;
@@ -52,8 +58,8 @@ PREFIX schema: <http://schema.org/>
 FILTER(langMatches(lang(?tierart), "${lang}"))
 FILTER(langMatches(lang(?seuche), "${lang}"))
 FILTER(langMatches(lang(?seuchen_gruppe), "${lang}"))
-FILTER(langMatches(lang(?tier_gruppe), "${lang }"))
-FILTER (?diagnose_datum >= "${this.checkDate(from)}"^^xsd:date && ?diagnose_datum <="${this.checkDate(to)}"^^xsd:date)
+FILTER(langMatches(lang(?tier_gruppe), "${lang}"))
+FILTER (?${by} >= "${this.checkDate(from)}"^^xsd:date && ?${by} <="${this.checkDate(to)}"^^xsd:date)
 }`;
 
     const params = new HttpParams()
