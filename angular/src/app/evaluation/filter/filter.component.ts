@@ -4,7 +4,6 @@ import { Report } from '../../shared/models/report.model';
 import { NgbDate } from '../../shared/models/ngb-date.model';
 import { InputField } from '../../shared/models/inputfield.model';
 import { LanguageService } from 'src/app/shared/services/language.service';
-import { Subscription } from 'rxjs';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort, MatSortable } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
@@ -20,6 +19,7 @@ import { Translations } from '../../shared/models/translations.model';
 import { FilterConfig } from '../../shared/models/filterConfig.model';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import dayjs from 'dayjs';
+import { SubscriptionManagerService } from 'src/app/shared/services/subscription-manager.service';
 declare let $: any;
 
 @Component({
@@ -44,17 +44,6 @@ export class FilterComponent implements OnInit, OnDestroy {
 
   from: NgbDate;
   to: NgbDate;
-
-  private _translationSub: Subscription;
-  private _paramSub: Subscription;
-  private _langSub: Subscription;
-  private _dataSub: Subscription;
-  private _cantonsSub: Subscription;
-  private _municSub: Subscription;
-  private _epidemicsGroupSub: Subscription;
-  private _animalsGroupSub: Subscription;
-  private _animalsSub: Subscription;
-  private _epidemicsSub: Subscription;
 
   _filter = {
     lang: '',
@@ -149,7 +138,8 @@ export class FilterComponent implements OnInit, OnDestroy {
     private _notification: NotificationService,
     public translate: TranslateService,
     public ngbDatepickerConfig: NgbDatepickerConfig,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private _subscriptionManagerService: SubscriptionManagerService,
   ) { }
 
   ngOnInit() {
@@ -161,45 +151,46 @@ export class FilterComponent implements OnInit, OnDestroy {
     } else {
       this.selectedTab = 'timeline';
     }
-    this._paramSub = this._route.queryParams.subscribe(
-      params => {
-        this._filter.lang = params['lang'];
-        this._filter.from = params['from'];
-        this._filter.to = params['to'];
+    this._subscriptionManagerService.add(
+      this._route.queryParams.subscribe(
+        params => {
+          this._filter.lang = params['lang'];
+          this._filter.from = params['from'];
+          this._filter.to = params['to'];
 
-        // Sets parmas if none detected or one is misssing
-        if (!params['lang'] || !params['from'] || !params['to']) {
-          const lang = this.translate.currentLang;
-          const from = dayjs().subtract(2, 'y').format('YYYY-MM-DD');
-          const to = dayjs().subtract(1, 'y').format('YYYY-MM-DD');
-          this.updateRouteParams({
-            lang: lang,
-            from: from,
-            to: to
-          });
-          this.getList(this._filter.lang, this._filter.from, this._filter.to);
-        } else {
-          // Load data according to URL-input by user
-          this.getList(this._filter.lang, this._filter.from, this._filter.to);
-          if (this._filter.lang !== this.translate.currentLang) {
-            this._langauageService.changeLang(this._filter.lang);
+          // Sets parmas if none detected or one is misssing
+          if (!params['lang'] || !params['from'] || !params['to']) {
+            const lang = this.translate.currentLang;
+            const from = dayjs().subtract(2, 'y').format('YYYY-MM-DD');
+            const to = dayjs().subtract(1, 'y').format('YYYY-MM-DD');
+            this.updateRouteParams({
+              lang: lang,
+              from: from,
+              to: to
+            });
+            this.getList(this._filter.lang, this._filter.from, this._filter.to);
+          } else {
+            // Load data according to URL-input by user
+            this.getList(this._filter.lang, this._filter.from, this._filter.to);
+            if (this._filter.lang !== this.translate.currentLang) {
+              this._langauageService.changeLang(this._filter.lang);
+            }
           }
         }
-      }
-    );
-
-    // If the languare changes through click, update param
-    this._langSub = this._langauageService.currentLang.subscribe(
-      lang => {
-        if (this._filter.lang !== lang) {
-          this.updateRouteParams({ lang: lang });
-          this.resetFilterOnLangOrPeriodChange();
-          this.removeErrors();
+      ),
+      // If the languare changes through click, update param
+      this._langauageService.currentLang.subscribe(
+        lang => {
+          if (this._filter.lang !== lang) {
+            this.updateRouteParams({ lang: lang });
+            this.resetFilterOnLangOrPeriodChange();
+            this.removeErrors();
+          }
+        }, err => {
+          // TODO: Imporve error handling
+          this._notification.errorMessage(err.statusText + '<br>' + 'language error', err.name);
         }
-      }, err => {
-        // TODO: Imporve error handling
-        this._notification.errorMessage(err.statusText + '<br>' + 'language error', err.name);
-      }
+      )
     );
 
     const today = new Date();
@@ -229,16 +220,7 @@ export class FilterComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this._langSub.unsubscribe();
-    this._dataSub.unsubscribe();
-    this._paramSub.unsubscribe();
-    this._animalsGroupSub.unsubscribe();
-    this._animalsSub.unsubscribe();
-    this._cantonsSub.unsubscribe();
-    this._epidemicsGroupSub.unsubscribe();
-    this._epidemicsSub.unsubscribe();
-    this._municSub.unsubscribe();
-    this._translationSub.unsubscribe();
+    this._subscriptionManagerService.unsubscribe();
   }
 
  /**
@@ -910,73 +892,75 @@ export class FilterComponent implements OnInit, OnDestroy {
     const dateFrom = dayjs(from);
     const dateTo = dayjs(to);
     this._distributeDataService.loadData();
-    this._dataSub = this._sparqlDataService.getReports('diagnose_datum', lang, from, to, dateTo.diff(dateFrom, 'day') > 500)
-      .subscribe(
-         (data: any[]) => {
-          this.beautifiedData = data.map(d => {
-            return {
-              diagnosis_date: d.diagnose_datum.value,
-              canton: d.kanton.value,
-              canton_id: Number(d.canton_id.value),
-              munic: d.gemeinde.value,
-              munic_id: Number(d.munic_id.value),
-              epidemic_group: d.seuchen_gruppe.value,
-              epidemic: d.seuche.value,
-              // Capitalize first letter
-              animal_group: d.tier_gruppe.value[0].toUpperCase() + d.tier_gruppe.value.slice(1),
-              animal_species: d.tierart.value[0].toUpperCase() + d.tierart.value.slice(1)
-            } as Report;
-          });
-          this.getTranslations();
-          this.getAllPossibleValues(lang);
-          this.filteredData = this.filterDataObjectBasedOnEventData(this.beautifiedData, this.filterConfig);
+    this._subscriptionManagerService.add(
+      this._sparqlDataService.getReports('diagnose_datum', lang, from, to, dateTo.diff(dateFrom, 'day') > 500)
+        .subscribe(
+           (data: any[]) => {
+            this.beautifiedData = data.map(d => {
+              return {
+                diagnosis_date: d.diagnose_datum.value,
+                canton: d.kanton.value,
+                canton_id: Number(d.canton_id.value),
+                munic: d.gemeinde.value,
+                munic_id: Number(d.munic_id.value),
+                epidemic_group: d.seuchen_gruppe.value,
+                epidemic: d.seuche.value,
+                // Capitalize first letter
+                animal_group: d.tier_gruppe.value[0].toUpperCase() + d.tier_gruppe.value.slice(1),
+                animal_species: d.tierart.value[0].toUpperCase() + d.tierart.value.slice(1)
+              } as Report;
+            });
+            this.getTranslations();
+            this.getAllPossibleValues(lang);
+            this.filteredData = this.filterDataObjectBasedOnEventData(this.beautifiedData, this.filterConfig);
 
-          this._distributeDataService.updateData(this.filteredData, from, to);
-          this.extractFilterParts(this.filteredData);
-          this.constructTable(this.filteredData);
+            this._distributeDataService.updateData(this.filteredData, from, to);
+            this.extractFilterParts(this.filteredData);
+            this.constructTable(this.filteredData);
 
-          // Set `from` and `to` for datepicker to match the current date selection
-          this.from = this.transformDate(from);
-          this.to = this.transformDate(to);
-        }, err => {
-        this._notification.errorMessage(err.statusText + '<br>' + 'reports error', err.name);
-        // TODO: Imporve error handling
-      });
+            // Set `from` and `to` for datepicker to match the current date selection
+            this.from = this.transformDate(from);
+            this.to = this.transformDate(to);
+          }, err => {
+          this._notification.errorMessage(err.statusText + '<br>' + 'reports error', err.name);
+          // TODO: Imporve error handling
+        }
+      )
+    );
   }
 
   checkSelectedAll(filterType: string): boolean {
-    if (this.filterConfig[filterType].filter.length === 0) {
-      return false;
-    }
-    return true;
+    return !(this.filterConfig[filterType].filter.length === 0);
   }
 
   private getTranslations(): void {
-    this._translationSub = this.translate.get([
-      'FILTER.DATE_COMPARE_ERROR',
-      'FILTER.DATE_PERIOD_ERROR',
-      'FILTER.DATE_FROM_ERROR',
-      'FILTER.DATE_TO_ERROR',
-      'FILTER.DATE_FORMAT_ERROR',
-      'EVAL.DATE_WRONG_ORDER',
-      'EVAL.DATE_WRONG_FORMAT',
-      'EVAL.DATE_TOO_SMALL',
-      'EVAL.DATE_FROM_WRONG_RANGE',
-      'EVAL.DATE_TO_WRONG_RANGE',
-      'EVAL.ORDER_DESCENDING',
-      'EVAL.ORDER_ASCENDING',
-      'EVAL.ORDER_BY',
-      'EVAL.VISU_DATA',
-      'EVAL.CANTON',
-      'EVAL.MUNICIPALITY',
-      'EVAL.PEST',
-      'EVAL.PEST_GROUP',
-      'EVAL.ANIMAL_SPECIES',
-      'EVAL.DIAGNOSIS_DATE']).subscribe(
-        texts => {
-          this.trans = texts;
-          this.sortItem = this.trans['EVAL.DIAGNOSIS_DATE'];
-      }
+    this._subscriptionManagerService.add(
+      this.translate.get([
+        'FILTER.DATE_COMPARE_ERROR',
+        'FILTER.DATE_PERIOD_ERROR',
+        'FILTER.DATE_FROM_ERROR',
+        'FILTER.DATE_TO_ERROR',
+        'FILTER.DATE_FORMAT_ERROR',
+        'EVAL.DATE_WRONG_ORDER',
+        'EVAL.DATE_WRONG_FORMAT',
+        'EVAL.DATE_TOO_SMALL',
+        'EVAL.DATE_FROM_WRONG_RANGE',
+        'EVAL.DATE_TO_WRONG_RANGE',
+        'EVAL.ORDER_DESCENDING',
+        'EVAL.ORDER_ASCENDING',
+        'EVAL.ORDER_BY',
+        'EVAL.VISU_DATA',
+        'EVAL.CANTON',
+        'EVAL.MUNICIPALITY',
+        'EVAL.PEST',
+        'EVAL.PEST_GROUP',
+        'EVAL.ANIMAL_SPECIES',
+        'EVAL.DIAGNOSIS_DATE']).subscribe(
+          texts => {
+            this.trans = texts;
+            this.sortItem = this.trans['EVAL.DIAGNOSIS_DATE'];
+        }
+      )
     );
   }
 
@@ -990,74 +974,86 @@ export class FilterComponent implements OnInit, OnDestroy {
   }
 
   private getUniqueCantons(): void {
-    this._cantonsSub = this._sparqlDataService.getUniqueCantons().subscribe(
-      uniqueCantons => {
-        this.allCantons = this.beautifyItems(uniqueCantons, 'kanton');
-        this.inputCantons = this.constructItemList(this.possibleSelections.canton, this.allCantons);
-        this.loadCanton = false;
-      }, err => {
-        this._notification.errorMessage(err.statusText + '<br>' + 'unique cantons error' , err.name);
-      }
+    this._subscriptionManagerService.add(
+      this._sparqlDataService.getUniqueCantons().subscribe(
+        uniqueCantons => {
+          this.allCantons = this.beautifyItems(uniqueCantons, 'kanton');
+          this.inputCantons = this.constructItemList(this.possibleSelections.canton, this.allCantons);
+          this.loadCanton = false;
+        }, err => {
+          this._notification.errorMessage(err.statusText + '<br>' + 'unique cantons error' , err.name);
+        }
+      )
     );
   }
 
   private getUniqueMunicipalities(): void {
-    this._municSub = this._sparqlDataService.getUniqueMunicipalities().subscribe(
-      uniqueMunic => {
-        this.allCommunities = this.beautifyItems(uniqueMunic, 'gemeinde');
-        this.inputCommunities = this.constructItemList(this.possibleSelections.munic, this.allCommunities);
-        this.loadMunic = false;
-      }, err => {
-        this._notification.errorMessage(err.statusText + '<br>' + 'unique municipalities error', err.name);
-      }
+    this._subscriptionManagerService.add(
+      this._sparqlDataService.getUniqueMunicipalities().subscribe(
+        uniqueMunic => {
+          this.allCommunities = this.beautifyItems(uniqueMunic, 'gemeinde');
+          this.inputCommunities = this.constructItemList(this.possibleSelections.munic, this.allCommunities);
+          this.loadMunic = false;
+        }, err => {
+          this._notification.errorMessage(err.statusText + '<br>' + 'unique municipalities error', err.name);
+        }
+      )
     );
   }
 
   private getUniqueEpidemicGroups(lang: string): void {
-    this._epidemicsGroupSub = this._sparqlDataService.getUniqueEpidemicGroups(lang).subscribe(
-      uniqueEpidGroup => {
-        this.allEpidemicsGroups = this.beautifyItems(uniqueEpidGroup, 'seuchen_gruppe');
-        this.inputEpidemicsGroup = this.constructItemList(this.possibleSelections.epidemic_group, this.allEpidemicsGroups);
-        this.loadEpidemicG = false;
-      }, err => {
-        this._notification.errorMessage(err.statusText + '<br>' + 'unique epidemic groups error', err.name);
-      }
+    this._subscriptionManagerService.add(
+      this._sparqlDataService.getUniqueEpidemicGroups(lang).subscribe(
+        uniqueEpidGroup => {
+          this.allEpidemicsGroups = this.beautifyItems(uniqueEpidGroup, 'seuchen_gruppe');
+          this.inputEpidemicsGroup = this.constructItemList(this.possibleSelections.epidemic_group, this.allEpidemicsGroups);
+          this.loadEpidemicG = false;
+        }, err => {
+          this._notification.errorMessage(err.statusText + '<br>' + 'unique epidemic groups error', err.name);
+        }
+      )
     );
   }
 
   private getUniqueEpidemics(lang: string): void {
-    this._epidemicsSub = this._sparqlDataService.getUniqueEpidemics(lang).subscribe(
-      uniqueEpid => {
-        this.allEpidemics = this.beautifyItems(uniqueEpid, 'tier_seuche');
-        this.inputEpidemics = this.constructItemList(this.possibleSelections.epidemic, this.allEpidemics);
-        this.loadEpidemic = false;
-      }, err => {
-        this._notification.errorMessage(err.statusText + '<br>' + 'unique epidemics error', err.name);
-      }
+    this._subscriptionManagerService.add(
+      this._sparqlDataService.getUniqueEpidemics(lang).subscribe(
+        uniqueEpid => {
+          this.allEpidemics = this.beautifyItems(uniqueEpid, 'tier_seuche');
+          this.inputEpidemics = this.constructItemList(this.possibleSelections.epidemic, this.allEpidemics);
+          this.loadEpidemic = false;
+        }, err => {
+          this._notification.errorMessage(err.statusText + '<br>' + 'unique epidemics error', err.name);
+        }
+      )
     );
   }
 
   private getUniqueAnimalGroups(lang: string): void {
-    this._animalsGroupSub = this._sparqlDataService.getUniqueAnimalGroups(lang).subscribe(
-      uniqueAnimalGroups => {
-        this.allAnimalGroups = this.beautifyItems(uniqueAnimalGroups, 'tier_gruppe');
-        this.inputAnimalGroups = this.constructItemList(this.possibleSelections.animal_group, this.allAnimalGroups);
-        this.loadAnimalG = false;
-      }, err => {
-        this._notification.errorMessage(err.statusText + '<br>' + 'unique animal group error', err.name);
-      }
+    this._subscriptionManagerService.add(
+      this._sparqlDataService.getUniqueAnimalGroups(lang).subscribe(
+        uniqueAnimalGroups => {
+          this.allAnimalGroups = this.beautifyItems(uniqueAnimalGroups, 'tier_gruppe');
+          this.inputAnimalGroups = this.constructItemList(this.possibleSelections.animal_group, this.allAnimalGroups);
+          this.loadAnimalG = false;
+        }, err => {
+          this._notification.errorMessage(err.statusText + '<br>' + 'unique animal group error', err.name);
+        }
+      )
     );
   }
 
   private getUniqueAnimals(lang: string): void {
-    this._animalsSub = this._sparqlDataService.getUniqueAnimals(lang).subscribe(
-      uniqueAnimals => {
-        this.allAnimals = this.beautifyItems(uniqueAnimals, 'tier_art');
-        this.inputAnimals = this.constructItemList(this.possibleSelections.animal_species, this.allAnimals);
-        this.loadAnimal = false;
-      }, err => {
-        this._notification.errorMessage(err.statusText + '<br>' + 'unique animals error', err.name);
-      }
+    this._subscriptionManagerService.add(
+      this._sparqlDataService.getUniqueAnimals(lang).subscribe(
+        uniqueAnimals => {
+          this.allAnimals = this.beautifyItems(uniqueAnimals, 'tier_art');
+          this.inputAnimals = this.constructItemList(this.possibleSelections.animal_species, this.allAnimals);
+          this.loadAnimal = false;
+        }, err => {
+          this._notification.errorMessage(err.statusText + '<br>' + 'unique animals error', err.name);
+        }
+      )
     );
   }
 

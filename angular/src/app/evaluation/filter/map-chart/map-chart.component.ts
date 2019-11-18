@@ -199,9 +199,15 @@ export class MapChartComponent implements AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.dataSub.unsubscribe();
-    this.wktCantonSub.unsubscribe();
-    this.wktMunicSub.unsubscribe();
+    if (this.dataSub) {
+      this.dataSub.unsubscribe();
+    }
+    if (this.wktCantonSub) {
+      this.wktCantonSub.unsubscribe();
+    }
+    if (this.wktMunicSub) {
+      this.wktMunicSub.unsubscribe();
+    }
   }
 
   onSwitchLayer(layer: OlVectorLayer): void {

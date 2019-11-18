@@ -44,6 +44,7 @@ import { HighchartService } from './shared/services/highchart.service';
 import { ParamService } from './shared/services/param.service';
 import { ChDate } from './shared/pipes/ch-date.pipe';
 import { NotificationService } from './shared/services/notification.service';
+import { SubscriptionManagerService } from './shared/services/subscription-manager.service';
 
 
 @NgModule({
@@ -102,6 +103,7 @@ import { NotificationService } from './shared/services/notification.service';
     HighchartService,
     ParamService,
     NotificationService,
+    SubscriptionManagerService,
     {
       provide: MatPaginatorIntl,
       useClass: MatPaginatorI18nService,

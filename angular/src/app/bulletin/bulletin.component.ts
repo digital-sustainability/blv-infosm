@@ -8,12 +8,12 @@ import { SparqlDataService } from 'src/app/shared/services/sparql-data.service';
 import { TranslateService } from '@ngx-translate/core';
 import { LanguageService } from 'src/app/shared/services/language.service';
 import { NotificationService } from '../shared/services/notification.service';
-import { Router, ActivatedRoute } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { NgbDateParserFormatter, NgbDate, NgbDateStruct} from '@ng-bootstrap/ng-bootstrap';
 import { NgbDateCHFormatter } from '../shared/formatters/ngb-ch-date-formatter';
 import { inRange } from 'lodash';
 import { ParamService } from '../shared/services/param.service';
-import { Subscription } from 'rxjs';
+import { SubscriptionManagerService } from '../shared/services/subscription-manager.service'
 import dayjs from 'dayjs';
 import weekOfYear from 'dayjs/plugin/weekOfYear';
 dayjs.extend(weekOfYear);
@@ -30,7 +30,7 @@ export class BulletinComponent implements OnInit, OnDestroy {
 
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   @ViewChild(MatSort, { static: false }) sort: MatSort;
- 
+
   hoveredDate: NgbDate;
   from: NgbDate;
   to: NgbDate;
@@ -39,9 +39,6 @@ export class BulletinComponent implements OnInit, OnDestroy {
   fromDate: string | Date;
   toDate: string | Date;
 
-  private _paramSub: Subscription;
-  private _langSub: Subscription;
-  private _dataSub: Subscription;
   private _paramState: ParamState;
 
   data: Report[];
@@ -61,7 +58,8 @@ export class BulletinComponent implements OnInit, OnDestroy {
     private _paramsService: ParamService,
     private _route: ActivatedRoute,
     private _notification: NotificationService,
-    public translateService: TranslateService
+    private _subscriptionManagerService: SubscriptionManagerService,
+    public translateService: TranslateService,
   ) { }
 
   ngOnInit(): void {
@@ -73,49 +71,49 @@ export class BulletinComponent implements OnInit, OnDestroy {
     this.model = this.startDate;
 
     this._paramState = { lang: '', from: '', to: '' };
-    this._paramSub = this._route.queryParams.subscribe(
-      params => {
-        // set parmas if none detected or one is misssing
-        if (!params['lang'] || !params['from'] || !params['to']) {
-          this.updateInput({
-            lang: this.translateService.currentLang,
-            from: dayjs().subtract(7, 'd').format('YYYY-MM-DD'),
-            to: dayjs().format('YYYY-MM-DD')
-          }, this._paramState);
-        // set params and get data accordning to URL input
-        } else {
-          // load data according to URL-input by user
-          this.updateInput({
-            lang: params['lang'],
-            from: params['from'],
-            to: params['to']
-          }, this._paramState);
+    this._subscriptionManagerService.add(
+      this._route.queryParams.subscribe(
+        params => {
+          // set parmas if none detected or one is misssing
+          if (!params['lang'] || !params['from'] || !params['to']) {
+            this.updateInput({
+              lang: this.translateService.currentLang,
+              from: dayjs().subtract(7, 'd').format('YYYY-MM-DD'),
+              to: dayjs().format('YYYY-MM-DD')
+            }, this._paramState);
+          // set params and get data accordning to URL input
+          } else {
+            // load data according to URL-input by user
+            this.updateInput({
+              lang: params['lang'],
+              from: params['from'],
+              to: params['to']
+            }, this._paramState);
 
-          // in case the language in URL defers from the one currently set, change the language
-           // TODO: Check if this logic makes sense or needed at all. Also in Bulletin-detail
-          if (this._paramState.lang !== this.translateService.currentLang) {
-            this._langauageService.changeLang(this._paramState.lang);
-          }
-        }
-        // If the language changes through click, update param
-        this._langSub = this._langauageService.currentLang.subscribe(
-          lang => {
-            if (this._paramState.lang !== lang) {
-              this.updateInput({ lang: lang }, this._paramState);
+            // in case the language in URL defers from the one currently set, change the language
+             // TODO: Check if this logic makes sense or needed at all. Also in Bulletin-detail
+            if (this._paramState.lang !== this.translateService.currentLang) {
+              this._langauageService.changeLang(this._paramState.lang);
             }
-          }, err => {
-            // TODO: Imporve error handling
-            this._notification.errorMessage(err.statusText + '<br>' + 'language error', err.name);
           }
-        );
-      }
+          // If the language changes through click, update param
+          this._langauageService.currentLang.subscribe(
+            lang => {
+              if (this._paramState.lang !== lang) {
+                this.updateInput({ lang: lang }, this._paramState);
+              }
+            }, err => {
+              // TODO: Imporve error handling
+              this._notification.errorMessage(err.statusText + '<br>' + 'language error', err.name);
+            }
+          );
+        }
+      )
     );
   }
 
   ngOnDestroy(): void {
-    this._paramSub.unsubscribe();
-    this._dataSub.unsubscribe();
-    this._langSub.unsubscribe();
+    this._subscriptionManagerService.unsubscribe();
   }
 
   onDateSelection(date: NgbDate) {
@@ -234,28 +232,31 @@ export class BulletinComponent implements OnInit, OnDestroy {
    * @param to Date to which the disease might have been published
    */
   private getList(lang: string, from: string | Date, to: string | Date): void {
-    this._dataSub = this._sparqlDataService.getReports('publikations_datum', lang, from, to).subscribe(
-      data => {
-        this.noData = data.length === 0;
-        this.data = this.beautifyDataObject(
-          data.map(report => {
-            return {
-              publication_date: report.publikations_datum.value,
-              canton: report.kanton.value,
-              munic: report.gemeinde.value,
-              epidemic_group: report.seuchen_gruppe.value,
-              epidemic: report.seuche.value,
-              animal_group: report.tier_gruppe.value,
-              animal_species: report.tierart.value
-            } as Report;
-          })
-        );
-        this.updateDatesAndData(this.model);
-      }, err => {
-        // TODO: Imporve error handling
-        this._notification.errorMessage(err.statusText + '<br>' + 'reports error', err.name);
-        console.log(err);
-      });
+    this._subscriptionManagerService.add(
+      this._sparqlDataService.getReports('publikations_datum', lang, from, to).subscribe(
+        data => {
+          this.noData = data.length === 0;
+          this.data = this.beautifyDataObject(
+            data.map(report => {
+              return {
+                publication_date: report.publikations_datum.value,
+                canton: report.kanton.value,
+                munic: report.gemeinde.value,
+                epidemic_group: report.seuchen_gruppe.value,
+                epidemic: report.seuche.value,
+                animal_group: report.tier_gruppe.value,
+                animal_species: report.tierart.value
+              } as Report;
+            })
+          );
+          this.updateDatesAndData(this.model);
+        }, err => {
+          // TODO: Imporve error handling
+          this._notification.errorMessage(err.statusText + '<br>' + 'reports error', err.name);
+          console.log(err);
+        }
+      )
+    );
   }
 
   private constructNumber(date: Date | string): string {

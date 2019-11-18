@@ -12,6 +12,7 @@ import { HighchartService } from 'src/app/shared/services/highchart.service';
 import { uniq, uniqBy, range, countBy, mapKeys, get } from 'lodash';
 import dayjs from 'dayjs';
 import weekOfYear from 'dayjs/plugin/weekOfYear';
+import { SubscriptionManagerService } from 'src/app/shared/services/subscription-manager.service';
 dayjs.extend(weekOfYear);
 
 @Component({
@@ -21,7 +22,6 @@ dayjs.extend(weekOfYear);
 })
 export class TimelineChartComponent implements OnInit, OnDestroy {
   private _years: string;
-  private _dataSub: Subscription;
   private _translationSub: Subscription;
   private _isYear: boolean;
   private _isMonth: boolean;
@@ -29,7 +29,6 @@ export class TimelineChartComponent implements OnInit, OnDestroy {
   private _xAxis: string;
   private _trans: Translations;
   private _timeLineChartData: Line[];
-  private _loadingSub: Subscription;
 
   private _intervals = {
     minYear : 0,
@@ -42,7 +41,6 @@ export class TimelineChartComponent implements OnInit, OnDestroy {
 
   reports: Report[];
   timelineChart: Chart;
-  paramSub: Subscription;
   mediaQuery: MediaQueryList = window.matchMedia('(max-width: 700px)');
   loading = true;
   activeEmidemics: boolean;
@@ -52,68 +50,72 @@ export class TimelineChartComponent implements OnInit, OnDestroy {
     private _distributeDataService: DistributeDataService,
     private _route: ActivatedRoute,
     private _highChartService: HighchartService,
-    private _notification: NotificationService
+    private _notification: NotificationService,
+    private _subscriptionManagerService: SubscriptionManagerService,
   ) { }
 
   ngOnInit() {
-    // get min/max year and min/max month for computing the range on the x axis
-    this.paramSub = this._route.queryParams.subscribe(
-      params => {
-        this._intervals.minYear = this.extractYear(params['from']);
-        this._intervals.maxYear = this.extractYear(params['to']);
-        this._intervals.minMonth = this.extractMonth(params['from']) + 1;
-        this._intervals.maxMonth = this.extractMonth(params['to']) + 1;
-        this._intervals.minWeek = this.extractWeek(params['from']);
-        this._intervals.maxWeek = this.extractWeek(params['to']);
-        this.getIntervalUnit(params['from'], params['to']);
-      }
-    );
-    this._loadingSub = this._distributeDataService.loadingData.subscribe(
-      loading => this.loading = loading,
-      err => this._notification.errorMessage(err.statusText + '<br>' + 'data service error', err.name),
-    );
-    // if(this.intervals.minYear === this.intervals.maxYear) {this.isYear = false; }
-    this._dataSub = this._distributeDataService.currentData.subscribe(
-      data => {
-        if (data) {
-          this.reports = data;
-          this._years = this.extractYears(data);
-          // Translate if new data is loaded
-          this._translationSub = this.translate.get([
-            'EVAL.WEEK_LABEL',
-            'EVAL.MONTHS',
-            'EVAL.MONTH_LABEL',
-            'EVAL.YEAR',
-            'EVAL.YEAR_LABEL',
-            'EVAL.YEARS_LABEL',
-            'EVAL.AGGR_ANIMAL_GROUPS',
-            'EVAL.AGGR_EPIDEMIC_GROUPS',
-            'EVAL.COUNT',
-            'EVAL.SHOW_ALL_NONE']).subscribe(
-              texts => {
-                // Obj that holds all tarnslations for this component
-                this._trans = texts;
-                this._timeLineChartData = this.extract(data, 'epidemic_group');
-                this.drawChart();
-                this.activeEmidemics = true;
-                this.mediaQuery.addEventListener('change', () => {
-                  this.checkMediaHeight(this.mediaQuery);
-                  this.checkMediaLegend(this.mediaQuery);
-                  this.drawChart();
-                });
-              }
-            );
+    this._subscriptionManagerService.add(
+      // get min/max year and min/max month for computing the range on the x axis
+      this._route.queryParams.subscribe(
+        params => {
+          this._intervals.minYear = this.extractYear(params['from']);
+          this._intervals.maxYear = this.extractYear(params['to']);
+          this._intervals.minMonth = this.extractMonth(params['from']) + 1;
+          this._intervals.maxMonth = this.extractMonth(params['to']) + 1;
+          this._intervals.minWeek = this.extractWeek(params['from']);
+          this._intervals.maxWeek = this.extractWeek(params['to']);
+          this.getIntervalUnit(params['from'], params['to']);
         }
-      },
-      // TODO: Improve Error handling
-      err => this._notification.errorMessage(err.statusText + '<br>' + 'data service error', err.name)
+      ),
+      this._distributeDataService.loadingData.subscribe(
+        loading => this.loading = loading,
+        err => this._notification.errorMessage(err.statusText + '<br>' + 'data service error', err.name),
+      ),
+      // if(this.intervals.minYear === this.intervals.maxYear) {this.isYear = false; }
+      this._distributeDataService.currentData.subscribe(
+        data => {
+          if (data) {
+            this.reports = data;
+            this._years = this.extractYears(data);
+            // Translate if new data is loaded
+            this._translationSub = this.translate.get([
+              'EVAL.WEEK_LABEL',
+              'EVAL.MONTHS',
+              'EVAL.MONTH_LABEL',
+              'EVAL.YEAR',
+              'EVAL.YEAR_LABEL',
+              'EVAL.YEARS_LABEL',
+              'EVAL.AGGR_ANIMAL_GROUPS',
+              'EVAL.AGGR_EPIDEMIC_GROUPS',
+              'EVAL.COUNT',
+              'EVAL.SHOW_ALL_NONE']).subscribe(
+                texts => {
+                  // Obj that holds all tarnslations for this component
+                  this._trans = texts;
+                  this._timeLineChartData = this.extract(data, 'epidemic_group');
+                  this.drawChart();
+                  this.activeEmidemics = true;
+                  this.mediaQuery.addEventListener('change', () => {
+                    this.checkMediaHeight(this.mediaQuery);
+                    this.checkMediaLegend(this.mediaQuery);
+                    this.drawChart();
+                  });
+                }
+              );
+          }
+        },
+        // TODO: Improve Error handling
+        err => this._notification.errorMessage(err.statusText + '<br>' + 'data service error', err.name)
+      )
     );
   }
 
   ngOnDestroy() {
-    this._translationSub.unsubscribe();
-    this._dataSub.unsubscribe();
-    this._loadingSub.unsubscribe();
+    if (this._translationSub) {
+      this._translationSub.unsubscribe();
+    }
+    this._subscriptionManagerService.unsubscribe();
   }
 
   drawChart(): void {

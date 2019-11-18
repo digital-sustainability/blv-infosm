@@ -9,6 +9,7 @@ import { HighchartService } from 'src/app/shared/services/highchart.service';
 import { NotificationService } from '../../../shared/services/notification.service';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
+import { SubscriptionManagerService } from 'src/app/shared/services/subscription-manager.service';
 
 @Component({
   selector: 'app-frequency-chart',
@@ -33,48 +34,53 @@ export class FrequencyChartComponent implements OnInit, OnDestroy {
     public translate: TranslateService,
     private _distributeDataServie: DistributeDataService,
     private _highChartService: HighchartService,
-    private _notification: NotificationService
+    private _notification: NotificationService,
+    private _subscriptionManagerService: SubscriptionManagerService,
   ) { }
 
   ngOnInit() {
-    this._loadingSub = this._distributeDataServie.loadingData.subscribe(
-      loading => this.loading = loading,
-      err => this._notification.errorMessage(err.statusText + '<br>' + 'data service error', err.name),
-    );
-    this._dataSub = this._distributeDataServie.currentData.subscribe(
-      (data: Report[]) => {
-        this.loaded = true; // stop loading sign if any kind of response from the server
-        if (data.length > 0) {
-          this.reports = data;
-          this._translationSub = this.translate.get([
-            'EVAL.SHOW_ALL_NONE',
-            'EVAL.OTHER',
-            'EVAL.EPIDEMIC_PER_ANIMLAL',
-            'EVAL.ANIMLAL_PER_EPIDEMIC'
-            ]).subscribe(
-              texts => {
-                this._trans = texts;
-                this.activeEmidemics = true;
-                this.drawChart(data, 'epidemic', 'animal_species');
-                this.mediaQuery.addEventListener('change', () => {
-                  this.checkMediaHeight(this.mediaQuery);
-                  this.checkMediaLegend(this.mediaQuery);
+    this._subscriptionManagerService.add(
+      this._distributeDataServie.loadingData.subscribe(
+        loading => this.loading = loading,
+        err => this._notification.errorMessage(err.statusText + '<br>' + 'data service error', err.name),
+      ),
+      this._dataSub = this._distributeDataServie.currentData.subscribe(
+        (data: Report[]) => {
+          this.loaded = true; // stop loading sign if any kind of response from the server
+          if (data.length > 0) {
+            this.reports = data;
+            this._translationSub = this.translate.get([
+              'EVAL.SHOW_ALL_NONE',
+              'EVAL.OTHER',
+              'EVAL.EPIDEMIC_PER_ANIMLAL',
+              'EVAL.ANIMLAL_PER_EPIDEMIC'
+              ]).subscribe(
+                texts => {
+                  this._trans = texts;
+                  this.activeEmidemics = true;
                   this.drawChart(data, 'epidemic', 'animal_species');
-                });
-              }
-            );
+                  this.mediaQuery.addEventListener('change', () => {
+                    this.checkMediaHeight(this.mediaQuery);
+                    this.checkMediaLegend(this.mediaQuery);
+                    this.drawChart(data, 'epidemic', 'animal_species');
+                  });
+                }
+              );
+          }
+        },
+        err => {
+          this.loaded = false; // show spin wheel on err
+          this._notification.errorMessage(err.statusText + '<br>' + 'data service error', err.name);
         }
-      },
-      err => {
-        this.loaded = false; // show spin wheel on err
-        this._notification.errorMessage(err.statusText + '<br>' + 'data service error', err.name);
-      }
+      )
     );
   }
 
   ngOnDestroy() {
-    this._translationSub.unsubscribe();
-    this._dataSub.unsubscribe();
+    if (this._translationSub) {
+      this._translationSub.unsubscribe();
+    }
+    this._subscriptionManagerService.unsubscribe();
   }
 
   drawChart(data: Report[], barName: string, stackName: string): void {

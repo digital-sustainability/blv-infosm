@@ -8,6 +8,7 @@ import { NotificationService } from '../../shared/services/notification.service'
 import { ngxCsv } from 'ngx-csv/ngx-csv';
 import * as XLSX from 'xlsx';
 import { omit } from 'lodash';
+import { SubscriptionManagerService } from 'src/app/shared/services/subscription-manager.service';
 
 @Component({
   selector: 'app-download',
@@ -15,7 +16,6 @@ import { omit } from 'lodash';
   styleUrls: ['./download.component.css']
 })
 export class DownloadComponent implements OnInit, OnDestroy {
-  private _dataSub: Subscription;
   private translationSub: Subscription;
   private _reports: Report[];
   private _trans: Translations;
@@ -23,36 +23,41 @@ export class DownloadComponent implements OnInit, OnDestroy {
   constructor(
     public translate: TranslateService,
     private _distributeDataService: DistributeDataService,
-    private _notification: NotificationService
+    private _notification: NotificationService,
+    private _subscriptionManagerService: SubscriptionManagerService,
   ) { }
 
   // TODO: Error handling and notify the user
   ngOnInit(): void {
-    this._dataSub = this._distributeDataService.currentData.subscribe(
-      reports => {
-        // Remove unwanted properties from download
-        this._reports = reports.map(report => omit(report, ['munic_id', 'canton_id']));
-        this.translationSub = this.translate.get([
-          'DOWNLOAD.TITLE',
-          'DOWNLOAD.DIAGNOSIS_DATE',
-          'DOWNLOAD.MUNICIPALITY',
-          'DOWNLOAD.CANTON',
-          'DOWNLOAD.PEST',
-          'DOWNLOAD.PEST_GROUP',
-          'DOWNLOAD.ANIMAL_GROUP',
-          'DOWNLOAD.ANIMAL_SPECIES',
-        ]).subscribe(
-          texts => this._trans = texts,
-          err => this._notification.errorMessage(err.statusText + '<br>' + 'translations error', err.name)
-        );
-      },
-      err => this._notification.errorMessage(err.statusText + '<br>' + 'reports error', err.name)
+    this._subscriptionManagerService.add(
+      this._distributeDataService.currentData.subscribe(
+        reports => {
+          // Remove unwanted properties from download
+          this._reports = reports.map(report => omit(report, ['munic_id', 'canton_id']));
+          this.translationSub = this.translate.get([
+            'DOWNLOAD.TITLE',
+            'DOWNLOAD.DIAGNOSIS_DATE',
+            'DOWNLOAD.MUNICIPALITY',
+            'DOWNLOAD.CANTON',
+            'DOWNLOAD.PEST',
+            'DOWNLOAD.PEST_GROUP',
+            'DOWNLOAD.ANIMAL_GROUP',
+            'DOWNLOAD.ANIMAL_SPECIES',
+          ]).subscribe(
+            texts => this._trans = texts,
+            err => this._notification.errorMessage(err.statusText + '<br>' + 'translations error', err.name)
+          );
+        },
+        err => this._notification.errorMessage(err.statusText + '<br>' + 'reports error', err.name)
+      )
     );
   }
 
   ngOnDestroy(): void {
-    this._dataSub.unsubscribe();
-    this.translationSub.unsubscribe();
+    if (this.translationSub) {
+      this.translationSub.unsubscribe();
+    }
+    this._subscriptionManagerService.unsubscribe();
   }
 
   onDownloadCsv(): void {
