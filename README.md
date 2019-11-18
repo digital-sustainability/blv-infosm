@@ -19,10 +19,8 @@ Since the config for development is not under version control, please add the fo
 
 ~~~js
 module.exports = {
-    config: {
-        use_cors: false,
-        port: 5000
-    }
+    use_cors: false,
+    port: 5000,
 }
 ~~~
 
