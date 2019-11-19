@@ -11,11 +11,10 @@ The live application is hosted by the company  [Begasoft](https://www.begasoft.c
 If you find problems in the source code please open a GitHub issue.
 
 ## Development
-This project uses an slim [Express.js](https://expressjs.com/) backend. The frontend is powered by [Angular](https://angular.io/) SPA Framework. You are welcome to contribute to code improvements by sending us pull-requests of your suggested changes.
+This project uses an slim [Express.js](https://expressjs.com/) backend. The frontend is powered by the [Angular](https://angular.io/) SPA Framework. You are welcome to contribute to code improvements by submitting pull-requests of your suggested changes.
 
 ### Config
 Since the config for development is not under version control, please add the following file: ***./config/devConfig.js*** with the content:
-
 
 ~~~js
 module.exports = {
@@ -29,7 +28,7 @@ In case you extend the app with any sensitive information like passwords or API 
 ### Running the Application for Development
 Install the backend dependencies with `npm install` and start up the node server on port 5000 by running `npm start`.
 
-After navigating to *./angular* and running `npm install`, run `ng serve` to start-up the frontend on http://localhost:4200/. The app will automatically reload if you change any of the source files.
+After navigating to *./angular* and running `npm install`, run `ng serve` to start-up the frontend on http://localhost:4200/. The app will automatically reload if you change any of the front-end files.
 
 ### Scaffolding of Additional Angular Code
 Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
