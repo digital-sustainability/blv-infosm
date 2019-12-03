@@ -4,7 +4,7 @@
   <div style="text-align: center">
     <p> {{ 'BULLETIN.FILTER_MESSAGE' | translate}} </p>
     <ngb-datepicker #dp [minDate]="{year: 2008, month: 11, day:17}" [maxDate]="maxDate" [showWeekNumbers]="true" 
-      [startDate]="startDate" [(ngModel)]="model" (select)="onDateSelection($event)" [dayTemplate]="t">
+      [startDate]="selectedDate" [(ngModel)]="selectedDate" (select)="onDateSelection($event)" [dayTemplate]="t">
     </ngb-datepicker>
     <ng-template #t let-date="date" let-focused="focused" let-disabled="disabled">
       <span

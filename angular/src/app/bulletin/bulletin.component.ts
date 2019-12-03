@@ -13,7 +13,7 @@ import { NgbDateParserFormatter, NgbDate, NgbDateStruct} from '@ng-bootstrap/ng-
 import { NgbDateCHFormatter } from '../shared/formatters/ngb-ch-date-formatter';
 import { inRange } from 'lodash';
 import { ParamService } from '../shared/services/param.service';
-import { SubscriptionManagerService } from '../shared/services/subscription-manager.service'
+import { SubscriptionManagerService } from '../shared/services/subscription-manager.service';
 import dayjs from 'dayjs';
 import weekOfYear from 'dayjs/plugin/weekOfYear';
 dayjs.extend(weekOfYear);
@@ -42,9 +42,10 @@ export class BulletinComponent implements OnInit, OnDestroy {
   private _paramState: ParamState;
 
   data: Report[];
-  model: NgbDateStruct;
+  // model: NgbDateStruct;
+  // startDate: NgbDateStruct;
   maxDate: NgbDateStruct;
-  startDate: NgbDateStruct;
+  selectedDate: NgbDateStruct;
   displayedCols = ['publication_date', 'canton', 'munic', 'epidemic_group', 'epidemic', 'animal_species', 'count'];
   bulletinNumber: string;
   bulletinEntries: Report[];
@@ -66,9 +67,9 @@ export class BulletinComponent implements OnInit, OnDestroy {
     // max possible date is today
     this.maxDate = this.transformDate(dayjs().day(0).format('YYYY-MM-DD'));
     // the start date is the actual bulletin from last week
-    this.startDate = this.transformDate(dayjs().subtract(7, 'd').format('YYYY-MM-DD'));
+    this.selectedDate = this.transformDate(dayjs().subtract(7, 'd').format('YYYY-MM-DD'));
     // start by setting the model of the date picker to the start date
-    this.model = this.startDate;
+    // this.model = this.startDate;
 
     this._paramState = { lang: '', from: '', to: '' };
     this._subscriptionManagerService.add(
@@ -249,7 +250,7 @@ export class BulletinComponent implements OnInit, OnDestroy {
               } as Report;
             })
           );
-          this.updateDatesAndData(this.model);
+          this.updateDatesAndData(this.selectedDate);
         }, err => {
           // TODO: Imporve error handling
           this._notification.errorMessage(err.statusText + '<br>' + 'reports error', err.name);
