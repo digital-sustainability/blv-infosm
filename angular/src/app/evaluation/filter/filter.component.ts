@@ -206,12 +206,12 @@ export class FilterComponent implements OnInit, OnDestroy {
     this.sorted = true;
 
     // initialize all the forms (input fields)
-    this.formCant = this.fb.group({ canton: ''});
-    this.formMunic = this.fb.group({ munic: ''});
-    this.formEpidG = this.fb.group({ epidemic_group: ''});
-    this.formEpid = this.fb.group({ epidemic: ''});
-    this.formAniG = this.fb.group({ animal_group: ''});
-    this.formAni = this.fb.group({ animal_species: ''});
+    this.formCant = this.fb.group({ canton: '' });
+    this.formMunic = this.fb.group({ munic: '' });
+    this.formEpidG = this.fb.group({ epidemic_group: '' });
+    this.formEpid = this.fb.group({ epidemic: '' });
+    this.formAniG = this.fb.group({ animal_group: '' });
+    this.formAni = this.fb.group({ animal_species: '' });
   }
 
   onChangeTab(route: string): void {
@@ -223,11 +223,11 @@ export class FilterComponent implements OnInit, OnDestroy {
     this._subscriptionManagerService.unsubscribe();
   }
 
- /**
-  * Updates every time when the user adds an entry in the filter. Adapts the possible
-  * selections in the inputfileds in an "OR" logic based on the selections the user made
-  * in the hierarchies above
-  */
+  /**
+   * Updates every time when the user adds an entry in the filter. Adapts the possible
+   * selections in the inputfileds in an "OR" logic based on the selections the user made
+   * in the hierarchies above
+   */
   onAdd($event, filterType: string): void {
     this.mapLoadingInputField(filterType);
     this.checkHierarchy(filterType);
@@ -420,7 +420,7 @@ export class FilterComponent implements OnInit, OnDestroy {
 
     if (['munic', 'epidemic', 'animal_species'].includes(formControlName)) {
       const next = this.getNextHigherHierarchy(formControlName);
-      const nextForm =  this.getCorrespondingForms(formControlName)[0];
+      const nextForm = this.getCorrespondingForms(formControlName)[0];
       this.toggleDisableInput(nextForm, next);
     }
   }
@@ -473,7 +473,6 @@ export class FilterComponent implements OnInit, OnDestroy {
    * @param filterConfigKey the key of the FilterConfig to handle next
    */
   orderItems(elementId: string, elToDisable: string, filterConfigKey: string): void {
-    // set the order of the element
     this.stateOrder++;
     document.getElementById(elementId).style.order = `${this.stateOrder}`;
     this.hierarchy = this.hierarchy + 1;
@@ -515,14 +514,12 @@ export class FilterComponent implements OnInit, OnDestroy {
    * @param selected an array of subsequent hierarcies that belong together, eg ['canton', 'munic']
    */
   inputFieldsToDisabled(selected: string[]): void {
-    if (selected.length === 1) {
-      return;
-    } else if (selected.length === 2) {
+    if (selected.length === 2) {
       const firstToDisable = selected[0];
       const forms = this.getCorrespondingForms(firstToDisable[0]);
       this.toggleDisableInput(forms[0], firstToDisable[0]);
       this.toggleDisableInput(forms[1], firstToDisable[1]);
-    } else {
+    } else if (selected.length >= 2) {
       const secondToDisable = selected[1];
       const forms = this.getCorrespondingForms(secondToDisable[0]);
       this.toggleDisableInput(forms[0], secondToDisable[0]);
@@ -608,12 +605,12 @@ export class FilterComponent implements OnInit, OnDestroy {
    * Checks which input fields are disabled and enables them if they are disabled.
    */
   checkDisabledInputFields(): void {
-    if (this.formAni.controls['animal_species'].disabled) { this.formAni.controls['animal_species'].enable(); }
-    if (this.formEpid.controls['epidemic'].disabled) { this.formEpid.controls['epidemic'].enable(); }
-    if (this.formMunic.controls['munic'].disabled) { this.formMunic.controls['munic'].enable(); }
-    if (this.formCant.controls['canton'].disabled) { this.formCant.controls['canton'].enable(); }
-    if (this.formEpidG.controls['epidemic_group'].disabled) { this.formEpidG.controls['epidemic_group'].enable(); }
-    if (this.formAniG.controls['animal_group'].disabled) { this.formAniG.controls['animal_group'].enable(); }
+    this.formAni.controls['animal_species'].enable();
+    this.formEpid.controls['epidemic'].enable();
+    this.formMunic.controls['munic'].enable();
+    this.formCant.controls['canton'].enable();
+    this.formEpidG.controls['epidemic_group'].enable();
+    this.formAniG.controls['animal_group'].enable();
   }
 
   resetModels(): void {
@@ -631,7 +628,7 @@ export class FilterComponent implements OnInit, OnDestroy {
    * @param filteredData initial data filtered based on the selected period
    */
   private extractFilterParts(filteredData): void {
-    if (this.filterEntryPoint.length === 0 ) {
+    if (this.filterEntryPoint.length === 0) {
       for (const el of ['canton', 'munic', 'epidemic_group', 'epidemic', 'animal_group', 'animal_species']) {
         this.possibleSelections[el] = uniq(map(filteredData, el)).sort();
       }
@@ -690,16 +687,17 @@ export class FilterComponent implements OnInit, OnDestroy {
    * @param filterObject the current FilterConfig
    */
   private checkFilter(type: string, compare: string, filterObject: FilterConfig): boolean {
-    return (filterObject[type].filter.length !== 0 && filterObject[type].filter.includes(compare))
-                || filterObject[type].filter.length === 0;
+    return (filterObject[type].filter.length !== 0
+      && filterObject[type].filter.includes(compare))
+      || filterObject[type].filter.length === 0;
   }
 
   /**
    * Constructs the list of items for the input field.
-   * @param possibleItems  items that can be selected. either they are in the selected time interval
-   *       or they contain are part of a match when the user already filtered
+   * @param possibleItems items that can be selected. either they are in the selected time interval
+   *        or they contain are part of a match when the user already filtered
    * @param uniqueItems unnique items that could have an entry in the database in the future but don't have yet
-   * Returns an object of type InputField and indicates which of them are selectable
+   *        Returns an object of type InputField and indicates which of them are selectable
    */
   private constructItemList(possibleItems: string[], uniqueItems: string[]): InputField[] {
     let disabledList = [];
@@ -746,10 +744,10 @@ export class FilterComponent implements OnInit, OnDestroy {
     }
     this._router.navigate(
       [], {
-        queryParams: this._filter,
-        // queryParamsHandling: 'merge', // remove to replace all query params by provided
-        relativeTo: this._route // stay on current route
-      });
+      queryParams: this._filter,
+      // queryParamsHandling: 'merge', // remove to replace all query params by provided
+      relativeTo: this._route // stay on current route
+    });
   }
 
   /**
@@ -770,14 +768,13 @@ export class FilterComponent implements OnInit, OnDestroy {
   onChangeDate(option: string): void {
     this.resetFilterOnLangOrPeriodChange();
     this.radioActive = true;
-    // TODO: One year too much because we don't have all the data
     this._filter.to = dayjs().format('YYYY-MM-DD');
     switch (option) {
       case ('week'):
         this._filter.from = dayjs().subtract(1, 'week').format('YYYY-MM-DD'); break;
       case ('month'):
         this._filter.from = dayjs().subtract(1, 'month').format('YYYY-MM-DD'); break;
-      case ('year'): // TODO: One year too much because we don't have all the data
+      case ('year'):
         this._filter.from = dayjs().subtract(1, 'y').format('YYYY-MM-DD'); break;
       case ('threeYears'):
         this._filter.from = dayjs().subtract(3, 'y').format('YYYY-MM-DD'); break;
@@ -864,6 +861,10 @@ export class FilterComponent implements OnInit, OnDestroy {
     $('#datetoerror').remove();
   }
 
+  /**
+   * Builds the correct string displayed above the table (column name and sort direction)
+   * @param $event (matSortChange): ececuted when the user clicks on the header of a table
+   */
   getSortItemAndOrder($event: Object): void {
     const column = $event['active'];
     const direction = $event['direction'];
@@ -895,7 +896,7 @@ export class FilterComponent implements OnInit, OnDestroy {
     this._subscriptionManagerService.add(
       this._sparqlDataService.getReports('diagnose_datum', lang, from, to, dateTo.diff(dateFrom, 'day') > 500)
         .subscribe(
-           (data: any[]) => {
+          (data: any[]) => {
             this.beautifiedData = data.map(d => {
               return {
                 diagnosis_date: d.diagnose_datum.value,
@@ -922,10 +923,10 @@ export class FilterComponent implements OnInit, OnDestroy {
             this.from = this.transformDate(from);
             this.to = this.transformDate(to);
           }, err => {
-          this._notification.errorMessage(err.statusText + '<br>' + 'reports error', err.name);
-          // TODO: Imporve error handling
-        }
-      )
+            this._notification.errorMessage(err.statusText + '<br>' + 'reports error', err.name);
+            // TODO: Imporve error handling
+          }
+        )
     );
   }
 
@@ -959,11 +960,14 @@ export class FilterComponent implements OnInit, OnDestroy {
           texts => {
             this.trans = texts;
             this.sortItem = this.trans['EVAL.DIAGNOSIS_DATE'];
-        }
-      )
+          }
+        )
     );
   }
 
+  /**
+   * Requests all the unique items that are displayed in the input fields in correct language.
+   */
   private getAllPossibleValues(lang: string): void {
     this.getUniqueCantons();
     this.getUniqueMunicipalities();
@@ -981,7 +985,7 @@ export class FilterComponent implements OnInit, OnDestroy {
           this.inputCantons = this.constructItemList(this.possibleSelections.canton, this.allCantons);
           this.loadCanton = false;
         }, err => {
-          this._notification.errorMessage(err.statusText + '<br>' + 'unique cantons error' , err.name);
+          this._notification.errorMessage(err.statusText + '<br>' + 'unique cantons error', err.name);
         }
       )
     );
@@ -1057,6 +1061,7 @@ export class FilterComponent implements OnInit, OnDestroy {
     );
   }
 
+  // TODO: check if we still have to used this function when productive data is ready
   private beautifyItems(item: any[], type: string): string[] {
     const niceItems: string[] = [];
     item.forEach(entry => {

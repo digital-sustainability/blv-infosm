@@ -368,14 +368,14 @@ export class TimelineChartComponent implements OnInit, OnDestroy {
     return dayjs(this.checkDate(date)).week();
   }
 
-  private extractMonths(data: Report[]): number {
-    return uniq(this.getDates(data).map(date => this.extractMonth(date))).sort((a: number, b: number) => {
-      if (a >= b) {
-        return 1;
-      }
-      return -1;
-    });
-  }
+  // private extractMonths(data: Report[]): number {
+  //   return uniq(this.getDates(data).map(date => this.extractMonth(date))).sort((a: number, b: number) => {
+  //     if (a >= b) {
+  //       return 1;
+  //     }
+  //     return -1;
+  //   });
+  // }
 
   private checkDate(date: string | Date): string {
     return (dayjs(date).isValid()) ? dayjs(date).format('YYYY-MM-DD') : dayjs().format('YYYY-MM-DD');
