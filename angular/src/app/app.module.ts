@@ -45,6 +45,7 @@ import { ParamService } from './shared/services/param.service';
 import { ChDate } from './shared/pipes/ch-date.pipe';
 import { NotificationService } from './shared/services/notification.service';
 import { SubscriptionManagerService } from './shared/services/subscription-manager.service';
+import { BulletinTableComponent } from './bulletin/bulletin-table/bulletin-table.component';
 
 
 @NgModule({
@@ -63,7 +64,8 @@ import { SubscriptionManagerService } from './shared/services/subscription-manag
     DownloadComponent,
     GeoDownloadComponent,
     GeoDownloadDetailComponent,
-    ChDate
+    ChDate,
+    BulletinTableComponent
   ],
   imports: [
     BrowserModule,

@@ -27,6 +27,7 @@
     "@ngx-translate/http-loader": "^4.0.0",
     "@types/jquery": "^3.3.29",
     "@webcomponents/webcomponentsjs": "^2.2.10",
+    "@zazuko/query-rdf-data-cube": "^0.7.0",
     "angular-font-awesome": "^3.1.2",
     "angular-highcharts": "^7.0.2",
     "angular-popper": "^2.0.0",
@@ -49,6 +50,7 @@
     "popper.js": "^1.14.7",
     "proj4": "^2.5.0",
     "rxjs": "~6.5.2",
+    "sparqljs": "^3.0.1",
     "tslib": "^1.9.0",
     "xlsx": "^0.14.3",
     "zone.js": "~0.9.1"
@@ -70,6 +72,7 @@
     "karma-coverage-istanbul-reporter": "~2.0.1",
     "karma-jasmine": "~1.1.2",
     "karma-jasmine-html-reporter": "^0.2.2",
+    "prettier": "^1.19.1",
     "protractor": "~5.4.0",
     "swiss-styleguide": "^3.0.0",
     "tslint": "~5.11.0",

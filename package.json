@@ -25,6 +25,7 @@
   "devDependencies": {
     "@rdfjs/data-model": "^1.1.2",
     "@zazuko/query-rdf-data-cube": "^0.7.0",
+    "prettier": "^1.19.1",
     "ts-node": "^8.5.4",
     "typescript": "^3.7.3"
   }
