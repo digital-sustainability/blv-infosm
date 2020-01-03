@@ -2,21 +2,17 @@
   width: 100%;
 }
 
+th.mat-header-cell {
+  vertical-align: middle;
+}
+
 .count-row {
   text-align: center;
 }
 
-.mat-table__wrapper .mat-table {
-  min-width: auto !important;
-  width: 100% !important;
-}
-
-.mat-header-row {
-  width: 100%;
-}
-
-.mat-row {
-  width: 100%;
+td.mat-cell {
+  padding-top: 8px;
+  padding-bottom: 8px;
 }
 
 @media screen and (max-width: 850px) {
@@ -32,4 +28,4 @@
     overflow-x: auto;
     margin: 0;
   }
-}
+} 
