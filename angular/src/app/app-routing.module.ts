@@ -1,13 +1,11 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { InfoComponent } from './info/info.component';
 import { ErrorComponent } from './error.component';
 import { EvaluationComponent } from './evaluation/evaluation.component';
 import { FrequencyChartComponent } from './evaluation/filter/frequency-chart/frequency-chart.component';
 import { TimelineChartComponent } from './evaluation/filter/timeline-chart/timeline-chart.component';
 import { MapChartComponent } from './evaluation/filter/map-chart/map-chart.component';
 import { BulletinComponent } from './bulletin/bulletin.component';
-import { GeoDownloadDetailComponent } from './geo-download-detail/geo-download-detail.component';
 
 const routes: Routes = [
   {
@@ -26,14 +24,8 @@ const routes: Routes = [
     pathMatch: 'full'
   },
   {
-    path: 'geo-download',
-    component: GeoDownloadDetailComponent,
-    pathMatch: 'full'
-  },
-  {
     path: 'info',
-    component: InfoComponent,
-    pathMatch: 'full'
+    loadChildren: () => import('./info/info.module').then(m => m.InfoModule)
   },
   {
     path: '',

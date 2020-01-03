@@ -19,7 +19,6 @@ import { MatIconModule } from '@angular/material/icon';
 
 import { AppComponent } from './app.component';
 import { HeaderComponent } from './header/header.component';
-import { InfoComponent } from './info/info.component';
 import { EvaluationComponent } from './evaluation/evaluation.component';
 import { FilterComponent } from './evaluation/filter/filter.component';
 import { TimelineChartComponent } from './evaluation/filter/timeline-chart/timeline-chart.component';
@@ -29,8 +28,6 @@ import { ErrorComponent } from './error.component';
 import { FooterComponent } from './footer/footer.component';
 import { BulletinComponent } from './bulletin/bulletin.component';
 import { DownloadComponent } from './evaluation/download/download.component';
-import { GeoDownloadComponent } from './info/geo-download/geo-download.component';
-import { GeoDownloadDetailComponent } from './geo-download-detail/geo-download-detail.component';
 
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { LanguageService } from './shared/services/language.service';
@@ -46,13 +43,13 @@ import { ChDate } from './shared/pipes/ch-date.pipe';
 import { NotificationService } from './shared/services/notification.service';
 import { SubscriptionManagerService } from './shared/services/subscription-manager.service';
 import { BulletinTableComponent } from './bulletin/bulletin-table/bulletin-table.component';
+import { InfoModule } from './info/info.module';
 
 
 @NgModule({
   declarations: [
     AppComponent,
     HeaderComponent,
-    InfoComponent,
     EvaluationComponent,
     FilterComponent,
     TimelineChartComponent,
@@ -62,8 +59,6 @@ import { BulletinTableComponent } from './bulletin/bulletin-table/bulletin-table
     FooterComponent,
     BulletinComponent,
     DownloadComponent,
-    GeoDownloadComponent,
-    GeoDownloadDetailComponent,
     ChDate,
     BulletinTableComponent
   ],
@@ -73,6 +68,7 @@ import { BulletinTableComponent } from './bulletin/bulletin-table/bulletin-table
     HttpClientModule,
     ChartModule,
     FormsModule,
+    InfoModule,
     ReactiveFormsModule,
     NgSelectModule,
     AngularFontAwesomeModule,
