@@ -147,6 +147,7 @@ export class FrequencyChartComponent implements OnInit, OnDestroy {
           color: '#ffffff' // Hide dot symbol on backgroud
         })
     });
+    console.log('|==> Goal: ', this.extractFrequencies(data, barName, stackName));
   }
 
   // returns the height of the chart based on a media query

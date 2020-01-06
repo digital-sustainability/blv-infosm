@@ -3,8 +3,8 @@ export interface Report {
     publication_date: string | Date;
     canton: string;
     munic: string;
-    killed: number;
-    infected: string;
+    killed?: number;
+    infected?: string;
     epidemic_group: string;
     epidemic: string;
     animal_group: string;

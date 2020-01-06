@@ -1,101 +1,64 @@
 <div style="margin-left: 2%; margin-right: 2%; margin-top: 2%">
-  <h3 style="text-align: center">{{ 'BULLETIN.OPTIONS' | translate}}</h3>
-  <hr>
+  <h3 style="text-align: center">{{ "BULLETIN.OPTIONS" | translate }}</h3>
+  <hr />
   <div style="text-align: center">
-    <p> {{ 'BULLETIN.FILTER_MESSAGE' | translate}} </p>
-    <ngb-datepicker #dp [minDate]="{year: 2008, month: 11, day:17}" [maxDate]="maxDate" [showWeekNumbers]="true" 
-      [startDate]="selectedDate" [(ngModel)]="selectedDate" (select)="onDateSelection($event)" [dayTemplate]="t">
+    <p>{{ "BULLETIN.FILTER_MESSAGE" | translate }}</p>
+    <ngb-datepicker
+      #dp
+      [minDate]="{ year: 2008, month: 11, day: 17 }"
+      [maxDate]="maxDate"
+      [showWeekNumbers]="true"
+      [startDate]="selectedDate"
+      [(ngModel)]="selectedDate"
+      (select)="onDateSelection($event)"
+      [dayTemplate]="t"
+    >
     </ngb-datepicker>
-    <ng-template #t let-date="date" let-focused="focused" let-disabled="disabled">
+    <ng-template
+      #t
+      let-date="date"
+      let-focused="focused"
+      let-disabled="disabled"
+    >
       <span
-            class="custom-day"
-            [class.focused]="focused"
-            [class.range]="isRange(date)"
-            [class.faded]="isHovered(date) || isInside(date)"
-            [class.disabled]="disabled"
-            (mouseenter)="hoveredDate = date"
-            (mouseleave)="hoveredDate = null">        
-            {{ date.day }}
+        class="custom-day"
+        [class.focused]="focused"
+        [class.range]="isRange(date)"
+        [class.faded]="isHovered(date) || isInside(date)"
+        [class.disabled]="disabled"
+        (mouseenter)="hoveredDate = date"
+        (mouseleave)="hoveredDate = null"
+      >
+        {{ date.day }}
       </span>
     </ng-template>
   </div>
 
-
   <div style="margin-left: 2%; margin-right: 2%; margin-top: 2%">
-    <h5 style="text-align: center"><strong>{{ 'BULLETIN.NOTICES' | translate}} {{ fromDate | chDate }} -
-        {{  toDate | chDate }}</strong></h5>
-    <hr>
-    <h6 style="text-align: center">{{ 'BULLETIN.NUMBER' | translate}} {{ bulletinNumber }} <span
-        *ngIf="actualBulletin"><i>({{ 'BULLETIN.ACTUAL_BULLETIN' | translate }})</i></span> </h6>
-  </div>
+    <h5 style="text-align: center">
+      <strong
+        >{{ "BULLETIN.NOTICES" | translate }} {{ fromDate | chDate }} -
+        {{ toDate | chDate }}</strong
+      >
+    </h5>
+    <hr />
 
-  <div *ngIf="bulletinEntries; else loadingBulletin">
+    <div *ngIf="reports; else loadingBulletin">
+      <app-bulletin-table [reports]="reports"></app-bulletin-table>
+    </div>
 
-    <div *ngIf="noData" class="noMessages">
-        {{ 'BULLETIN.NO_BULLETINS' | translate }}
-    </div>
-  
-    <div class="table" [hidden]="noData">
-      <mat-table class="mat-elevation-z1" [dataSource]="dataS" matSort>
-        <ng-container matColumnDef="publication_date">
-          <mat-header-cell *matHeaderCellDef mat-sort-header> <strong>{{ 'EVAL.PUBLICATION_DATE' | translate }}</strong>
-          </mat-header-cell>
-          <mat-cell *matCellDef="let element"> {{element.publication_date | chDate }} </mat-cell>
-        </ng-container>
-  
-        <ng-container matColumnDef="canton">
-          <mat-header-cell *matHeaderCellDef mat-sort-header> <strong>{{ 'EVAL.CANTON' | translate }}</strong>
-          </mat-header-cell>
-          <mat-cell *matCellDef="let element"> {{element.canton}} </mat-cell>
-        </ng-container>
-  
-        <ng-container matColumnDef="munic">
-          <mat-header-cell *matHeaderCellDef mat-sort-header><strong>{{ 'EVAL.MUNICIPALITY' | translate }}</strong>
-          </mat-header-cell>
-          <mat-cell *matCellDef="let element"> {{element.munic}} </mat-cell>
-        </ng-container>
-  
-  
-        <ng-container matColumnDef="epidemic_group">
-          <mat-header-cell *matHeaderCellDef mat-sort-header> <strong>{{ 'EVAL.PEST' | translate }}</strong>
-          </mat-header-cell>
-          <mat-cell *matCellDef="let element"> {{element.epidemic}} </mat-cell>
-        </ng-container>
-  
-        <ng-container matColumnDef="epidemic">
-          <mat-header-cell *matHeaderCellDef mat-sort-header> <strong>{{ 'EVAL.PEST_GROUP' | translate }}</strong>
-          </mat-header-cell>
-          <mat-cell *matCellDef="let element">{{element.epidemic_group}}</mat-cell>
-        </ng-container>
-  
-        <ng-container matColumnDef="animal_species">
-          <mat-header-cell *matHeaderCellDef mat-sort-header> <strong>{{ 'EVAL.ANIMAL_SPECIES' | translate }}</strong>
-          </mat-header-cell>
-          <mat-cell *matCellDef="let element">{{element.animal_species}} </mat-cell>
-        </ng-container>
-  
-        <ng-container matColumnDef="count">
-          <mat-header-cell *matHeaderCellDef mat-sort-header>
-            <strong>{{ 'BULLETIN.NUMBER_OF_NOTICES' | translate}}</strong></mat-header-cell>
-          <mat-cell *matCellDef="let element">{{element.count}}</mat-cell>
-        </ng-container>
-  
-        <mat-header-row *matHeaderRowDef="displayedCols"></mat-header-row>
-        <mat-row *matRowDef="let row; columns: displayedCols;"></mat-row>
-      </mat-table>
-  
-      <mat-paginator [pageSize]="10" [hidePageSize]="true" showFirstLastButtons></mat-paginator>
-    </div>
-  
+    <ng-template #loadingBulletin>
+      <div class="loadingSign">
+        <fa name="refresh" size="4x" animation="spin"></fa>
+      </div>
+    </ng-template>
+
     <div class="clearfix">
-      <small class="pull-right scroll-link"><a class="icon icon--before icon--power" (click)="onScrollUp()">{{ 'GENERAL.GO_UP' | translate }}</a></small>
+      <small class="pull-right scroll-link"
+        ><a class="icon icon--before icon--power" (click)="onScrollUp()">{{
+          "GENERAL.GO_UP" | translate
+        }}</a></small
+      >
     </div>
   </div>
-
-
-  <ng-template #loadingBulletin>
-    <div class="loadingSign">
-      <fa name="refresh" size="4x" animation="spin"></fa>
-    </div>
-  </ng-template>
 </div>
