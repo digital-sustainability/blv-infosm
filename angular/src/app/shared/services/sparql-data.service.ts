@@ -66,6 +66,7 @@ FILTER (?${by} >= "${this.checkDate(from)}"^^xsd:date && ?${by} <="${this.checkD
       .set('url', this._zazukoEndpoint)
       .set('query', query)
       .set('useCaching', useCaching.toString());
+      console.log(query);
     return this.http.get<Report[]>(this._api + 'sparql', { params: params });
   }
 

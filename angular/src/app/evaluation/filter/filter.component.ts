@@ -896,6 +896,7 @@ export class FilterComponent implements OnInit, OnDestroy {
       this._sparqlDataService.getReports('diagnose_datum', lang, from, to, dateTo.diff(dateFrom, 'day') > 500)
         .subscribe(
            (data: any[]) => {
+            console.log('Meeeerp', data);
             this.beautifiedData = data.map(d => {
               return {
                 diagnosis_date: d.diagnose_datum.value,
