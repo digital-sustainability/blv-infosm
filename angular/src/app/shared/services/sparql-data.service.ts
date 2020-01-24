@@ -66,6 +66,7 @@ FILTER (?${by} >= "${this.checkDate(from)}"^^xsd:date && ?${by} <="${this.checkD
       .set('url', this._zazukoEndpoint)
       .set('query', query)
       .set('useCaching', useCaching.toString());
+      console.log(query);
     return this.http.get<Report[]>(this._api + 'sparql', { params: params });
   }
 
@@ -167,23 +168,42 @@ FILTER(langMatches(lang( ?tier_art), "${lang}"))
     return this.http.get<any[]>(this._api + 'sparql', { params: params });
   }
 
-
+  /**
+   * NOTE: The shapes used to show the cantons and municipalites are strongly reduced in detail and thus size.
+   * This optimized version is provied by the BFS unlike the hihg quality shapes by SwissTopo. By the time of 
+   * writing, the BFS does not provide optimized shapes for 2020, why the `mostRecentYear` needs to be hardcoded
+   * to 2019 until new shapes for 2020 are available. 
+   */
   getCantonWkts(): any {
+    // NOTE: Original query, fetching the most recent year
+    // const query = `${this._prefix}
+    // SELECT * WHERE {
+    //   {
+    //     SELECT(max(?issued) AS ?mostRecentYear) WHERE {
+    //       <https://ld.geo.admin.ch/boundaries/canton/1> dct:hasVersion/dct:issued ?issued.
+    //     }
+    //   }
+    //   ?canton <http://www.geonames.org/ontology#featureCode> <http://www.geonames.org/ontology#A.ADM1> ;
+    //   schema:name ?shape_label ;
+    //   <http://purl.org/dc/terms/hasVersion> ?geomuniVersion .
+    //   ?geomuniVersion <http://purl.org/dc/terms/issued> ?mostRecentYear ;
+    //   <http://www.opengis.net/ont/geosparql#hasGeometry>/<http://www.opengis.net/ont/geosparql#asWKT> ?wkt .
+    //   ?geomuniVersion <https://ld.geo.admin.ch/def/bfsNumber> ?shape_id .
+    // }
+    // `;
+
     const query = `${this._prefix}
-    SELECT * WHERE {
-      {
-        SELECT(max(?issued) AS ?mostRecentYear) WHERE {
-          <https://ld.geo.admin.ch/boundaries/canton/1> dct:hasVersion/dct:issued ?issued.
-        }
-      }
-      ?canton <http://www.geonames.org/ontology#featureCode> <http://www.geonames.org/ontology#A.ADM1> ;
-      schema:name ?shape_label ;
-      <http://purl.org/dc/terms/hasVersion> ?geomuniVersion .
-      ?geomuniVersion <http://purl.org/dc/terms/issued> ?mostRecentYear ;
-      <http://www.opengis.net/ont/geosparql#hasGeometry>/<http://www.opengis.net/ont/geosparql#asWKT> ?wkt .
-      ?geomuniVersion <https://ld.geo.admin.ch/def/bfsNumber> ?shape_id .
+      SELECT * WHERE {
+        ?canton <http://www.geonames.org/ontology#featureCode> <http://www.geonames.org/ontology#A.ADM1> ;
+        schema:name ?shape_label ;
+        <http://purl.org/dc/terms/hasVersion> ?geomuniVersion .
+        ?geomuniVersion <http://purl.org/dc/terms/issued> "2019-01-01"^^xsd:date ;
+        <http://www.opengis.net/ont/geosparql#hasGeometry>/<http://www.opengis.net/ont/geosparql#asWKT> ?wkt .
+        ?geomuniVersion <https://ld.geo.admin.ch/def/bfsNumber> ?shape_id .
     }
     `;
+
+    // TODO: Temporary fix until new shapes are available
     const params = new HttpParams()
       .set('url', this._geoadminEndpoint)
       .set('query', query)
@@ -192,16 +212,12 @@ FILTER(langMatches(lang( ?tier_art), "${lang}"))
   }
 
   getMunicWkts(): any {
+    // TODO: Temporary fix until new shapes are available
     const query = `${this._prefix}
     SELECT * WHERE {
-      {
-        SELECT(max(?issued) AS ?mostRecentYear) WHERE {
-          <https://ld.geo.admin.ch/boundaries/canton/1> dct:hasVersion/dct:issued ?issued.
-        }
-      }
-        ?canton <http://www.geonames.org/ontology#featureCode> <http://www.geonames.org/ontology#A.ADM3> ;
+      ?canton <http://www.geonames.org/ontology#featureCode> <http://www.geonames.org/ontology#A.ADM3> ;
       <http://purl.org/dc/terms/hasVersion> ?geomuniVersion .
-      ?geomuniVersion <http://purl.org/dc/terms/issued> ?mostRecentYear ;
+      ?geomuniVersion <http://purl.org/dc/terms/issued> "2019-01-01"^^xsd:date ;
       schema:name ?shape_label ;
       <http://www.geonames.org/ontology#parentADM1>/schema:name ?parent_canton_label;
       <http://www.opengis.net/ont/geosparql#hasGeometry>/<http://www.opengis.net/ont/geosparql#asWKT> ?wkt .
