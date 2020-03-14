@@ -28,7 +28,7 @@
     "@types/jquery": "^3.3.29",
     "@webcomponents/webcomponentsjs": "^2.2.10",
     "@zazuko/query-rdf-data-cube": "^0.7.0",
-    "acorn": "6.1.0",
+    "acorn": "6.4.1",
     "angular-font-awesome": "^3.1.2",
     "angular-highcharts": "^7.0.2",
     "angular-popper": "^2.0.0",
