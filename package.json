@@ -16,7 +16,7 @@
     "compression": "^1.7.3",
     "cors": "^2.8.5",
     "dayjs": "^1.8.14",
-    "express": "^4.16.4",
+    "express": "^4.18.2",
     "jslint": "^0.12.0",
     "querystring": "^0.2.0",
     "request": "^2.88.0",
